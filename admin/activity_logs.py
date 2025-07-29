@@ -76,7 +76,7 @@ def activity_logs(content: ft.Column, username: str):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text(f"Activity Logs - {username}", size=24, weight="bold"),
+                ft.Text(f"Activity Logs", size=24, weight="bold"),
                 ft.Divider(),
                 centered_table,
             ],
