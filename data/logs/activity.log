@@ -202,3 +202,107 @@
 2025-07-29 14:26:51.417165 | raysan | Logged into admin panel
 2025-07-29 14:27:40.726250 | raysan | Logged out
 2025-07-29 14:28:12.401171 | raysan | Logged into admin panel
+2025-07-29 15:52:00 |  |  | raysan | Logged into admin panel
+2025-07-29 16:01:43 - Raysan Perez (raysan@example.com, ADMIN) - Logged in
+2025-07-29 16:01:43 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:02:37 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:02:49 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:03:13 - Raysan Perez (raysan@example.com, ADMIN) - Added new user Test User (user@example.com) with role USER
+2025-07-29 16:05:12 - Raysan Perez (raysan@example.com, ADMIN) - Logged in
+2025-07-29 16:05:12 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:08:56 - Raysan Perez (raysan@example.com, ADMIN) - Logged in
+2025-07-29 16:08:56 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:09:06 - Raysan Perez (raysan@example.com, ADMIN) - Deleted user user@example.com
+2025-07-29 16:15:33 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:15:38 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-29 16:17:36 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:17:42 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:18:01 - Raysan Perez (raysan@example.com, ADMIN) - Added new user 'user test' (test@example.com) with role 'USER'
+2025-07-29 16:18:21 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:18:28 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-29 16:22:54 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:23:01 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:23:26 - Raysan Perez (raysan@example.com, ADMIN) - Added new user user test (test@example.com) with role USER
+2025-07-29 16:27:19 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:29:16 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:31:19 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:32:16 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:34:16 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:34:20 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:21 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:21 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:22 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:22 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:22 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:34:51 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:35:39 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:36:49 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:36:50 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:36:51 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:36:59 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:36:59 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:36:59 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:05 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:05 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:05 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:05 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:06 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:06 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:08 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:08 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:08 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:09 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:37:57 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:37:59 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:38:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:38:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:38:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:38:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:38:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:39:52 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:39:55 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:39:56 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:39:57 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:39:57 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:40:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:40:02 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:40:02 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:38 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:41:41 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:43 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:41:43 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:43:57 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:47:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:54:42 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:54:44 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:55:11 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:55:12 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:55:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from admin panel
+2025-07-29 16:55:31 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:56:16 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:56:17 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-29 16:56:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:56:28 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:56:29 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-29 16:56:33 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 16:56:34 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-29 16:57:07 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-29 16:58:04 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 16:58:19 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-29 17:01:03 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:03:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:03:25 - Raysan Perez (raysan@example.com, ADMIN) - Logged out

@@ -1,7 +1,6 @@
 import flet as ft
 import json
 from utils.logger import log_action
-from utils.session_logger import log_logout  # FIXED IMPORT
 from flet import FontWeight, ScrollMode, CrossAxisAlignment, MainAxisAlignment, Colors
 from typing import Optional
 from admin.navbar import create_navbar
@@ -20,8 +19,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     # Logout function
     def logout(e):
-        # Log logout with runtime calculation
-        log_logout(username, "admin")
         log_action(username, "Logged out")
         page.clean()
         from login_window import login_view
@@ -141,7 +138,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         ])
         content.update()
 
-    # Navigation handler
+    # Navigation handler (fixed order)
     def navigate_to_section(index: int):
         content.controls.clear()
         if index == 0:
@@ -160,13 +157,14 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     # Layout
     page.controls.clear()
+
     page.add(
         ft.Column(
             [
                 top_nav,
                 content
             ],
-            spacing=10,
+            spacing=10, 
             expand=True,
         )
     )

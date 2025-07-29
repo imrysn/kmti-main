@@ -7,6 +7,7 @@ import hashlib
 import datetime
 import asyncio
 from admin.utils.team_utils import get_team_options
+from utils.logger import log_action  # centralized logger
 
 
 def user_management(content: ft.Column, username: Optional[str]):
@@ -89,9 +90,7 @@ def user_management(content: ft.Column, username: Optional[str]):
     )
 
     def refresh_columns_for_width(width: int):
-        """Adjust visible columns dynamically based on width."""
         table.columns.clear()
-
         show_password = width >= 1000
         show_team = width >= 1000
 
@@ -102,7 +101,6 @@ def user_management(content: ft.Column, username: Optional[str]):
                 continue
             table.columns.append(ft.DataColumn(ft.Text(col_name)))
 
-        # Row size adjust
         if width > 1200:
             table.heading_row_height = 60
             table.data_row_min_height = 60
@@ -162,7 +160,6 @@ def user_management(content: ft.Column, username: Optional[str]):
                 continue
 
             cells = []
-
             for col_name, always in all_columns:
                 if col_name == "Password" and page_width < 1000:
                     continue
@@ -228,22 +225,31 @@ def user_management(content: ft.Column, username: Optional[str]):
     def update_role(user_email, new_role):
         users = load_users()
         if user_email in users:
-            users[user_email]["role"] = new_role
-            save_users(users)
-            refresh_table()
+            current_role = users[user_email].get("role")
+            # Log only if the value changes
+            if new_role != current_role:
+                users[user_email]["role"] = new_role
+                save_users(users)
+                log_action(username, f"Updated role of {user_email} from {current_role} to {new_role}")
+                refresh_table()
 
     def update_team_tags(user_email, new_tags):
         users = load_users()
         if user_email in users:
-            users[user_email]["team_tags"] = new_tags
-            save_users(users)
-            refresh_table()
+            current_tags = users[user_email].get("team_tags", [])
+            # Log only if the tags change
+            if current_tags != new_tags:
+                users[user_email]["team_tags"] = new_tags
+                save_users(users)
+                log_action(username, f"Updated team of {user_email} from {current_tags} to {new_tags}")
+                refresh_table()
 
     def delete_user(user_email):
         users = load_users()
         if user_email in users:
             users.pop(user_email)
             save_users(users)
+            log_action(username, f"Deleted user {user_email}")
         refresh_table()
 
     def toggle_edit_mode(e):
@@ -251,28 +257,30 @@ def user_management(content: ft.Column, username: Optional[str]):
         refresh_table()
 
     def go_to_add_user(e):
+        log_action(username, "Opened Add User page")
         from admin.add_user import add_user_page
         add_user_page(content, content.page, username)
 
     def go_to_reset_password(e):
+        log_action(username, "Opened Reset Password page")
         from admin.reset_password import reset_password_page
         reset_password_page(content, content.page, username)
 
     buttons_row = ft.Row(
         controls=[
-            ft.ElevatedButton("Assign Roles", 
-                              on_click=toggle_edit_mode, 
+            ft.ElevatedButton("Assign Roles",
+                              on_click=toggle_edit_mode,
                               icon=ft.Icons.EDIT,
-                                style=ft.ButtonStyle(
-                                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                             ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                    color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                             ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                    side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
-                                    shape=ft.RoundedRectangleBorder(radius=5))
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                           ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
                               ),
-            ft.ElevatedButton("Add User", 
-                              icon=ft.Icons.ADD, 
+            ft.ElevatedButton("Add User",
+                              icon=ft.Icons.ADD,
                               on_click=go_to_add_user,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
@@ -282,8 +290,8 @@ def user_management(content: ft.Column, username: Optional[str]):
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
-            ft.ElevatedButton("Reset Password", 
-                              icon=ft.Icons.LOCK_RESET, 
+            ft.ElevatedButton("Reset Password",
+                              icon=ft.Icons.LOCK_RESET,
                               on_click=go_to_reset_password,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
@@ -308,7 +316,6 @@ def user_management(content: ft.Column, username: Optional[str]):
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )
 
-    # Wrap table in container to make it stretch
     table_container = ft.Container(
         ft.Row([table], expand=True),
         expand=True
@@ -323,7 +330,6 @@ def user_management(content: ft.Column, username: Optional[str]):
     content.controls.append(main_container)
     refresh_table()
 
-    # Make table stretch dynamically
     def on_resized(e):
         refresh_table()
 

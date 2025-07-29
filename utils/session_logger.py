@@ -2,65 +2,58 @@ import json
 import os
 from datetime import datetime
 
-LOG_FILE = "data/logs/activity_metadata.json"
+LOG_FILE = "data/logs/activity_logs.json"
+USERS_FILE = "data/users.json"
+
+
+def ensure_log_file():
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    if not os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "w") as f:
+            json.dump([], f)
+
+
+def load_user_details(username: str):
+    """Load fullname, email, and role from users.json based on username."""
+    if not os.path.exists(USERS_FILE):
+        return username, username, "", ""
+    try:
+        with open(USERS_FILE, "r") as f:
+            users = json.load(f)
+        for email, data in users.items():
+            if data.get("username") == username:
+                return (
+                    data.get("username", username),
+                    data.get("fullname", username),
+                    email,
+                    data.get("role", ""),
+                )
+    except Exception:
+        pass
+    return username, username, "", ""
+
+
+def log_action(username: str, description: str):
+    """Generic log entry writer that records description."""
+    ensure_log_file()
+    _, fullname, email, role = load_user_details(username)
+
+    with open(LOG_FILE, "r") as f:
+        logs = json.load(f)
+
+    logs.append({
+        "username": username,
+        "fullname": fullname,
+        "email": email,
+        "role": role.upper(),
+        "datetime": datetime.now().isoformat(),
+        "description": description
+    })
+
+    with open(LOG_FILE, "w") as f:
+        json.dump(logs, f, indent=4)
 
 
 def log_login(username: str, role: str):
-    """
-    Record a login entry for a user with login_time.
-    """
-    os.makedirs("data/logs", exist_ok=True)
-
-    logs = []
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "r") as f:
-            try:
-                logs = json.load(f)
-            except json.JSONDecodeError:
-                logs = []
-
-    now = datetime.now()
-    entry = {
-        "username": username,
-        "role": role,
-        "login_time": now.strftime("%Y-%m-%d %H:%M:%S"),
-        "logout_time": None,
-        "runtime": None,
-        "date": now.strftime("%Y-%m-%d")
-    }
-    logs.append(entry)
-
-    with open(LOG_FILE, "w") as f:
-        json.dump(logs, f, indent=4)
-
-
-def log_logout(username: str, role: str):
-    """
-    Updates the last login record of the user with logout_time and runtime.
-    """
-    os.makedirs("data/logs", exist_ok=True)
-
-    logs = []
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "r") as f:
-            try:
-                logs = json.load(f)
-            except json.JSONDecodeError:
-                logs = []
-
-    # Find the latest login for this username that has no logout_time
-    for record in reversed(logs):
-        if record["username"] == username and record["role"] == role and record["logout_time"] is None:
-            logout_time = datetime.now()
-            record["logout_time"] = logout_time.strftime("%Y-%m-%d %H:%M:%S")
-
-            # Calculate runtime
-            login_dt = datetime.strptime(record["login_time"], "%Y-%m-%d %H:%M:%S")
-            delta = logout_time - login_dt
-            hours, remainder = divmod(delta.seconds, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            record["runtime"] = f"{hours:02}:{minutes:02}:{seconds:02}"
-            break
-
-    with open(LOG_FILE, "w") as f:
-        json.dump(logs, f, indent=4)
+    """Log when a user logs in."""
+    log_action(username, f"Logged into {role} panel")

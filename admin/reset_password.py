@@ -3,6 +3,7 @@ import json
 import os
 import hashlib
 from typing import Optional
+from utils.logger import log_action  # centralized logger
 
 USERS_FILE = "data/users.json"
 
@@ -51,6 +52,12 @@ def reset_password_page(content: ft.Column, page: ft.Page, username: Optional[st
         if selected_email in users:
             users[selected_email]["password"] = hash_password(new_password.value)
             save_users(users)
+
+            # Log ONLY when password reset was successful
+            log_action(
+                username,
+                f"Reset password for {users[selected_email].get('fullname', '')} ({selected_email})"
+            )
 
         from admin.user_management import user_management
         user_management(content, username)
