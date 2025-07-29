@@ -20,7 +20,7 @@ def load_saved_credentials():
     return {}
 
 def login_view(page: ft.Page):
-    page.title = "Login"
+    page.title = "KMTI Data Management Login"
     page.vertical_alignment = MainAxisAlignment.CENTER
     page.horizontal_alignment = CrossAxisAlignment.CENTER
     page.bgcolor = "#D9D9D9"

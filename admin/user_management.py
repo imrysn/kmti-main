@@ -103,10 +103,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                 )
                 team_tags_widget = tags_dropdown
             else:
-                # Display as plain text
                 team_tags_widget = ft.Text(", ".join(tags_list) if tags_list else "")
 
-            # Delete button - instant delete
+            # Delete button
             delete_btn = ft.ElevatedButton(
                 "Delete",
                 style=ft.ButtonStyle(
@@ -165,37 +164,9 @@ def user_management(content: ft.Column, username: Optional[str]):
         from admin.add_user import add_user_page
         add_user_page(content, content.page, username)
 
-    def reset_password_dialog(e):
-        new_pass = ft.TextField(label="Enter new password", password=True)
-
-        def submit_password(ev):
-            selected_email = None
-            users = load_users()
-            if len(users) == 1:
-                selected_email = list(users.keys())[0]
-            if selected_email:
-                # Hash the new password before saving
-                users[selected_email]["password"] = hash_password(new_pass.value)
-                save_users(users)
-            refresh_table()
-
-        dlg = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Reset Password"),
-            content=new_pass,
-            actions=[
-                ft.TextButton("Cancel", on_click=lambda e: close_dialog()),
-                ft.TextButton("Submit", on_click=submit_password),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
-        )
-        content.page.dialog = dlg
-        dlg.open = True
-        content.page.update()
-
-    def close_dialog():
-        content.page.dialog.open = False
-        content.page.update()
+    def go_to_reset_password(e):
+        from admin.reset_password import reset_password_page
+        reset_password_page(content, content.page, username)
 
     # Buttons row
     buttons_row = ft.Row(
@@ -225,7 +196,7 @@ def user_management(content: ft.Column, username: Optional[str]):
                 )),
             ft.ElevatedButton(
                 "Reset Password",
-                on_click=reset_password_dialog,
+                on_click=go_to_reset_password,
                 icon=ft.Icons.LOCK_RESET,
                 style=ft.ButtonStyle(
                     bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,

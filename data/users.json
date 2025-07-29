@@ -18,5 +18,13 @@
             "KUSAKABE"
         ],
         "join_date": "2025-07-28"
+    },
+    "user@example.com": {
+        "fullname": "user",
+        "username": "user",
+        "password": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28"
     }
 }

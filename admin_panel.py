@@ -12,7 +12,7 @@ from admin.user_management import user_management
 
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     # Page properties
-    page.title = "Admin Dashboard"
+    page.title = "KMTI Data Management Admin"
     page.vertical_alignment = MainAxisAlignment.START
     page.horizontal_alignment = CrossAxisAlignment.START
     page.bgcolor = "#f5f5f5"
