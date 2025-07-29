@@ -7,7 +7,8 @@
         "team_tags": [
             "KUSAKABE"
         ],
-        "join_date": "2025-07-28"
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-29T14:23:32.903928"
     },
     "admin@example.com": {
         "fullname": "Admin System",
@@ -17,7 +18,8 @@
         "team_tags": [
             "KUSAKABE"
         ],
-        "join_date": "2025-07-28"
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-29T13:59:31.935067"
     },
     "user@example.com": {
         "fullname": "user",
@@ -25,6 +27,7 @@
         "password": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
         "role": "USER",
         "team_tags": [],
-        "join_date": "2025-07-28"
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-29T13:59:31.935067"
     }
 }

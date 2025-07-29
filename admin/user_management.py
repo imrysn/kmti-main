@@ -4,6 +4,8 @@ from typing import Optional
 import json
 import os
 import hashlib
+import datetime
+import asyncio
 from admin.utils.team_utils import get_team_options
 
 
@@ -12,17 +14,16 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     users_file = "data/users.json"
     edit_mode = {"value": False}
+    filter_mode = {"value": "All"}
+    runtime_labels = {}  # Store references to runtime Text widgets
 
     def hash_password(password: str) -> str:
-        """Convert password to a SHA-256 hash."""
         return hashlib.sha256(password.encode()).hexdigest()
 
     def migrate_plain_passwords(users):
-        """Convert any plain text password to hashed."""
         changed = False
         for email, data in users.items():
             pw = data.get("password", "")
-            # Detect if it's plain text (not 64 hex chars)
             if len(pw) != 64 or not all(c in "0123456789abcdef" for c in pw.lower()):
                 data["password"] = hash_password(pw)
                 changed = True
@@ -33,7 +34,6 @@ def user_management(content: ft.Column, username: Optional[str]):
             return {}
         with open(users_file, "r") as f:
             users = json.load(f)
-        # Auto migrate plain text passwords
         if migrate_plain_passwords(users):
             save_users(users)
         return users
@@ -43,11 +43,29 @@ def user_management(content: ft.Column, username: Optional[str]):
             json.dump(data, f, indent=4)
 
     users = load_users()
+
     search_field = ft.TextField(
         label="Search users...",
         width=400,
         border_radius=10,
         on_change=lambda e: refresh_table()
+    )
+
+    filter_dropdown = ft.Dropdown(
+        label="Filter / Sort",
+        width=180,
+        border_radius=10,
+        value="All",
+        options=[
+            ft.dropdown.Option("All"),
+            ft.dropdown.Option("Sort by Name (A–Z)"),
+            ft.dropdown.Option("Sort by Email (A–Z)"),
+            ft.dropdown.Option("Sort by Username (A–Z)"),
+            ft.dropdown.Option("Filter by Role (ADMIN)"),
+            ft.dropdown.Option("Filter by Role (USER)"),
+            ft.dropdown.Option("Filter by Team"),
+        ],
+        on_change=lambda e: apply_filter(e.control.value)
     )
 
     table = ft.DataTable(
@@ -59,6 +77,7 @@ def user_management(content: ft.Column, username: Optional[str]):
             ft.DataColumn(ft.Text("Password")),
             ft.DataColumn(ft.Text("Role")),
             ft.DataColumn(ft.Text("Team")),
+            ft.DataColumn(ft.Text("Runtime")),
             ft.DataColumn(ft.Text("Remove User")),
         ],
         rows=[]
@@ -67,20 +86,60 @@ def user_management(content: ft.Column, username: Optional[str]):
     def refresh_team_options():
         return [ft.dropdown.Option(opt) for opt in get_team_options()]
 
+    def apply_filter(value: str):
+        filter_mode["value"] = value
+        refresh_table()
+
+    def calculate_runtime(runtime_start: str) -> str:
+        try:
+            start_time = datetime.datetime.fromisoformat(runtime_start)
+        except Exception:
+            return "N/A"
+        delta = datetime.datetime.now() - start_time
+        hours, remainder = divmod(delta.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{delta.days}d {hours}h {minutes}m {seconds}s"
+
     def refresh_table():
         users = load_users()
         table.rows.clear()
+        runtime_labels.clear()
+
         query = search_field.value.lower().strip()
+        selected_filter = filter_mode["value"]
+        users_list = list(users.items())
+
+        # Sorting / filtering
+        if selected_filter == "Sort by Name (A–Z)":
+            users_list.sort(key=lambda x: x[1].get("fullname", "").lower())
+        elif selected_filter == "Sort by Email (A–Z)":
+            users_list.sort(key=lambda x: x[0].lower())
+        elif selected_filter == "Sort by Username (A–Z)":
+            users_list.sort(key=lambda x: x[1].get("username", "").lower())
+        elif selected_filter == "Filter by Role (ADMIN)":
+            users_list = [u for u in users_list if u[1].get("role", "").upper() == "ADMIN"]
+        elif selected_filter == "Filter by Role (USER)":
+            users_list = [u for u in users_list if u[1].get("role", "").upper() == "USER"]
+        elif selected_filter == "Filter by Team":
+            users_list = [u for u in users_list if "KUSAKABE" in u[1].get("team_tags", [])]
+
         team_options = refresh_team_options()
 
-        for email, data in users.items():
+        for email, data in users_list:
             if query and query not in data.get("fullname", "").lower() and query not in email.lower():
                 continue
 
             fullname_text = ft.Text(data.get("fullname", ""), weight=FontWeight.BOLD)
             email_text = ft.Text(email)
             username_text = ft.Text(data.get("username", ""))
-            password_text = ft.Text("••••••")  # Always masked
+            password_text = ft.Text("••••••")
+
+            # Runtime only for currently logged-in user
+            if username == data.get("username"):
+                runtime_text = ft.Text(calculate_runtime(data.get("runtime_start", datetime.datetime.now().isoformat())))
+                runtime_labels[email] = runtime_text
+            else:
+                runtime_text = ft.Text("-")
 
             # Role column
             if edit_mode["value"]:
@@ -122,13 +181,14 @@ def user_management(content: ft.Column, username: Optional[str]):
             table.rows.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(fullname_text),
-                        ft.DataCell(email_text),
-                        ft.DataCell(username_text),
-                        ft.DataCell(password_text),
-                        ft.DataCell(role_widget),
-                        ft.DataCell(team_tags_widget),
-                        ft.DataCell(delete_btn),
+                        ft.DataCell(ft.Container(fullname_text, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(email_text, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(username_text, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(password_text, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(role_widget, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(team_tags_widget, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(runtime_text, alignment=ft.alignment.center)),
+                        ft.DataCell(ft.Container(delete_btn, alignment=ft.alignment.center)),
                     ]
                 )
             )
@@ -209,10 +269,10 @@ def user_management(content: ft.Column, username: Optional[str]):
         alignment=ft.MainAxisAlignment.END,
     )
 
-    # Top controls layout
     top_controls = ft.Row(
         controls=[
             search_field,
+            filter_dropdown,
             ft.Container(expand=True),
             buttons_row
         ],
@@ -221,9 +281,22 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     main_container = ft.Container(
         content=ft.Column([top_controls, ft.Divider(), table]),
-        margin=ft.margin.only(left=100, right=50, top=20),
+        margin=ft.margin.only(left=50, right=50, top=20),
         expand=True,
     )
 
     content.controls.append(main_container)
     refresh_table()
+
+    # Auto-refresh runtime for currently logged-in user
+    async def periodic_refresh():
+        while True:
+            await asyncio.sleep(1)
+            users = load_users()
+            for email, lbl in runtime_labels.items():
+                start = users.get(email, {}).get("runtime_start")
+                if start:
+                    lbl.value = calculate_runtime(start)
+            content.update()
+
+    content.page.run_task(periodic_refresh)

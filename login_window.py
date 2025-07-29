@@ -7,17 +7,21 @@ from admin_panel import admin_panel
 from user_panel import user_panel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from typing import Optional
+from utils.session_logger import log_login  # NEW IMPORT
+
 
 def hash_password(password: str | None) -> str:
     if password is None:
         return ""
     return hashlib.sha256(password.encode()).hexdigest()
 
+
 def load_saved_credentials():
     if os.path.exists("data/remember_me.json"):
         with open("data/remember_me.json", "r") as f:
             return json.load(f)
     return {}
+
 
 def login_view(page: ft.Page):
     page.title = "KMTI Data Management Login"
@@ -27,7 +31,7 @@ def login_view(page: ft.Page):
 
     is_admin_login = False
 
-    # Load saved credentials (all remembered users)
+    # Load saved credentials
     saved_credentials = load_saved_credentials()
     saved_usernames = list(saved_credentials.keys()) if isinstance(saved_credentials, dict) else []
 
@@ -74,6 +78,9 @@ def login_view(page: ft.Page):
                 error_text.value = f"Access denied: This account is for '{role.upper()}' only!"
                 page.update()
                 return
+
+            # Log login
+            log_login(username.value, role)
 
             # Save if remember me is checked
             if remember_me.value:
