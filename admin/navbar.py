@@ -72,7 +72,7 @@ def create_navbar(username: str, on_nav, on_logout):
 
     # Combine into a horizontal navbar
     navbar = ft.Container(
-        bgcolor=ft.Colors.GREY_700,
+        bgcolor=ft.Colors.GREY_800,
         padding=10,
         content=ft.Row(
             controls=[

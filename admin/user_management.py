@@ -49,6 +49,7 @@ def user_management(content: ft.Column, username: Optional[str]):
         expand=False,
         width=400,
         border_radius=10,
+        border_color=ft.Colors.GREY,
         on_change=lambda e: refresh_table()
     )
 
@@ -259,9 +260,39 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     buttons_row = ft.Row(
         controls=[
-            ft.ElevatedButton("Assign Roles", on_click=toggle_edit_mode, icon=ft.Icons.EDIT),
-            ft.ElevatedButton("Add User", icon=ft.Icons.ADD, on_click=go_to_add_user),
-            ft.ElevatedButton("Reset Password", icon=ft.Icons.LOCK_RESET, on_click=go_to_reset_password),
+            ft.ElevatedButton("Assign Roles", 
+                              on_click=toggle_edit_mode, 
+                              icon=ft.Icons.EDIT,
+                                style=ft.ButtonStyle(
+                                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                             ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                    color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                             ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                    side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
+                                    shape=ft.RoundedRectangleBorder(radius=5))
+                              ),
+            ft.ElevatedButton("Add User", 
+                              icon=ft.Icons.ADD, 
+                              on_click=go_to_add_user,
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
+                              ),
+            ft.ElevatedButton("Reset Password", 
+                              icon=ft.Icons.LOCK_RESET, 
+                              on_click=go_to_reset_password,
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                           ft.ControlState.HOVERED: ft.Colors.RED},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
+                              )
         ],
         alignment=ft.MainAxisAlignment.END,
     )
