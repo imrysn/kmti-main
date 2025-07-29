@@ -15,7 +15,7 @@ def user_management(content: ft.Column, username: Optional[str]):
     users_file = "data/users.json"
     edit_mode = {"value": False}
     filter_mode = {"value": "All"}
-    runtime_labels = {}  # Store references to runtime Text widgets
+    runtime_labels = {}
 
     def hash_password(password: str) -> str:
         return hashlib.sha256(password.encode()).hexdigest()
@@ -46,6 +46,7 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     search_field = ft.TextField(
         label="Search users...",
+        expand=False,
         width=400,
         border_radius=10,
         on_change=lambda e: refresh_table()
@@ -53,6 +54,7 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     filter_dropdown = ft.Dropdown(
         label="Filter / Sort",
+        expand=False,
         width=180,
         border_radius=10,
         value="All",
@@ -68,20 +70,47 @@ def user_management(content: ft.Column, username: Optional[str]):
         on_change=lambda e: apply_filter(e.control.value)
     )
 
+    all_columns = [
+        ("Full Name", True),
+        ("Email", True),
+        ("Username", True),
+        ("Password", True),
+        ("Role", True),
+        ("Team", True),
+        ("Runtime", True),
+        ("Remove User", True),
+    ]
+
     table = ft.DataTable(
         expand=True,
-        columns=[
-            ft.DataColumn(ft.Text("Full Name")),
-            ft.DataColumn(ft.Text("Email")),
-            ft.DataColumn(ft.Text("Username")),
-            ft.DataColumn(ft.Text("Password")),
-            ft.DataColumn(ft.Text("Role")),
-            ft.DataColumn(ft.Text("Team")),
-            ft.DataColumn(ft.Text("Runtime")),
-            ft.DataColumn(ft.Text("Remove User")),
-        ],
+        columns=[],
         rows=[]
     )
+
+    def refresh_columns_for_width(width: int):
+        """Adjust visible columns dynamically based on width."""
+        table.columns.clear()
+
+        show_password = width >= 1000
+        show_team = width >= 1000
+
+        for col_name, always in all_columns:
+            if col_name == "Password" and not show_password:
+                continue
+            if col_name == "Team" and not show_team:
+                continue
+            table.columns.append(ft.DataColumn(ft.Text(col_name)))
+
+        # Row size adjust
+        if width > 1200:
+            table.heading_row_height = 60
+            table.data_row_min_height = 60
+        elif width > 800:
+            table.heading_row_height = 50
+            table.data_row_min_height = 50
+        else:
+            table.heading_row_height = 40
+            table.data_row_min_height = 40
 
     def refresh_team_options():
         return [ft.dropdown.Option(opt) for opt in get_team_options()]
@@ -105,11 +134,13 @@ def user_management(content: ft.Column, username: Optional[str]):
         table.rows.clear()
         runtime_labels.clear()
 
+        page_width = content.page.width if content.page else 1200
+        refresh_columns_for_width(page_width)
+
         query = search_field.value.lower().strip()
         selected_filter = filter_mode["value"]
         users_list = list(users.items())
 
-        # Sorting / filtering
         if selected_filter == "Sort by Name (A–Z)":
             users_list.sort(key=lambda x: x[1].get("fullname", "").lower())
         elif selected_filter == "Sort by Email (A–Z)":
@@ -129,69 +160,67 @@ def user_management(content: ft.Column, username: Optional[str]):
             if query and query not in data.get("fullname", "").lower() and query not in email.lower():
                 continue
 
-            fullname_text = ft.Text(data.get("fullname", ""), weight=FontWeight.BOLD)
-            email_text = ft.Text(email)
-            username_text = ft.Text(data.get("username", ""))
-            password_text = ft.Text("••••••")
+            cells = []
 
-            # Runtime only for currently logged-in user
-            if username == data.get("username"):
-                runtime_text = ft.Text(calculate_runtime(data.get("runtime_start", datetime.datetime.now().isoformat())))
-                runtime_labels[email] = runtime_text
-            else:
-                runtime_text = ft.Text("-")
+            for col_name, always in all_columns:
+                if col_name == "Password" and page_width < 1000:
+                    continue
+                if col_name == "Team" and page_width < 1000:
+                    continue
 
-            # Role column
-            if edit_mode["value"]:
-                role_dropdown = ft.Dropdown(
-                    options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
-                    value=data.get("role", "user"),
-                    on_change=lambda e, u=email: update_role(u, e.control.value)
-                )
-                role_widget = role_dropdown
-            else:
-                role_widget = ft.Text(data.get("role", ""))
+                if col_name == "Full Name":
+                    cells.append(ft.DataCell(ft.Text(data.get("fullname", ""), weight=FontWeight.BOLD)))
+                elif col_name == "Email":
+                    cells.append(ft.DataCell(ft.Text(email)))
+                elif col_name == "Username":
+                    cells.append(ft.DataCell(ft.Text(data.get("username", ""))))
+                elif col_name == "Password":
+                    cells.append(ft.DataCell(ft.Text("••••••")))
+                elif col_name == "Role":
+                    if edit_mode["value"]:
+                        role_dropdown = ft.Dropdown(
+                            options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
+                            value=data.get("role", "user"),
+                            on_change=lambda e, u=email: update_role(u, e.control.value)
+                        )
+                        cells.append(ft.DataCell(role_dropdown))
+                    else:
+                        cells.append(ft.DataCell(ft.Text(data.get("role", ""))))
+                elif col_name == "Team":
+                    tags_list = data.get("team_tags", [])
+                    if edit_mode["value"]:
+                        tags_dropdown = ft.Dropdown(
+                            options=team_options,
+                            value=tags_list[0] if tags_list else None,
+                            on_change=lambda e, u=email: update_team_tags(u, [e.control.value])
+                        )
+                        cells.append(ft.DataCell(tags_dropdown))
+                    else:
+                        cells.append(ft.DataCell(ft.Text(", ".join(tags_list) if tags_list else "")))
+                elif col_name == "Runtime":
+                    if username == data.get("username"):
+                        runtime_text = ft.Text(
+                            calculate_runtime(data.get("runtime_start", datetime.datetime.now().isoformat())))
+                        runtime_labels[email] = runtime_text
+                        cells.append(ft.DataCell(runtime_text))
+                    else:
+                        cells.append(ft.DataCell(ft.Text("-")))
+                elif col_name == "Remove User":
+                    delete_btn = ft.ElevatedButton(
+                        "Delete",
+                        style=ft.ButtonStyle(
+                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                     ft.ControlState.HOVERED: ft.Colors.WHITE},
+                            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                   ft.ControlState.HOVERED: ft.Colors.RED},
+                            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+                            shape=ft.RoundedRectangleBorder(radius=5),
+                        ),
+                        on_click=lambda e, u=email: delete_user(u)
+                    )
+                    cells.append(ft.DataCell(delete_btn))
 
-            # Team column
-            tags_list = data.get("team_tags", [])
-            if edit_mode["value"]:
-                tags_dropdown = ft.Dropdown(
-                    options=team_options,
-                    value=tags_list[0] if tags_list else None,
-                    on_change=lambda e, u=email: update_team_tags(u, [e.control.value])
-                )
-                team_tags_widget = tags_dropdown
-            else:
-                team_tags_widget = ft.Text(", ".join(tags_list) if tags_list else "")
-
-            # Delete button
-            delete_btn = ft.ElevatedButton(
-                "Delete",
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
-                             ft.ControlState.HOVERED: ft.Colors.WHITE},
-                    color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                           ft.ControlState.HOVERED: ft.Colors.RED},
-                    side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
-                    shape=ft.RoundedRectangleBorder(radius=5),
-                ),
-                on_click=lambda e, u=email: delete_user(u)
-            )
-
-            table.rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Container(fullname_text, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(email_text, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(username_text, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(password_text, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(role_widget, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(team_tags_widget, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(runtime_text, alignment=ft.alignment.center)),
-                        ft.DataCell(ft.Container(delete_btn, alignment=ft.alignment.center)),
-                    ]
-                )
-            )
+            table.rows.append(ft.DataRow(cells=cells))
 
         content.update()
 
@@ -228,43 +257,11 @@ def user_management(content: ft.Column, username: Optional[str]):
         from admin.reset_password import reset_password_page
         reset_password_page(content, content.page, username)
 
-    # Buttons row
     buttons_row = ft.Row(
         controls=[
-            ft.ElevatedButton(
-                "Assign Roles",
-                on_click=toggle_edit_mode,
-                icon=ft.Icons.EDIT,
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                             ft.ControlState.HOVERED: ft.Colors.BLACK},
-                    side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
-                    color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                           ft.ControlState.HOVERED: ft.Colors.WHITE},
-                    shape=ft.RoundedRectangleBorder(radius=5),
-                )),
-            ft.ElevatedButton(
-                "Add User",
-                icon=ft.Icons.ADD,
-                on_click=go_to_add_user,
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                             ft.ControlState.HOVERED: ft.Colors.GREEN},
-                    shape=ft.RoundedRectangleBorder(radius=5),
-                    color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                           ft.ControlState.HOVERED: ft.Colors.WHITE},
-                )),
-            ft.ElevatedButton(
-                "Reset Password",
-                on_click=go_to_reset_password,
-                icon=ft.Icons.LOCK_RESET,
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                             ft.ControlState.HOVERED: ft.Colors.RED},
-                    shape=ft.RoundedRectangleBorder(radius=5),
-                    color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                           ft.ControlState.HOVERED: ft.Colors.WHITE},
-                )),
+            ft.ElevatedButton("Assign Roles", on_click=toggle_edit_mode, icon=ft.Icons.EDIT),
+            ft.ElevatedButton("Add User", icon=ft.Icons.ADD, on_click=go_to_add_user),
+            ft.ElevatedButton("Reset Password", icon=ft.Icons.LOCK_RESET, on_click=go_to_reset_password),
         ],
         alignment=ft.MainAxisAlignment.END,
     )
@@ -276,11 +273,18 @@ def user_management(content: ft.Column, username: Optional[str]):
             ft.Container(expand=True),
             buttons_row
         ],
+        expand=True,
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )
 
+    # Wrap table in container to make it stretch
+    table_container = ft.Container(
+        ft.Row([table], expand=True),
+        expand=True
+    )
+
     main_container = ft.Container(
-        content=ft.Column([top_controls, ft.Divider(), table]),
+        content=ft.Column([top_controls, ft.Divider(), table_container], expand=True),
         margin=ft.margin.only(left=50, right=50, top=20),
         expand=True,
     )
@@ -288,7 +292,12 @@ def user_management(content: ft.Column, username: Optional[str]):
     content.controls.append(main_container)
     refresh_table()
 
-    # Auto-refresh runtime for currently logged-in user
+    # Make table stretch dynamically
+    def on_resized(e):
+        refresh_table()
+
+    content.page.on_resized = on_resized
+
     async def periodic_refresh():
         while True:
             await asyncio.sleep(1)
