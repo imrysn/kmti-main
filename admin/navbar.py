@@ -86,5 +86,4 @@ def create_navbar(username: str, on_nav, on_logout):
 
     # Set initial active button style
     refresh_buttons()
-
     return navbar
