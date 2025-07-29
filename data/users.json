@@ -1,22 +1,22 @@
 {
-  "admin@example.com": {
-    "password": "admin",
-    "role": "admin",
-    "fullname": "System Admin"
-  },
-  "nicolasayin@gmail.com": {
-    "password": "user123",
-    "role": "user",
-    "fullname": "Nicolas Ayin"
-  },
-  "raysan": {
-    "password": "raysan",
-    "role": "admin",
-    "fullname": "Raysan Perez"
-  },
-    "user": {
-    "password": "user123",
-    "role": "user",
-    "fullname": "User Test"
-  }
+    "raysan@example.com": {
+        "fullname": "Raysan Perez",
+        "username": "raysan",
+        "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
+        "role": "ADMIN",
+        "team_tags": [
+            "KUSAKABE"
+        ],
+        "join_date": "2025-07-28"
+    },
+    "admin@example.com": {
+        "fullname": "Admin System",
+        "username": "admin",
+        "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+        "role": "ADMIN",
+        "team_tags": [
+            "KUSAKABE"
+        ],
+        "join_date": "2025-07-28"
+    }
 }

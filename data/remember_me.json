@@ -5,5 +5,9 @@
     "raysan": {
         "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
         "role": "admin"
+    },
+    "user": {
+        "password": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
+        "role": "user"
     }
 }
