@@ -120,40 +120,45 @@ def activity_logs(content: ft.Column, username: Optional[str]):
     search_field = ft.TextField(
         label="Search / Filter",
         width=250,
-        height=35,
+        height=40,
         on_change=refresh_table,
         border_radius=10,
     )
-    export_button = ft.ElevatedButton("Export Logs",
-                                      style=ft.ButtonStyle(
-                                        bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                                ft.ControlState.HOVERED: ft.Colors.GREEN},
-                                        color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                            ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                        side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
-                                        shape=ft.RoundedRectangleBorder(radius=5)
-                        ))
-    clear_button = ft.ElevatedButton("Clear", 
-                                     on_click=clear_logs_action,
-                                     style=ft.ButtonStyle(
-                                        bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                                ft.ControlState.HOVERED: ft.Colors.RED},
-                                        color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                            ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                        side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
-                                        shape=ft.RoundedRectangleBorder(radius=5)
-                        ))
+    export_button = ft.ElevatedButton(
+        "Export Logs",
+        style=ft.ButtonStyle(
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                     ft.ControlState.HOVERED: ft.Colors.GREEN},
+            color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+            shape=ft.RoundedRectangleBorder(radius=5)
+        )
+    )
+    clear_button = ft.ElevatedButton(
+        "Clear",
+        on_click=clear_logs_action,
+        style=ft.ButtonStyle(
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                     ft.ControlState.HOVERED: ft.Colors.RED},
+            color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+            shape=ft.RoundedRectangleBorder(radius=5)
+        )
+    )
 
     # Top row layout
     top_controls = ft.Row(
         controls=[
-            ft.Text("Activity Logs", size=20, weight=FontWeight.BOLD),
-            ft.Container(expand=True),  # Stretch
+            ft.Text("Activity Logs", size=22, weight=FontWeight.BOLD),
+            ft.Container(expand=True), 
             search_field,
             export_button,
             clear_button,
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        
     )
 
     # Center table
@@ -164,7 +169,7 @@ def activity_logs(content: ft.Column, username: Optional[str]):
             expand=True
         ),
         expand=True,
-        padding=40,
+        padding=10,
     )
 
     # Add to content

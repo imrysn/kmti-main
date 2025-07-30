@@ -174,4 +174,4 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     # Show initial tab
     navigate_to_section(initial_tab)
 
-    log_action(username, "Logged into admin panel")
+    log_action(username, "Login")

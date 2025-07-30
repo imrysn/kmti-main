@@ -4,9 +4,10 @@ from typing import Optional
 import json
 import os
 import hashlib
-import datetime
 import asyncio
+from datetime import datetime
 from admin.utils.team_utils import get_team_options
+from utils.session_logger import get_active_sessions, get_last_runtime
 
 
 def user_management(content: ft.Column, username: Optional[str]):
@@ -66,6 +67,7 @@ def user_management(content: ft.Column, username: Optional[str]):
             ft.dropdown.Option("Sort by Username (A–Z)"),
             ft.dropdown.Option("Filter by Role (ADMIN)"),
             ft.dropdown.Option("Filter by Role (USER)"),
+            ft.dropdown.Option("Filter by Team"),
         ],
         on_change=lambda e: apply_filter(e.control.value)
     )
@@ -88,7 +90,6 @@ def user_management(content: ft.Column, username: Optional[str]):
     )
 
     def refresh_columns_for_width(width: int):
-        """Adjust visible columns dynamically based on width."""
         table.columns.clear()
 
         show_password = width >= 1000
@@ -101,7 +102,7 @@ def user_management(content: ft.Column, username: Optional[str]):
                 continue
             table.columns.append(ft.DataColumn(ft.Text(col_name)))
 
-        # Row size adjust
+        # Adjust row size
         if width > 1200:
             table.heading_row_height = 60
             table.data_row_min_height = 60
@@ -119,20 +120,27 @@ def user_management(content: ft.Column, username: Optional[str]):
         filter_mode["value"] = value
         refresh_table()
 
-    def calculate_runtime(runtime_start: str) -> str:
+    def format_runtime_from_delta(delta):
+        total_seconds = int(delta.total_seconds())
+        days, rem = divmod(total_seconds, 86400)
+        hours, rem = divmod(rem, 3600)
+        minutes, seconds = divmod(rem, 60)
+        return f"{days}d {hours}h {minutes}m {seconds}s"
+
+    def calculate_live_runtime(login_time_str: str) -> str:
         try:
-            start_time = datetime.datetime.fromisoformat(runtime_start)
+            start = datetime.strptime(login_time_str, "%Y-%m-%d %H:%M:%S")
+            delta = datetime.now() - start
+            return format_runtime_from_delta(delta)
         except Exception:
-            return "N/A"
-        delta = datetime.datetime.now() - start_time
-        hours, remainder = divmod(delta.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-        return f"{delta.days}d {hours}h {minutes}m {seconds}s"
+            return "-"
 
     def refresh_table():
         users = load_users()
         table.rows.clear()
         runtime_labels.clear()
+
+        active_sessions = get_active_sessions()
 
         page_width = content.page.width if content.page else 1200
         refresh_columns_for_width(page_width)
@@ -151,15 +159,28 @@ def user_management(content: ft.Column, username: Optional[str]):
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "ADMIN"]
         elif selected_filter == "Filter by Role (USER)":
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "USER"]
+        elif selected_filter == "Filter by Team":
+            users_list = [u for u in users_list if "KUSAKABE" in u[1].get("team_tags", [])]
 
         team_options = refresh_team_options()
 
         for email, data in users_list:
+            uname = data.get("username", "")
+            role = (data.get("role", "") or "").upper()
+
             if query and query not in data.get("fullname", "").lower() and query not in email.lower():
                 continue
 
-            cells = []
+            runtime_text = "-"
+            session_key = f"{uname}:{role}"
 
+            if session_key in active_sessions:
+                login_time = active_sessions[session_key]["login_time"]
+                runtime_text = calculate_live_runtime(login_time)
+            else:
+                runtime_text = get_last_runtime(uname)
+
+            cells = []
             for col_name, always in all_columns:
                 if col_name == "Password" and page_width < 1000:
                     continue
@@ -171,19 +192,19 @@ def user_management(content: ft.Column, username: Optional[str]):
                 elif col_name == "Email":
                     cells.append(ft.DataCell(ft.Text(email)))
                 elif col_name == "Username":
-                    cells.append(ft.DataCell(ft.Text(data.get("username", ""))))
+                    cells.append(ft.DataCell(ft.Text(uname)))
                 elif col_name == "Password":
                     cells.append(ft.DataCell(ft.Text("••••••")))
                 elif col_name == "Role":
                     if edit_mode["value"]:
                         role_dropdown = ft.Dropdown(
                             options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
-                            value=data.get("role", "user"),
+                            value=role,
                             on_change=lambda e, u=email: update_role(u, e.control.value)
                         )
                         cells.append(ft.DataCell(role_dropdown))
                     else:
-                        cells.append(ft.DataCell(ft.Text(data.get("role", ""))))
+                        cells.append(ft.DataCell(ft.Text(role)))
                 elif col_name == "Team":
                     tags_list = data.get("team_tags", [])
                     if edit_mode["value"]:
@@ -196,15 +217,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                     else:
                         cells.append(ft.DataCell(ft.Text(", ".join(tags_list) if tags_list else "")))
                 elif col_name == "Runtime":
-                    if username == data.get("username"):
-                        runtime_start = data.get("runtime_start", datetime.datetime.now().isoformat())
-                        runtime_text = ft.Text(calculate_runtime(runtime_start))
-                        runtime_labels.clear()  # ensure only current user
-                        runtime_labels[email] = runtime_text
-                        cells.append(ft.DataCell(runtime_text))
-                    else:
-                        cells.append(ft.DataCell(ft.Text("-")))
-
+                    runtime_lbl = ft.Text(runtime_text)
+                    runtime_labels[email] = (runtime_lbl, session_key)
+                    cells.append(ft.DataCell(runtime_lbl))
                 elif col_name == "Remove User":
                     delete_btn = ft.ElevatedButton(
                         "Delete",
@@ -260,19 +275,19 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     buttons_row = ft.Row(
         controls=[
-            ft.ElevatedButton("Assign Roles", 
-                              on_click=toggle_edit_mode, 
+            ft.ElevatedButton("Assign Roles",
+                              on_click=toggle_edit_mode,
                               icon=ft.Icons.EDIT,
-                                style=ft.ButtonStyle(
-                                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                             ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                    color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                             ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                    side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
-                                    shape=ft.RoundedRectangleBorder(radius=5))
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
                               ),
-            ft.ElevatedButton("Add User", 
-                              icon=ft.Icons.ADD, 
+            ft.ElevatedButton("Add User",
+                              icon=ft.Icons.ADD,
                               on_click=go_to_add_user,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
@@ -282,8 +297,8 @@ def user_management(content: ft.Column, username: Optional[str]):
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
-            ft.ElevatedButton("Reset Password", 
-                              icon=ft.Icons.LOCK_RESET, 
+            ft.ElevatedButton("Reset Password",
+                              icon=ft.Icons.LOCK_RESET,
                               on_click=go_to_reset_password,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
@@ -308,7 +323,6 @@ def user_management(content: ft.Column, username: Optional[str]):
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )
 
-    # Wrap table in container to make it stretch
     table_container = ft.Container(
         ft.Row([table], expand=True),
         expand=True
@@ -323,7 +337,6 @@ def user_management(content: ft.Column, username: Optional[str]):
     content.controls.append(main_container)
     refresh_table()
 
-    # Make table stretch dynamically
     def on_resized(e):
         refresh_table()
 
@@ -332,16 +345,11 @@ def user_management(content: ft.Column, username: Optional[str]):
     async def periodic_refresh():
         while True:
             await asyncio.sleep(1)
-            users = load_users()
-            # Only refresh runtime for the currently logged-in user
-            for email, lbl in list(runtime_labels.items()):
-                runtime_start = users.get(email, {}).get("runtime_start")
-                if runtime_start:
-                    try:
-                        lbl.value = calculate_runtime(runtime_start)
-                    except Exception:
-                        lbl.value = "N/A"
+            active_sessions = get_active_sessions()
+            for email, (lbl, session_key) in runtime_labels.items():
+                if session_key in active_sessions:
+                    login_time = active_sessions[session_key]["login_time"]
+                    lbl.value = calculate_live_runtime(login_time)
             content.update()
-
 
     content.page.run_task(periodic_refresh)

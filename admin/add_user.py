@@ -100,7 +100,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                      ft.ControlState.HOVERED: ft.Colors.GREEN},
                             color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
                             side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                             shape=ft.RoundedRectangleBorder(radius=5)
                         )
@@ -112,7 +112,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                      ft.ControlState.HOVERED: ft.Colors.RED},
                             color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
                             side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5)
                         )
