@@ -19,7 +19,7 @@ def create_navbar(username: str, on_nav, on_logout):
     def refresh_buttons():
         for i, btn in enumerate(buttons):
             if i == active_index["value"]:
-                btn.content.weight = FontWeight.NORMAL
+                btn.content.weight = FontWeight.BOLD
                 btn.content.style = ft.TextStyle(
                     decoration=ft.TextDecoration.UNDERLINE,
                     decoration_color=ft.Colors.WHITE,
@@ -59,10 +59,10 @@ def create_navbar(username: str, on_nav, on_logout):
     # Right section: user info + logout
     right_section = ft.Row(
         controls=[
-            ft.Text(f"Hi, {username}", size=14,
+            ft.Text(f"Hi, {username}", size=16,
                     color=ft.Colors.WHITE),
             ft.TextButton(
-                content=ft.Text("Logout", size=14, color=ft.Colors.WHITE),
+                content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
                 on_click=lambda e: on_logout(),
             ),
         ],
@@ -72,7 +72,7 @@ def create_navbar(username: str, on_nav, on_logout):
 
     # Combine into a horizontal navbar
     navbar = ft.Container(
-        bgcolor=ft.Colors.GREY_700,
+        bgcolor=ft.Colors.GREY_800,
         padding=10,
         content=ft.Row(
             controls=[
