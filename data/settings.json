@@ -1,0 +1,8 @@
+{
+    "maintenance": false,
+    "system_name": "KMTI System",
+    "theme": "Dark",
+    "font_size": "Medium",
+    "session_timeout": 30,
+    "password_min_length": 8
+}

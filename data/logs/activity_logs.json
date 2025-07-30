@@ -1,194 +1,350 @@
 [
     {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Log",
-        "date": "2025-07-30 13:45:01"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Log",
-        "date": "2025-07-30 13:48:05"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 13:51:11"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Logged out",
-        "date": "2025-07-30 13:51:15"
-    },
-    {
-        "username": "admin",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 13:52:12"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 14:02:24"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 14:10:48"
-    },
-    {
-        "username": "raysan",
-        "fullname": "Raysan Perez",
-        "description": "Deleted user test@example.com",
-        "timestamp": "2025-07-30 14:11:01"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Logged out",
-        "date": "2025-07-30 14:11:57"
-    },
-    {
-        "username": "admin",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 14:12:02"
-    },
-    {
-        "username": "admin",
-        "role": "unknown",
-        "activity": "Logged out",
-        "date": "2025-07-30 14:12:06"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 14:12:11"
-    },
-    {
-        "username": "raysan",
-        "fullname": "Raysan Perez",
-        "description": "Changed team of raysan@example.com from ['IT'] to ['ADMIN']",
-        "timestamp": "2025-07-30 14:12:44"
-    },
-    {
-        "username": "raysan",
-        "fullname": "Raysan Perez",
-        "description": "Added new user 'test' with role 'USER'",
-        "timestamp": "2025-07-30 14:13:00"
-    },
-    {
-        "username": "raysan",
-        "role": "unknown",
-        "activity": "Logged out",
-        "date": "2025-07-30 14:13:07"
-    },
-    {
-        "username": "admin",
-        "role": "unknown",
-        "activity": "Login",
-        "date": "2025-07-30 14:19:48"
-    },
-    {
-        "username": "admin",
-        "fullname": "Admin",
-        "activity": "Changed team of raysan@example.com from ['ADMIN'] to ['IT']",
-        "date": "2025-07-30 14:19:58"
-    },
-    {
         "username": "admin",
         "fullname": "Admin",
         "activity": "Added new user 'test' with role 'USER'",
-        "date": "2025-07-30 14:20:29"
+        "date": "2025-07-30 14:34:03"
     },
     {
         "username": "admin",
         "fullname": "Admin",
-        "activity": "Reset password for user raysan@example.com",
-        "date": "2025-07-30 14:22:03"
+        "activity": "Reset password for user mg@example.com",
+        "date": "2025-07-30 14:36:17"
     },
     {
         "username": "admin",
         "fullname": "Admin",
-        "activity": "Reset password for user raysan@example.com",
-        "date": "2025-07-30 14:22:04"
+        "activity": "Changed role of mg@example.com from ADMIN to USER",
+        "date": "2025-07-30 14:38:24"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 14:38:29"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 14:38:57"
     },
     {
         "username": "admin",
         "fullname": "Admin",
-        "activity": "Reset password for user raysan@example.com",
-        "date": "2025-07-30 14:22:04"
+        "activity": "Added new user 'adwa' with role 'USER'",
+        "date": "2025-07-30 14:39:51"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 14:40:25"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 14:42:24"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 14:42:40"
     },
     {
         "username": "admin",
         "fullname": "Admin",
-        "activity": "Reset password for user raysan@example.com",
-        "date": "2025-07-30 14:22:05"
+        "activity": "Changed role of mg@example.com from USER to ADMIN",
+        "date": "2025-07-30 14:43:03"
+    },
+    {
+        "username": "emji",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 14:43:22"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "activity": "Deleted user wa",
+        "date": "2025-07-30 14:44:40"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "activity": "Deleted user test",
+        "date": "2025-07-30 16:14:36"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Login",
-        "date": "2025-07-30 14:25:54"
+        "date": "2025-07-30 16:28:36"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:29:25"
     },
     {
         "username": "raysan",
         "fullname": "Raysan Perez",
-        "activity": "Reset password for user raysan@example.com",
-        "date": "2025-07-30 14:26:17"
+        "activity": "Deleted team 'ADMIN'",
+        "date": "2025-07-30 16:29:40"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Added new team 'ADMIN'",
+        "date": "2025-07-30 16:29:46"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:33:27"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Updated system settings: maintenance=True, name='KMTI System'",
+        "date": "2025-07-30 16:34:16"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Updated system settings: maintenance=False, name='KMTI System'",
+        "date": "2025-07-30 16:35:24"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:40:29"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:44:09"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 16:44:49"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:45:50"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:50:48"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 16:51:33"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Logged out",
-        "date": "2025-07-30 14:26:26"
+        "date": "2025-07-30 17:02:27"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Login",
-        "date": "2025-07-30 14:26:31"
+        "date": "2025-07-30 17:02:37"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Updated User Preferences",
+        "date": "2025-07-30 17:03:28"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:05:58"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:08:02"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:09:02"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:10:56"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:12:11"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:25:51"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:27:11"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Renamed team 'ADMIN' to 'AGCC'",
+        "date": "2025-07-30 17:27:27"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Renamed team 'AGCC' to 'DAIICHI'",
+        "date": "2025-07-30 17:27:28"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Added new team 'ADMIN'",
+        "date": "2025-07-30 17:27:43"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Logged out",
-        "date": "2025-07-30 14:26:43"
+        "date": "2025-07-30 17:29:29"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Login",
-        "date": "2025-07-30 14:26:48"
+        "date": "2025-07-30 17:29:43"
     },
     {
-        "username": "raysan",
-        "fullname": "Raysan Perez",
-        "activity": "Added new user 'test' with role 'USER'",
-        "date": "2025-07-30 14:26:57"
-    },
-    {
-        "username": "raysan",
-        "fullname": "Raysan Perez",
-        "activity": "Reset password for user test",
-        "date": "2025-07-30 14:27:52"
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:30:16"
     },
     {
         "username": "raysan",
         "role": "unknown",
         "activity": "Login",
-        "date": "2025-07-30 14:31:15"
+        "date": "2025-07-30 17:31:04"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:31:54"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:34:06"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:35:03"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 17:35:48"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:35:57"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 17:36:35"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:36:44"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:37:32"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:40:02"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:42:45"
     },
     {
         "username": "raysan",
         "fullname": "Raysan Perez",
-        "activity": "Reset password for user test",
-        "date": "2025-07-30 14:31:24"
+        "activity": "Added new user 'user1' with role 'USER'",
+        "date": "2025-07-30 17:50:26"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 17:55:18"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-30 17:55:24"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-30 17:55:28"
+    },
+    {
+        "username": "user1",
+        "role": "unknown",
+        "activity": "Uploaded file: kmti_logo.png",
+        "date": "2025-07-30 17:55:40"
     }
 ]
