@@ -48,13 +48,13 @@ def log_login(username: str, role: str):
     If the user already has an open session (no logout_time), close it before adding new login.
     """
     logs = _load_logs()
-    role = role.upper()
 
-    # Close previous unfinished session for this user/role
+    # Close any unfinished session for this user/role
     for record in reversed(logs):
-        if record["username"] == username and record["role"].upper() == role and record["logout_time"] is None:
+        if record["username"] == username and record["role"] == role and record["logout_time"] is None:
             logout_time = datetime.now()
             record["logout_time"] = logout_time.strftime("%Y-%m-%d %H:%M:%S")
+            # Compute runtime for that old session
             login_dt = datetime.strptime(record["login_time"], "%Y-%m-%d %H:%M:%S")
             delta = logout_time - login_dt
             total_seconds = int(delta.total_seconds())
@@ -63,7 +63,7 @@ def log_login(username: str, role: str):
             record["runtime"] = f"{hours:02}:{minutes:02}:{seconds:02}"
             break
 
-    # Create new login session
+    # Add a fresh login entry
     now = datetime.now()
     entry = {
         "username": username,
@@ -83,12 +83,14 @@ def log_logout(username: str, role: str):
     Updates the last login record of the user with logout_time and runtime.
     """
     logs = _load_logs()
-    role = role.upper()
 
+    # Find the latest login for this username and role that has no logout_time
     for record in reversed(logs):
-        if record["username"] == username and record["role"].upper() == role and record["logout_time"] is None:
+        if record["username"] == username and record["role"] == role and record["logout_time"] is None:
             logout_time = datetime.now()
             record["logout_time"] = logout_time.strftime("%Y-%m-%d %H:%M:%S")
+
+            # Calculate runtime
             login_dt = datetime.strptime(record["login_time"], "%Y-%m-%d %H:%M:%S")
             delta = logout_time - login_dt
             total_seconds = int(delta.total_seconds())
@@ -105,7 +107,7 @@ def get_active_sessions():
     Returns a dictionary of currently logged-in users (no logout_time).
     Structure:
     {
-        "username:ROLE": {
+        "username:role": {
             "username": "...",
             "role": "...",
             "login_time": "...",
@@ -117,12 +119,10 @@ def get_active_sessions():
     active = {}
 
     for record in logs:
-        # Only consider truly active sessions
         if record.get("logout_time") is None:
             uname = record["username"]
-            role = record["role"].upper()
+            role = record["role"]
             key = f"{uname}:{role}"
-            # Store only the latest open session
             active[key] = {
                 "username": uname,
                 "role": role,
@@ -135,19 +135,47 @@ def get_active_sessions():
 
 def get_last_runtime(username: str) -> str:
     """
-    Return the runtime from the last completed session (where logout_time is set).
-    If the latest session is active, return "-".
+    Get the last recorded runtime from activity_metadata.json for a logged-out user.
     """
     logs = _load_logs()
-    user_entries = [entry for entry in logs if entry.get("username") == username]
+    for record in reversed(logs):
+        if record["username"] == username and record.get("logout_time"):
+            return record.get("runtime") or "-"
+    return "-"
 
-    if not user_entries:
-        return "-"
 
-    # Sort latest first
-    user_entries.sort(key=lambda x: x.get("login_time", ""), reverse=True)
-    last = user_entries[0]
+# --------------------------------------------------------------------
+# Unified log_activity function for admin/user actions
+# --------------------------------------------------------------------
 
-    if last.get("logout_time") is None:
-        return "-"
-    return last.get("runtime", "-")
+def log_activity(username: str, description: str):
+    """
+    Record an admin/user action (not tied to login sessions).
+    Format is unified with logger.py:
+    - activity
+    - date
+    """
+    log_file = "data/logs/activity_logs.json"
+
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+    # Load existing logs
+    logs = []
+    if os.path.exists(log_file):
+        try:
+            with open(log_file, "r") as f:
+                logs = json.load(f)
+        except Exception:
+            logs = []
+
+    entry = {
+        "username": username,
+        "fullname": get_fullname(username),
+        "activity": description,
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    logs.append(entry)
+
+    with open(log_file, "w") as f:
+        json.dump(logs, f, indent=4)

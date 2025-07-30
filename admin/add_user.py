@@ -4,6 +4,7 @@ import json
 import os
 import hashlib
 from admin.utils.team_utils import get_team_options
+from utils.session_logger import log_activity  # NEW IMPORT
 
 USERS_FILE = "data/users.json"
 
@@ -71,6 +72,9 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
             "join_date": "2025-07-28",
         }
         save_users(users)
+
+        # Log this activity
+        log_activity(username, f"Added new user '{username_field.value}' with role '{role.value}'")
 
         from admin.user_management import user_management
         content.controls.clear()

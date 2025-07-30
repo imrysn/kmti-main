@@ -7,7 +7,7 @@ import hashlib
 import asyncio
 from datetime import datetime
 from admin.utils.team_utils import get_team_options
-from utils.session_logger import get_active_sessions, get_last_runtime
+from utils.session_logger import get_active_sessions, get_last_runtime, log_activity
 
 
 def user_management(content: ft.Column, username: Optional[str]):
@@ -243,15 +243,23 @@ def user_management(content: ft.Column, username: Optional[str]):
     def update_role(user_email, new_role):
         users = load_users()
         if user_email in users:
+            old_role = users[user_email].get("role")
             users[user_email]["role"] = new_role
             save_users(users)
+
+            # Log activity
+            log_activity(username, f"Changed role of {user_email} from {old_role} to {new_role}")
             refresh_table()
 
     def update_team_tags(user_email, new_tags):
         users = load_users()
         if user_email in users:
+            old_team = users[user_email].get("team_tags", [])
             users[user_email]["team_tags"] = new_tags
             save_users(users)
+
+            # Log activity
+            log_activity(username, f"Changed team of {user_email} from {old_team} to {new_tags}")
             refresh_table()
 
     def delete_user(user_email):
@@ -259,6 +267,9 @@ def user_management(content: ft.Column, username: Optional[str]):
         if user_email in users:
             users.pop(user_email)
             save_users(users)
+
+            # Log activity
+            log_activity(username, f"Deleted user {user_email}")
         refresh_table()
 
     def toggle_edit_mode(e):
