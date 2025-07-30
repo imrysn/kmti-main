@@ -66,7 +66,6 @@ def user_management(content: ft.Column, username: Optional[str]):
             ft.dropdown.Option("Sort by Username (A–Z)"),
             ft.dropdown.Option("Filter by Role (ADMIN)"),
             ft.dropdown.Option("Filter by Role (USER)"),
-            ft.dropdown.Option("Filter by Team"),
         ],
         on_change=lambda e: apply_filter(e.control.value)
     )
@@ -152,8 +151,6 @@ def user_management(content: ft.Column, username: Optional[str]):
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "ADMIN"]
         elif selected_filter == "Filter by Role (USER)":
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "USER"]
-        elif selected_filter == "Filter by Team":
-            users_list = [u for u in users_list if "KUSAKABE" in u[1].get("team_tags", [])]
 
         team_options = refresh_team_options()
 
@@ -200,12 +197,14 @@ def user_management(content: ft.Column, username: Optional[str]):
                         cells.append(ft.DataCell(ft.Text(", ".join(tags_list) if tags_list else "")))
                 elif col_name == "Runtime":
                     if username == data.get("username"):
-                        runtime_text = ft.Text(
-                            calculate_runtime(data.get("runtime_start", datetime.datetime.now().isoformat())))
+                        runtime_start = data.get("runtime_start", datetime.datetime.now().isoformat())
+                        runtime_text = ft.Text(calculate_runtime(runtime_start))
+                        runtime_labels.clear()  # ensure only current user
                         runtime_labels[email] = runtime_text
                         cells.append(ft.DataCell(runtime_text))
                     else:
                         cells.append(ft.DataCell(ft.Text("-")))
+
                 elif col_name == "Remove User":
                     delete_btn = ft.ElevatedButton(
                         "Delete",
@@ -217,7 +216,8 @@ def user_management(content: ft.Column, username: Optional[str]):
                             side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5),
                         ),
-                        on_click=lambda e, u=email: delete_user(u)
+                        on_click=lambda e, u=email: delete_user(u),
+                        icon=ft.Icons.DELETE,
                     )
                     cells.append(ft.DataCell(delete_btn))
 
@@ -333,10 +333,15 @@ def user_management(content: ft.Column, username: Optional[str]):
         while True:
             await asyncio.sleep(1)
             users = load_users()
-            for email, lbl in runtime_labels.items():
-                start = users.get(email, {}).get("runtime_start")
-                if start:
-                    lbl.value = calculate_runtime(start)
+            # Only refresh runtime for the currently logged-in user
+            for email, lbl in list(runtime_labels.items()):
+                runtime_start = users.get(email, {}).get("runtime_start")
+                if runtime_start:
+                    try:
+                        lbl.value = calculate_runtime(runtime_start)
+                    except Exception:
+                        lbl.value = "N/A"
             content.update()
+
 
     content.page.run_task(periodic_refresh)

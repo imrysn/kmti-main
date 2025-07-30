@@ -5,29 +5,29 @@
         "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
         "role": "ADMIN",
         "team_tags": [
-            "KUSAKABE"
+            "IT"
         ],
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-29T14:23:32.903928"
     },
     "admin@example.com": {
-        "fullname": "Admin System",
+        "fullname": "Admin",
         "username": "admin",
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "KUSAKABE"
+            "ADMIN"
         ],
-        "join_date": "2025-07-28",
-        "runtime_start": "2025-07-29T13:59:31.935067"
+        "join_date": "2025-07-28"
     },
-    "user@example.com": {
-        "fullname": "user",
-        "username": "user",
-        "password": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28",
-        "runtime_start": "2025-07-29T13:59:31.935067"
+    "mg@example.com": {
+        "fullname": "Mary Grace Castellano",
+        "username": "emji",
+        "password": "e010fd1ce1acc173e3b4835b7635f8d4600d774869102adb5cb7b5d7895649ba",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28"
     }
 }
