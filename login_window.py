@@ -4,7 +4,7 @@ import os
 import hashlib
 from utils.auth import validate_login
 from admin_panel import admin_panel
-from user_panel import user_panel
+from user.user_panel import user_panel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from typing import Optional
 from utils.session_logger import log_login  # NEW IMPORT
@@ -52,31 +52,18 @@ def login_view(page: ft.Page):
     page.bgcolor = "#D9D9D9"
 
     is_admin_login = False
-
-    # Load saved credentials
     saved_credentials = load_saved_credentials()
     saved_usernames = list(saved_credentials.keys()) if isinstance(saved_credentials, dict) else []
 
     username = ft.TextField(
-        label="Username",
-        width=300,
-        border_radius=10,
-        height=50,
-        border_color="#cccccc",
-        focused_border_color="#000000",
-        bgcolor=ft.Colors.WHITE,
+        label="Username", width=300, border_radius=10, height=50,
+        border_color="#cccccc", focused_border_color="#000000", bgcolor=ft.Colors.WHITE,
     )
 
     password = ft.TextField(
-        label="Password",
-        password=True,
-        can_reveal_password=True,
-        width=300,
-        border_radius=10,
-        height=50,
-        border_color="#cccccc",
-        focused_border_color="#000000",
-        bgcolor=ft.Colors.WHITE
+        label="Password", password=True, can_reveal_password=True, width=300,
+        border_radius=10, height=50, border_color="#cccccc",
+        focused_border_color="#000000", bgcolor=ft.Colors.WHITE
     )
 
     remember_me = ft.Checkbox(label="Remember Me", value=False)
@@ -102,7 +89,6 @@ def login_view(page: ft.Page):
                 page.update()
                 return
 
-            # Log login
             log_login(username.value, role)
 
             # Reset runtime_start on login (session-based runtime)

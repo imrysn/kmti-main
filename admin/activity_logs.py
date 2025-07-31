@@ -19,8 +19,8 @@ def load_json(file_path, default):
         return default
 
 
-def activity_logs(content: ft.Column, username: Optional[str]):
-    # Clear existing content
+def activity_logs(content: ft.Column, username: str):
+    # Clear previous content
     content.controls.clear()
 
     # Load data

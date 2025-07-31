@@ -60,6 +60,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
             page.update()
             return
 
+        # Save user data
         users = load_users()
         hashed_pw = hash_password(password.value)
 
