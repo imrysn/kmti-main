@@ -1,0 +1,90 @@
+[
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:30:53.415979",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:31:02.334330",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:32:29.042259",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:33:29.117947",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:34:36.990903",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:36:41.358027",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:01.391602",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:09.373553",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:18.691278",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:23.029523",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:05:43.695895",
+        "description": "Login"
+    }
+]

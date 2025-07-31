@@ -8,7 +8,7 @@
             "IT"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T12:02:50.674249"
+        "runtime_start": "2025-07-31T14:05:43.671374"
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -16,10 +16,10 @@
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "ADMIN"
+            "KMTI PJ"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T12:02:12.441548"
+        "runtime_start": "2025-07-31T14:02:55.481324"
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -32,42 +32,6 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-30T14:43:22.813847"
     },
-<<<<<<< HEAD
-    "bryan@gmail.com": {
-        "fullname": "bryan",
-        "username": "bryan",
-        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-    },
-    "adie@gmail.com": {
-        "fullname": "adie",
-        "username": "adie",
-        "password": "efc925c0652227bc83196167c8c8dacf8d0b4f1c8d92329da1541c1869880180",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-    },
-    "bryanbergonia@gmail.com": {
-        "fullname": "bryan bergonia",
-        "username": "bryanbergonia",
-        "password": "b7691cf794ab02f2d29f5a71eb6ebdf483d289da2166d853455c225bf5be5205",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-=======
-    "user@example.com": {
-        "fullname": "User",
-        "username": "user",
-        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
-        "role": "USER",
-        "team_tags": [
-            "KMTI PJ"
-        ],
-        "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T13:10:38.903435"
-    },
     "user1@example.com": {
         "fullname": "User Test",
         "username": "user1",
@@ -75,7 +39,6 @@
         "role": "USER",
         "team_tags": [],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-30T17:55:35.607679"
->>>>>>> c62cc143ff3b3d39efb4d9709b6e764870cd5fa8
+        "runtime_start": "2025-07-31T13:36:50.758077"
     }
 }

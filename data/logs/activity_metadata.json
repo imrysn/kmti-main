@@ -3,246 +3,99 @@
         "username": "admin",
         "fullname": "Admin",
         "role": "ADMIN",
-        "login_time": "2025-07-31 11:50:52",
-        "logout_time": "2025-07-31 11:56:25",
-        "runtime": "00:05:33",
+        "login_time": "2025-07-31 13:30:53",
+        "logout_time": "2025-07-31 13:32:29",
+        "runtime": "00:01:36",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "role": "USER",
+        "login_time": "2025-07-31 13:31:11",
+        "logout_time": "2025-07-31 13:36:50",
+        "runtime": "00:05:39",
         "date": "2025-07-31"
     },
     {
         "username": "admin",
         "fullname": "Admin",
         "role": "ADMIN",
-        "login_time": "2025-07-31 11:56:25",
-        "logout_time": "2025-07-31 11:56:44",
-        "runtime": "00:00:19",
+        "login_time": "2025-07-31 13:32:29",
+        "logout_time": "2025-07-31 13:34:36",
+        "runtime": "00:02:07",
         "date": "2025-07-31"
     },
     {
         "username": "admin",
         "fullname": "Admin",
         "role": "ADMIN",
-        "login_time": "2025-07-31 11:58:22",
-        "logout_time": "2025-07-31 11:59:31",
-        "runtime": "00:01:09",
+        "login_time": "2025-07-31 13:34:36",
+        "logout_time": "2025-07-31 13:52:01",
+        "runtime": "00:17:25",
         "date": "2025-07-31"
     },
     {
-        "username": "admin",
-        "fullname": "Admin",
-        "role": "ADMIN",
-        "login_time": "2025-07-31 11:59:31",
-        "logout_time": "2025-07-31 11:59:51",
-        "runtime": "00:00:20",
-        "date": "2025-07-31"
-    },
-    {
-        "username": "admin",
-        "fullname": "Admin",
-        "role": "ADMIN",
-        "login_time": "2025-07-31 11:59:51",
-        "logout_time": "2025-07-31 12:02:12",
-        "runtime": "00:02:21",
+        "username": "user1",
+        "fullname": "User Test",
+        "role": "USER",
+        "login_time": "2025-07-31 13:36:50",
+        "logout_time": null,
+        "runtime": null,
         "date": "2025-07-31"
     },
     {
         "username": "raysan",
         "fullname": "Raysan Perez",
         "role": "ADMIN",
-        "login_time": "2025-07-31 12:00:32",
-        "logout_time": "2025-07-31 12:01:40",
+        "login_time": "2025-07-31 13:51:10",
+        "logout_time": "2025-07-31 13:52:18",
         "runtime": "00:01:08",
         "date": "2025-07-31"
     },
     {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 13:52:01",
+        "logout_time": "2025-07-31 14:02:55",
+        "runtime": "00:10:54",
+        "date": "2025-07-31"
+    },
+    {
         "username": "raysan",
         "fullname": "Raysan Perez",
         "role": "ADMIN",
-        "login_time": "2025-07-31 12:01:40",
-        "logout_time": "2025-07-31 12:02:28",
-        "runtime": "00:00:48",
+        "login_time": "2025-07-31 13:52:18",
+        "logout_time": "2025-07-31 14:03:23",
+        "runtime": "00:11:05",
         "date": "2025-07-31"
     },
     {
         "username": "admin",
         "fullname": "Admin",
         "role": "ADMIN",
-        "login_time": "2025-07-31 12:02:12",
+        "login_time": "2025-07-31 14:02:55",
         "logout_time": null,
         "runtime": null,
-        "date": "2025-07-31"
-    },
-    {
-        "username": "raysan",
-<<<<<<< HEAD
-        "role": "admin",
-        "login_time": "2025-07-29 14:32:34",
-        "logout_time": "2025-07-29 14:33:50",
-        "runtime": "00:01:16",
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:34:49",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:37:58",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:38:51",
-        "logout_time": "2025-07-29 14:39:26",
-        "runtime": "00:00:35",
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:40:15",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:43:36",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:45:12",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:47:01",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:49:20",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:52:58",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:54:17",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 14:55:44",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:05:28",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:08:25",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:15:47",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:16:24",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:46:22",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-    },
-    {
-        "username": "raysan",
-        "role": "admin",
-        "login_time": "2025-07-29 15:52:00",
-        "logout_time": null,
-        "runtime": null,
-        "date": "2025-07-29"
-=======
-        "fullname": "Raysan Perez",
-        "role": "ADMIN",
-        "login_time": "2025-07-31 12:02:28",
-        "logout_time": "2025-07-31 12:02:50",
-        "runtime": "00:00:22",
         "date": "2025-07-31"
     },
     {
         "username": "raysan",
         "fullname": "Raysan Perez",
         "role": "ADMIN",
-        "login_time": "2025-07-31 12:02:50",
-        "logout_time": null,
-        "runtime": null,
+        "login_time": "2025-07-31 14:03:23",
+        "logout_time": "2025-07-31 14:05:43",
+        "runtime": "00:02:20",
         "date": "2025-07-31"
-<<<<<<< HEAD
     },
     {
-        "username": "user",
-        "fullname": "User",
-        "role": "USER",
-        "login_time": "2025-07-31 13:10:38",
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 14:05:43",
         "logout_time": null,
         "runtime": null,
         "date": "2025-07-31"
-=======
->>>>>>> c62cc143ff3b3d39efb4d9709b6e764870cd5fa8
->>>>>>> 25f37200033825dd2b7bca6b863e662008f01e5d
     }
 ]
