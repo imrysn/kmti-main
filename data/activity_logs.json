@@ -454,5 +454,37 @@
         "role": "ADMIN",
         "datetime": "2025-07-31T15:47:45.713930",
         "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T16:59:15.035835",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:00:26.990867",
+        "description": "Logged out"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:00:39.809293",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:00:44.503458",
+        "description": "Logged out from USER panel"
     }
 ]

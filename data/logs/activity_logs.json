@@ -166,5 +166,29 @@
         "fullname": "Admin",
         "activity": "Opened Add User page",
         "date": "2025-07-31 15:48:07"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login to admin panel",
+        "date": "2025-07-31 16:59:15"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-07-31 17:00:27"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-07-31 17:00:39"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-07-31 17:00:44"
     }
 ]

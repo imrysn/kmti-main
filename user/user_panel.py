@@ -30,12 +30,12 @@ def user_panel(page: ft.Page, username: Optional[str]):
     current_view = "browser"
 
     # Log that user entered the panel
-    log_action(username, "Entered USER panel")
-    log_activity(username, "Login to user panel")
+    log_action(username, "Login")
+    log_activity(username, "Login")
 
     def logout(e):
         # Log logout event
-        log_action(username, "Logged out from USER panel")
+        log_action(username, "Logged")
         log_activity(username, "Logout")
 
         # Clear all page elements completely

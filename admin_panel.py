@@ -15,7 +15,6 @@ from utils.session_logger import log_activity
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
-ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
 
 
 def load_json(path, default):
@@ -41,7 +40,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     def logout(e):
         log_logout(username, "admin")
         log_action(username, "Logged out")
-        log_activity(username, "Logout")
+        log_activity(username, "Logged out")
         page.clean()
         from login_window import login_view
         login_view(page)
@@ -52,9 +51,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     def load_logs():
         return load_json(ACTIVITY_LOGS_FILE, [])
 
-    def load_metadata():
-        return load_json(ACTIVITY_METADATA_FILE, {})
-
     content = ft.Column(
         scroll=ScrollMode.AUTO,
         expand=True,
@@ -63,7 +59,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     )
     users = load_users()
     logs = load_logs()
-    metadata = load_metadata()
 
     # Filter logs for today's date
     today = datetime.now().strftime("%Y-%m-%d")
@@ -71,51 +66,21 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     # Helper: Get the last activity type for a user
     def get_last_activity(username_lookup: str) -> str:
-        # Find latest activity log entry for this username
-        for entry in reversed(logs):
+        for entry in reversed(logs):  # reverse to get the latest
             if entry.get("username") == username_lookup:
                 return entry.get("activity", "")
         return ""
 
-    # Unified status check
+    # Unified status check using logs only
     def is_user_online(user_data) -> bool:
         uname = user_data.get("username")
         if not uname:
             return False
 
-        # 1. Look up metadata for this username
-        session_entry = None
-        if isinstance(metadata, list):
-            for entry in metadata:
-                if entry.get("username") == uname:
-                    session_entry = entry
-                    break
-        elif isinstance(metadata, dict):
-            session_entry = metadata.get(uname, {})
-
-        # If no login info available
-        if not session_entry:
-            return False
-
-        login_time = session_entry.get("login_time")
-        logout_time = session_entry.get("logout_time")
-
-        # If no login recorded, offline
-        if not login_time:
-            return False
-
-        # If logout_time exists, offline
-        if logout_time is not None:
-            return False
-
-        # Finally, check last activity logs
         last_act = get_last_activity(uname)
-        if last_act == "Logged out" or last_act == "Logout":
-            return False
+        return last_act == "Login"
 
-        return True
-
-    # Returns Text object for DataTable
+    # Status text widget
     def get_login_status(user_email, user_data):
         online = is_user_online(user_data)
         return ft.Text(
@@ -129,7 +94,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         total_users = len(users)
 
-        # Count active users using unified logic
+        # Count active users based on last log entry
         active_users = sum(1 for u in users.values() if is_user_online(u))
 
         recent_activity_count = len(today_logs)
@@ -255,6 +220,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                         ft.DataCell(ft.Text(info["email"])),
                         ft.DataCell(ft.Text(uname)),
                         ft.DataCell(ft.Text(info["role"])),
+
                         ft.DataCell(ft.Text(info["team"])),
                         ft.DataCell(ft.Text(log.get("date", "-"))),
                         ft.DataCell(ft.Text(log.get("activity", ""))),
@@ -291,7 +257,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         content.update()
 
-    # Navigation handler (fixed order)
+    # Navigation handler
     def navigate_to_section(index: int):
         content.controls.clear()
         if index == 0:
@@ -327,5 +293,4 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     navigate_to_section(initial_tab)
 
     log_action(username, "Login")
-    log_activity(username, "Login to admin panel")
-
+    log_activity(username, "Login")

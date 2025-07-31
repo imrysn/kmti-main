@@ -165,3 +165,7 @@
 2025-07-31 15:45:38 - Admin (admin@example.com, ADMIN) - Logged out
 2025-07-31 15:45:45 - User Test (user1@example.com, USER) - Entered USER panel
 2025-07-31 15:47:45 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 16:59:15 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 17:00:26 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 17:00:39 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 17:00:44 - User Test (user1@example.com, USER) - Logged out from USER panel

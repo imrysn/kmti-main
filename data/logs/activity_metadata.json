@@ -364,8 +364,8 @@
         "fullname": "User Test",
         "role": "USER",
         "login_time": "2025-07-31 15:45:45",
-        "logout_time": null,
-        "runtime": null,
+        "logout_time": "2025-07-31 17:00:39",
+        "runtime": "01:14:54",
         "date": "2025-07-31"
     },
     {
@@ -373,6 +373,24 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-07-31 15:47:45",
+        "logout_time": "2025-07-31 16:59:14",
+        "runtime": "01:11:29",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 16:59:14",
+        "logout_time": null,
+        "runtime": null,
+        "date": "2025-07-31"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "role": "USER",
+        "login_time": "2025-07-31 17:00:39",
         "logout_time": null,
         "runtime": null,
         "date": "2025-07-31"
