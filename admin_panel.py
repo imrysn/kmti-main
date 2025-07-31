@@ -40,6 +40,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     # Logout
     def logout(e):
+        # Log logout with runtime calculation
         log_logout(username, "admin")
         log_action(username, "Logged out")
         page.clean()
@@ -280,7 +281,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         content.update()
 
-    # Navigation handler
+    # Navigation handler (fixed order)
     def navigate_to_section(index: int):
         content.controls.clear()
         if index == 0:
@@ -299,6 +300,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     # Layout
     page.controls.clear()
+
     page.add(
         ft.Column(
             [
@@ -309,7 +311,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     padding=20,
                 ),
             ],
-            spacing=10,
+            spacing=10, 
             expand=True,
         )
     )
