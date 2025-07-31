@@ -88,5 +88,14 @@
         "logout_time": null,
         "runtime": null,
         "date": "2025-07-31"
+    },
+    {
+        "username": "user",
+        "fullname": "User",
+        "role": "USER",
+        "login_time": "2025-07-31 13:10:38",
+        "logout_time": null,
+        "runtime": null,
+        "date": "2025-07-31"
     }
 ]

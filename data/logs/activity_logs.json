@@ -118,5 +118,11 @@
         "role": "unknown",
         "activity": "Login",
         "date": "2025-07-31 12:02:50"
+    },
+    {
+        "username": "raysan",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-31 13:10:09"
     }
 ]
