@@ -7,6 +7,9 @@ from .components.profile_view import ProfileView
 from .components.files_view import FilesView
 from .services.profile_service import ProfileService
 from .services.file_service import FileService
+from utils.logger import log_action  
+from utils.session_logger import log_activity
+
 
 def user_panel(page: ft.Page, username: Optional[str]):
     """Main user panel function - orchestrates the different views and services"""
@@ -25,8 +28,16 @@ def user_panel(page: ft.Page, username: Optional[str]):
     
     # Current view state
     current_view = "browser"
-    
+
+    # Log that user entered the panel
+    log_action(username, "Entered USER panel")
+    log_activity(username, "Login to user panel")
+
     def logout(e):
+        # Log logout event
+        log_action(username, "Logged out from USER panel")
+        log_activity(username, "Logout")
+
         # Clear all page elements completely
         page.controls.clear()
         page.appbar = None  # Remove the app bar
@@ -99,6 +110,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
         page.update()
     
     # Initialize page
-    page.title = "User Dashboard"
+    page.title = "KMTI Data Management Users"
     page.bgcolor = ft.Colors.GREY_200
     update_content()

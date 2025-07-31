@@ -108,6 +108,7 @@
 2025-07-31 11:29:47 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
 2025-07-31 11:39:03 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
 2025-07-31 11:48:56 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+<<<<<<< HEAD
 2025-07-31 13:30:35 - Admin (admin@example.com, ADMIN) - Login
 2025-07-31 13:31:07 - Admin (admin@example.com, ADMIN) - Logged out
 2025-07-31 13:31:37 - Admin (admin@example.com, ADMIN) - Login
@@ -214,3 +215,62 @@
 2025-07-31 16:46:59 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
 2025-07-31 16:47:15 - bryan (bryan@gmail.com, USER) - Deleted file: survey-report.pdf
 2025-07-31 16:50:36 - bryan (bryan@gmail.com, USER) - Deleted file: 494819174_1344004343348157_3368362034039009803_n.png
+=======
+2025-07-31 13:30:53 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:31:02 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:32:29 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:33:29 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:34:36 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:36:41 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:52:01 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:52:09 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:52:18 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 13:52:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:05:43 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:33:55 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:35:37 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:36:15 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:00 - Raysan Perez (raysan@example.com, ADMIN) - Login to User Panel
+2025-07-31 14:37:08 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-07-31 14:37:40 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:37:41 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:46 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:37:47 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:58 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:38:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:40:36 - Raysan Perez (raysan@example.com, ADMIN) - Opened folder: WINDSMILE
+2025-07-31 14:41:39 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 14:44:06 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 14:44:16 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:48:14 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:48:22 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 14:50:49 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:55:01 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:56:48 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 14:56:52 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:57:37 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:04:57 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 15:05:20 - Raysan Perez (raysan@example.com, ADMIN) - Uploaded file: kmti.ico
+2025-07-31 15:05:25 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 15:05:31 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:06:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:06:18 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 15:06:28 - User Test (user1@example.com, USER) - Uploaded file: kmti.ico
+2025-07-31 15:06:40 - User Test (user1@example.com, USER) - Uploaded file: 2784TRAIP.icd
+2025-07-31 15:06:48 - User Test (user1@example.com, USER) - Logged out from USER panel
+2025-07-31 15:06:55 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:13:28 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:39:38 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:40:09 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:40:17 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:40:32 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:40:47 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:41:15 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:41:56 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:43:50 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:44:15 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:44:57 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:45:38 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:45:45 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 15:47:45 - Admin (admin@example.com, ADMIN) - Login
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d

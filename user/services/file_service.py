@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from utils.file_manager import save_file
 from utils.logger import log_action
+from utils.session_logger import log_activity
 
 class FileService:
     """Service class to handle file operations with real file persistence"""
@@ -124,6 +125,7 @@ class FileService:
                     # Save file using existing file manager
                     save_file(f, self.user_folder)
                     log_action(self.username, f"Uploaded file: {f.name}")
+                    log_activity(self.username, f"Uploaded file: {f.name}")
                     
                     # Initialize metadata for new file
                     metadata = self.get_file_metadata()
@@ -155,6 +157,7 @@ class FileService:
                     self.save_file_metadata(metadata)
                 
                 log_action(self.username, f"Deleted file: {filename}")
+                log_activity(self.username, f"Deleted file: {filename}")
                 return True
             else:
                 print(f"File not found: {filename}")
@@ -184,6 +187,7 @@ class FileService:
                 
                 if self.save_file_metadata(metadata):
                     log_action(self.username, f"Updated metadata for file: {filename}")
+                    log_activity(self.username, f"Updated metadata for file: {filename}")
                     return True
             else:
                 print(f"File not found: {filename}")

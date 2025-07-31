@@ -4,7 +4,11 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:30:35.980604",
+=======
+        "datetime": "2025-07-31T13:30:53.415979",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Login"
     },
     {
@@ -12,7 +16,11 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:31:07.452164",
+=======
+        "datetime": "2025-07-31T13:31:02.334330",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Logged out"
     },
     {
@@ -20,7 +28,11 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:31:37.339982",
+=======
+        "datetime": "2025-07-31T13:32:29.042259",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Login"
     },
     {
@@ -28,7 +40,11 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:32:15.026342",
+=======
+        "datetime": "2025-07-31T13:33:29.117947",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Logged out"
     },
     {
@@ -36,7 +52,11 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:35:30.633530",
+=======
+        "datetime": "2025-07-31T13:34:36.990903",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Login"
     },
     {
@@ -44,7 +64,27 @@
         "fullname": "Admin",
         "email": "admin@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:36:07.153005",
+=======
+        "datetime": "2025-07-31T13:36:41.358027",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:01.391602",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T13:52:09.373553",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Logged out"
     },
     {
@@ -52,7 +92,11 @@
         "fullname": "Raysan Perez",
         "email": "raysan@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:37:38.931010",
+=======
+        "datetime": "2025-07-31T13:52:18.691278",
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
         "description": "Login"
     },
     {
@@ -60,6 +104,7 @@
         "fullname": "Raysan Perez",
         "email": "raysan@example.com",
         "role": "ADMIN",
+<<<<<<< HEAD
         "datetime": "2025-07-31T13:37:52.191788",
         "description": "Logged out"
     },
@@ -846,5 +891,385 @@
         "role": "USER",
         "datetime": "2025-07-31T16:50:36.111807",
         "description": "Deleted file: 494819174_1344004343348157_3368362034039009803_n.png"
+=======
+        "datetime": "2025-07-31T13:52:23.029523",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:05:43.695895",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:33:55.824967",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:35:37.680199",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:36:15.100169",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:00.845338",
+        "description": "Login to User Panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:08.539135",
+        "description": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:40.160363",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:41.757520",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:46.566432",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:47.892876",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:37:58.895304",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:38:01.428138",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:40:36.430576",
+        "description": "Opened folder: WINDSMILE"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:41:39.243862",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:44:06.532129",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:44:16.776621",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:48:14.330333",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:48:22.875388",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:50:49.891715",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:55:01.580687",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:56:48.250320",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:56:52.865513",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T14:57:37.308689",
+        "description": "Logged out"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:04:57.675522",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:05:20.420011",
+        "description": "Uploaded file: kmti.ico"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:05:25.401973",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:05:31.696042",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:06:13.395375",
+        "description": "Logged out"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T15:06:18.390661",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T15:06:28.098881",
+        "description": "Uploaded file: kmti.ico"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T15:06:40.481134",
+        "description": "Uploaded file: 2784TRAIP.icd"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T15:06:48.865880",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:06:55.096658",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:13:28.594253",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:39:38.395953",
+        "description": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:40:09.666270",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:40:17.856259",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:40:32.002219",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:40:47.066043",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:41:15.882446",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:41:56.981176",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:43:50.860826",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:44:15.550304",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:44:57.273361",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:45:38.137858",
+        "description": "Logged out"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-07-31T15:45:45.998803",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T15:47:45.713930",
+        "description": "Login"
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
     }
 ]

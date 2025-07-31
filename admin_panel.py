@@ -11,6 +11,7 @@ from admin.data_management import data_management
 from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
+from utils.session_logger import log_activity
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
@@ -32,22 +33,19 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     PANEL_COLOR = "#FFFFFF"
     PANEL_RADIUS = 14
 
-    # Page properties
     page.title = "KMTI Data Management Admin"
     page.vertical_alignment = MainAxisAlignment.START
     page.horizontal_alignment = CrossAxisAlignment.START
     page.bgcolor = BACKGROUND
 
-    # Logout
     def logout(e):
-        # Log logout with runtime calculation
         log_logout(username, "admin")
         log_action(username, "Logged out")
+        log_activity(username, "Logout")
         page.clean()
         from login_window import login_view
         login_view(page)
 
-    # Data loaders
     def load_users():
         return load_json(USERS_FILE, {})
 
@@ -71,52 +69,58 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     today = datetime.now().strftime("%Y-%m-%d")
     today_logs = [log for log in logs if log.get("date", "").startswith(today)]
 
-    # Card helper
-    def card(title_icon, title, value, icon_color=Colors.BLACK):
-        return ft.Container(
-            content=ft.Column(
-                [
-                    ft.Icon(title_icon, size=40, color=icon_color),
-                    ft.Text(title, size=16, color="#333333"),
-                    ft.Text(value, size=26, weight=FontWeight.BOLD, color="#000000"),
-                ],
-                horizontal_alignment=CrossAxisAlignment.CENTER,
-                spacing=8,
-            ),
-            padding=20,
-            bgcolor=PANEL_COLOR,
-            border_radius=PANEL_RADIUS,
-            shadow=ft.BoxShadow(
-                blur_radius=8,
-                spread_radius=1,
-                color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-            ),
-            width=220,
-            height=160,
-        )
+    # Helper: Get the last activity type for a user
+    def get_last_activity(username_lookup: str) -> str:
+        # Find latest activity log entry for this username
+        for entry in reversed(logs):
+            if entry.get("username") == username_lookup:
+                return entry.get("activity", "")
+        return ""
 
-        # Get login status of a user
-    def get_login_status(user_email, user_data):
+    # Unified status check
+    def is_user_online(user_data) -> bool:
         uname = user_data.get("username")
-        is_online = False
+        if not uname:
+            return False
 
-        # If metadata is a list
+        # 1. Look up metadata for this username
+        session_entry = None
         if isinstance(metadata, list):
             for entry in metadata:
                 if entry.get("username") == uname:
-                    if entry.get("login_time") and entry.get("logout_time") is None:
-                        is_online = True
+                    session_entry = entry
                     break
-        # If metadata is a dict (legacy)
         elif isinstance(metadata, dict):
-            entry = metadata.get(uname, {})
-            if entry.get("login_time") and entry.get("logout_time") is None:
-                is_online = True
+            session_entry = metadata.get(uname, {})
 
-        # Return colored text
+        # If no login info available
+        if not session_entry:
+            return False
+
+        login_time = session_entry.get("login_time")
+        logout_time = session_entry.get("logout_time")
+
+        # If no login recorded, offline
+        if not login_time:
+            return False
+
+        # If logout_time exists, offline
+        if logout_time is not None:
+            return False
+
+        # Finally, check last activity logs
+        last_act = get_last_activity(uname)
+        if last_act == "Logged out" or last_act == "Logout":
+            return False
+
+        return True
+
+    # Returns Text object for DataTable
+    def get_login_status(user_email, user_data):
+        online = is_user_online(user_data)
         return ft.Text(
-            "Online" if is_online else "Offline",
-            color=Colors.GREEN if is_online else Colors.RED,
+            "Online" if online else "Offline",
+            color=Colors.GREEN if online else Colors.RED,
             weight=FontWeight.BOLD
         )
 
@@ -125,28 +129,35 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         total_users = len(users)
 
-        # Count active users
-        active_users = 0
-        if isinstance(metadata, list):
-            active_users = sum(
-                1
-                for entry in metadata
-                if isinstance(entry, dict)
-                and entry.get("login_time")
-                and entry.get("logout_time") is None
-            )
-        elif isinstance(metadata, dict):
-            active_users = sum(
-                1
-                for u in metadata.values()
-                if isinstance(u, dict)
-                and u.get("login_time")
-                and u.get("logout_time") is None
-            )
+        # Count active users using unified logic
+        active_users = sum(1 for u in users.values() if is_user_online(u))
 
         recent_activity_count = len(today_logs)
 
         # Dashboard cards
+        def card(title_icon, title, value, icon_color=Colors.BLACK):
+            return ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Icon(title_icon, size=40, color=icon_color),
+                        ft.Text(title, size=16, color="#333333"),
+                        ft.Text(value, size=26, weight=FontWeight.BOLD, color="#000000"),
+                    ],
+                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    spacing=8,
+                ),
+                padding=20,
+                bgcolor=PANEL_COLOR,
+                border_radius=PANEL_RADIUS,
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                ),
+                width=220,
+                height=160,
+            )
+
         content.controls.append(
             ft.Row(
                 [
@@ -187,7 +198,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                         ft.DataCell(ft.Text(data.get("fullname", "Unknown"))),
                         ft.DataCell(ft.Text(email)),
                         ft.DataCell(get_login_status(email, data)),
-
                     ]
                 )
                 for email, data in list(users.items())[:5]
@@ -295,10 +305,8 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         elif index == 4:
             system_settings(content, username)
 
-    # Top navbar
     top_nav = create_navbar(username, navigate_to_section, lambda: logout(None))
 
-    # Layout
     page.controls.clear()
 
     page.add(
@@ -311,12 +319,13 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     padding=20,
                 ),
             ],
-            spacing=10, 
+            spacing=10,
             expand=True,
         )
     )
 
-    # Initial tab
     navigate_to_section(initial_tab)
 
     log_action(username, "Login")
+    log_activity(username, "Login to admin panel")
+

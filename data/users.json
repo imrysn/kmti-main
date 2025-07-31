@@ -8,7 +8,11 @@
             "IT"
         ],
         "join_date": "2025-07-28",
+<<<<<<< HEAD
         "runtime_start": "2025-07-31T13:37:38.856684"
+=======
+        "runtime_start": "2025-07-31T15:39:38.004626"
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -16,10 +20,14 @@
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "ADMIN"
+            "KMTI PJ"
         ],
         "join_date": "2025-07-28",
+<<<<<<< HEAD
         "runtime_start": "2025-07-31T13:35:30.581981"
+=======
+        "runtime_start": "2025-07-31T15:47:45.677376"
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -32,6 +40,7 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-30T14:43:22.813847"
     },
+<<<<<<< HEAD
     "user@example.com": {
         "fullname": "User",
         "username": "user",
@@ -43,6 +52,8 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-31T17:00:54.355377"
     },
+=======
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
     "user1@example.com": {
         "fullname": "User Test",
         "username": "user1",
@@ -50,6 +61,7 @@
         "role": "USER",
         "team_tags": [],
         "join_date": "2025-07-28",
+<<<<<<< HEAD
         "runtime_start": "2025-07-30T17:55:35.607679"
     },
     "bryan@gmail.com": {
@@ -60,5 +72,8 @@
         "team_tags": [],
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-31T17:16:29.306506"
+=======
+        "runtime_start": "2025-07-31T15:45:45.986782"
+>>>>>>> 721374eea774e493057efd422e2d269d5e14531d
     }
 }
