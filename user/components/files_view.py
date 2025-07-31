@@ -1,4 +1,7 @@
 import flet as ft
+import os
+import shutil
+from datetime import datetime
 from ..services.file_service import FileService
 from .shared_ui import SharedUI
 from .dialogs import DialogManager
@@ -33,31 +36,183 @@ class FilesView:
         self.navigation = navigation
         self.shared.set_navigation(navigation)
     
-    def upload_file(self, e: ft.FilePickerResultEvent):
-        """Handle file upload with real file persistence and instant refresh"""
-        if e.files:
+    def generate_unique_filename(self, original_filename: str) -> str:
+        """Generate a unique filename to handle duplicates"""
+        user_folder = self.file_service.user_folder
+        file_path = os.path.join(user_folder, original_filename)
+        
+        # If file doesn't exist, return original name
+        if not os.path.exists(file_path):
+            return original_filename
+        
+        # Split filename and extension
+        name, ext = os.path.splitext(original_filename)
+        counter = 1
+        
+        # Keep incrementing counter until we find a unique name
+        while True:
+            new_filename = f"{name} ({counter}){ext}"
+            new_file_path = os.path.join(user_folder, new_filename)
+            
+            if not os.path.exists(new_file_path):
+                return new_filename
+            
+            counter += 1
+            
+            # Safety check to prevent infinite loop
+            if counter > 1000:
+                # Fallback with timestamp
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                return f"{name}_{timestamp}{ext}"
+    
+    def upload_files_with_duplicates(self, files):
+        """Upload files allowing duplicates with unique naming"""
+        uploaded_files = []
+        failed_files = []
+        
+        for file in files:
             try:
-                # Upload files
-                self.file_service.upload_files(e.files)
+                # Generate unique filename for this file
+                unique_filename = self.generate_unique_filename(file.name)
                 
-                # Show success message
-                file_count = len(e.files)
-                file_names = ", ".join([f.name for f in e.files[:3]])
-                if file_count > 3:
-                    file_names += f" and {file_count - 3} more"
+                # Create full path for destination
+                dest_path = os.path.join(self.file_service.user_folder, unique_filename)
                 
-                # CORRECT FLET API for snack bar
+                # Copy the file to destination
+                shutil.copy2(file.path, dest_path)
+                
+                uploaded_files.append({
+                    'original': file.name,
+                    'saved_as': unique_filename
+                })
+                
+                print(f"DEBUG: Uploaded '{file.name}' as '{unique_filename}'")
+                
+            except Exception as ex:
+                print(f"DEBUG: Failed to upload {file.name}: {str(ex)}")
+                failed_files.append({
+                    'name': file.name,
+                    'error': str(ex)
+                })
+        
+        return uploaded_files, failed_files
+    
+    def delete_file_immediately(self, filename: str):
+        """Delete file immediately without confirmation dialog"""
+        try:
+            print(f"DEBUG: Attempting immediate deletion of file: {filename}")
+            print(f"DEBUG: File service user folder: {self.file_service.user_folder}")
+            
+            # Check if file exists before deletion
+            file_path = os.path.join(self.file_service.user_folder, filename)
+            print(f"DEBUG: File path: {file_path}")
+            print(f"DEBUG: File exists before deletion: {os.path.exists(file_path)}")
+            
+            # Attempt deletion
+            deletion_result = self.file_service.delete_file(filename)
+            print(f"DEBUG: Deletion result: {deletion_result}")
+            
+            # Check if file exists after deletion attempt
+            print(f"DEBUG: File exists after deletion: {os.path.exists(file_path)}")
+            
+            if deletion_result:
+                print(f"DEBUG: File deleted successfully")
+                # Success - show success message
                 self.page.snack_bar = ft.SnackBar(
-                    content=ft.Text(f"✅ Successfully uploaded: {file_names}"), 
+                    content=ft.Text(f"✅ File '{filename}' deleted successfully!"), 
                     bgcolor=ft.Colors.GREEN
                 )
                 self.page.snack_bar.open = True
                 
+                # Immediately refresh the files table
+                print(f"DEBUG: Refreshing files table")
+                self.update_files_table_content()
+                
+                self.page.update()
+            else:
+                print(f"DEBUG: File deletion failed")
+                # Show error message
+                self.page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"❌ Error deleting file '{filename}'!"), 
+                    bgcolor=ft.Colors.RED
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
+                
+        except Exception as ex:
+            print(f"DEBUG: Exception occurred during deletion: {str(ex)}")
+            import traceback
+            print(f"DEBUG: Full traceback: {traceback.format_exc()}")
+            
+            # Show error message
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"❌ Error: {str(ex)}"), 
+                bgcolor=ft.Colors.RED
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+    
+    def upload_file(self, e: ft.FilePickerResultEvent):
+        """Handle file upload with duplicate support and instant refresh"""
+        if e.files:
+            try:
+                # Upload files with duplicate handling
+                uploaded_files, failed_files = self.upload_files_with_duplicates(e.files)
+                
+                # Create success message
+                if uploaded_files:
+                    success_messages = []
+                    for file_info in uploaded_files[:3]:  # Show first 3
+                        if file_info['original'] != file_info['saved_as']:
+                            success_messages.append(f"'{file_info['original']}' → '{file_info['saved_as']}'")
+                        else:
+                            success_messages.append(f"'{file_info['original']}'")
+                    
+                    if len(uploaded_files) > 3:
+                        success_messages.append(f"and {len(uploaded_files) - 3} more")
+                    
+                    success_text = "✅ Uploaded: " + ", ".join(success_messages)
+                    
+                    self.page.snack_bar = ft.SnackBar(
+                        content=ft.Text(success_text), 
+                        bgcolor=ft.Colors.GREEN
+                    )
+                    self.page.snack_bar.open = True
+                
+                # Show failure message if any failed
+                if failed_files:
+                    failed_names = [f['name'] for f in failed_files[:2]]
+                    if len(failed_files) > 2:
+                        failed_names.append(f"and {len(failed_files) - 2} more")
+                    
+                    error_text = f"❌ Failed to upload: {', '.join(failed_names)}"
+                    
+                    # If there were also successes, show error after success
+                    if uploaded_files:
+                        def show_error():
+                            self.page.snack_bar = ft.SnackBar(
+                                content=ft.Text(error_text), 
+                                bgcolor=ft.Colors.RED
+                            )
+                            self.page.snack_bar.open = True
+                            self.page.update()
+                        
+                        # Show error after 3 seconds
+                        import threading
+                        timer = threading.Timer(3.0, show_error)
+                        timer.start()
+                    else:
+                        self.page.snack_bar = ft.SnackBar(
+                            content=ft.Text(error_text), 
+                            bgcolor=ft.Colors.RED
+                        )
+                        self.page.snack_bar.open = True
+                
                 # Update the files table content directly
-                if self.files_container_ref:
+                if self.files_container_ref and uploaded_files:
                     self.update_files_table_content()
                 
-                # Minimal page update that won't affect profile section
+                # Minimal page update
                 self.page.update()
                 
             except Exception as ex:
@@ -72,8 +227,10 @@ class FilesView:
     def update_files_table_content(self):
         """Update only the files table content without affecting anything else"""
         try:
+            print(f"DEBUG: Updating files table content")
             # Get fresh file data
             files = self.file_service.get_files()
+            print(f"DEBUG: Found {len(files)} files after refresh")
             
             # Update the scrollable files container
             if self.files_container_ref:
@@ -92,11 +249,16 @@ class FilesView:
                         self.create_empty_state()
                     )
                 
+                print(f"DEBUG: Files table updated successfully")
                 # Update the page
                 self.page.update()
+            else:
+                print(f"DEBUG: files_container_ref is None")
             
         except Exception as ex:
-            print(f"Error updating files table: {ex}")
+            print(f"DEBUG: Error updating files table: {ex}")
+            import traceback
+            print(f"DEBUG: Full traceback: {traceback.format_exc()}")
     
     def refresh_files(self):
         """Refresh the files view"""
@@ -159,7 +321,7 @@ class FilesView:
                     expand=1
                 ),
                 
-                # Action buttons - REMOVED EDIT BUTTON, ONLY KEEP INFO AND DELETE
+                # Action buttons - MODIFIED FOR IMMEDIATE DELETE
                 ft.Row([
                     ft.IconButton(
                         icon=ft.Icons.INFO_OUTLINE_ROUNDED,
@@ -173,11 +335,7 @@ class FilesView:
                     ft.ElevatedButton(
                         "Delete",
                         icon=ft.Icons.DELETE_OUTLINE_ROUNDED,
-                        on_click=lambda e, filename=file_info["name"]: self.dialogs.show_delete_confirmation(
-                            filename, 
-                            self.file_service,
-                            self.refresh_files
-                        ),
+                        on_click=lambda e, filename=file_info["name"]: self.delete_file_immediately(filename),
                         bgcolor=ft.Colors.RED_50,
                         color=ft.Colors.RED_700,
                         height=32,

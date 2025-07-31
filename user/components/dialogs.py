@@ -21,10 +21,21 @@ class DialogManager:
         
         def delete_file(e):
             try:
-                # The file_service.delete_file method already handles both:
-                # 1. Removing the physical file from filesystem
-                # 2. Removing the metadata from the JSON database
-                if file_service.delete_file(filename):
+                print(f"DEBUG: Attempting to delete file: {filename}")
+                print(f"DEBUG: File service user folder: {file_service.user_folder}")
+                
+                # Check if file exists before deletion
+                import os
+                file_path = os.path.join(file_service.user_folder, filename)
+                print(f"DEBUG: File path: {file_path}")
+                print(f"DEBUG: File exists: {os.path.exists(file_path)}")
+                
+                # Attempt deletion
+                deletion_result = file_service.delete_file(filename)
+                print(f"DEBUG: Deletion result: {deletion_result}")
+                
+                if deletion_result:
+                    print(f"DEBUG: File deleted successfully")
                     # Success - file removed from both filesystem and database
                     self.page.snack_bar = ft.SnackBar(
                         content=ft.Text(f"✅ File '{filename}' deleted successfully!"), 
@@ -36,8 +47,12 @@ class DialogManager:
                     
                     # Refresh the files view to show updated list
                     if refresh_callback:
+                        print(f"DEBUG: Calling refresh callback")
                         refresh_callback()
+                    else:
+                        print(f"DEBUG: No refresh callback provided")
                 else:
+                    print(f"DEBUG: File deletion failed")
                     # Error occurred during deletion
                     self.page.snack_bar = ft.SnackBar(
                         content=ft.Text(f"❌ Error deleting file '{filename}'!"), 
@@ -46,6 +61,7 @@ class DialogManager:
                     self.page.snack_bar.open = True
                     self.page.update()
             except Exception as ex:
+                print(f"DEBUG: Exception occurred: {str(ex)}")
                 # Handle any unexpected errors
                 self.page.snack_bar = ft.SnackBar(
                     content=ft.Text(f"Error: {str(ex)}"), 
