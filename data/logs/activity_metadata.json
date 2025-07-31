@@ -1547,8 +1547,8 @@
         "fullname": "Raysan Perez",
         "role": "ADMIN",
         "login_time": "2025-07-31 09:54:41",
-        "logout_time": null,
-        "runtime": null,
+        "logout_time": "2025-07-31 10:56:41",
+        "runtime": "01:02:00",
         "date": "2025-07-31"
     },
     {
@@ -1655,6 +1655,177 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-07-31 10:28:48",
+        "logout_time": "2025-07-31 10:32:14",
+        "runtime": "00:03:26",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:32:14",
+        "logout_time": "2025-07-31 10:39:36",
+        "runtime": "00:07:22",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:39:36",
+        "logout_time": "2025-07-31 10:43:42",
+        "runtime": "00:04:06",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:43:42",
+        "logout_time": "2025-07-31 10:45:39",
+        "runtime": "00:01:57",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:45:39",
+        "logout_time": "2025-07-31 10:51:30",
+        "runtime": "00:05:51",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:51:30",
+        "logout_time": "2025-07-31 10:57:50",
+        "runtime": "00:06:20",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:56:41",
+        "logout_time": null,
+        "runtime": null,
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 10:57:50",
+        "logout_time": "2025-07-31 11:00:07",
+        "runtime": "00:02:17",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:00:07",
+        "logout_time": "2025-07-31 11:02:35",
+        "runtime": "00:02:28",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:02:35",
+        "logout_time": "2025-07-31 11:08:03",
+        "runtime": "00:05:28",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:08:03",
+        "logout_time": "2025-07-31 11:09:16",
+        "runtime": "00:01:13",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:09:16",
+        "logout_time": "2025-07-31 11:18:25",
+        "runtime": "00:09:09",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:18:25",
+        "logout_time": "2025-07-31 11:19:17",
+        "runtime": "00:00:52",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:19:17",
+        "logout_time": "2025-07-31 11:19:41",
+        "runtime": "00:00:24",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:19:41",
+        "logout_time": "2025-07-31 11:20:11",
+        "runtime": "00:00:30",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:20:11",
+        "logout_time": "2025-07-31 11:23:00",
+        "runtime": "00:02:49",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:23:00",
+        "logout_time": "2025-07-31 11:23:56",
+        "runtime": "00:00:56",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:23:56",
+        "logout_time": "2025-07-31 11:26:36",
+        "runtime": "00:02:40",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:26:36",
+        "logout_time": "2025-07-31 11:27:33",
+        "runtime": "00:00:57",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 11:27:33",
         "logout_time": null,
         "runtime": null,
         "date": "2025-07-31"

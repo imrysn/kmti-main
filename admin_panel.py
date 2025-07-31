@@ -1,5 +1,7 @@
 import flet as ft
 import json
+import os
+from datetime import datetime
 from utils.logger import log_action
 from utils.session_logger import log_logout
 from flet import FontWeight, ScrollMode, CrossAxisAlignment, MainAxisAlignment, Colors
@@ -10,9 +12,22 @@ from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
 
+USERS_FILE = "data/users.json"
+ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
+ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
+
+
+def load_json(path, default):
+    if not os.path.exists(path):
+        return default
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return default
+
 
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
-    # macOS-inspired colors
     BACKGROUND = ft.Colors.GREY_100
     PANEL_COLOR = "#FFFFFF"
     PANEL_RADIUS = 14
@@ -31,29 +46,26 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         from login_window import login_view
         login_view(page)
 
-    # Load users and logs
     def load_users():
-        try:
-            with open("data/users.json", "r") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return {}
+        return load_json(USERS_FILE, {})
 
     def load_logs():
-        try:
-            with open("data/logs/activity.log", "r") as f:
-                return f.readlines()[-100:]
-        except FileNotFoundError:
-            return ["No activity logs found"]
+        return load_json(ACTIVITY_LOGS_FILE, [])
 
-    content = ft.Column(scroll=ScrollMode.AUTO, expand=True, spacing=20)
+    def load_metadata():
+        return load_json(ACTIVITY_METADATA_FILE, {})
+
+    content = ft.Column(scroll=ScrollMode.AUTO, expand=True, spacing=20,
+                        horizontal_alignment=CrossAxisAlignment.CENTER)
     users = load_users()
     logs = load_logs()
+    metadata = load_metadata()
 
-    def get_user_status(data):
-        return data.get('status', 'Unknown')
+    # Filter logs to today only
+    today = datetime.now().strftime("%Y-%m-%d")
+    today_logs = [log for log in logs if log.get("date", "").startswith(today)]
 
-    # Card helper for macOS style
+    # Card helper
     def card(title_icon, title, value, icon_color=Colors.BLACK):
         return ft.Container(
             content=ft.Column(
@@ -68,75 +80,134 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             padding=20,
             bgcolor=PANEL_COLOR,
             border_radius=PANEL_RADIUS,
-            shadow=ft.BoxShadow(blur_radius=8, spread_radius=1, color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+            shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
+                                color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
             width=220,
             height=160,
         )
+
+    def get_login_status(user_email, user_data):
+        uname = user_data.get("username")
+        meta = metadata.get(uname, {})
+        return meta.get("login_time", "Offline")
 
     def show_dashboard():
         content.controls.clear()
 
         total_users = len(users)
-        active_users = sum(1 for u in users.values() if get_user_status(u) == 'Active')
+        active_users = sum(1 for u in metadata.values() if "login_time" in u)
+        recent_activity_count = len(today_logs)
 
-        content.controls.extend([
-            ft.Row([
-                card(ft.Icons.PEOPLE, "Total Users", str(total_users)),
-                card(ft.Icons.PERSON, "Active Users", str(active_users), icon_color=Colors.GREEN),
-                card(ft.Icons.HISTORY, "Recent Activities", str(len(logs)), icon_color=Colors.BLUE),
-            ], spacing=20),
+        # Dashboard cards
+        content.controls.append(
+            ft.Row(
+                [
+                    card(ft.Icons.PEOPLE, "Total Users", str(total_users)),
+                    card(ft.Icons.PERSON, "Active Users", str(active_users), icon_color=Colors.GREEN),
+                    card(ft.Icons.HISTORY, "Recent Activities", str(recent_activity_count), icon_color=Colors.BLUE),
+                ],
+                spacing=20,
+                alignment=MainAxisAlignment.CENTER
+            )
+        )
 
-            ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111"),
+        # Recent Users Table (centered, no actions)
+        content.controls.append(ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111"))
+
+        users_table = ft.DataTable(
+            heading_row_color="#FAFAFA",
+            columns=[
+                ft.DataColumn(ft.Text("Name", weight=FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Status", weight=FontWeight.BOLD)),
+            ],
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(data.get('fullname', 'Unknown'))),
+                        ft.DataCell(ft.Text(email)),
+                        ft.DataCell(ft.Text(get_login_status(email, data))),
+                    ]
+                ) for email, data in list(users.items())[:5]
+            ],
+        )
+
+        content.controls.append(
             ft.Container(
-                content=ft.DataTable(
-                    heading_row_color="#FAFAFA",
-                    columns=[
-                        ft.DataColumn(ft.Text("Name", weight=FontWeight.BOLD)),
-                        ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD)),
-                        ft.DataColumn(ft.Text("Status", weight=FontWeight.BOLD)),
-                        ft.DataColumn(ft.Text("Actions", weight=FontWeight.BOLD))
-                    ],
-                    rows=[
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(ft.Text(data.get('fullname', 'Unknown'))),
-                                ft.DataCell(ft.Text(email)),
-                                ft.DataCell(ft.Text(
-                                    get_user_status(data),
-                                    color={
-                                        "Active": Colors.GREEN,
-                                        "Inactive": Colors.ORANGE,
-                                        "Banned": Colors.RED
-                                    }.get(get_user_status(data), Colors.GREY)
-                                )),
-                                ft.DataCell(ft.Row([
-                                    ft.IconButton(ft.Icons.EDIT, tooltip="Edit"),
-                                    ft.IconButton(ft.Icons.LOCK_RESET, tooltip="Reset Password"),
-                                    ft.IconButton(ft.Icons.DELETE, tooltip="Delete", icon_color=Colors.RED)
-                                ], spacing=8))
-                            ]
-                        ) for email, data in list(users.items())[:5]
-                    ],
-                ),
+                content=ft.Row([users_table], alignment=MainAxisAlignment.CENTER),
                 bgcolor=PANEL_COLOR,
                 border_radius=PANEL_RADIUS,
                 padding=20,
-                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1, color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
-            ),
+                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
+                                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+            )
+        )
 
-            ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111"),
+        # Recent Activities Table (reuse layout from activity_logs.py)
+        content.controls.append(ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111"))
+
+        # Build user info lookup
+        user_info = {}
+        for email, data in users.items():
+            uname = data.get("username")
+            if uname:
+                team = data.get("team_tags", [])
+                team_str = ", ".join(team) if isinstance(team, list) else (str(team) if team else "")
+                user_info[uname] = {
+                    "fullname": data.get("fullname", uname),
+                    "email": email,
+                    "role": data.get("role", ""),
+                    "team": team_str,
+                }
+
+        # Build rows for today's logs
+        rows = []
+        for log in reversed(today_logs[-10:]):
+            uname = log.get("username", "")
+            info = user_info.get(uname, {
+                "fullname": uname,
+                "email": "",
+                "role": "",
+                "team": ""
+            })
+            rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(info["fullname"])),
+                        ft.DataCell(ft.Text(info["email"])),
+                        ft.DataCell(ft.Text(uname)),
+                        ft.DataCell(ft.Text(info["role"])),
+                        ft.DataCell(ft.Text(info["team"])),
+                        ft.DataCell(ft.Text(log.get("date", "-"))),
+                        ft.DataCell(ft.Text(log.get("activity", ""))),
+                    ]
+                )
+            )
+
+        activities_table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("Full Name")),
+                ft.DataColumn(ft.Text("Email")),
+                ft.DataColumn(ft.Text("Username")),
+                ft.DataColumn(ft.Text("Role")),
+                ft.DataColumn(ft.Text("Team")),
+                ft.DataColumn(ft.Text("Date & Time")),
+                ft.DataColumn(ft.Text("Activity")),
+            ],
+            rows=rows,
+        )
+
+        content.controls.append(
             ft.Container(
-                content=ft.ListView(
-                    [ft.Text(line.strip(), color="#333333") for line in reversed(logs[-10:])],
-                    height=200,
-                    spacing=5
-                ),
+                content=ft.Row([activities_table], alignment=MainAxisAlignment.CENTER),
                 bgcolor=PANEL_COLOR,
                 border_radius=PANEL_RADIUS,
                 padding=20,
-                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1, color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
-            ),
-        ])
+                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
+                                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+            )
+        )
+
         content.update()
 
     # Navigation handler
