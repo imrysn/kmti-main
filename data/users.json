@@ -21,14 +21,28 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-29T13:59:31.935067"
     },
-    "test@example.com": {
-        "fullname": "user test",
-        "username": "test1",
-        "password": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+    "bryan@gmail.com": {
+        "fullname": "bryan",
+        "username": "bryan",
+        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
         "role": "USER",
-        "team_tags": [
-            "KUSAKABE"
-        ],
+        "team_tags": [],
+        "join_date": "2025-07-28"
+    },
+    "adie@gmail.com": {
+        "fullname": "adie",
+        "username": "adie",
+        "password": "efc925c0652227bc83196167c8c8dacf8d0b4f1c8d92329da1541c1869880180",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28"
+    },
+    "bryanbergonia@gmail.com": {
+        "fullname": "bryan bergonia",
+        "username": "bryanbergonia",
+        "password": "b7691cf794ab02f2d29f5a71eb6ebdf483d289da2166d853455c225bf5be5205",
+        "role": "USER",
+        "team_tags": [],
         "join_date": "2025-07-28"
     }
 }

@@ -4,7 +4,7 @@ import os
 import hashlib
 from utils.auth import validate_login
 from admin_panel import admin_panel
-from user_panel import user_panel
+from user.user_panel import user_panel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from typing import Optional
 from utils.session_logger import log_login
