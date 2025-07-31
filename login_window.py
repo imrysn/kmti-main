@@ -7,7 +7,9 @@ from admin_panel import admin_panel
 from user.user_panel import user_panel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from typing import Optional
-from utils.session_logger import log_login
+from utils.session_logger import log_login  # NEW IMPORT
+from datetime import datetime  # NEW IMPORT
+
 
 def hash_password(password: str | None) -> str:
     if password is None:
@@ -20,6 +22,27 @@ def load_saved_credentials():
         with open("data/remember_me.json", "r") as f:
             return json.load(f)
     return {}
+
+
+def reset_runtime_start(username: str):
+    """Reset runtime_start to now for the given username."""
+    users_file = "data/users.json"
+    if not os.path.exists(users_file):
+        return
+    try:
+        with open(users_file, "r") as f:
+            users = json.load(f)
+    except Exception:
+        return
+
+    now = datetime.now().isoformat()
+    for email, data in users.items():
+        if data.get("username") == username:
+            data["runtime_start"] = now
+            break
+
+    with open(users_file, "w") as f:
+        json.dump(users, f, indent=4)
 
 
 def login_view(page: ft.Page):
@@ -55,18 +78,23 @@ def login_view(page: ft.Page):
         if isinstance(saved_credentials, dict):
             saved_usernames.extend(saved_credentials.keys())
 
+        # Now validate_login() returns "ADMIN", "USER", or None
         role = validate_login(username.value, password.value, is_admin_login)
         error_text.value = ""
 
-        if role in ["admin", "user"]:
-            expected_role = "admin" if is_admin_login else "user"
+        if role in ["ADMIN", "USER"]:
+            expected_role = "ADMIN" if is_admin_login else "USER"
             if role != expected_role:
-                error_text.value = f"Access denied: This account is for '{role.upper()}' only!"
+                error_text.value = f"Access denied: This account is for '{role}' only!"
                 page.update()
                 return
 
             log_login(username.value, role)
 
+            # Reset runtime_start on login (session-based runtime)
+            reset_runtime_start(username.value)
+
+            # Save if remember me is checked
             if remember_me.value:
                 os.makedirs("data", exist_ok=True)
                 saved_credentials[username.value] = {
@@ -79,8 +107,9 @@ def login_view(page: ft.Page):
                 page.snack_bar.open = True
                 page.update()
 
+            # Navigate to the correct panel
             page.clean()
-            if role == "admin":
+            if role == "ADMIN":
                 admin_panel(page, username.value)
             else:
                 user_panel(page, username.value)

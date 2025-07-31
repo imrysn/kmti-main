@@ -4,7 +4,7 @@ import json
 import os
 import hashlib
 from admin.utils.team_utils import get_team_options
-from utils.logger import log_action  # centralized logger
+from utils.session_logger import log_activity  # NEW IMPORT
 
 USERS_FILE = "data/users.json"
 
@@ -55,7 +55,6 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
 
     # Actions
     def save_user(e):
-        # Validate all required fields
         if not all([fullname.value, email.value, username_field.value, password.value, role.value]):
             page.snack_bar = ft.SnackBar(ft.Text("All fields except Team are required."), open=True)
             page.update()
@@ -75,11 +74,8 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
         }
         save_users(users)
 
-        # Log the action ONLY when saving is successful
-        log_action(
-            username,
-            f"Added new user {fullname.value} ({email.value}) with role {role.value}"
-        )
+        # Log this activity
+        log_activity(username, f"Added new user '{username_field.value}' with role '{role.value}'")
 
         from admin.user_management import user_management
         content.controls.clear()
@@ -109,7 +105,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                      ft.ControlState.HOVERED: ft.Colors.GREEN},
                             color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
                             side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                             shape=ft.RoundedRectangleBorder(radius=5)
                         )
@@ -121,7 +117,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                      ft.ControlState.HOVERED: ft.Colors.RED},
                             color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
                             side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5)
                         )
@@ -143,7 +139,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                     padding=20,
                 )
             ],
-            alignment=ft.MainAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,  # Always center horizontally
             expand=True
         )
     )

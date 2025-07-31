@@ -4,11 +4,13 @@ import hashlib
 
 USERS_FILE = "data/users.json"
 
+
 def hash_password(password: str | None) -> str:
     """Return the SHA-256 hash of a password."""
     if password is None:
         return ""
     return hashlib.sha256(password.encode()).hexdigest()
+
 
 def migrate_plain_passwords(users):
     """
@@ -24,6 +26,7 @@ def migrate_plain_passwords(users):
             changed = True
     return changed
 
+
 def load_users():
     """Load users from JSON file, migrate if necessary."""
     if not os.path.exists(USERS_FILE):
@@ -38,10 +41,11 @@ def load_users():
 
     return users
 
+
 def validate_login(username_or_email: str, password: str, is_admin_login: bool) -> str | None:
     """
     Validate login credentials.
-    Returns "admin", "user", or None if invalid.
+    Returns "ADMIN", "USER", or None if invalid.
     """
     users = load_users()
     entered_hash = hash_password(password)
@@ -53,6 +57,7 @@ def validate_login(username_or_email: str, password: str, is_admin_login: bool) 
         if username_or_email == email or username_or_email == data.get("username", ""):
             # Compare hashed password (support migration)
             if entered_hash == stored_hash or password == stored_hash:
-                role = data.get("role", "").lower()
-                return role
+                role = data.get("role", "")
+                # Normalize role to uppercase for consistency
+                return role.upper()
     return None

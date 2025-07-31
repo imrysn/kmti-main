@@ -5,22 +5,34 @@
         "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
         "role": "ADMIN",
         "team_tags": [
-            "KUSAKABE"
+            "IT"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-29T14:23:32.903928"
+        "runtime_start": "2025-07-31T12:02:50.674249"
     },
     "admin@example.com": {
-        "fullname": "Admin System",
+        "fullname": "Admin",
         "username": "admin",
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "KUSAKABE"
+            "ADMIN"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-29T13:59:31.935067"
+        "runtime_start": "2025-07-31T12:02:12.441548"
     },
+    "mg@example.com": {
+        "fullname": "Mary Grace Castellano",
+        "username": "emji",
+        "password": "e010fd1ce1acc173e3b4835b7635f8d4600d774869102adb5cb7b5d7895649ba",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-30T14:43:22.813847"
+    },
+<<<<<<< HEAD
     "bryan@gmail.com": {
         "fullname": "bryan",
         "username": "bryan",
@@ -44,5 +56,26 @@
         "role": "USER",
         "team_tags": [],
         "join_date": "2025-07-28"
+=======
+    "user@example.com": {
+        "fullname": "User",
+        "username": "user",
+        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+        "role": "USER",
+        "team_tags": [
+            "KMTI PJ"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-30T14:32:23.858123"
+    },
+    "user1@example.com": {
+        "fullname": "User Test",
+        "username": "user1",
+        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-30T17:55:35.607679"
+>>>>>>> c62cc143ff3b3d39efb4d9709b6e764870cd5fa8
     }
 }

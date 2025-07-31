@@ -4,10 +4,10 @@ from typing import Optional
 import json
 import os
 import hashlib
-import datetime
 import asyncio
+from datetime import datetime
 from admin.utils.team_utils import get_team_options
-from utils.logger import log_action  # centralized logger
+from utils.session_logger import get_active_sessions, get_last_runtime, log_activity
 
 
 def user_management(content: ft.Column, username: Optional[str]):
@@ -91,6 +91,7 @@ def user_management(content: ft.Column, username: Optional[str]):
 
     def refresh_columns_for_width(width: int):
         table.columns.clear()
+
         show_password = width >= 1000
         show_team = width >= 1000
 
@@ -101,6 +102,7 @@ def user_management(content: ft.Column, username: Optional[str]):
                 continue
             table.columns.append(ft.DataColumn(ft.Text(col_name)))
 
+        # Adjust row size
         if width > 1200:
             table.heading_row_height = 60
             table.data_row_min_height = 60
@@ -118,20 +120,27 @@ def user_management(content: ft.Column, username: Optional[str]):
         filter_mode["value"] = value
         refresh_table()
 
-    def calculate_runtime(runtime_start: str) -> str:
+    def format_runtime_from_delta(delta):
+        total_seconds = int(delta.total_seconds())
+        days, rem = divmod(total_seconds, 86400)
+        hours, rem = divmod(rem, 3600)
+        minutes, seconds = divmod(rem, 60)
+        return f"{days}d {hours}h {minutes}m {seconds}s"
+
+    def calculate_live_runtime(login_time_str: str) -> str:
         try:
-            start_time = datetime.datetime.fromisoformat(runtime_start)
+            start = datetime.strptime(login_time_str, "%Y-%m-%d %H:%M:%S")
+            delta = datetime.now() - start
+            return format_runtime_from_delta(delta)
         except Exception:
-            return "N/A"
-        delta = datetime.datetime.now() - start_time
-        hours, remainder = divmod(delta.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-        return f"{delta.days}d {hours}h {minutes}m {seconds}s"
+            return "-"
 
     def refresh_table():
         users = load_users()
         table.rows.clear()
         runtime_labels.clear()
+
+        active_sessions = get_active_sessions()
 
         page_width = content.page.width if content.page else 1200
         refresh_columns_for_width(page_width)
@@ -156,8 +165,20 @@ def user_management(content: ft.Column, username: Optional[str]):
         team_options = refresh_team_options()
 
         for email, data in users_list:
+            uname = data.get("username", "")
+            role = (data.get("role", "") or "").upper()
+
             if query and query not in data.get("fullname", "").lower() and query not in email.lower():
                 continue
+
+            runtime_text = "-"
+            session_key = f"{uname}:{role}"
+
+            if session_key in active_sessions:
+                login_time = active_sessions[session_key]["login_time"]
+                runtime_text = calculate_live_runtime(login_time)
+            else:
+                runtime_text = get_last_runtime(uname)
 
             cells = []
             for col_name, always in all_columns:
@@ -171,19 +192,19 @@ def user_management(content: ft.Column, username: Optional[str]):
                 elif col_name == "Email":
                     cells.append(ft.DataCell(ft.Text(email)))
                 elif col_name == "Username":
-                    cells.append(ft.DataCell(ft.Text(data.get("username", ""))))
+                    cells.append(ft.DataCell(ft.Text(uname)))
                 elif col_name == "Password":
                     cells.append(ft.DataCell(ft.Text("••••••")))
                 elif col_name == "Role":
                     if edit_mode["value"]:
                         role_dropdown = ft.Dropdown(
                             options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
-                            value=data.get("role", "user"),
+                            value=role,
                             on_change=lambda e, u=email: update_role(u, e.control.value)
                         )
                         cells.append(ft.DataCell(role_dropdown))
                     else:
-                        cells.append(ft.DataCell(ft.Text(data.get("role", ""))))
+                        cells.append(ft.DataCell(ft.Text(role)))
                 elif col_name == "Team":
                     tags_list = data.get("team_tags", [])
                     if edit_mode["value"]:
@@ -196,25 +217,23 @@ def user_management(content: ft.Column, username: Optional[str]):
                     else:
                         cells.append(ft.DataCell(ft.Text(", ".join(tags_list) if tags_list else "")))
                 elif col_name == "Runtime":
-                    if username == data.get("username"):
-                        runtime_text = ft.Text(
-                            calculate_runtime(data.get("runtime_start", datetime.datetime.now().isoformat())))
-                        runtime_labels[email] = runtime_text
-                        cells.append(ft.DataCell(runtime_text))
-                    else:
-                        cells.append(ft.DataCell(ft.Text("-")))
+                    runtime_lbl = ft.Text(runtime_text)
+                    runtime_labels[email] = (runtime_lbl, session_key)
+                    cells.append(ft.DataCell(runtime_lbl))
                 elif col_name == "Remove User":
                     delete_btn = ft.ElevatedButton(
                         "Delete",
                         style=ft.ButtonStyle(
-                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
-                                     ft.ControlState.HOVERED: ft.Colors.WHITE},
-                            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.RED},
-                            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
+                                     ft.ControlState.HOVERED: ft.Colors.RED},
+                            color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED_900),
+                                ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5),
                         ),
-                        on_click=lambda e, u=email: delete_user(u)
+                        on_click=lambda e, u=email: delete_user(u),
+                        icon=ft.Icons.DELETE_OUTLINED,
                     )
                     cells.append(ft.DataCell(delete_btn))
 
@@ -225,31 +244,33 @@ def user_management(content: ft.Column, username: Optional[str]):
     def update_role(user_email, new_role):
         users = load_users()
         if user_email in users:
-            current_role = users[user_email].get("role")
-            # Log only if the value changes
-            if new_role != current_role:
-                users[user_email]["role"] = new_role
-                save_users(users)
-                log_action(username, f"Updated role of {user_email} from {current_role} to {new_role}")
-                refresh_table()
+            old_role = users[user_email].get("role")
+            users[user_email]["role"] = new_role
+            save_users(users)
+
+            # Log activity
+            log_activity(username, f"Changed role of {user_email} from {old_role} to {new_role}")
+            refresh_table()
 
     def update_team_tags(user_email, new_tags):
         users = load_users()
         if user_email in users:
-            current_tags = users[user_email].get("team_tags", [])
-            # Log only if the tags change
-            if current_tags != new_tags:
-                users[user_email]["team_tags"] = new_tags
-                save_users(users)
-                log_action(username, f"Updated team of {user_email} from {current_tags} to {new_tags}")
-                refresh_table()
+            old_team = users[user_email].get("team_tags", [])
+            users[user_email]["team_tags"] = new_tags
+            save_users(users)
+
+            # Log activity
+            log_activity(username, f"Changed team of {user_email} from {old_team} to {new_tags}")
+            refresh_table()
 
     def delete_user(user_email):
         users = load_users()
         if user_email in users:
             users.pop(user_email)
             save_users(users)
-            log_action(username, f"Deleted user {user_email}")
+
+            # Log activity
+            log_activity(username, f"Deleted user {user_email}")
         refresh_table()
 
     def toggle_edit_mode(e):
@@ -272,10 +293,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               on_click=toggle_edit_mode,
                               icon=ft.Icons.EDIT,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                           ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
@@ -283,9 +304,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                               icon=ft.Icons.ADD,
                               on_click=go_to_add_user,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
                                            ft.ControlState.HOVERED: ft.Colors.GREEN},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
@@ -294,9 +315,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                               icon=ft.Icons.LOCK_RESET,
                               on_click=go_to_reset_password,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
                                            ft.ControlState.HOVERED: ft.Colors.RED},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
@@ -338,11 +359,11 @@ def user_management(content: ft.Column, username: Optional[str]):
     async def periodic_refresh():
         while True:
             await asyncio.sleep(1)
-            users = load_users()
-            for email, lbl in runtime_labels.items():
-                start = users.get(email, {}).get("runtime_start")
-                if start:
-                    lbl.value = calculate_runtime(start)
+            active_sessions = get_active_sessions()
+            for email, (lbl, session_key) in runtime_labels.items():
+                if session_key in active_sessions:
+                    login_time = active_sessions[session_key]["login_time"]
+                    lbl.value = calculate_live_runtime(login_time)
             content.update()
 
     content.page.run_task(periodic_refresh)
