@@ -778,5 +778,17 @@
         "fullname": "Admin",
         "activity": "Added new team 'ADMIN'",
         "date": "2025-07-31 10:25:22"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Login",
+        "date": "2025-07-31 10:28:48"
+    },
+    {
+        "username": "admin",
+        "role": "unknown",
+        "activity": "Logged out",
+        "date": "2025-07-31 10:28:55"
     }
 ]
