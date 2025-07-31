@@ -436,6 +436,15 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-07-31 17:51:02",
+        "logout_time": "2025-07-31 17:52:22",
+        "runtime": "00:01:20",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-07-31 17:52:22",
         "logout_time": null,
         "runtime": null,
         "date": "2025-07-31"

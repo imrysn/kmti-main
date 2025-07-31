@@ -734,5 +734,13 @@
         "role": "ADMIN",
         "datetime": "2025-07-31T17:51:02.482295",
         "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:52:22.192410",
+        "description": "Login"
     }
 ]
