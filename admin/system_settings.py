@@ -37,7 +37,7 @@ def save_teams(teams):
 def load_settings():
     defaults = {
         "maintenance": False,
-        "system_name": "KMTI System",
+        "system_name": "KMTI Data Management",
         "theme": "Light",
         "font_size": "Medium",
         "session_timeout": 30,
@@ -72,13 +72,13 @@ def system_settings(content: ft.Column, username: Optional[str]):
         )
         system_name_field = ft.TextField(
             label="System Name",
-            value=settings_data.get("system_name", "KMTI System"),
+            value=settings_data.get("system_name", "KMTI Data Management"),
             width=300
         )
 
         def save_app_settings(e):
             settings_data["maintenance"] = maintenance_switch.value
-            settings_data["system_name"] = system_name_field.value.strip() or "KMTI System"
+            settings_data["system_name"] = system_name_field.value.strip() or "KMTI Data Management"
             save_settings(settings_data)
             log_activity(username, "Updated Application settings")
             content.page.snack_bar = ft.SnackBar(ft.Text("Application settings saved!"), open=True)
@@ -139,8 +139,8 @@ def system_settings(content: ft.Column, username: Optional[str]):
                     log_activity(username, f"Deleted team '{tname}'")
                 refresh_team_table()
 
-            edit_btn = ft.IconButton(ft.Icons.EDIT, tooltip="Edit")
-            save_btn = ft.IconButton(ft.Icons.SAVE, tooltip="Save", visible=False)
+            edit_btn = ft.IconButton(ft.Icons.EDIT_OUTLINED, tooltip="Edit")
+            save_btn = ft.IconButton(ft.Icons.SAVE_OUTLINED, tooltip="Save", visible=False)
 
             edit_btn.on_click = lambda e, eb=edit_btn, sb=save_btn, f=team_field: toggle_edit(eb, sb, f)
             save_btn.on_click = lambda e, f=team_field, eb=edit_btn, sb=save_btn: save_changes(e, team, f, eb, sb)
@@ -154,8 +154,8 @@ def system_settings(content: ft.Column, username: Optional[str]):
                                 [
                                     edit_btn,
                                     save_btn,
-                                    ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED, tooltip="Delete",
-                                                  on_click=lambda e: delete_team(e)),
+                                    ft.IconButton(ft.Icons.DELETE_OUTLINED, icon_color=ft.Colors.RED, tooltip="Delete",
+                                                  on_click=lambda e, tn=team: delete_team(e, tn)),
                                 ]
                             )
                         )
@@ -248,10 +248,10 @@ def system_settings(content: ft.Column, username: Optional[str]):
     # --- About Page ---
     def about_page():
         return ft.Column([
-            ft.Text("About KMTI System", size=22, weight=FontWeight.BOLD),
+            ft.Text("About KMTI Data Management System", size=22, weight=FontWeight.BOLD),
             ft.Divider(),
             ft.Text("Version: 1.0.0"),
-            ft.Text("Developed by: Your Team"),
+            ft.Text("Developed by: OJT Team"),
             ft.Text("Description: Local File System Data Management Tool"),
         ], spacing=20, expand=True)
 
@@ -267,7 +267,7 @@ def system_settings(content: ft.Column, username: Optional[str]):
 
     def render_sidebar():
         sidebar_column = ft.Column(
-            controls=[ft.Text("Preferences", weight=FontWeight.BOLD, size=18), ft.Divider()],
+            
             spacing=5,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             expand=True,
@@ -278,8 +278,11 @@ def system_settings(content: ft.Column, username: Optional[str]):
             btn = ft.TextButton(
                 text=s,
                 style=ft.ButtonStyle(
-                    color="#000000" if is_selected else "#007BFFFF",
-                    bgcolor="#0234BBFF" if is_selected else "#F5F5F7",
+                    color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                            ft.ControlState.SELECTED: ft.Colors.WHITE},
+                    bgcolor={ft.ControlState.DEFAULT: "#F5F5F7",
+                             ft.ControlState.SELECTED: "#007BFFFF"},
+                    
                 ),
                 on_click=lambda e, sec=s: show_section(sec),
             )
@@ -288,9 +291,11 @@ def system_settings(content: ft.Column, username: Optional[str]):
                 border_radius=5,
                 padding=5,
                 width=180,
-                bgcolor="#007BFFFF" if is_selected else None
+                bgcolor="#007BFFFF" if is_selected else "#F5F5F7",
+                
             )
             sidebar_column.controls.append(container)
+
 
         return ft.Container(
             bgcolor="#F5F5F7",

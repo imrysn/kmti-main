@@ -13,7 +13,7 @@ from admin.user_management import user_management
 
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     # macOS-inspired colors
-    BACKGROUND = "#F5F5F7"
+    BACKGROUND = ft.Colors.GREY_100
     PANEL_COLOR = "#FFFFFF"
     PANEL_RADIUS = 14
 

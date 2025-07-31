@@ -224,15 +224,16 @@ def user_management(content: ft.Column, username: Optional[str]):
                     delete_btn = ft.ElevatedButton(
                         "Delete",
                         style=ft.ButtonStyle(
-                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
-                                     ft.ControlState.HOVERED: ft.Colors.WHITE},
-                            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                   ft.ControlState.HOVERED: ft.Colors.RED},
-                            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
+                                     ft.ControlState.HOVERED: ft.Colors.RED},
+                            color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED_900),
+                                ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5),
                         ),
                         on_click=lambda e, u=email: delete_user(u),
-                        icon=ft.Icons.DELETE,
+                        icon=ft.Icons.DELETE_OUTLINED,
                     )
                     cells.append(ft.DataCell(delete_btn))
 
