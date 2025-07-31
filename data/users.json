@@ -8,7 +8,7 @@
             "IT"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T12:02:50.674249"
+        "runtime_start": "2025-07-31T13:37:38.856684"
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -19,7 +19,7 @@
             "ADMIN"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T12:02:12.441548"
+        "runtime_start": "2025-07-31T13:35:30.581981"
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -32,31 +32,6 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-30T14:43:22.813847"
     },
-<<<<<<< HEAD
-    "bryan@gmail.com": {
-        "fullname": "bryan",
-        "username": "bryan",
-        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-    },
-    "adie@gmail.com": {
-        "fullname": "adie",
-        "username": "adie",
-        "password": "efc925c0652227bc83196167c8c8dacf8d0b4f1c8d92329da1541c1869880180",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-    },
-    "bryanbergonia@gmail.com": {
-        "fullname": "bryan bergonia",
-        "username": "bryanbergonia",
-        "password": "b7691cf794ab02f2d29f5a71eb6ebdf483d289da2166d853455c225bf5be5205",
-        "role": "USER",
-        "team_tags": [],
-        "join_date": "2025-07-28"
-=======
     "user@example.com": {
         "fullname": "User",
         "username": "user",
@@ -66,7 +41,7 @@
             "KMTI PJ"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-30T14:32:23.858123"
+        "runtime_start": "2025-07-31T17:00:54.355377"
     },
     "user1@example.com": {
         "fullname": "User Test",
@@ -76,6 +51,14 @@
         "team_tags": [],
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-30T17:55:35.607679"
->>>>>>> c62cc143ff3b3d39efb4d9709b6e764870cd5fa8
+    },
+    "bryan@gmail.com": {
+        "fullname": "bryan",
+        "username": "bryan",
+        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-31T17:16:29.306506"
     }
 }

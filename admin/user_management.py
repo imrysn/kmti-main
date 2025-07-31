@@ -278,12 +278,12 @@ def user_management(content: ft.Column, username: Optional[str]):
         refresh_table()
 
     def go_to_add_user(e):
-        log_action(username, "Opened Add User page")
+        log_activity(username, "Opened Add User page")
         from admin.add_user import add_user_page
         add_user_page(content, content.page, username)
 
     def go_to_reset_password(e):
-        log_action(username, "Opened Reset Password page")
+        log_activity(username, "Opened Reset Password page")
         from admin.reset_password import reset_password_page
         reset_password_page(content, content.page, username)
 
