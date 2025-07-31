@@ -454,5 +454,285 @@
         "role": "ADMIN",
         "datetime": "2025-07-31T15:47:45.713930",
         "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:39:41.035058",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:40:19.131580",
+        "description": "Logged out"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:31.930711",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.840626",
+        "description": "Uploaded file: test - Copy (9) - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.852425",
+        "description": "Uploaded file: test - Copy (9) - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.880431",
+        "description": "Uploaded file: test - Copy (9) - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.890035",
+        "description": "Uploaded file: test - Copy (9) - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.900491",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.911856",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.921783",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.931754",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.939359",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.949756",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.957819",
+        "description": "Uploaded file: test - Copy (10) - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.967978",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.977095",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.985712",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:52.994254",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.003153",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.010404",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.025474",
+        "description": "Uploaded file: test - Copy (11) - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.032766",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.041490",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.051100",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.059157",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.066686",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.074472",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:40:53.082231",
+        "description": "Uploaded file: test - Copy (12) - Copy - Copy.txt"
+    },
+    {
+        "username": "bensent",
+        "fullname": "bensent",
+        "email": "bensent@gmail.com",
+        "role": "USER",
+        "datetime": "2025-07-31T17:41:09.197150",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:41:17.805130",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:44:21.538872",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:47:37.112514",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:50:06.876948",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:50:56.435538",
+        "description": "Logged out"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-07-31T17:51:02.482295",
+        "description": "Login"
     }
 ]

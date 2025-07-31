@@ -38,6 +38,10 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     page.horizontal_alignment = CrossAxisAlignment.START
     page.bgcolor = BACKGROUND
 
+    # ✨ Ensure no space around the window
+    page.padding = 0
+    page.margin = 0
+
     def logout(e):
         log_logout(username, "admin")
         log_action(username, "Logged out")
@@ -65,25 +69,20 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     logs = load_logs()
     metadata = load_metadata()
 
-    # Filter logs for today's date
     today = datetime.now().strftime("%Y-%m-%d")
     today_logs = [log for log in logs if log.get("date", "").startswith(today)]
 
-    # Helper: Get the last activity type for a user
     def get_last_activity(username_lookup: str) -> str:
-        # Find latest activity log entry for this username
         for entry in reversed(logs):
             if entry.get("username") == username_lookup:
                 return entry.get("activity", "")
         return ""
 
-    # Unified status check
     def is_user_online(user_data) -> bool:
         uname = user_data.get("username")
         if not uname:
             return False
 
-        # 1. Look up metadata for this username
         session_entry = None
         if isinstance(metadata, list):
             for entry in metadata:
@@ -93,29 +92,23 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         elif isinstance(metadata, dict):
             session_entry = metadata.get(uname, {})
 
-        # If no login info available
         if not session_entry:
             return False
 
         login_time = session_entry.get("login_time")
         logout_time = session_entry.get("logout_time")
 
-        # If no login recorded, offline
         if not login_time:
             return False
-
-        # If logout_time exists, offline
         if logout_time is not None:
             return False
 
-        # Finally, check last activity logs
         last_act = get_last_activity(uname)
         if last_act == "Logged out" or last_act == "Logout":
             return False
 
         return True
 
-    # Returns Text object for DataTable
     def get_login_status(user_email, user_data):
         online = is_user_online(user_data)
         return ft.Text(
@@ -128,13 +121,9 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         content.controls.clear()
 
         total_users = len(users)
-
-        # Count active users using unified logic
         active_users = sum(1 for u in users.values() if is_user_online(u))
-
         recent_activity_count = len(today_logs)
 
-        # Dashboard cards
         def card(title_icon, title, value, icon_color=Colors.BLACK):
             return ft.Container(
                 content=ft.Column(
@@ -180,7 +169,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             )
         )
 
-        # Recent Users Table
         content.controls.append(
             ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111")
         )
@@ -218,12 +206,10 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             )
         )
 
-        # Recent Activities Table
         content.controls.append(
             ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111")
         )
 
-        # Build user info lookup
         user_info = {}
         for email, data in users.items():
             uname = data.get("username")
@@ -291,7 +277,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         content.update()
 
-    # Navigation handler (fixed order)
     def navigate_to_section(index: int):
         content.controls.clear()
         if index == 0:
@@ -312,14 +297,18 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     page.add(
         ft.Column(
             [
-                top_nav,
+                ft.Container(
+                    content=top_nav,
+                    padding=0,
+                    margin=0,
+                ),
                 ft.Container(
                     content=content,
                     expand=True,
                     padding=20,
                 ),
             ],
-            spacing=10,
+            spacing=0,
             expand=True,
         )
     )
@@ -328,4 +317,4 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
     log_action(username, "Login")
     log_activity(username, "Login to admin panel")
-
+    page.update()

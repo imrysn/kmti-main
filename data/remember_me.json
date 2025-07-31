@@ -13,5 +13,9 @@
     "bryan": {
         "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
         "role": "user"
+    },
+    "admin": {
+        "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+        "role": "ADMIN"
     }
 }

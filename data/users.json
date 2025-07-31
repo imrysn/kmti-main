@@ -19,7 +19,7 @@
             "KMTI PJ"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T15:47:45.677376"
+        "runtime_start": "2025-07-31T17:51:02.468909"
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -40,5 +40,14 @@
         "team_tags": [],
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-31T15:45:45.986782"
+    },
+    "bensent@gmail.com": {
+        "fullname": "bensent",
+        "username": "bensent",
+        "password": "a7259809b1ecd2ea86a974d3d88de461a53448fb0748d456fe88b0bab26ecbc2",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-07-31T17:40:31.906417"
     }
 }
