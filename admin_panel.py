@@ -46,6 +46,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         from login_window import login_view
         login_view(page)
 
+    # Data loaders
     def load_users():
         return load_json(USERS_FILE, {})
 
@@ -55,13 +56,17 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     def load_metadata():
         return load_json(ACTIVITY_METADATA_FILE, {})
 
-    content = ft.Column(scroll=ScrollMode.AUTO, expand=True, spacing=20,
-                        horizontal_alignment=CrossAxisAlignment.CENTER)
+    content = ft.Column(
+        scroll=ScrollMode.AUTO,
+        expand=True,
+        spacing=20,
+        horizontal_alignment=CrossAxisAlignment.CENTER,
+    )
     users = load_users()
     logs = load_logs()
     metadata = load_metadata()
 
-    # Filter logs to today only
+    # Filter logs for today's date
     today = datetime.now().strftime("%Y-%m-%d")
     today_logs = [log for log in logs if log.get("date", "").startswith(today)]
 
@@ -80,22 +85,64 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             padding=20,
             bgcolor=PANEL_COLOR,
             border_radius=PANEL_RADIUS,
-            shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
-                                color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+            shadow=ft.BoxShadow(
+                blur_radius=8,
+                spread_radius=1,
+                color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+            ),
             width=220,
             height=160,
         )
 
+        # Get login status of a user
     def get_login_status(user_email, user_data):
         uname = user_data.get("username")
-        meta = metadata.get(uname, {})
-        return meta.get("login_time", "Offline")
+        is_online = False
+
+        # If metadata is a list
+        if isinstance(metadata, list):
+            for entry in metadata:
+                if entry.get("username") == uname:
+                    if entry.get("login_time") and entry.get("logout_time") is None:
+                        is_online = True
+                    break
+        # If metadata is a dict (legacy)
+        elif isinstance(metadata, dict):
+            entry = metadata.get(uname, {})
+            if entry.get("login_time") and entry.get("logout_time") is None:
+                is_online = True
+
+        # Return colored text
+        return ft.Text(
+            "Online" if is_online else "Offline",
+            color=Colors.GREEN if is_online else Colors.RED,
+            weight=FontWeight.BOLD
+        )
 
     def show_dashboard():
         content.controls.clear()
 
         total_users = len(users)
-        active_users = sum(1 for u in metadata.values() if "login_time" in u)
+
+        # Count active users
+        active_users = 0
+        if isinstance(metadata, list):
+            active_users = sum(
+                1
+                for entry in metadata
+                if isinstance(entry, dict)
+                and entry.get("login_time")
+                and entry.get("logout_time") is None
+            )
+        elif isinstance(metadata, dict):
+            active_users = sum(
+                1
+                for u in metadata.values()
+                if isinstance(u, dict)
+                and u.get("login_time")
+                and u.get("logout_time") is None
+            )
+
         recent_activity_count = len(today_logs)
 
         # Dashboard cards
@@ -103,16 +150,28 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             ft.Row(
                 [
                     card(ft.Icons.PEOPLE, "Total Users", str(total_users)),
-                    card(ft.Icons.PERSON, "Active Users", str(active_users), icon_color=Colors.GREEN),
-                    card(ft.Icons.HISTORY, "Recent Activities", str(recent_activity_count), icon_color=Colors.BLUE),
+                    card(
+                        ft.Icons.PERSON,
+                        "Active Users",
+                        str(active_users),
+                        icon_color=Colors.GREEN,
+                    ),
+                    card(
+                        ft.Icons.HISTORY,
+                        "Recent Activities",
+                        str(recent_activity_count),
+                        icon_color=Colors.BLUE,
+                    ),
                 ],
                 spacing=20,
-                alignment=MainAxisAlignment.CENTER
+                alignment=MainAxisAlignment.CENTER,
             )
         )
 
-        # Recent Users Table (centered, no actions)
-        content.controls.append(ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111"))
+        # Recent Users Table
+        content.controls.append(
+            ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111")
+        )
 
         users_table = ft.DataTable(
             heading_row_color="#FAFAFA",
@@ -124,11 +183,13 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             rows=[
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text(data.get('fullname', 'Unknown'))),
+                        ft.DataCell(ft.Text(data.get("fullname", "Unknown"))),
                         ft.DataCell(ft.Text(email)),
-                        ft.DataCell(ft.Text(get_login_status(email, data))),
+                        ft.DataCell(get_login_status(email, data)),
+
                     ]
-                ) for email, data in list(users.items())[:5]
+                )
+                for email, data in list(users.items())[:5]
             ],
         )
 
@@ -138,13 +199,18 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                 bgcolor=PANEL_COLOR,
                 border_radius=PANEL_RADIUS,
                 padding=20,
-                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
-                                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                ),
             )
         )
 
-        # Recent Activities Table (reuse layout from activity_logs.py)
-        content.controls.append(ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111"))
+        # Recent Activities Table
+        content.controls.append(
+            ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111")
+        )
 
         # Build user info lookup
         user_info = {}
@@ -152,7 +218,11 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             uname = data.get("username")
             if uname:
                 team = data.get("team_tags", [])
-                team_str = ", ".join(team) if isinstance(team, list) else (str(team) if team else "")
+                team_str = (
+                    ", ".join(team)
+                    if isinstance(team, list)
+                    else (str(team) if team else "")
+                )
                 user_info[uname] = {
                     "fullname": data.get("fullname", uname),
                     "email": email,
@@ -160,16 +230,13 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     "team": team_str,
                 }
 
-        # Build rows for today's logs
         rows = []
         for log in reversed(today_logs[-10:]):
             uname = log.get("username", "")
-            info = user_info.get(uname, {
-                "fullname": uname,
-                "email": "",
-                "role": "",
-                "team": ""
-            })
+            info = user_info.get(
+                uname,
+                {"fullname": uname, "email": "", "role": "", "team": ""},
+            )
             rows.append(
                 ft.DataRow(
                     cells=[
@@ -203,8 +270,11 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                 bgcolor=PANEL_COLOR,
                 border_radius=PANEL_RADIUS,
                 padding=20,
-                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1,
-                                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK)),
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                ),
             )
         )
 
@@ -237,7 +307,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     content=content,
                     expand=True,
                     padding=20,
-                )
+                ),
             ],
             spacing=10,
             expand=True,
