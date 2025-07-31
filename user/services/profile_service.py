@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from utils.session_logger import log_activity
 
 class ProfileService:
     """Service for handling user profile operations"""
@@ -19,7 +20,7 @@ class ProfileService:
             if os.path.exists(self.profile_file):
                 with open(self.profile_file, 'r', encoding='utf-8') as f:
                     profile_data = json.load(f)
-                    
+
                 # Ensure all required fields exist
                 default_profile = self.get_default_profile()
                 for key, value in default_profile.items():
