@@ -117,6 +117,31 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         active_users = sum(1 for u in users.values() if is_user_online(u))
         recent_activity_count = len(fresh_logs)
 
+        # Add title with Refresh button
+        refresh_button = ft.ElevatedButton(
+            "Refresh",
+            icon=ft.Icons.REFRESH,
+            on_click=lambda e: show_dashboard(),
+            style=ft.ButtonStyle(
+                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                        ft.ControlState.HOVERED: ft.Colors.BLUE},
+                color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+                side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
+                shape=ft.RoundedRectangleBorder(radius=5)
+            )
+        )
+
+        content.controls.append(
+            ft.Row(
+                [
+                    refresh_button,
+                ],
+                alignment=MainAxisAlignment.END,
+            )
+        )
+
+
         # --- Small metric cards ---
         def card(title_icon, title, value, icon_color=Colors.BLACK):
             return ft.Container(
@@ -137,7 +162,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     spread_radius=1,
                     color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
                 ),
-                width=220,
+                width=250,
                 height=160,
             )
 
@@ -160,6 +185,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                 ],
                 spacing=20,
                 alignment=MainAxisAlignment.CENTER,
+                
             )
         )
 
