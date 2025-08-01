@@ -1,8 +1,8 @@
 import flet as ft
 from flet import FontWeight
-from typing import Optional
 import json
 import os
+from utils.dialog import show_center_sheet
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
@@ -108,13 +108,51 @@ def activity_logs(content: ft.Column, username: str):
         table.rows.extend(build_rows(search_field.value or ""))
         table.update()
 
-    # Clear logs function
+        # Function to clear only filtered logs
     def clear_logs_action(e):
-        if os.path.exists(ACTIVITY_LOGS_FILE):
-            with open(ACTIVITY_LOGS_FILE, "w") as f:
-                json.dump([], f, indent=4)
+        search_text = (search_field.value or "").lower()
+        print(f"[DEBUG] clear_logs_action called with filter: '{search_text}'")
+
+        if not search_text:
+            # If no filter, do nothing
+            print("[DEBUG] No filter applied, nothing to delete.")
+            return
+
+        # Rebuild the remaining logs: keep only those that do NOT match the search
+        remaining_logs = []
+        for log in logs:
+            uname = log.get("username", "")
+            info = user_info.get(uname, {
+                "fullname": uname,
+                "email": "",
+                "role": "",
+                "team": ""
+            })
+            dt_display = log.get("date", "-")
+            description = log.get("activity", "")
+            combined = " ".join([
+                info["fullname"],
+                info["email"],
+                uname,
+                info["role"],
+                info["team"],
+                dt_display,
+                description
+            ]).lower()
+
+            # Keep logs that don't match the filter
+            if search_text not in combined:
+                remaining_logs.append(log)
+
+        # Save the remaining logs back to file
+        with open(ACTIVITY_LOGS_FILE, "w") as f:
+            json.dump(remaining_logs, f, indent=4)
+
+        # Update in-memory logs and refresh table
         logs.clear()
+        logs.extend(remaining_logs)
         refresh_table()
+
 
     # Controls
     search_field = ft.TextField(
@@ -126,27 +164,37 @@ def activity_logs(content: ft.Column, username: str):
     )
     export_button = ft.ElevatedButton(
         "Export Logs",
+        icon=ft.Icons.UPLOAD_OUTLINED,
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                     ft.ControlState.HOVERED: ft.Colors.GREEN},
-            color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                   ft.ControlState.HOVERED: ft.Colors.WHITE},
-            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                     ft.ControlState.HOVERED: ft.Colors.WHITE},
+            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                   ft.ControlState.HOVERED: ft.Colors.GREEN},
+            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.GREEN),
+                ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
             shape=ft.RoundedRectangleBorder(radius=5)
         )
     )
     clear_button = ft.ElevatedButton(
         "Clear",
-        on_click=clear_logs_action,
+        icon=ft.Icons.CLEAR_OUTLINED,
+        on_click=lambda e: show_center_sheet(
+            content.page,
+            title="Confirm Delete Filtered Logs",
+            message="Are you sure you want to delete this filtered logs? Only filtered logs will be deleted",
+            on_confirm=lambda: clear_logs_action(e),
+        ),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                     ft.ControlState.HOVERED: ft.Colors.RED},
-            color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                   ft.ControlState.HOVERED: ft.Colors.WHITE},
-            side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
+                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                ft.ControlState.HOVERED: ft.Colors.RED},
+            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED),
+                ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
             shape=ft.RoundedRectangleBorder(radius=5)
         )
     )
+
 
     # Top row layout
     top_controls = ft.Row(

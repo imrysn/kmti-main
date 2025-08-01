@@ -123,10 +123,10 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             icon=ft.Icons.REFRESH,
             on_click=lambda e: show_dashboard(),
             style=ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                        ft.ControlState.HOVERED: ft.Colors.BLUE},
-                color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+                bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                        ft.ControlState.HOVERED: ft.Colors.WHITE},
+                color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                    ft.ControlState.HOVERED: ft.Colors.BLUE},
                 side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
                 shape=ft.RoundedRectangleBorder(radius=5)
             )

@@ -303,10 +303,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               on_click=toggle_edit_mode,
                               icon=ft.Icons.EDIT,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                           ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
@@ -314,10 +314,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               icon=ft.Icons.ADD,
                               on_click=go_to_add_user,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                                           ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.GREEN},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
@@ -325,10 +325,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               icon=ft.Icons.LOCK_RESET,
                               on_click=go_to_reset_password,
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.RED},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                           ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                         ft.ControlState.HOVERED: ft.Colors.RED},
                                   side={ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               )
