@@ -805,8 +805,8 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-08-01 13:37:05",
-        "logout_time": null,
-        "runtime": null,
+        "logout_time": "2025-08-01 15:26:30",
+        "runtime": "01:49:25",
         "date": "2025-08-01"
     },
     {
@@ -814,6 +814,24 @@
         "fullname": "Raysan Perez",
         "role": "ADMIN",
         "login_time": "2025-08-01 14:28:42",
+        "logout_time": null,
+        "runtime": null,
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 15:26:30",
+        "logout_time": "2025-08-01 15:47:26",
+        "runtime": "00:20:56",
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 15:47:26",
         "logout_time": null,
         "runtime": null,
         "date": "2025-08-01"
