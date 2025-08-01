@@ -56,45 +56,59 @@ def system_settings(content: ft.Column, username: Optional[str]):
     def refresh_team_table():
         team_table.rows.clear()
 
-        for team in load_teams():
+        teams = load_teams()
+        for index, team in enumerate(teams):
             team_field = ft.TextField(value=team, expand=True, disabled=True)
-
-            def toggle_edit(edit_btn, save_btn, field):
-                field.disabled = False
-                field.update()
-                edit_btn.visible = False
-                save_btn.visible = True
-                edit_btn.update()
-                save_btn.update()
-
-            def save_changes(e, old=team, field=team_field, edit_btn=None, save_btn=None):
-                new_name = field.value.strip()
-                if new_name and new_name != old:
-                    teams = load_teams()
-                    if old in teams:
-                        teams[teams.index(old)] = new_name
-                        save_teams(teams)
-                        log_activity(username, f"Renamed team '{old}' to '{new_name}'")
-                # disable back
-                field.disabled = True
-                if edit_btn and save_btn:
-                    edit_btn.visible = True
-                    save_btn.visible = False
-                refresh_team_table()
-
-            def delete_team(e, tname=team):
-                teams = load_teams()
-                if tname in teams:
-                    teams.remove(tname)
-                    save_teams(teams)
-                    log_activity(username, f"Deleted team '{tname}'")
-                refresh_team_table()
 
             edit_btn = ft.IconButton(ft.Icons.EDIT_OUTLINED, tooltip="Edit")
             save_btn = ft.IconButton(ft.Icons.SAVE_OUTLINED, tooltip="Save", visible=False)
+            delete_btn = ft.IconButton(
+                ft.Icons.DELETE_OUTLINED,
+                icon_color=ft.Colors.RED,
+                tooltip="Delete",
+            )
 
-            edit_btn.on_click = lambda e, eb=edit_btn, sb=save_btn, f=team_field: toggle_edit(eb, sb, f)
-            save_btn.on_click = lambda e, f=team_field, eb=edit_btn, sb=save_btn: save_changes(e, team, f, eb, sb)
+            # Define button handlers inside a function to capture correct variables
+            def make_handlers(old_team, field, eb, sb, db):
+                def toggle_edit(_):
+                    field.disabled = False
+                    field.update()
+                    eb.visible = False
+                    sb.visible = True
+                    eb.update()
+                    sb.update()
+
+                def save_changes(_):
+                    new_name = field.value.strip()
+                    if new_name and new_name != old_team:
+                        teams_list = load_teams()
+                        if old_team in teams_list:
+                            teams_list[teams_list.index(old_team)] = new_name
+                            save_teams(teams_list)
+                            log_activity(username, f"Renamed team '{old_team}' to '{new_name}'")
+                    # Lock the field again
+                    field.disabled = True
+                    eb.visible = True
+                    sb.visible = False
+                    field.update()
+                    eb.update()
+                    sb.update()
+                    refresh_team_table()
+
+                def delete_team(_):
+                    teams_list = load_teams()
+                    if old_team in teams_list:
+                        teams_list.remove(old_team)
+                        save_teams(teams_list)
+                        log_activity(username, f"Deleted team '{old_team}'")
+                    refresh_team_table()
+
+                eb.on_click = toggle_edit
+                sb.on_click = save_changes
+                db.on_click = delete_team
+
+            # Apply handlers with correct scope
+            make_handlers(team, team_field, edit_btn, save_btn, delete_btn)
 
             team_table.rows.append(
                 ft.DataRow(
@@ -105,19 +119,16 @@ def system_settings(content: ft.Column, username: Optional[str]):
                                 [
                                     edit_btn,
                                     save_btn,
-                                    ft.IconButton(
-                                        ft.Icons.DELETE_OUTLINED,
-                                        icon_color=ft.Colors.RED,
-                                        tooltip="Delete",
-                                        on_click=lambda e, tn=team: delete_team(e, tn),
-                                    ),
+                                    delete_btn,
                                 ]
                             )
-                        )
+                        ),
                     ]
                 )
             )
+
         content.update()
+
 
     def add_team(e):
         name = new_team_field.value.strip()
@@ -134,11 +145,20 @@ def system_settings(content: ft.Column, username: Optional[str]):
     def team_page():
         refresh_team_table()
         return ft.Column([
-            ft.Text("Teams", size=22, weight=FontWeight.BOLD),
-            ft.Divider(),
-            ft.Row([new_team_field, ft.ElevatedButton("Add Team", on_click=add_team)]),
-            team_table
-        ], spacing=20, expand=True)
+                # Top row: "Teams" on left, text field + button on right
+            ft.Row(
+                    [
+                        ft.Text("Teams", size=22, weight=FontWeight.BOLD),
+                        ft.Container(expand=True),  # pushes controls to the right
+                        new_team_field,
+                        ft.ElevatedButton("Add Team", on_click=add_team),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Divider(),
+                team_table
+            ], spacing=20, expand=True)
+
 
     # --- About Page ---
     def about_page():
