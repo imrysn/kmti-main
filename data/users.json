@@ -8,7 +8,7 @@
             "IT"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T09:54:41.217223"
+        "runtime_start": "2025-07-31T15:39:38.004626"
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -16,10 +16,10 @@
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "ADMIN"
+            "KMTI PJ"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-31T10:24:57.068756"
+        "runtime_start": "2025-08-01T09:13:33.049461"
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -32,17 +32,6 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-07-30T14:43:22.813847"
     },
-    "user@example.com": {
-        "fullname": "User",
-        "username": "user",
-        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
-        "role": "USER",
-        "team_tags": [
-            "KMTI PJ"
-        ],
-        "join_date": "2025-07-28",
-        "runtime_start": "2025-07-30T14:32:23.858123"
-    },
     "user1@example.com": {
         "fullname": "User Test",
         "username": "user1",
@@ -50,6 +39,6 @@
         "role": "USER",
         "team_tags": [],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-07-30T17:55:35.607679"
+        "runtime_start": "2025-08-01T08:53:37.733175"
     }
 }

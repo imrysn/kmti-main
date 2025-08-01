@@ -1,204 +1,291 @@
-2025-07-25 11:47:48.923494 | admin@example.com | Logged into admin panel
-2025-07-25 11:48:38.403848 | raysan | Logged into admin panel
-2025-07-25 11:49:01.442630 | raysan | Logged into admin panel
-2025-07-25 11:51:15.522429 | raysan | Logged into admin panel
-2025-07-25 11:53:46.156071 | user | Uploaded file: kmti_logo.png
-2025-07-25 13:23:33.777743 | raysan | Logged into admin panel
-2025-07-25 13:26:38.279272 | raysan | Logged into admin panel
-2025-07-25 13:27:46.708203 | raysan | Logged into admin panel
-2025-07-25 13:33:26.206614 | raysan | Logged into admin panel
-2025-07-25 13:33:47.432620 | admin@example.com | Logged into admin panel
-2025-07-25 13:51:57.101722 | raysan | Logged into admin panel
-2025-07-25 13:53:28.140281 | raysan | Logged into admin panel
-2025-07-25 14:26:43.982317 | raysan | Logged into admin panel
-2025-07-25 14:59:03.383975 | raysan | Logged into admin panel
-2025-07-25 14:59:15.560377 | raysan | Logged out
-2025-07-25 14:59:22.496592 | raysan | Logged into admin panel
-2025-07-25 14:59:33.624943 | raysan | Logged out
-2025-07-25 14:59:39.903125 | raysan | Logged into admin panel
-2025-07-25 15:01:11.799816 | raysan | Logged out
-2025-07-25 15:01:21.665229 | raysan | Logged into admin panel
-2025-07-25 15:02:00.184245 | raysan | Logged out
-2025-07-25 15:02:30.937033 | raysan | Logged into admin panel
-2025-07-25 15:02:32.695473 | raysan | Logged out
-2025-07-25 15:02:34.039959 | raysan | Logged into admin panel
-2025-07-25 15:02:36.455300 | raysan | Logged out
-2025-07-25 15:02:39.326823 | raysan | Logged into admin panel
-2025-07-25 15:02:40.575355 | raysan | Logged out
-2025-07-25 15:02:46.359646 | raysan | Logged into admin panel
-2025-07-25 15:02:49.687207 | raysan | Logged out
-2025-07-25 15:09:56.814398 | raysan | Logged into admin panel
-2025-07-25 15:10:19.644864 | raysan | Logged out
-2025-07-25 15:10:26.246669 | raysan | Logged into admin panel
-2025-07-25 15:10:27.412769 | raysan | Logged out
-2025-07-25 15:13:13.890689 | raysan | Logged into admin panel
-2025-07-25 15:13:17.763914 | raysan | Logged out
-2025-07-25 15:20:30.071116 | raysan | Logged into admin panel
-2025-07-25 15:20:31.154135 | raysan | Logged out
-2025-07-25 15:32:11.654359 | raysan | Logged into admin panel
-2025-07-25 15:32:15.077302 | raysan | Logged out
-2025-07-25 15:33:00.036698 | raysan | Logged into admin panel
-2025-07-25 15:33:16.004883 | raysan | Logged out
-2025-07-25 15:33:19.788943 | raysan | Logged into admin panel
-2025-07-25 15:40:34.918093 | raysan | Logged into admin panel
-2025-07-25 15:40:45.866538 | raysan | Logged out
-2025-07-25 15:40:59.412266 | raysan | Logged into admin panel
-2025-07-25 15:41:08.671594 | raysan | Logged out
-2025-07-25 15:44:16.667594 | raysan | Logged into admin panel
-2025-07-25 15:44:18.817324 | raysan | Logged out
-2025-07-25 15:55:21.495205 | raysan | Logged into admin panel
-2025-07-25 15:55:24.101850 | raysan | Logged out
-2025-07-25 15:59:55.729296 | raysan | Logged into admin panel
-2025-07-25 15:59:57.835904 | raysan | Logged out
-2025-07-25 16:00:07.643712 | raysan | Logged into admin panel
-2025-07-25 16:00:08.883934 | raysan | Logged out
-2025-07-29 07:20:41.124266 | raysan | Logged into admin panel
-2025-07-29 07:20:46.812263 | raysan | Logged out
-2025-07-29 07:23:44.837620 | raysan | Logged into admin panel
-2025-07-29 07:24:16.732340 | raysan | Logged out
-2025-07-29 07:37:13.689994 | raysan | Logged into admin panel
-2025-07-29 07:38:18.123650 | raysan | Logged into admin panel
-2025-07-29 07:52:25.959732 | raysan | Logged into admin panel
-2025-07-29 07:52:54.197304 | raysan | Logged out
-2025-07-29 08:01:47.451656 | raysan | Logged into admin panel
-2025-07-29 08:01:56.661043 | raysan | Logged out
-2025-07-29 08:02:34.919350 | raysan | Logged into admin panel
-2025-07-29 08:03:02.101136 | raysan | Logged into admin panel
-2025-07-29 08:04:45.350606 | raysan | Logged into admin panel
-2025-07-29 08:07:47.612739 | raysan | Logged into admin panel
-2025-07-29 08:10:28.343102 | raysan | Logged into admin panel
-2025-07-29 08:12:27.044723 | raysan | Logged into admin panel
-2025-07-29 08:13:15.556653 | raysan | Logged into admin panel
-2025-07-29 08:17:38.500265 | raysan | Logged into admin panel
-2025-07-29 08:19:25.877793 | raysan | Logged into admin panel
-2025-07-29 08:20:03.077949 | raysan | Logged into admin panel
-2025-07-29 08:21:02.526755 | raysan | Logged into admin panel
-2025-07-29 08:23:36.182633 | raysan | Logged into admin panel
-2025-07-29 08:27:13.781342 | raysan | Logged into admin panel
-2025-07-29 08:27:51.135007 | raysan | Logged into admin panel
-2025-07-29 08:29:50.677707 | raysan | Logged out
-2025-07-29 08:33:18.774347 | raysan | Logged into admin panel
-2025-07-29 08:38:56.798289 | raysan | Logged into admin panel
-2025-07-29 08:42:42.835368 | raysan | Logged into admin panel
-2025-07-29 08:45:59.566811 | raysan | Logged into admin panel
-2025-07-29 08:51:15.942786 | raysan | Logged into admin panel
-2025-07-29 08:52:32.550772 | raysan | Logged into admin panel
-2025-07-29 08:54:02.862544 | raysan | Logged into admin panel
-2025-07-29 08:55:18.126332 | raysan | Logged into admin panel
-2025-07-29 08:56:02.732701 | raysan | Logged into admin panel
-2025-07-29 08:56:10.624699 | raysan | Logged into admin panel
-2025-07-29 08:59:34.943427 | raysan | Logged into admin panel
-2025-07-29 09:00:59.317439 | raysan | Logged into admin panel
-2025-07-29 09:01:21.389561 | raysan | Logged into admin panel
-2025-07-29 09:02:36.255196 | raysan | Logged into admin panel
-2025-07-29 09:03:05.263375 | raysan | Logged into admin panel
-2025-07-29 09:03:55.054924 | raysan | Logged into admin panel
-2025-07-29 09:05:29.126506 | raysan | Logged into admin panel
-2025-07-29 09:05:41.554168 | raysan | Logged into admin panel
-2025-07-29 09:06:40.381743 | raysan | Logged into admin panel
-2025-07-29 09:06:50.412618 | raysan | Logged into admin panel
-2025-07-29 09:08:49.048301 | raysan | Logged into admin panel
-2025-07-29 09:08:57.089306 | raysan | Logged into admin panel
-2025-07-29 09:09:13.869888 | raysan | Logged into admin panel
-2025-07-29 09:10:32.623153 | raysan | Logged into admin panel
-2025-07-29 09:13:00.983414 | raysan | Logged into admin panel
-2025-07-29 09:16:18.823315 | raysan | Logged into admin panel
-2025-07-29 09:20:38.288920 | raysan | Logged into admin panel
-2025-07-29 09:38:22.666466 | raysan | Logged into admin panel
-2025-07-29 09:44:20.536354 | raysan | Logged into admin panel
-2025-07-29 09:48:59.978304 | raysan | Logged into admin panel
-2025-07-29 09:52:51.713201 | raysan | Logged into admin panel
-2025-07-29 09:53:22.223937 | raysan | Logged into admin panel
-2025-07-29 10:04:01.939356 | raysan | Logged into admin panel
-2025-07-29 10:07:51.520405 | raysan | Logged into admin panel
-2025-07-29 10:11:58.784969 | raysan | Logged into admin panel
-2025-07-29 10:13:38.825136 | raysan | Logged into admin panel
-2025-07-29 10:13:51.313392 | raysan | Logged into admin panel
-2025-07-29 10:16:19.201231 | raysan | Logged into admin panel
-2025-07-29 10:16:33.592758 | raysan | Logged into admin panel
-2025-07-29 10:18:18.620080 | raysan | Logged into admin panel
-2025-07-29 10:22:57.839903 | raysan | Logged into admin panel
-2025-07-29 10:25:38.601534 | raysan | Logged into admin panel
-2025-07-29 10:26:35.618137 | raysan | Logged into admin panel
-2025-07-29 10:29:19.961996 | raysan | Logged into admin panel
-2025-07-29 10:32:48.266825 | raysan | Logged into admin panel
-2025-07-29 10:35:56.433957 | raysan | Logged into admin panel
-2025-07-29 10:39:07.762004 | raysan | Logged into admin panel
-2025-07-29 10:44:19.219175 | raysan | Logged into admin panel
-2025-07-29 10:46:23.218136 | raysan | Logged into admin panel
-2025-07-29 10:46:55.873412 | raysan | Logged into admin panel
-2025-07-29 10:48:47.314420 | raysan | Logged into admin panel
-2025-07-29 10:49:11.386147 | raysan | Logged into admin panel
-2025-07-29 10:49:37.553570 | raysan | Logged into admin panel
-2025-07-29 10:55:57.617330 | raysan | Logged into admin panel
-2025-07-29 10:56:45.444279 | raysan | Logged into admin panel
-2025-07-29 10:58:13.609709 | raysan | Logged into admin panel
-2025-07-29 10:59:51.289732 | raysan | Logged into admin panel
-2025-07-29 11:01:06.994413 | raysan | Logged into admin panel
-2025-07-29 11:02:03.986283 | raysan | Logged into admin panel
-2025-07-29 11:02:40.987296 | raysan | Logged into admin panel
-2025-07-29 11:03:01.338645 | raysan | Logged into admin panel
-2025-07-29 11:08:10.410197 | raysan | Logged into admin panel
-2025-07-29 11:13:17.946776 | raysan | Logged into admin panel
-2025-07-29 11:15:44.715141 | raysan | Logged into admin panel
-2025-07-29 11:19:18.106364 | raysan | Logged into admin panel
-2025-07-29 11:19:42.499093 | raysan | Logged into admin panel
-2025-07-29 11:20:20.139734 | raysan | Logged into admin panel
-2025-07-29 11:21:20.370667 | raysan | Logged into admin panel
-2025-07-29 11:23:26.563235 | raysan | Logged into admin panel
-2025-07-29 11:25:09.699068 | raysan | Logged into admin panel
-2025-07-29 11:26:11.091040 | raysan | Logged into admin panel
-2025-07-29 11:35:41.890870 | raysan | Logged into admin panel
-2025-07-29 11:39:13.163544 | raysan | Logged into admin panel
-2025-07-29 11:41:59.797802 | raysan | Logged into admin panel
-2025-07-29 11:43:02.477981 | raysan | Logged into admin panel
-2025-07-29 11:47:37.723282 | raysan | Logged into admin panel
-2025-07-29 11:48:51.812904 | raysan | Logged into admin panel
-2025-07-29 11:49:29.485616 | raysan | Logged into admin panel
-2025-07-29 11:52:11.852007 | raysan | Logged into admin panel
-2025-07-29 13:07:25.686418 | raysan | Logged into admin panel
-2025-07-29 13:11:10.307001 | raysan | Logged into admin panel
-2025-07-29 13:12:07.684687 | raysan | Logged into admin panel
-2025-07-29 13:12:40.767511 | raysan | Logged into admin panel
-2025-07-29 13:15:10.196642 | raysan | Logged into admin panel
-2025-07-29 13:16:45.430564 | raysan | Logged into admin panel
-2025-07-29 13:18:34.203725 | raysan | Logged into admin panel
-2025-07-29 13:23:45.533381 | raysan | Logged into admin panel
-2025-07-29 13:24:16.652732 | raysan | Logged out
-2025-07-29 13:30:54.143188 | raysan | Logged into admin panel
-2025-07-29 13:31:06.701120 | raysan | Logged out
-2025-07-29 13:31:12.381128 | raysan | Logged into admin panel
-2025-07-29 13:32:36.614328 | raysan | Logged into admin panel
-2025-07-29 13:33:46.374124 | raysan | Logged into admin panel
-2025-07-29 13:34:49.326458 | raysan | Logged into admin panel
-2025-07-29 13:41:14.078135 | raysan | Logged into admin panel
-2025-07-29 13:43:25.445126 | raysan | Logged into admin panel
-2025-07-29 13:44:06.518678 | raysan | Logged into admin panel
-2025-07-29 13:44:23.222531 | raysan | Logged into admin panel
-2025-07-29 13:44:42.310698 | raysan | Logged into admin panel
-2025-07-29 13:45:41.455314 | raysan | Logged into admin panel
-2025-07-29 13:46:27.885781 | raysan | Logged into admin panel
-2025-07-29 13:47:00.416216 | raysan | Logged into admin panel
-2025-07-29 13:47:33.654325 | raysan | Logged into admin panel
-2025-07-29 13:47:53.150460 | raysan | Logged into admin panel
-2025-07-29 13:49:06.525885 | raysan | Logged into admin panel
-2025-07-29 13:50:04.224431 | raysan | Logged into admin panel
-2025-07-29 13:50:36.861940 | raysan | Logged into admin panel
-2025-07-29 13:50:58.286523 | raysan | Logged into admin panel
-2025-07-29 13:51:52.319318 | raysan | Logged into admin panel
-2025-07-29 13:54:02.224081 | raysan | Logged into admin panel
-2025-07-29 13:56:40.310303 | raysan | Logged into admin panel
-2025-07-29 13:57:41.150042 | raysan | Logged into admin panel
-2025-07-29 13:59:31.094589 | raysan | Logged into admin panel
-2025-07-29 14:03:39.797446 | raysan | Logged into admin panel
-2025-07-29 14:04:53.529419 | raysan | Logged into admin panel
-2025-07-29 14:09:41.224858 | raysan | Logged into admin panel
-2025-07-29 14:09:54.581910 | raysan | Logged out
-2025-07-29 14:10:13.145303 | raysan | Logged into admin panel
-2025-07-29 14:15:35.180477 | raysan | Logged out
-2025-07-29 14:16:05.314462 | raysan | Logged into admin panel
-2025-07-29 14:23:32.920787 | raysan | Logged into admin panel
-2025-07-29 14:24:42.351218 | raysan | Logged out
-2025-07-29 14:26:51.417165 | raysan | Logged into admin panel
-2025-07-29 14:27:40.726250 | raysan | Logged out
-2025-07-29 14:28:12.401171 | raysan | Logged into admin panel
+2025-07-29 17:23:27 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-29 17:23:40 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:24:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:24:37 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:24:51 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-29 17:25:59 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 08:55:26 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 08:55:29 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 09:02:20 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 09:02:35 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-30 09:02:50 - Raysan Perez (raysan@example.com, ADMIN) - Added new user bryan (bryan@gmail.com) with role USER
+2025-07-30 09:02:55 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 09:06:50 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 09:07:25 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 09:07:35 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 09:16:52 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 10:17:24 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 10:17:25 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:15:50 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:30:00 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:30:02 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:39:40 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:40:05 - Raysan Perez (raysan@example.com, ADMIN) - Deleted user test@example.com
+2025-07-30 11:40:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:40:32 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:40:52 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-30 11:41:54 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:42:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:42:18 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:43:43 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:43:46 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-30 11:44:04 - Raysan Perez (raysan@example.com, ADMIN) - Added new user adie (adie@gmail.com) with role USER
+2025-07-30 11:44:06 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 11:44:15 - adie (adie@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 11:44:15 - adie (adie@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-30 11:57:49 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 11:57:59 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-30 11:58:35 - Raysan Perez (raysan@example.com, ADMIN) - Added new user bryan bergonia (bryanbergonia@gmail.com) with role USER
+2025-07-30 11:58:36 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 13:25:17 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 13:25:21 - Raysan Perez (raysan@example.com, ADMIN) - Opened Add User page
+2025-07-30 13:25:44 - Raysan Perez (raysan@example.com, ADMIN) - Added new user gab (gab@gmail) with role USER
+2025-07-30 13:25:46 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 13:26:10 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 13:26:44 - Raysan Perez (raysan@example.com, ADMIN) - Deleted user gab@gmail
+2025-07-30 13:30:17 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 16:08:50 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 16:09:05 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 16:43:44 - bryan (bryan@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-30 16:43:44 - bryan (bryan@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-30 16:43:45 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 16:43:45 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 16:43:45 - bryan (bryan@gmail.com, USER) - Opened folder: Minatogumi
+2025-07-30 16:43:46 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 16:43:46 - bryan (bryan@gmail.com, USER) - Opened folder: DAIICHI
+2025-07-30 16:43:46 - bryan (bryan@gmail.com, USER) - Opened folder: AGCC Project
+2025-07-30 16:43:47 - bryan (bryan@gmail.com, USER) - Opened folder: SOLIDWORKS
+2025-07-30 16:43:47 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-30 16:43:47 - bryan (bryan@gmail.com, USER) - Opened folder: DAIICHI
+2025-07-30 16:43:47 - bryan (bryan@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-30 16:43:48 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 16:43:48 - bryan (bryan@gmail.com, USER) - Opened folder: Minatogumi
+2025-07-30 17:19:41 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 17:19:46 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 17:20:02 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-30 17:20:03 - bryan (bryan@gmail.com, USER) - Opened folder: SOLIDWORKS
+2025-07-30 17:20:03 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-30 17:21:47 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 17:22:00 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-30 17:22:12 - Raysan Perez (raysan@example.com, ADMIN) - Reset password for bryan (bryan@gmail.com)
+2025-07-30 17:22:14 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 17:22:36 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 17:22:41 - Raysan Perez (raysan@example.com, ADMIN) - Opened Reset Password page
+2025-07-30 17:22:48 - Raysan Perez (raysan@example.com, ADMIN) - Reset password for bryan (bryan@gmail.com)
+2025-07-30 17:22:50 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 17:36:29 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-30 17:36:32 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-30 17:46:54 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-30 17:46:54 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-30 17:46:54 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-30 17:56:14 - bryan (bryan@gmail.com, USER) - Uploaded file: images.jpg
+2025-07-31 08:11:01 - bryan (bryan@gmail.com, USER) - Uploaded file: diagram.webp
+2025-07-31 08:12:56 - bryan (bryan@gmail.com, USER) - Uploaded file: bergonia_bryan_HERO.pdf
+2025-07-31 08:20:35 - Raysan Perez (raysan@example.com, ADMIN) - Logged into admin panel
+2025-07-31 08:32:37 - bryan (bryan@gmail.com, USER) - Uploaded file: login_ui_fixed.py
+2025-07-31 08:55:00 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 09:00:02 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 09:04:50 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT- Placement.pdf
+2025-07-31 09:09:57 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 09:13:22 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 09:13:34 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT- Placement.pdf
+2025-07-31 09:13:43 - bryan (bryan@gmail.com, USER) - Uploaded file: Smart Academic Assistant System- Chapter 1.docx
+2025-07-31 09:14:08 - bryan (bryan@gmail.com, USER) - Uploaded file: Professional CV Resume.pdf
+2025-07-31 09:14:22 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-Consent-Arino.pdf
+2025-07-31 09:14:27 - bryan (bryan@gmail.com, USER) - Uploaded file: myCV.pdf
+2025-07-31 09:14:32 - bryan (bryan@gmail.com, USER) - Uploaded file: BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.pdf
+2025-07-31 09:46:03 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 09:57:33 - bryan (bryan@gmail.com, USER) - Opened folder: Minatogumi
+2025-07-31 09:57:33 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-31 09:57:34 - bryan (bryan@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-31 10:15:18 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 10:16:45 - bryan (bryan@gmail.com, USER) - Opened folder: KMTI PJ
+2025-07-31 10:19:17 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT- Placement.pdf
+2025-07-31 10:20:09 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 10:20:16 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT- Placement.pdf
+2025-07-31 10:29:16 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 10:49:38 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 11:29:47 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 11:39:03 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 11:48:56 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+<<<<<<< HEAD
+2025-07-31 13:30:35 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:31:07 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:31:37 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:32:15 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:35:30 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:36:07 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:37:38 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 13:37:52 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 13:52:47 - bryan (bryan@gmail.com, USER) - Deleted file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 13:52:50 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-certification.pdf
+2025-07-31 13:57:25 - bryan (bryan@gmail.com, USER) - Deleted file: diagram.webp
+2025-07-31 13:57:28 - bryan (bryan@gmail.com, USER) - Deleted file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 13:57:28 - bryan (bryan@gmail.com, USER) - Deleted file: OJT- Placement.pdf
+2025-07-31 13:57:28 - bryan (bryan@gmail.com, USER) - Deleted file: BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.pdf
+2025-07-31 13:57:29 - bryan (bryan@gmail.com, USER) - Deleted file: myCV.pdf
+2025-07-31 13:57:29 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-Consent-Arino.pdf
+2025-07-31 13:57:29 - bryan (bryan@gmail.com, USER) - Deleted file: Professional CV Resume.pdf
+2025-07-31 13:57:29 - bryan (bryan@gmail.com, USER) - Deleted file: Smart Academic Assistant System- Chapter 1.docx
+2025-07-31 13:57:30 - bryan (bryan@gmail.com, USER) - Deleted file: KMTI-MOA.docx
+2025-07-31 13:57:30 - bryan (bryan@gmail.com, USER) - Deleted file: login_ui_fixed.py
+2025-07-31 13:57:33 - bryan (bryan@gmail.com, USER) - Deleted file: bergonia_bryan_HERO.pdf
+2025-07-31 13:57:54 - bryan (bryan@gmail.com, USER) - Uploaded file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx
+2025-07-31 13:58:02 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 14:02:28 - bryan (bryan@gmail.com, USER) - Deleted file: KMTI-MOA.docx
+2025-07-31 14:02:28 - bryan (bryan@gmail.com, USER) - Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx
+2025-07-31 14:02:38 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 14:02:42 - bryan (bryan@gmail.com, USER) - Uploaded file: 1ea33614-080f-4112-9f54-2c9fd71b1035.jpg
+2025-07-31 14:02:48 - bryan (bryan@gmail.com, USER) - Uploaded file: BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.pdf
+2025-07-31 14:09:45 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-31 14:09:45 - bryan (bryan@gmail.com, USER) - Opened folder: WINDSMILE
+2025-07-31 14:09:45 - bryan (bryan@gmail.com, USER) - Opened folder: AGCC Project
+2025-07-31 14:12:32 - bryan (bryan@gmail.com, USER) - Uploaded file: CV.pdf
+2025-07-31 14:12:36 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 14:12:39 - bryan (bryan@gmail.com, USER) - Uploaded file: Bergonia-Trainee-Industry-Agreement-Liability-Waiver.pdf
+2025-07-31 14:12:43 - bryan (bryan@gmail.com, USER) - Uploaded file: myCV.pdf
+2025-07-31 14:12:47 - bryan (bryan@gmail.com, USER) - Uploaded file: My_CV.pdf
+2025-07-31 14:55:11 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-Consent-Arino.pdf
+2025-07-31 14:55:15 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT.pdf
+2025-07-31 14:55:19 - bryan (bryan@gmail.com, USER) - Uploaded file: survey-report.docx
+2025-07-31 14:55:25 - bryan (bryan@gmail.com, USER) - Uploaded file: Resume (1).pdf
+2025-07-31 14:55:29 - bryan (bryan@gmail.com, USER) - Uploaded file: CV.pdf
+2025-07-31 16:29:57 - bryan (bryan@gmail.com, USER) - Deleted file: CV.pdf
+2025-07-31 16:30:06 - bryan (bryan@gmail.com, USER) - Deleted file: OJT.pdf
+2025-07-31 16:30:09 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-Consent-Arino.pdf
+2025-07-31 16:30:13 - bryan (bryan@gmail.com, USER) - Deleted file: Resume (1).pdf
+2025-07-31 16:30:14 - bryan (bryan@gmail.com, USER) - Deleted file: survey-report.docx
+2025-07-31 16:30:14 - bryan (bryan@gmail.com, USER) - Deleted file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 16:30:14 - bryan (bryan@gmail.com, USER) - Deleted file: Bergonia-Trainee-Industry-Agreement-Liability-Waiver.pdf
+2025-07-31 16:30:14 - bryan (bryan@gmail.com, USER) - Deleted file: myCV.pdf
+2025-07-31 16:30:14 - bryan (bryan@gmail.com, USER) - Deleted file: My_CV.pdf
+2025-07-31 16:30:15 - bryan (bryan@gmail.com, USER) - Deleted file: 1ea33614-080f-4112-9f54-2c9fd71b1035.jpg
+2025-07-31 16:30:15 - bryan (bryan@gmail.com, USER) - Deleted file: BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.pdf
+2025-07-31 16:30:16 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-certification.pdf
+2025-07-31 16:30:24 - bryan (bryan@gmail.com, USER) - Uploaded file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 16:30:38 - bryan (bryan@gmail.com, USER) - Uploaded file: My_CV.pdf
+2025-07-31 16:30:41 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:30:45 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:30:51 - bryan (bryan@gmail.com, USER) - Uploaded file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx
+2025-07-31 16:30:55 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:31:03 - bryan (bryan@gmail.com, USER) - Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx
+2025-07-31 16:31:08 - bryan (bryan@gmail.com, USER) - Uploaded file: Professional CV Resume.pdf
+2025-07-31 16:31:12 - bryan (bryan@gmail.com, USER) - Uploaded file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx
+2025-07-31 16:31:17 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:31:23 - bryan (bryan@gmail.com, USER) - Uploaded file: survey-report.pdf
+2025-07-31 16:31:29 - bryan (bryan@gmail.com, USER) - Uploaded file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 16:31:35 - bryan (bryan@gmail.com, USER) - Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx
+2025-07-31 16:31:35 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-certification.pdf
+2025-07-31 16:31:35 - bryan (bryan@gmail.com, USER) - Deleted file: Professional CV Resume.pdf
+2025-07-31 16:31:36 - bryan (bryan@gmail.com, USER) - Deleted file: Screenshot_2025-07-21_103258-removebg-preview.png
+2025-07-31 16:31:36 - bryan (bryan@gmail.com, USER) - Deleted file: survey-report.pdf
+2025-07-31 16:31:36 - bryan (bryan@gmail.com, USER) - Deleted file: 518731264_1066521395131717_4616312988897449563_n.png
+2025-07-31 16:31:36 - bryan (bryan@gmail.com, USER) - Deleted file: My_CV.pdf
+2025-07-31 16:32:20 - bryan (bryan@gmail.com, USER) - Uploaded file: 494819174_1344004343348157_3368362034039009803_n.png
+2025-07-31 16:32:25 - bryan (bryan@gmail.com, USER) - Uploaded file: OJT.pdf
+2025-07-31 16:32:29 - bryan (bryan@gmail.com, USER) - Uploaded file: Astro Runner-Nodes.docx
+2025-07-31 16:32:32 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:32:36 - bryan (bryan@gmail.com, USER) - Uploaded file: Smart Academic Assistant System- Chapter 1.docx
+2025-07-31 16:32:41 - bryan (bryan@gmail.com, USER) - Uploaded file: Astro Runner-Nodes.docx
+2025-07-31 16:32:52 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 16:34:40 - bryan (bryan@gmail.com, USER) - Deleted file: Smart Academic Assistant System- Chapter 1.docx
+2025-07-31 16:34:57 - bryan (bryan@gmail.com, USER) - Uploaded file: myCV.pdf
+2025-07-31 16:35:06 - bryan (bryan@gmail.com, USER) - Uploaded file: myCV.pdf
+2025-07-31 16:35:10 - bryan (bryan@gmail.com, USER) - Deleted file: myCV.pdf
+2025-07-31 16:35:18 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 16:35:23 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 16:35:28 - bryan (bryan@gmail.com, USER) - Uploaded file: Parents-certification.pdf
+2025-07-31 16:36:15 - bryan (bryan@gmail.com, USER) - Uploaded file: KMTI-MOA.docx
+2025-07-31 16:36:17 - bryan (bryan@gmail.com, USER) - Deleted file: KMTI-MOA.docx
+2025-07-31 16:36:18 - bryan (bryan@gmail.com, USER) - Deleted file: Parents-certification.pdf
+2025-07-31 16:36:18 - bryan (bryan@gmail.com, USER) - Deleted file: 494819174_1344004343348157_3368362034039009803_n.png
+2025-07-31 16:36:26 - bryan (bryan@gmail.com, USER) - Uploaded file: BERGONIA BRYAN - Activity (DFS and DSPA).docx
+2025-07-31 16:36:30 - bryan (bryan@gmail.com, USER) - Uploaded file: My_CV.pdf
+2025-07-31 16:36:36 - bryan (bryan@gmail.com, USER) - Uploaded file: Smart Academic Assistant System- Chapter 1 (Repaired).docx
+2025-07-31 16:36:40 - bryan (bryan@gmail.com, USER) - Uploaded file: myCV.pdf
+2025-07-31 16:36:46 - bryan (bryan@gmail.com, USER) - Uploaded file: 494819174_1344004343348157_3368362034039009803_n.png
+2025-07-31 16:36:51 - bryan (bryan@gmail.com, USER) - Uploaded file: 494821944_979019437455450_3739855748643100630_n.png
+2025-07-31 16:36:56 - bryan (bryan@gmail.com, USER) - Uploaded file: Smart Academic Assistant System Chapter 1.pdf
+2025-07-31 16:37:02 - bryan (bryan@gmail.com, USER) - Uploaded file: SMART-PARCEL-DROP-BOX-SYSTEM-WITH-MOBILE-APP-FOR-SECURE-CONTACTLESS-DELIVERIES (1).pdf
+2025-07-31 16:37:07 - bryan (bryan@gmail.com, USER) - Uploaded file: survey-report.docx
+2025-07-31 16:37:12 - bryan (bryan@gmail.com, USER) - Uploaded file: survey-report.pdf
+2025-07-31 16:42:32 - bryan (bryan@gmail.com, USER) - Deleted file: SMART-PARCEL-DROP-BOX-SYSTEM-WITH-MOBILE-APP-FOR-SECURE-CONTACTLESS-DELIVERIES (1).pdf
+2025-07-31 16:45:27 - bryan (bryan@gmail.com, USER) - Deleted file: survey-report.docx
+2025-07-31 16:46:59 - bryan (bryan@gmail.com, USER) - Opened folder: Minatogumi
+2025-07-31 16:46:59 - bryan (bryan@gmail.com, USER) - Opened folder: KUSAKABE
+2025-07-31 16:47:15 - bryan (bryan@gmail.com, USER) - Deleted file: survey-report.pdf
+2025-07-31 16:50:36 - bryan (bryan@gmail.com, USER) - Deleted file: 494819174_1344004343348157_3368362034039009803_n.png
+=======
+2025-07-31 13:30:53 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:31:02 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:32:29 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:33:29 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:34:36 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:36:41 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:52:01 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 13:52:09 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 13:52:18 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 13:52:23 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:05:43 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:33:55 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:35:37 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:36:15 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:00 - Raysan Perez (raysan@example.com, ADMIN) - Login to User Panel
+2025-07-31 14:37:08 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-07-31 14:37:40 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:37:41 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:46 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:37:47 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:37:58 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:38:01 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 14:40:36 - Raysan Perez (raysan@example.com, ADMIN) - Opened folder: WINDSMILE
+2025-07-31 14:41:39 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 14:44:06 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 14:44:16 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:48:14 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:48:22 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 14:50:49 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:55:01 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 14:56:48 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 14:56:52 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 14:57:37 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:04:57 - Raysan Perez (raysan@example.com, ADMIN) - Entered USER panel
+2025-07-31 15:05:20 - Raysan Perez (raysan@example.com, ADMIN) - Uploaded file: kmti.ico
+2025-07-31 15:05:25 - Raysan Perez (raysan@example.com, ADMIN) - Logged out from USER panel
+2025-07-31 15:05:31 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:06:13 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:06:18 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 15:06:28 - User Test (user1@example.com, USER) - Uploaded file: kmti.ico
+2025-07-31 15:06:40 - User Test (user1@example.com, USER) - Uploaded file: 2784TRAIP.icd
+2025-07-31 15:06:48 - User Test (user1@example.com, USER) - Logged out from USER panel
+2025-07-31 15:06:55 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:13:28 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:39:38 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-07-31 15:40:09 - Raysan Perez (raysan@example.com, ADMIN) - Logged out
+2025-07-31 15:40:17 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:40:32 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:40:47 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:41:15 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:41:56 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:43:50 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:44:15 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:44:57 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 15:45:38 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 15:45:45 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 15:47:45 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 16:59:15 - Admin (admin@example.com, ADMIN) - Login
+2025-07-31 17:00:26 - Admin (admin@example.com, ADMIN) - Logged out
+2025-07-31 17:00:39 - User Test (user1@example.com, USER) - Entered USER panel
+2025-07-31 17:00:44 - User Test (user1@example.com, USER) - Logged out from USER panel
+2025-08-01 08:52:33 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 08:53:30 - Admin (admin@example.com, ADMIN) - Logout
+2025-08-01 08:53:37 - User Test (user1@example.com, USER) - Login
+2025-08-01 08:53:50 - User Test (user1@example.com, USER) - Deleted file: HB3P101N01_TRAIP.icd
+2025-08-01 08:53:55 - User Test (user1@example.com, USER) - Deleted file: kmti.ico
+2025-08-01 08:53:58 - User Test (user1@example.com, USER) - Deleted file: HB3P010U01_TRAIP.icd
+2025-08-01 08:54:00 - User Test (user1@example.com, USER) - Deleted file: kmti_logo.png
+2025-08-01 08:54:18 - User Test (user1@example.com, USER) - Logged
+2025-08-01 08:54:23 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:10:02 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:12:28 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:13:33 - Admin (admin@example.com, ADMIN) - Login

@@ -4,11 +4,11 @@ import os
 import hashlib
 from utils.auth import validate_login
 from admin_panel import admin_panel
-from user_panel import user_panel
+from user.user_panel import user_panel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from typing import Optional
-from utils.session_logger import log_login  # NEW IMPORT
-from datetime import datetime  # NEW IMPORT
+from utils.session_logger import log_login
+from datetime import datetime
 
 
 def hash_password(password: str | None) -> str:
@@ -52,31 +52,18 @@ def login_view(page: ft.Page):
     page.bgcolor = "#D9D9D9"
 
     is_admin_login = False
-
-    # Load saved credentials
     saved_credentials = load_saved_credentials()
     saved_usernames = list(saved_credentials.keys()) if isinstance(saved_credentials, dict) else []
 
     username = ft.TextField(
-        label="Username",
-        width=300,
-        border_radius=10,
-        height=50,
-        border_color="#cccccc",
-        focused_border_color="#000000",
-        bgcolor=ft.Colors.WHITE,
+        label="Username", width=300, border_radius=10, height=50,
+        border_color="#cccccc", focused_border_color="#000000", bgcolor=ft.Colors.WHITE,
     )
 
     password = ft.TextField(
-        label="Password",
-        password=True,
-        can_reveal_password=True,
-        width=300,
-        border_radius=10,
-        height=50,
-        border_color="#cccccc",
-        focused_border_color="#000000",
-        bgcolor=ft.Colors.WHITE
+        label="Password", password=True, can_reveal_password=True, width=300,
+        border_radius=10, height=50, border_color="#cccccc",
+        focused_border_color="#000000", bgcolor=ft.Colors.WHITE
     )
 
     remember_me = ft.Checkbox(label="Remember Me", value=False)
@@ -91,24 +78,21 @@ def login_view(page: ft.Page):
         if isinstance(saved_credentials, dict):
             saved_usernames.extend(saved_credentials.keys())
 
-        # Now validate_login() returns "ADMIN", "USER", or None
         role = validate_login(username.value, password.value, is_admin_login)
         error_text.value = ""
 
         if role in ["ADMIN", "USER"]:
-            expected_role = "ADMIN" if is_admin_login else "USER"
-            if role != expected_role:
-                error_text.value = f"Access denied: This account is for '{role}' only!"
-                page.update()
-                return
-
-            # Log login
+            if is_admin_login:
+                # Admin login page: must be ADMIN only
+                if role != "ADMIN":
+                    error_text.value = f"Access denied: This account is for '{role}' only!"
+                    page.update()
+                    return
+            # Log login action
             log_login(username.value, role)
-
-            # Reset runtime_start on login (session-based runtime)
             reset_runtime_start(username.value)
 
-            # Save if remember me is checked
+            # Save credentials if remember me is checked
             if remember_me.value:
                 os.makedirs("data", exist_ok=True)
                 saved_credentials[username.value] = {
@@ -121,12 +105,15 @@ def login_view(page: ft.Page):
                 page.snack_bar.open = True
                 page.update()
 
-            # Navigate to the correct panel
+            # Navigation
             page.clean()
-            if role == "ADMIN":
+            if is_admin_login:
+                # Admin login page always goes to admin panel
                 admin_panel(page, username.value)
             else:
+                # User login page: both ADMIN and USER go to user panel
                 user_panel(page, username.value)
+
         else:
             error_text.value = "Invalid credentials!"
             page.update()

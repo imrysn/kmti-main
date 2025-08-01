@@ -4,7 +4,7 @@ import json
 import os
 import hashlib
 from admin.utils.team_utils import get_team_options
-from utils.session_logger import log_activity  # NEW IMPORT
+from utils.session_logger import log_activity
 
 USERS_FILE = "data/users.json"
 
@@ -60,6 +60,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
             page.update()
             return
 
+        # Save user data
         users = load_users()
         hashed_pw = hash_password(password.value)
 
@@ -138,7 +139,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
                     padding=20,
                 )
             ],
-            alignment=ft.MainAxisAlignment.CENTER,  # Always center horizontally
+            alignment=ft.MainAxisAlignment.CENTER,  
             expand=True
         )
     )
