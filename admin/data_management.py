@@ -87,12 +87,11 @@ def data_management(content: ft.Column, username: Optional[str]):
         icon = ft.Icons.FOLDER if is_folder else ft.Icons.DESCRIPTION
         return ft.Container(
             content=ft.Column([
-                ft.Icon(icon, size=64),
-                ft.Text(item.name, size=12, text_align="center", no_wrap=False),
+                ft.Icon(icon, size=64, color="#000000"),
+                ft.Text(item.name, size=14, text_align="center", no_wrap=False),
             ], alignment=ft.MainAxisAlignment.CENTER),
             on_click=lambda e, p=item: open_item(p),
             padding=10,
-            bgcolor=ft.Colors.WHITE,
             border_radius=8,
         )
 

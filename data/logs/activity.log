@@ -377,3 +377,5 @@
 2025-08-01 11:36:28 - Admin (admin@example.com, ADMIN) - Logout
 2025-08-01 11:36:35 - Raysan Perez (raysan@example.com, ADMIN) - Login
 2025-08-01 11:39:32 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-08-01 15:53:02 - User Test (user1@example.com, USER) - Login
+2025-08-01 15:53:09 - User Test (user1@example.com, USER) - Logout
