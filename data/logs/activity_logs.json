@@ -1112,5 +1112,59 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-01 13:20:18"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 13:21:43"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:37:05"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:40:14"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Added new user 'dwada' with role 'USER'",
+        "date": "2025-08-01 13:41:20"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Deleted user awd",
+        "date": "2025-08-01 13:41:23"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:45:55"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:46:23"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:49:39"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 13:54:32"
     }
 ]

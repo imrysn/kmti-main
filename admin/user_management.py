@@ -8,6 +8,8 @@ import asyncio
 from datetime import datetime
 from admin.utils.team_utils import get_team_options
 from utils.session_logger import get_active_sessions, get_last_runtime, log_activity
+from utils.dialog import show_center_sheet
+
 
 
 def user_management(content: ft.Column, username: Optional[str]):
@@ -221,21 +223,31 @@ def user_management(content: ft.Column, username: Optional[str]):
                     runtime_labels[email] = (runtime_lbl, session_key)
                     cells.append(ft.DataCell(runtime_lbl))
                 elif col_name == "Remove User":
+                    def confirm_delete(e, u=email):
+                        show_center_sheet(
+                            content.page,
+                            title="Confirm Delete",
+                            message=f"Are you sure you want to delete user '{u}'?",
+                            on_confirm=lambda: delete_user(u)
+                        )
+
                     delete_btn = ft.ElevatedButton(
                         "Delete",
                         style=ft.ButtonStyle(
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                     ft.ControlState.HOVERED: ft.Colors.RED},
+                                    ft.ControlState.HOVERED: ft.Colors.RED},
                             color={ft.ControlState.DEFAULT: ft.Colors.RED,
-                                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                ft.ControlState.HOVERED: ft.Colors.WHITE},
                             side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED_900),
                                 ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                             shape=ft.RoundedRectangleBorder(radius=5),
                         ),
-                        on_click=lambda e, u=email: delete_user(u),
+                        on_click=confirm_delete,
                         icon=ft.Icons.DELETE_OUTLINED,
                     )
                     cells.append(ft.DataCell(delete_btn))
+
+
 
             table.rows.append(ft.DataRow(cells=cells))
 
