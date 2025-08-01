@@ -277,3 +277,15 @@
 2025-07-31 17:00:26 - Admin (admin@example.com, ADMIN) - Logged out
 2025-07-31 17:00:39 - User Test (user1@example.com, USER) - Entered USER panel
 2025-07-31 17:00:44 - User Test (user1@example.com, USER) - Logged out from USER panel
+2025-08-01 08:52:33 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 08:53:30 - Admin (admin@example.com, ADMIN) - Logout
+2025-08-01 08:53:37 - User Test (user1@example.com, USER) - Login
+2025-08-01 08:53:50 - User Test (user1@example.com, USER) - Deleted file: HB3P101N01_TRAIP.icd
+2025-08-01 08:53:55 - User Test (user1@example.com, USER) - Deleted file: kmti.ico
+2025-08-01 08:53:58 - User Test (user1@example.com, USER) - Deleted file: HB3P010U01_TRAIP.icd
+2025-08-01 08:54:00 - User Test (user1@example.com, USER) - Deleted file: kmti_logo.png
+2025-08-01 08:54:18 - User Test (user1@example.com, USER) - Logged
+2025-08-01 08:54:23 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:10:02 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:12:28 - Admin (admin@example.com, ADMIN) - Login
+2025-08-01 09:13:33 - Admin (admin@example.com, ADMIN) - Login

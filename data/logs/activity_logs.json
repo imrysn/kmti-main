@@ -76,5 +76,77 @@
         "fullname": "User Test",
         "activity": "Logout",
         "date": "2025-07-31 17:00:44"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 08:52:33"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 08:53:30"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 08:53:37"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: HB3P101N01_TRAIP.icd",
+        "date": "2025-08-01 08:53:50"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: kmti.ico",
+        "date": "2025-08-01 08:53:55"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: HB3P010U01_TRAIP.icd",
+        "date": "2025-08-01 08:53:58"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: kmti_logo.png",
+        "date": "2025-08-01 08:54:00"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 08:54:18"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 08:54:23"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:10:02"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:12:28"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:13:33"
     }
 ]

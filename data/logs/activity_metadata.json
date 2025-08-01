@@ -319,8 +319,8 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-07-31 16:59:14",
-        "logout_time": null,
-        "runtime": null,
+        "logout_time": "2025-08-01 08:52:33",
+        "runtime": "15:53:19",
         "date": "2025-07-31"
     },
     {
@@ -328,8 +328,62 @@
         "fullname": "User Test",
         "role": "USER",
         "login_time": "2025-07-31 17:00:39",
+        "logout_time": "2025-08-01 08:53:37",
+        "runtime": "15:52:58",
+        "date": "2025-07-31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 08:52:33",
+        "logout_time": "2025-08-01 08:54:23",
+        "runtime": "00:01:50",
+        "date": "2025-08-01"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "role": "USER",
+        "login_time": "2025-08-01 08:53:37",
         "logout_time": null,
         "runtime": null,
-        "date": "2025-07-31"
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 08:54:23",
+        "logout_time": "2025-08-01 09:10:02",
+        "runtime": "00:15:39",
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 09:10:02",
+        "logout_time": "2025-08-01 09:12:28",
+        "runtime": "00:02:26",
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 09:12:28",
+        "logout_time": "2025-08-01 09:13:33",
+        "runtime": "00:01:05",
+        "date": "2025-08-01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-01 09:13:33",
+        "logout_time": null,
+        "runtime": null,
+        "date": "2025-08-01"
     }
 ]

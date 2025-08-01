@@ -486,5 +486,101 @@
         "role": "USER",
         "datetime": "2025-07-31T17:49:07.828810",
         "description": "Deleted file: 2784TRAIP.icd"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T08:52:33.798744",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T08:53:30.715031",
+        "description": "Logout"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:53:37.764369",
+        "description": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:53:50.001713",
+        "description": "Deleted file: HB3P101N01_TRAIP.icd"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:53:55.642141",
+        "description": "Deleted file: kmti.ico"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:53:58.290809",
+        "description": "Deleted file: HB3P010U01_TRAIP.icd"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:54:00.146266",
+        "description": "Deleted file: kmti_logo.png"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:54:18.649592",
+        "description": "Logged"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T08:54:23.830895",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T09:10:02.611883",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T09:12:28.310630",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T09:13:33.084569",
+        "description": "Login"
     }
 ]
