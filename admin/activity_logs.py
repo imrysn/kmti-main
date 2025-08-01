@@ -3,6 +3,8 @@ from flet import FontWeight
 import json
 import os
 from utils.dialog import show_center_sheet
+from fpdf import FPDF
+import pathlib
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
@@ -108,17 +110,15 @@ def activity_logs(content: ft.Column, username: str):
         table.rows.extend(build_rows(search_field.value or ""))
         table.update()
 
-        # Function to clear only filtered logs
+    # Function to clear only filtered logs
     def clear_logs_action(e):
         search_text = (search_field.value or "").lower()
         print(f"[DEBUG] clear_logs_action called with filter: '{search_text}'")
 
         if not search_text:
-            # If no filter, do nothing
             print("[DEBUG] No filter applied, nothing to delete.")
             return
 
-        # Rebuild the remaining logs: keep only those that do NOT match the search
         remaining_logs = []
         for log in logs:
             uname = log.get("username", "")
@@ -140,19 +140,92 @@ def activity_logs(content: ft.Column, username: str):
                 description
             ]).lower()
 
-            # Keep logs that don't match the filter
             if search_text not in combined:
                 remaining_logs.append(log)
 
-        # Save the remaining logs back to file
         with open(ACTIVITY_LOGS_FILE, "w") as f:
             json.dump(remaining_logs, f, indent=4)
 
-        # Update in-memory logs and refresh table
         logs.clear()
         logs.extend(remaining_logs)
         refresh_table()
 
+    # Ensure default export directory
+    default_export_dir = pathlib.Path("data/export")
+    default_export_dir.mkdir(parents=True, exist_ok=True)
+
+    # File picker (still appended in case needed later)
+    file_picker = ft.FilePicker()
+    content.page.overlay.append(file_picker)
+
+    # Function to export logs to PDF
+    def export_logs_action(e):
+        search_text = (search_field.value or "").lower()
+        print(f"[DEBUG] export_logs_action called with filter: '{search_text}'")
+
+        filtered = []
+        for log in reversed(logs):
+            uname = log.get("username", "")
+            info = user_info.get(uname, {
+                "fullname": uname,
+                "email": "",
+                "role": "",
+                "team": ""
+            })
+            dt_display = log.get("date", "-")
+            description = log.get("activity", "")
+            combined = " ".join([
+                info["fullname"],
+                info["email"],
+                uname,
+                info["role"],
+                info["team"],
+                dt_display,
+                description
+            ]).lower()
+
+            if search_text in combined:
+                filtered.append({
+                    "fullname": info["fullname"],
+                    "email": info["email"],
+                    "username": uname,
+                    "role": info["role"],
+                    "team": info["team"],
+                    "date": dt_display,
+                    "activity": description
+                })
+
+        if not filtered:
+            print("[DEBUG] No logs found to export.")
+            return
+
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.cell(200, 10, txt="Exported Activity Logs", ln=True, align="C")
+        pdf.ln(5)
+
+        headers = ["Full Name", "Email", "Username", "Role", "Team", "Date & Time", "Activity"]
+        header_line = " | ".join(headers)
+        pdf.multi_cell(0, 8, header_line)
+        pdf.ln(2)
+
+        for entry in filtered:
+            line = f"{entry['fullname']} | {entry['email']} | {entry['username']} | {entry['role']} | {entry['team']} | {entry['date']} | {entry['activity']}"
+            pdf.multi_cell(0, 8, line)
+            pdf.ln(1)
+
+        # Find a unique filename
+        base_filename = "exported_logs"
+        ext = ".pdf"
+        counter = 0
+        export_file = default_export_dir / f"{base_filename}{ext}"
+        while export_file.exists():
+            counter += 1
+            export_file = default_export_dir / f"{base_filename}_{counter}{ext}"
+
+        pdf.output(str(export_file))
+        print(f"[DEBUG] Logs exported to {export_file}")
 
     # Controls
     search_field = ft.TextField(
@@ -165,16 +238,18 @@ def activity_logs(content: ft.Column, username: str):
     export_button = ft.ElevatedButton(
         "Export Logs",
         icon=ft.Icons.UPLOAD_OUTLINED,
+        on_click=lambda e: export_logs_action(e),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREEN,
-                     ft.ControlState.HOVERED: ft.Colors.WHITE},
-            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                   ft.ControlState.HOVERED: ft.Colors.GREEN},
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                     ft.ControlState.HOVERED: ft.Colors.GREEN},
+            color={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                   ft.ControlState.HOVERED: ft.Colors.WHITE},
             side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.GREEN),
-                ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                  ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
             shape=ft.RoundedRectangleBorder(radius=5)
         )
     )
+
     clear_button = ft.ElevatedButton(
         "Clear",
         icon=ft.Icons.CLEAR_OUTLINED,
@@ -185,31 +260,28 @@ def activity_logs(content: ft.Column, username: str):
             on_confirm=lambda: clear_logs_action(e),
         ),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.RED,
-                    ft.ControlState.HOVERED: ft.Colors.WHITE},
-            color={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                ft.ControlState.HOVERED: ft.Colors.RED},
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                    ft.ControlState.HOVERED: ft.Colors.RED},
+            color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                ft.ControlState.HOVERED: ft.Colors.WHITE},
             side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED),
                 ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
             shape=ft.RoundedRectangleBorder(radius=5)
         )
     )
 
-
     # Top row layout
     top_controls = ft.Row(
         controls=[
             ft.Text("Activity Logs", size=22, weight=FontWeight.BOLD),
-            ft.Container(expand=True), 
+            ft.Container(expand=True),
             search_field,
             export_button,
             clear_button,
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        
     )
 
-    # Center table
     table_container = ft.Container(
         content=ft.Row(
             controls=[table],
@@ -220,7 +292,6 @@ def activity_logs(content: ft.Column, username: str):
         padding=10,
     )
 
-    # Add to content
     content.controls.extend([
         top_controls,
         ft.Divider(),
