@@ -1,5 +1,6 @@
 import flet as ft
 import os
+import json
 from typing import Optional
 
 from .components.browser_view import BrowserView
@@ -10,10 +11,27 @@ from .services.file_service import FileService
 from utils.logger import log_action  
 from utils.session_logger import log_activity
 
+SESSION_FILE = "data/session.json"
+
+def save_session(username: str, role: str = "user"):
+    """Save active session to a JSON file."""
+    print(f"[DEBUG] Saving session for {username} with role {role}")
+    os.makedirs("data", exist_ok=True)
+    with open(SESSION_FILE, "w") as f:
+        json.dump({"username": username, "role": role}, f)
+
+def clear_session():
+    """Remove the session file."""
+    print("[DEBUG] Clearing session")
+    if os.path.exists(SESSION_FILE):
+        os.remove(SESSION_FILE)
 
 def user_panel(page: ft.Page, username: Optional[str]):
     """Main user panel function - orchestrates the different views and services"""
     
+    # Save session on login
+    save_session(username, "user")
+
     # Initialize services
     user_folder = f"data/uploads/{username}"
     os.makedirs(user_folder, exist_ok=True)
@@ -35,8 +53,11 @@ def user_panel(page: ft.Page, username: Optional[str]):
 
     def logout(e):
         # Log logout event
-        log_action(username, "Logged")
+        log_action(username, "Logout")
         log_activity(username, "Logout")
+
+        # Clear session so next launch requires login
+        clear_session()
 
         # Clear all page elements completely
         page.controls.clear()

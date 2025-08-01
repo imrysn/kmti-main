@@ -148,5 +148,861 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-01 09:13:33"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:18:39"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:23:05"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:23:30"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:41:45"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:42:25"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 09:42:43"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:42:52"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Changed team of admin@example.com from ['KMTI PJ'] to ['IT']",
+        "date": "2025-08-01 09:44:40"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Added new team 'ADMIN'",
+        "date": "2025-08-01 09:44:48"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:46:02"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:56:49"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 09:56:58"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 09:57:13"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 09:57:24"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 09:57:29"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:10:32"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:11:27"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:11:42"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 10:11:49"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 10:11:59"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:12:04"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:12:32"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:12:36"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:12:39"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:13:01"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:18:12"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:18:37"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:18:41"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:19:57"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:20:11"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:20:21"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:22:18"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:22:29"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:22:33"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:23:05"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:23:12"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:24:09"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:24:11"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:25:23"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:25:24"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:26:16"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:26:23"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:26:32"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:26:35"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:26:46"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:26:49"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:27:18"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:27:25"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 10:27:30"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 10:27:33"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:28:51"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:29:01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 10:40:38",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:40:38"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 10:42:04",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:42:04"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 10:59:14",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 10:59:14"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 10:59:19",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 10:59:19"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 10:59:26",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 10:59:26"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:02:24",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 11:02:24"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:06:35",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:06:35"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:16:46",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:16:46"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:16:54",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:16:54"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:16:57",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:16:57"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-01 11:17:05",
+        "activity": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-01 11:17:05"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-01 11:17:07",
+        "activity": "Logout"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-01 11:17:07"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:17:12",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 11:17:12"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:17:36",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 11:17:36"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:17:45",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:17:45"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:19:11",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:19:11"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:19:15",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:19:15"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:19:29",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 11:19:29"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:24:00",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 11:24:00"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:24:05",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 11:24:05"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:24:31",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:24:31"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:24:33",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:24:33"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:24:55",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:24:55"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:25:00",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:25:00"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "email": "mg@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:25:06",
+        "activity": "Login"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "activity": "Login",
+        "date": "2025-08-01 11:25:06"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "email": "mg@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:25:50",
+        "activity": "Login"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "activity": "Login",
+        "date": "2025-08-01 11:25:50"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "email": "mg@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:25:54",
+        "activity": "Logout"
+    },
+    {
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "activity": "Logout",
+        "date": "2025-08-01 11:25:54"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:25:59",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:25:59"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:30:37",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:30:37"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:30:45",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:30:45"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:30:50",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:30:50"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:31:19",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:31:19"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:31:24",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 11:31:24"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:33:49",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 11:33:49"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:33:54",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 11:33:54"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:36:28",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-01 11:36:28"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:36:35",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-01 11:36:35"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-01 11:39:32",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-01 11:39:32"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 12:00:59"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-01 12:03:38"
     }
 ]
