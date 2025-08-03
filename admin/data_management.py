@@ -3,10 +3,9 @@ from flet import FontWeight
 from typing import Optional
 from pathlib import Path
 import os
+from utils.config_loader import get_base_dir
 
-# Change this to your server folder
-BASE_DIR = Path(r"X:\PROJECTS")
-
+BASE_DIR = get_base_dir()
 
 def list_directory(path: Path):
     folders = []
@@ -42,7 +41,6 @@ def data_management(content: ft.Column, username: Optional[str]):
 
     current_path = [BASE_DIR]
 
-    # Grid for displaying folders/files
     grid = ft.GridView(
         expand=True,
         runs_count=6,
@@ -52,7 +50,6 @@ def data_management(content: ft.Column, username: Optional[str]):
         run_spacing=10,
     )
 
-    # Text field for search
     search_field = ft.TextField(
         hint_text="Search...",
         width=250,
@@ -62,7 +59,6 @@ def data_management(content: ft.Column, username: Optional[str]):
         prefix_icon=ft.Icons.SEARCH,
     )
 
-    # Back button
     back_button = ft.IconButton(
         ft.Icons.ARROW_BACK,
         tooltip="Back",
@@ -75,7 +71,7 @@ def data_management(content: ft.Column, username: Optional[str]):
             current_path[0] = item
             refresh()
         else:
-            os.startfile(item)  # Opens file with default application
+            os.startfile(item)
 
     def go_back():
         if current_path[0] != BASE_DIR:
@@ -85,24 +81,32 @@ def data_management(content: ft.Column, username: Optional[str]):
     def build_item_tile(item: Path):
         is_folder = item.is_dir()
         icon = ft.Icons.FOLDER if is_folder else ft.Icons.DESCRIPTION
+
+            # Limit display name length
+        display_name = item.name
+        max_len = 15
+        if len(display_name) > max_len:
+            short_name = display_name[:max_len - 3] + "..."
+        else:
+            short_name = display_name
+
         return ft.Container(
             content=ft.Column([
                 ft.Icon(icon, size=64, color="#000000"),
-                ft.Text(item.name, size=14, text_align="center", no_wrap=False),
+                ft.Text(short_name, size=14, text_align="center", no_wrap=True),
             ], alignment=ft.MainAxisAlignment.CENTER),
+            tooltip=item.name,  
             on_click=lambda e, p=item: open_item(p),
             padding=10,
             border_radius=8,
-        )
+            )
+
 
     def refresh():
         grid.controls.clear()
         path = current_path[0]
-
-        # Toggle back button
         back_button.visible = (path != BASE_DIR)
 
-        # If search is active, perform search
         query = search_field.value.strip()
         if query:
             results = search_all(BASE_DIR, query)
@@ -116,10 +120,8 @@ def data_management(content: ft.Column, username: Optional[str]):
         grid.update()
         back_button.update()
 
-    # Attach refresh to search field change
     search_field.on_change = lambda e: refresh()
 
-    # Layout top bar
     top_bar = ft.Row([
         back_button,
         ft.PopupMenuButton(
@@ -140,7 +142,6 @@ def data_management(content: ft.Column, username: Optional[str]):
         search_field,
     ], alignment=ft.MainAxisAlignment.START)
 
-    # Add controls
     content.controls.extend([
         top_bar,
         ft.Divider(),
@@ -148,5 +149,4 @@ def data_management(content: ft.Column, username: Optional[str]):
     ])
     content.update()
 
-    # Initial refresh
     refresh()

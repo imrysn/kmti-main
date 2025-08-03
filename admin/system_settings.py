@@ -6,7 +6,7 @@ import os
 from utils.session_logger import log_activity
 
 TEAMS_FILE = "data/teams.json"
-
+CONFIG_FILE = "data/config.json"
 
 # ========== Helpers for JSON ==========
 def load_json(path, default):
@@ -32,6 +32,11 @@ def load_teams():
 def save_teams(teams):
     save_json(TEAMS_FILE, teams)
 
+def load_config():
+    return load_json(CONFIG_FILE, {"base_dir": ""})
+
+def save_config(config):
+    save_json(CONFIG_FILE, config)
 
 # ========== Main Settings Page ==========
 def system_settings(content: ft.Column, username: Optional[str]):
@@ -145,11 +150,10 @@ def system_settings(content: ft.Column, username: Optional[str]):
     def team_page():
         refresh_team_table()
         return ft.Column([
-                # Top row: "Teams" on left, text field + button on right
-            ft.Row(
+                ft.Row(
                     [
                         ft.Text("Teams", size=22, weight=FontWeight.BOLD),
-                        ft.Container(expand=True),  # pushes controls to the right
+                        ft.Container(expand=True),
                         new_team_field,
                         ft.ElevatedButton("Add Team", on_click=add_team),
                     ],
@@ -159,6 +163,63 @@ def system_settings(content: ft.Column, username: Optional[str]):
                 team_table
             ], spacing=20, expand=True)
 
+    # --- Directory Settings Page ---
+    def directory_page():
+        config = load_config()
+        current_path = config.get("base_dir", "")
+
+        path_field = ft.TextField(
+            label="Base Directory Path",
+            value=current_path,
+            expand=True
+        )
+
+        def browse_folder(_):
+            def on_result(e: ft.FilePickerResultEvent):
+                if e.path:
+                    path_field.value = e.path
+                    path_field.update()
+            file_picker = ft.FilePicker(on_result=on_result)
+            content.page.overlay.append(file_picker)
+            content.page.update()
+            file_picker.get_directory_path()
+
+        def save_directory(_):
+            new_path = path_field.value.strip()
+            if new_path and os.path.exists(new_path):
+                config["base_dir"] = new_path
+                save_config(config)
+                log_activity(username, f"Changed base directory to {new_path}")
+                dlg = ft.AlertDialog(
+                    title=ft.Text("Directory Saved"),
+                    content=ft.Text("Base directory updated successfully.")
+                )
+                content.page.dialog = dlg
+                dlg.open = True
+                content.page.update()
+            else:
+                dlg = ft.AlertDialog(
+                    title=ft.Text("Invalid Path"),
+                    content=ft.Text("The entered path does not exist.")
+                )
+                content.page.dialog = dlg
+                dlg.open = True
+                content.page.update()
+
+        return ft.Column([
+            ft.Text("Base Directory", size=22, weight=FontWeight.BOLD),
+            ft.Divider(),
+            ft.Row([
+                path_field,
+                ft.ElevatedButton("Browse", on_click=browse_folder),
+                ft.ElevatedButton("Save", on_click=save_directory),
+            ]),
+            ft.Text(
+                "This directory will be used as the root for file management.",
+                size=14,
+                italic=True,
+            )
+        ], spacing=20, expand=True)
 
     # --- About Page ---
     def about_page():
@@ -173,29 +234,26 @@ def system_settings(content: ft.Column, username: Optional[str]):
     # ------------ Navigation ------------
     sections = [
         "Teams",
+        "Directory",
         "About"
     ]
 
-    # Containers for buttons, so we can update highlight without re-rendering
     sidebar_buttons = {}
 
     def show_section(section_name):
-        # Update selected section
         state["selected"] = section_name
 
-        # Update button highlights (only change property, don't call update() yet)
         for sec, cont in sidebar_buttons.items():
             cont.bgcolor = "#007BFFFF" if sec == section_name else "#F5F5F7"
 
-        # Update right panel content
         if section_name == "Teams":
             right_panel.content = team_page()
+        elif section_name == "Directory":
+            right_panel.content = directory_page()
         elif section_name == "About":
             right_panel.content = about_page()
 
-        # Update the whole content once
         content.update()
-
 
     # Sidebar with hover effects
     sidebar_column = ft.Column(
@@ -217,7 +275,6 @@ def system_settings(content: ft.Column, username: Optional[str]):
                          ft.ControlState.SELECTED: "#007BFF"},
             ),
             on_click=lambda e, sec=s: show_section(sec),
-            
         )
         container = ft.Container(
             content=btn,
@@ -234,13 +291,11 @@ def system_settings(content: ft.Column, username: Optional[str]):
         width=200,
         content=sidebar_column,
         padding=20,
-        
     )
 
-    # Layout: sidebar stays, right panel updates
     layout = ft.Row([sidebar, right_panel], expand=True)
     content.controls.append(layout)
-     
+
     # Initial page
     show_section(state["selected"])
     content.update()

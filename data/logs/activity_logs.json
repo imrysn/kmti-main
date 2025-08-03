@@ -332,5 +332,95 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-01 15:53:15"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 14:50:48"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 15:21:30"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 15:33:47"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Changed base directory to D:\\\\",
+        "date": "2025-08-03 15:34:10"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 15:34:36"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-03 15:35:23"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-03 15:35:30",
+        "activity": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-03 15:35:30"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-03 15:35:31",
+        "activity": "Opened folder: AGCC Project"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-03 15:35:36",
+        "activity": "Logout"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-03 15:35:36"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 15:35:41"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-03 15:36:29"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-03 15:40:22"
     }
 ]
