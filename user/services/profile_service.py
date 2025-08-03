@@ -54,7 +54,7 @@ class ProfileService:
         """Get default profile structure"""
         return {
             "username": self.username,
-            "email": f"{self.username}@example.com",
+            "email": f"{self.username}@gmail.com",
             "full_name": self.username.title(),
             "bio": "",
             "location": "",

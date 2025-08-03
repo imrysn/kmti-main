@@ -1,0 +1,356 @@
+INSERT INTO second_year_second_sem(Course_Code , Course_Title , Credit_Unit_Lec , Credit_Unit_Lab , Contact_Hrs_Lec , Contact_Hrs_lab , Pre_Requisite , Semester_Taken , Final_Grade , Professor_Instructor)
+VALUES
+('GNED 08' , 'Understanding the Self' , 3 , null , 3 , null , null , '2nd sem' , null , null) , 
+('GNED 14' , 'Panitikang Panlipunan' , 3 , null , 3 , null , null , '2nd sem' , null , null) ,
+('MATH 02' , 'Calculus' , 3 , null , 3 , null , MATH 1 , '2nd sem' , null , null) ,
+('COSC 65' , 'Architecture and Organization' , 2 , 1 , 2 , 3 , 'COSC 60' , '2nd sem' , null , null),
+('COSC 70' , 'Software Engineering I' , 3 , null , 3 , null , 'DCIT 50 & 24 , '2nd sem' , null , null),
+('DCIT 25' , 'Data Structures and Algorithms' , 2 , 1 , 2 , 3 , 'DCIT 23' , '2nd sem' , null , null),
+('DCIT 55' , 'Advance Database Management System' , 2 , 1 , 2 , 3 , 'DCIT 24' , '2nd sem' , null , null),
+('FITT 4' , 'Physical Activities towards Health and Fitness 2' , 2 , null , 2 , null , 'FITT 1' , '2nd sem' , null , null);
+
+
+
+
+CREATE table third_year_first_sem(Course_Code varchar(50) , Course_Title varchar(50) , Credit_Unit_Lec int , Credit_Unit_Lab int, Contact_Hrs_Lec int, Contact_Hrs_lab int, Pre_Requisite varchar(50), Semester_Taken varchar(50), Final_Grade double , Professor_Instructor Varchar(50));
+
+
+
+CREATE table first_year_first_sem (Course_Code varchar(50) , Course_Title varchar(50) , Credit_Unit_Lec int , Credit_Unit_Lab int , Contact_Hrs_Lec int , Contact_Hrs_lab int , Pre_Requisite varchar(50) , Semester_Taken varchar(50) , Final_Grade varchar(50) , Professor_Instructor varchar(50));
+
+
+INSERT INTO first_year_first_sem(Course_Code , Course_Title , Credit_Unit_Lec , Credit_Unit_Lab , Contact_Hrs_Lec , Contact_Hrs_lab , Pre_Requisite , Semester_Taken , Final_Grade , Professor_Instructor)
+
+
+
+INSERT INTO first_year_first_sem(Course_Code , Course_Title , Credit_Unit_Lec , Credit_Unit_Lab , Contact_Hrs_Lec , Contact_Hrs_lab , Pre_Requisite , Semester_Taken , Final_Grade , Professor_Instructor)
+VALUES('GNED 02' , 'Ethics' , 3 , null , 3 , null , null , '1st sem' , '3.00' , 'Abejuela') , 
+('GNED 05' , 'Purposive Communication' , 3 , null , 3 , null , null , '1st sem' , '3.00' , 'Pica') ,
+('GNED 11' , 'Kontesktwalisadong Komunikasyon sa Filipino' , 3 , null , 3 , null , null , '1st sem' , '1.25' , 'Castillo') ,
+('COSC 50' , 'Discrete Structures I' , 3 , null , 3 , null , null , '1st sem' , '1.75' , 'Santos'),
+('DCIT 21' , 'Intoduction to Computing' , 2 , 1 , 2 , 6 , null , '1st sem' , '2.50' , 'Romalosa'),
+('DCIT 22' , 'Computer Programming' , 1 , 2 , 1 , 3 , null , '1st sem' , '2.00' , 'Mitra'),
+('FITT 1' , 'Movement Enhancement' , 2 , null , 3 , null , null , '1st sem' , '1.75' , 'Mendoza'),   
+('NSTP 1' , 'National Service Training Program 1' , 3 , null , 2 , null , null , '1st sem' , '1.25' , 'Mitra'),
+('CVSU 101' , 'Institutional Orientation' , 1 , null , 1 , null , null , '1st sem' , 'S' , 'Veluz');
+
+
+
+INSERT INTO student_subject(course_Code , course_Title , Final_grade , professor_instructor)
+VALUES('GNED 02' , 'Ethics' , '3.00' , 'Abejuela') , 
+('GNED 05' , 'Purposive Communication'  , '3.00' , 'Pica') ,
+('GNED 11' , 'Kontesktwalisadong Komunikasyon sa Filipino' , '1.25' , 'Castillo') ,
+('COSC 50' , 'Discrete Structures I' , '1.75' , 'Santos'),
+('DCIT 21' , 'Intoduction to Computing' , '2.50' , 'Romalosa'),
+('DCIT 22' , 'Computer Programming' , '2.00' , 'Mitra'),
+('FITT 1' , 'Movement Enhancement' , '1.75' , 'Mendoza'),   
+('NSTP 1' , 'National Service Training Program 1' , '1.25' , 'Mitra'),
+('CVSU 101' , 'Institutional Orientation' , 'S' , 'Veluz');
+
+
+
+
+
+
+create table subjects (Course_Code varchar(50),
+Course_Title varchar(200), 
+Credit_Unit_Lec int,
+Credit_Unit_Lab int, 
+Contact_Hrs_Lec int,
+Contact_Hrs_Lab int, 
+Pre_requisite varchar(100),
+Semester_Taken varchar(30),
+insert into subjects
+values ("GNED 05", "Purposive Communication", 3, null, 3, null, null, "1st sem"),
+("GNED 11", "Kontekstwalisadong Komunikasyon sa Filipino", 3, null, 3, null, null, "1st sem"),
+("COSC 50", "Discrete Structures I", 3, null, 3, null, null, "1st sem"),
+("DCIT 21", "Introduction to Computing", 2, 1, 2, 6, null, "1st sem"),
+("DCIT 22", "Computer Programming I", 1, 2, 1, 3, null, "1st sem"),
+("FITT 1", "Movement Enhancement", 2, null, 3, null, null, "1st sem"),
+("NSTP 1", "National Service Training Program", 3, null, 2, null, null, "1st sem"),
+("CvSU 101", "Institutional Orientation", 1, null, 1, null, null, "1st sem");
+
+
+
+
+
+
+INSERT INTO student_info (student_name, student_id, address, contact_number)
+VALUE ('Bryan_Bergonia', '202211682', 'blk_105_lot_10_phs_4_mabuhay_city_dasmariñas_cavite', '09161546009')
+
+
+insert into first_year
+value ( "GNED 02", "Ethics", 3, null, 3, null, null, "1st Sem"),
+("GNED 05", "Purposive Communication", 3, null, 3, null, null, "1st Sem"),
+("GNED 11", "Kontekstwalisadong Komunikasyon sa Filipino", 3, null, 3, null, null, "1st Sem"),
+("COSC 50", "Discrete Structures 1", 3, null, 3, null, null, "1st Sem"),
+("DCIT 21", "Introduction to Computing", 2, 1, 2, 6, null, "1st Sem"),
+("DCIT 22", "Computer Programming 1", 1, 2, 1, 3, null, "1st Sem"),
+("FITT 1", "Movement Enhancement", 2, null, 3, null, null, "1st Sem"),
+("NSTP 1", "National Service Training Program 1", 3, null, 2, null, null, "1st Sem"),
+("CvSU 101", "Institutional Orientation", 1, null, 3, null, null, "1st Sem"),
+
+insert into first_yr_instructors
+value ("GNED 02", "Mr. Jerald Abejuela"),
+("GNED 05", "Ms. Raezy Mai Pica"),
+("GNED 11", "Mr. Christian Castillo"),
+("COSC 50", "Mr. Jeffrey Santos"),
+("DCIT 21", "Ms. Alvina Ramallosa"),
+("DCIT 22", "Mr. Jhune Hay Mitra"),
+("FITT 1", "Ms. Cherisma Mendoza"),
+("NSTP 1", "Mr. Jhune Hay Mitra"),
+("CvSU 101", "Mr. Arjon Veluz");
+
+
+("GNED 01", "Art Appreciation", 3, null, 3, null, null, "2nd Sem"),
+("GNED 03", "Mathematics in the Modern World", 3, null, 3, null, null, "2nd Year - 1st sem"),
+("GNED 06", "Science,Technology, and Society", 3, null, 3, null, null, "2nd Sem"),
+("GNED 12", "Dalumat Ng/Sa Filipino", 3, null, 3, null, "GNED 11", "2nd Sem"),
+("DCIT 23", "Computer Programming 2", 1, 2, 1, 6, "DCIT 22", "2nd Sem"),
+("ITEC 50", "Web Systems and Technologies", 2, 1, 2, 3, "DCIT 21", "2nd Sem"),
+("FITT 2", "Fitness Excercises", 2, null, 2, null, "FITT 1", "2nd Sem"),
+("NSTP 2", "National Service Training Program 2", 3, null, 3, null, "NSTP 1", "2nd Sem");
+
+insert into first_yr_instructors
+value 
+("GNED 01", "Dr. Richard Lozada"),
+("GNED 03", "Mr. James Mañozo"),
+("GNED 06", "Mr. Paul Jr. Montejar"),
+("GNED 12", "Ms. Maria Lyn Dela Cruz"),
+("DCIT 23", "Mr. Eduardo Ello"),
+("ITEC 50", "Mr. Raymart Gianan"),
+("FITT 2", "Ms. Cherisma Mendoza"),
+("NSTP 2", "Ms. Steffanie Bato");
+
+
+insert into second_year
+value ("GNED 04", "Mga Babasahin Hinggil sa Kasaysayan ng Pilipinas", 3, null, 3, null, null, "1st Sem"),
+("MATH 1", "Analytic Geometry", 3, null, 3, null, "GNED 03", "1st Sem"),
+("COSC 55", "Disrcete Structures 2", 3, null, 3, null, "COSC 50", "1st Sem"),
+("COSC 60", "Digital Logic Design", 2, 1, 2, 3, "COSC 50, DCIT 23", "1st Sem"),
+("DCIT 50", "Object Oriented Programming", 2, 1, 2, 3, "DCIT 23", "1st Sem"),
+("DCIT 24", "Information Management", 2, 1, 2, 3, "DCIT 23", "1st Sem"),
+("INSY 50", "Fundamentals of Information Systems", 3, null, 3, null, "DCIT 21", "1st Sem"),
+("FITT 3", "Physical Activities towards Health and Fitness 1", 2, null, 2, null, "FITT 1", "1st Sem"),
+
+insert into second_yr_instructors
+value ("GNED 04", "Ms. Jessica Ann Sambrano"),
+("MATH 1", "Mr. Richard Ongayo"),
+("COSC 55", "Ms. Aida Pensom"),
+("COSC 60", "Mr. Jayson Nati"),
+("DCIT 50", "Mr. Edan Belgica"),
+("DCIT 24", "Mr. Redem Decipulo"),
+("INSY 50", "Mr. Ronald Rosete"),
+("FITT 3", "Mr. Romel John Jamito"),
+
+insert into second_year
+value
+("GNED 08", "Understanding the Self", 3, null, 3, null, null, "2nd Sem"),
+("GNED 14", "Panitikang Panlipunan", 3, null, 3, null, null, "2nd Sem"),
+("MATH 2", "Calculus", 3, null, 3, null, "Math 1", "2nd Sem"),
+("COSC 65", "Architecture and Organization", 2, 1, 2, 3, "COSC 60", "2nd Sem"),
+("COSC 70", "Software Engineering 1", 3, null, 3, null, "DCIT 50 & 24", "2nd Sem"),
+("DCIT 25", "Data Structures and Algorithms", 2, 1, 2, 3, "DCIT 23", "2nd Sem"),
+("DCIT 55", "Advanced Database Management System", 2, 1, 2, 3, "DCIT 24", "2nd Sem"),
+("FITT 4", "Physical Activities towards Health and Fitness 2", 2, null, 2, null, "FITT 1","2nd Sem");
+
+insert into second_yr_instructors
+value 
+("GNED 08", "Mr. Roi Francisco"),
+("GNED 14", "Ms. Jessica Ann Sambrano"),
+("MATH 2", "Ms. Mariel Castillo"),
+("COSC 65", "Mr. Jerome Tacata"),
+("COSC 70", "Ms. Clarissa Rostrollo"),
+("DCIT 25", "Mr. Rufino Della Cruz"),
+("DCIT 55", "Mr. Edan Belgica"),
+("FITT 4", "Mr. Andrew Gabionza");
+
+
+insert into third_year
+value ("Math 3", "Linear Algebra", 3, null, 3, null, "Math 2", null),
+("COSC 75", "Software Engineering 2", 2, 1, 2, 3, "COSC 70", null),
+("COSC 80", "Operating Systems", 2, 1, 2, 3, "DCIT 25", null),
+("COSC 85", "Networks and Communication", 2, 1, 2, 3, "ITEC 50", null),
+("COSC 101", "CS Elective 1 (Computer Graphics and Visual Computing)", 2, 1, 2, 3, "DCIT 23", null),
+("DCIT 26", "Applications Dev't and Emerging Technologies", 2, 1, 2, 3, "ITEC 50", null),
+("DCIT 65", "Social and Professional Issues", 3, null, 3, null, null, null),
+
+insert into third_yr_grades
+value ("Math 3", null),
+("COSC 75", null),
+("COSC 80", null),
+("COSC 85", null),
+("COSC 101", null),
+("DCIT 26", null),
+("DCIT 65", null),
+
+
+insert into third_year
+value 
+("GNED 09", "Life and Works of Rizal", 3, null, 3, null, "GNED 14", null),
+("Math 4", "Experimental Statistics", 2, 1, 2, 3, "Math 2", null),
+("COSC 90", "Design and Analysis of Algorithm", 3, null, 3, null,"DCIT 25", null),
+("COSC 95", "Programming Languages", 3, null, 3, null, "DCIT 25", null),
+("COSC 106", "CS Elective 2 (Introduction to Game Development)", 2, 1, 2, 3, "Math 3, COSC 101", null),
+("DCIT 60", "Methods of Research", 3, null, 3, null, "3rd Yr. Standing", null),
+("ITEC 85", "Information Assurance and Security", 3, null, 3, null, "DCIT 24", null);
+
+
+
+("Dr. Richard Lozada", "GNED 01"),
+("Mr. James Mañozo", "GNED 03"),
+("Mr. Paul Jr. Montejar","GNED 06"),
+("Ms. Maria Lyn Dela Cruz", "GNED 12"),
+("Mr. Eduardo Ello", "DCIT 23"),
+("Mr. Raymart Gianan", "ITEC 50"),
+("Ms. Cherisma Mendoza", "FITT 2"),
+("Ms. Steffanie Bato", "NSTP 2");
+
+
+
+
+
+("Ms. Jessica Ann Sambrano", "GNED 04"),
+("Mr. Richard Ongayo", "MATH 1"),
+("Ms. Aida Pensom", "COSC 55"),
+("Mr. Jayson Nati", "COSC 60"),
+("Mr. Edan Belgica", "DCIT 50"),
+("Mr. Redem Decipulo", "DCIT 24"),
+("Mr. Ronald Rosete", "INSY 50"),
+("Mr. Romel John Jamito", "FITT 3");
+
+
+("Mr. Roi Francisco", "GNED 08"),
+("Ms. Jessica Ann Sambrano", "GNED 14"),
+("Ms. Mariel Castillo", "MATH 2"),
+("Mr. Jerome Tacata", "COSC 65"),
+("Ms. Clarissa Rostrollo", "COSC 70"),
+("Mr. Rufino Della Cruz", "DCIT 25"),
+("Mr. Edan Belgica", "DCIT 55"),
+("Mr. Andrew Gabionza", "FITT 4");
+
+(null, "MATH 3"),
+(null, "COSC 75"),
+(null, "COSC 80"),
+(null, "COSC 101"),
+(null, "DCIT 26"),
+(null, "DCIT 65");
+
+(null, "GNED 09"),
+(null, "MATH 4"),
+(null, "COSC 90"),
+(null, "COSC 95"),
+(null, "COSC 106"),
+(null, "DCIT 60"),
+(null, "ITEC 85"),
+
+(null, "ITEC 80"),
+(null, "COSC 100"),
+(null, "COSC 105"),
+(null, "COSC 111"),
+(null, "COSC 200A");
+
+(null, "GNED 07"),
+(null, "GNED 10"),
+(null, "COSC 110"),
+(null, "COSC 200B");
+
+
+INSERT INTO grades (Final_Grade, student_id, Course_Code, ID)
+VALUES ('3.00' , '202211682' , 'GNED 02' , 1),
+('3.00' , '202211682' , 'GNED 05' ,2),
+('1.25' , '202211682' , 'GNED 11' , 3),
+('1.75' , '202211682' , 'COSC 50' ,4),
+('2.50' , '202211682' , 'DCIT 21' , 5),
+('2.00' , '202211682' , 'DCIT 22' , 6),
+('1.75' , '202211682' , 'FITT 1' , 7),
+('1.25' , '202211682' ,  'NSTP 1' , 8),
+('S', '202211682' , 'CvSU 101', 9);
+ 
+
+('1.75' , '202211682' ,'GNED 01'  , 10),
+('1.75' , '202211682' , 'GNED 03' , 11),
+('1.75' , '202211682' , 'GNED 06' , 12),
+('1.75' , '202211682' , 'GNED 12' , 13),
+('1.75' , '202211682' , 'DCIT 23' , 14),
+('2.50' , '202211682' , 'ITEC 50' , 15),
+('1.75' , '202211682' , 'FITT 2'  , 16),
+('1.25' , '202211682' , 'NSTP 2'  , 17);
+
+
+
+('2.00' , '202211682' ,'GNED 04'  , 18),
+('2.25' , '202211682' , 'MATH 1' , 19),
+('1.75' , '202211682' , 'COSC 55' , 20),
+('1.75' , '202211682' , 'COSC 60' , 21),
+('2.75' , '202211682' , 'DCIT 50' , 22),
+('2.75' , '202211682' , 'DCIT 24' , 23),
+('2.00' , '202211682' , 'INSY 50'  , 24),
+('1.25' , '202211682' , 'FITT 3'  , 25);
+
+
+
+
+(null , '202211682' ,'GNED 08'  , 26),
+(null , '202211682' ,'GNED 14'  , 27),
+(null , '202211682' ,'MATH 02'  , 28),
+(null , '202211682' ,'COSC 65'  , 29),
+(null , '202211682' ,'COSC 70'  , 30),
+(null , '202211682' ,'DCIT 25'  , 31),
+(null , '202211682' ,'DCIT 55'  , 32),
+(null , '202211682' ,'FITT 4'   , 33),
+
+
+(null , '202211682' ,'MATH 3'   , 34),
+(null , '202211682' ,'COSC 75'  , 35),
+(null , '202211682' ,'COSC 80'  , 36),
+(null , '202211682' ,'COSC 85'  , 37),
+(null , '202211682' ,'COSC 101' , 38),
+(null , '202211682' ,'DCIT 26'  , 39),
+(null , '202211682' ,'DCIT 65'  , 40),
+
+(null , '202211682' ,'GNED 09'   , 41),
+(null , '202211682' ,'MATH 4'  , 42),
+(null , '202211682' ,'COSC 90'  , 43),
+(null , '202211682' ,'COSC 95'  , 44),
+(null , '202211682' ,'COSC 106' , 45),
+(null , '202211682' ,'DCIT 60'  , 46),
+(null , '202211682' ,'ITEC 85'  , 47),
+
+(null , '202211682' ,'COSC 199' , 48),
+
+(null , '202211682' ,'ITEC 80'  , 49),
+(null , '202211682' ,'COSC 100'   , 50),
+(null , '202211682' ,'COSC 105'  , 51),
+(null , '202211682' ,'COSC 111'  , 52),
+(null , '202211682' ,'COSC 200A' , 53),
+
+(null , '202211682' ,'GNED 07'  , 54),
+(null , '202211682' ,'GNED 10'   , 55),
+(null , '202211682' ,'COSC 110'  , 56),
+(null , '202211682' ,'COSC 200B'  , 57),
+
+
+
+
+SELECT *
+FROM table1
+JOIN table2 ON table1.primary_key_column = table2.foreign_key_column;
+
+
+
+
+
+select max(final_grade) AS min_grade
+from grades
+where FInal_Grade<5.00
+and Final_Grade between 1.25 and 3.00;
+
+SELECT
+count(case when Final_Grade is not null then 1 end) as passed_grade, 
+count (case when Final_Grade is null then 1 end) as null_rade
+
+SELECT avg(Final_Grade) as average_grade
+from grades;
+
+

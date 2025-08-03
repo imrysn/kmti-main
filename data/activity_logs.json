@@ -486,5 +486,1757 @@
         "role": "USER",
         "datetime": "2025-07-31T17:49:07.828810",
         "description": "Deleted file: 2784TRAIP.icd"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T08:58:33.830116",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:05:21.097844",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:14:57.763042",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:21:06.853298",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:21:38.501555",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:22:09.804111",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T09:22:13.487527",
+        "description": "Deleted file: .recycle_bin_data.json"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:02:10.491648",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:02:43.688871",
+        "description": "Deleted file: kmti.ico"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:03:33.102368",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T10:03:39.557726",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T10:04:00.288319",
+        "description": "Logged out"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:04:04.762688",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:04:17.263901",
+        "description": "Deleted file: 494821944_979019437455450_3739855748643100630_n.png"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:19:44.679725",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:21:13.690026",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:21:21.003049",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:24:08.117227",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:24:14.061851",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:35:21.137630",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:36:10.592040",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:36:15.738321",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:42:28.989874",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T10:42:36.936235",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T10:43:06.484960",
+        "description": "Logged out"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:43:11.673766",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:46:00.061988",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:48:24.520142",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:51:46.063668",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:51:50.073707",
+        "description": "Opened folder: Minatogumi"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:55:25.896023",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T10:58:57.507244",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:00:13.310997",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:01:01.067524",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:02:31.887134",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:18:31.346845",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:19:08.382867",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:19:13.374102",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:22:46.068171",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:24:24.335331",
+        "description": "Deleted file: profile_data.json"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:29:22.156003",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:38:51.373147",
+        "description": "Deleted file: BERGONIA BRYAN - Activity (DFS and DSPA).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:40:48.507135",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:41:20.309759",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:41:41.954550",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:42:14.358245",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:42:54.607570",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:43:16.642223",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:43:24.223927",
+        "description": "Deleted file: myCV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:44:26.093366",
+        "description": "Deleted file: My_CV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:52:31.309578",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:53:14.547414",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:54:20.695982",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:54:47.272234",
+        "description": "Deleted file: Smart Academic Assistant System Chapter 1.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:56:11.306363",
+        "description": "Deleted file: Japan.txt"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:56:12.185787",
+        "description": "Deleted file: Smart Academic Assistant System- Chapter 1 (Repaired).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:56:12.935352",
+        "description": "Deleted file: Astro Runner-Nodes.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:07.285210",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:12.624879",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:18.872996",
+        "description": "Deleted file: OJT.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:19.315182",
+        "description": "Deleted file: login_ui_fixed.py"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:19.817871",
+        "description": "Deleted file: 518731264_1066521395131717_4616312988897449563_n.png"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:20.541830",
+        "description": "Deleted file: Screenshot_2025-07-21_103258-removebg-preview.png"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:27.043842",
+        "description": "Deleted file: CV (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:27.768922",
+        "description": "Deleted file: Arino-Trainee-Industry-Agreement-Liability-Waiver.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:28.183031",
+        "description": "Deleted file: Bergonia-Trainee-Industry-Agreement-Liability-Waiver.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:58:28.549977",
+        "description": "Deleted file: OJT (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:03.255228",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:27.243570",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:38.114760",
+        "description": "Deleted file: KMTI-MOA (1).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:39.331824",
+        "description": "Deleted file: KMTI-MOA (2).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:40.423649",
+        "description": "Deleted file: KMTI-MOA (3).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:41.169251",
+        "description": "Deleted file: KMTI-MOA (4).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:41.842489",
+        "description": "Deleted file: KMTI-MOA (5).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:42.545705",
+        "description": "Deleted file: KMTI-MOA.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:42.911079",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:43.241321",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:43.536510",
+        "description": "Deleted file: logo (3).png"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:43.861908",
+        "description": "Deleted file: dotnet-sdk-9.0.302-win-x64.exe"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:44.306177",
+        "description": "Deleted file: LineInst.exe"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:44.669349",
+        "description": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:45.010942",
+        "description": "Deleted file: Parents-Consent-Arino.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:45.382159",
+        "description": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:45.731462",
+        "description": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:49.798965",
+        "description": "Deleted file: orders.sql"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T11:59:51.986445",
+        "description": "Deleted file: customers.sql"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T12:00:27.553064",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T12:00:31.849877",
+        "description": "Deleted file: 1ea33614-080f-4112-9f54-2c9fd71b1035.jpg"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:00:16.294025",
+        "description": "Deleted file: !DOCTYPE html.txt"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:17:40.013136",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:35:49.908999",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:44:19.362701",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T13:45:39.706705",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-01T13:45:43.100468",
+        "description": "Logged out"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:45:48.294436",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:46:08.960451",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:46:24.477940",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T13:52:33.431631",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:07:56.828592",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:08:16.699256",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:08:23.848148",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:08:30.593610",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:09:27.391767",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:11:40.155573",
+        "description": "Deleted file: Claude-Setup-x64.exe"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:11:41.020898",
+        "description": "Deleted file: Parents-Consent-Arino (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:17:01.810126",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:20:08.198548",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:20:45.458760",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:20:53.071714",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:20:58.229437",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:21:19.933146",
+        "description": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "email": "risan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:22:18.097358",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:22:22.670466",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:22:41.412512",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:22:45.701594",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:35:43.007669",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:36:37.634268",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:36:54.439070",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:36:55.694664",
+        "description": "Deleted file: Parents-Consent-Arino.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:36:59.222606",
+        "description": "Deleted file: 1.txt"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:37:41.004440",
+        "description": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:37:42.679867",
+        "description": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:38:13.658041",
+        "description": "Deleted file: bryanBergonia-main-final project.zip"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T14:59:39.985449",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:15:03.398367",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:15:06.463024",
+        "description": "Deleted file: Parents-certification.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:15:08.203053",
+        "description": "Deleted file: OJT- Placement (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:15:10.339305",
+        "description": "Deleted file: OJT- Placement (2).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:19:43.522700",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:19:46.457382",
+        "description": "Deleted file: OJT- Placement.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:19:52.458940",
+        "description": "Deleted file: OJT- Placement (1).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:22:07.519307",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:22:11.409241",
+        "description": "Deleted file: OJT- Placement.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:22:17.577295",
+        "description": "Deleted file: 0ecc5c9f-c58f-4ff8-ab3f-6dd82c0c24ef.jpg"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:23:52.361730",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:23:55.255768",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:26:07.062644",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:26:10.418508",
+        "description": "Deleted file: Placement (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:26:14.051955",
+        "description": "Opened folder: Minatogumi"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:26:17.542261",
+        "description": "Deleted file: Placement.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:36:38.920038",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:38:27.456161",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:38:30.755205",
+        "description": "Deleted file: BERGONIA - COR.jpg"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:48:17.560937",
+        "description": "Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver (1).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-01T15:58:42.493507",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T17:54:01.610929",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T17:54:13.144774",
+        "description": "Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:06:33.279436",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:07:04.001813",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:10:58.627944",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:14:33.241948",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:15:03.116744",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:15:06.093496",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:15:07.189458",
+        "description": "Deleted file: CV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:15:08.739671",
+        "description": "Deleted file: My_CV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:15:16.734031",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:24:19.376050",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:24:23.317950",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:30:46.606645",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:34:43.893274",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:37:59.956828",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:39:07.804166",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:39:10.322582",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:39:12.218171",
+        "description": "Deleted file: myCV (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:39:40.293416",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:39:44.755499",
+        "description": "Deleted file: myCV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:44:52.656617",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:50:05.939101",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:50:09.102718",
+        "description": "Deleted file: 518731264_1066521395131717_4616312988897449563_n.png"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:50:11.165808",
+        "description": "Deleted file: KMTI-MOA.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:59:07.363620",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T18:59:45.566664",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:00:05.946386",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:00:08.890362",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:00:09.826223",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:00:46.155437",
+        "description": "Deleted file: Parents-certification.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:06:33.367468",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:06:37.975459",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:12:14.503131",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:13:05.358031",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:13:12.175815",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:13:17.464323",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:16:08.421333",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:17:19.525830",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:17:29.787204",
+        "description": "Deleted file: Placement.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:17:31.490795",
+        "description": "Deleted file: myCV.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:19:30.224087",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:19:33.467143",
+        "description": "Deleted file: Professional CV Resume (1).pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:19:35.239786",
+        "description": "Deleted file: Professional CV Resume.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:23:35.710922",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:24:42.207351",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:25:00.371818",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:25:18.537384",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:25:24.924628",
+        "description": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:26:36.365424",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:27:20.992125",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-03T19:27:56.208512",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-03T19:28:00.768971",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-03T19:28:02.974184",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-03T19:28:10.827918",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-03T19:28:15.299813",
+        "description": "Logged out"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:15:46.861269",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:16:27.245417",
+        "description": "Deleted file: Game-Development-Proposal.pdf"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:16:28.353421",
+        "description": "Deleted file: family_pic1.jpg"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:16:54.887118",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:19:36.568574",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:28:08.535854",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:28:14.544447",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:30:21.116162",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:31:22.552945",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:32:20.395247",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:34:06.694868",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-04T07:36:55.585072",
+        "description": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "datetime": "2025-08-04T07:37:10.123476",
+        "description": "Logged out"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:37:41.613729",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:39:05.896408",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:41:01.321079",
+        "description": "Entered USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:43:45.445852",
+        "description": "Logged out from USER panel"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "email": "bryan@gmail.com",
+        "role": "USER",
+        "datetime": "2025-08-04T07:43:49.767185",
+        "description": "Entered USER panel"
     }
 ]
