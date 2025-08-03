@@ -3,9 +3,11 @@ from flet import FontWeight
 from typing import Optional
 from pathlib import Path
 import os
+import time
 from utils.config_loader import get_base_dir
 
 BASE_DIR = get_base_dir()
+
 
 def list_directory(path: Path):
     folders = []
@@ -40,6 +42,8 @@ def data_management(content: ft.Column, username: Optional[str]):
     content.controls.clear()
 
     current_path = [BASE_DIR]
+    selected_item = {"path": None}
+    last_click_time = {"time": 0}
 
     grid = ft.GridView(
         expand=True,
@@ -66,6 +70,8 @@ def data_management(content: ft.Column, username: Optional[str]):
         visible=False
     )
 
+    # ---------------- Core functions ----------------
+
     def open_item(item: Path):
         if item.is_dir():
             current_path[0] = item
@@ -78,29 +84,51 @@ def data_management(content: ft.Column, username: Optional[str]):
             current_path[0] = current_path[0].parent
             refresh()
 
+    def handle_click(item: Path):
+        """Single click selects, double click opens."""
+        now = time.time()
+        # First click or different item -> select
+        if selected_item["path"] != item or (now - last_click_time["time"]) > 0.5:
+            selected_item["path"] = item
+            last_click_time["time"] = now
+            refresh()
+        else:
+            # Double click -> open
+            open_item(item)
+            selected_item["path"] = None
+            refresh()
+
     def build_item_tile(item: Path):
         is_folder = item.is_dir()
         icon = ft.Icons.FOLDER if is_folder else ft.Icons.DESCRIPTION
 
-            # Limit display name length
+        # Limit display name length
         display_name = item.name
         max_len = 15
-        if len(display_name) > max_len:
-            short_name = display_name[:max_len - 3] + "..."
-        else:
-            short_name = display_name
+        short_name = display_name if len(display_name) <= max_len else display_name[:max_len - 3] + "..."
 
-        return ft.Container(
+        # Highlight selected
+        bg_color = "#DCEBFF" if selected_item["path"] == item else "transparent"
+
+        container = ft.Container(
             content=ft.Column([
                 ft.Icon(icon, size=64, color="#000000"),
                 ft.Text(short_name, size=14, text_align="center", no_wrap=True),
             ], alignment=ft.MainAxisAlignment.CENTER),
-            tooltip=item.name,  
-            on_click=lambda e, p=item: open_item(p),
+            tooltip=item.name,
+            on_click=lambda e, p=item: handle_click(p),
             padding=10,
             border_radius=8,
-            )
+            bgcolor=bg_color,
+        )
 
+        # Hover effect
+        def on_hover(e):
+            container.bgcolor = "#E6F2FF" if e.data == "true" and selected_item["path"] != item else bg_color
+            container.update()
+
+        container.on_hover = on_hover
+        return container
 
     def refresh():
         grid.controls.clear()
