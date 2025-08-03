@@ -1,0 +1,24 @@
+1.Django comes with a powerful Object-Relational Mapping (ORM) system that
+allows developers to interact with the database using Python objects. Discuss the
+advantages of using Django&#39;s ORM for database management. What are some
+of the limitations or challenges developers might face when using the ORM, and
+how can they overcome them?
+
+By using Python objects rather than raw SQL to communicate with databases, Django's Object-Relational Mapping (ORM) framework streamlines database administration. By making data processing and database backend change simple, it increases productivity. Because of its close connection with Django features, development is accelerated and repetitive chores are decreased. The ORM improves code maintainability by adhering to object-oriented principles. Developers can use tools like select_related and prefetch_related to improve queries, use raw SQL for greater control, and adopt a hybrid method for specific database requirements in order to overcome obstacles.
+
+2.As a web application grows, performance optimization becomes critical. Discuss
+the various techniques and strategies that can be used to optimize a Django
+application for better performance. Address aspects like database query
+optimization, caching, and handling large data sets. Provide examples of how
+Django’s features, such as querysets and caching, can be used to improve
+performance.
+
+As web applications scale, ensuring optimal performance becomes critical to maintain user satisfaction and efficient resource utilization. Django, with its robust features, provides various tools and strategies to optimize performance. Key areas to focus on include database query optimization, caching, and handling large datasets. Django’s built-in tools, combined with effective strategies, enable developers to optimize performance. By focusing on query efficiency, caching, and large data handling, applications can scale effectively while maintaining speed and reliability.
+
+3. Static and media files are an essential part of web applications. How does
+Django handle static files (e.g., CSS, JavaScript) and media files (e.g., images,
+user uploads)? Discuss the steps to configure Django for handling static and
+media files during development and production. What are some best practices for
+managing these files?
+
+For web applications, Django is a strong tool for handling media and static files. Media files hold user-uploaded material, whereas static files, such as CSS, JavaScript, and pictures, improve the user interface. During development, Django uses the STATIC_URL setting to specify the URL path for serving static files, and the STATICFILES_DIRS parameter to specify the locations of static files. In development, these files are served by the runserver command; in production, they are consolidated into a single directory by the collectstatic command. Performance and scalability are enhanced by this centralized directory, which usually makes use of a web server or content delivery network. Media files are handled differently; the directory for uploaded media is defined by the MEDIA_ROOT setting, while the base URL is specified by the MEDIA_URL setting. Django uses the development server to serve media files during development, but in production, they should be served by a dedicated web server or storage service.

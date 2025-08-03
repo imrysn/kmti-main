@@ -310,32 +310,103 @@
     {
         "username": "user1",
         "fullname": "User Test",
+<<<<<<< HEAD
+        "activity": "Deleted file: 2784TRAIP.icd",
+        "date": "2025-07-31 17:49:07"
+=======
         "activity": "Login",
         "date": "2025-08-01 15:53:02"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "user1",
         "fullname": "User Test",
+<<<<<<< HEAD
+        "activity": "Login to user panel",
+        "date": "2025-08-01 08:58:33"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 09:05:21"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 09:14:57"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 09:21:06"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 09:21:38"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 09:22:09"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: .recycle_bin_data.json",
+        "date": "2025-08-01 09:22:13"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:02:10"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Deleted file: kmti.ico",
+        "date": "2025-08-01 10:02:43"
+=======
         "email": "user1@example.com",
         "role": "USER",
         "date": "2025-08-01 15:53:09",
         "activity": "Logout"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "user1",
         "fullname": "User Test",
         "activity": "Logout",
+<<<<<<< HEAD
+        "date": "2025-08-01 10:03:33"
+=======
         "date": "2025-08-01 15:53:09"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to admin panel",
+        "date": "2025-08-01 10:03:39"
+=======
         "activity": "Login",
         "date": "2025-08-01 15:53:15"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Added new user 'bryan' with role 'USER'",
+        "date": "2025-08-01 10:03:58"
+=======
         "activity": "Login",
         "date": "2025-08-03 14:50:48"
     },
@@ -362,11 +433,81 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-03 15:34:36"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
         "activity": "Logout",
+<<<<<<< HEAD
+        "date": "2025-08-01 10:04:00"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:04:04"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 494821944_979019437455450_3739855748643100630_n.png",
+        "date": "2025-08-01 10:04:17"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:19:44"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 10:21:13"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:21:21"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 10:24:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:24:14"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:35:21"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 10:36:10"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:36:15"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 10:42:29"
+=======
         "date": "2025-08-03 15:35:23"
     },
     {
@@ -404,64 +545,1223 @@
         "fullname": "User Test",
         "activity": "Logout",
         "date": "2025-08-03 15:35:36"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to admin panel",
+        "date": "2025-08-01 10:42:36"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Added new user 'risan' with role 'USER'",
+        "date": "2025-08-01 10:43:04"
+=======
         "activity": "Login",
         "date": "2025-08-03 15:35:41"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
         "activity": "Logout",
+<<<<<<< HEAD
+        "date": "2025-08-01 10:43:06"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:43:11"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:46:00"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:48:24"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:51:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:55:25"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 10:58:57"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:00:13"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:01:01"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:02:31"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:18:31"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 11:19:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:19:13"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:22:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: profile_data.json",
+        "date": "2025-08-01 11:24:24"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:29:22"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: BERGONIA BRYAN - Activity (DFS and DSPA).docx",
+        "date": "2025-08-01 11:38:51"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:40:48"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:41:20"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:41:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:42:14"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:42:54"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:43:16"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: myCV.pdf",
+        "date": "2025-08-01 11:43:24"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: My_CV.pdf",
+        "date": "2025-08-01 11:44:26"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:52:31"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:53:14"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:54:20"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Smart Academic Assistant System Chapter 1.pdf",
+        "date": "2025-08-01 11:54:47"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Japan.txt",
+        "date": "2025-08-01 11:56:11"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Smart Academic Assistant System- Chapter 1 (Repaired).docx",
+        "date": "2025-08-01 11:56:12"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Astro Runner-Nodes.docx",
+        "date": "2025-08-01 11:56:12"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 11:58:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:58:12"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT.pdf",
+        "date": "2025-08-01 11:58:18"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: login_ui_fixed.py",
+        "date": "2025-08-01 11:58:19"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 518731264_1066521395131717_4616312988897449563_n.png",
+        "date": "2025-08-01 11:58:19"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Screenshot_2025-07-21_103258-removebg-preview.png",
+        "date": "2025-08-01 11:58:20"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: CV (1).pdf",
+        "date": "2025-08-01 11:58:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Arino-Trainee-Industry-Agreement-Liability-Waiver.pdf",
+        "date": "2025-08-01 11:58:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Bergonia-Trainee-Industry-Agreement-Liability-Waiver.pdf",
+        "date": "2025-08-01 11:58:28"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT (1).pdf",
+        "date": "2025-08-01 11:58:28"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 11:59:03"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 11:59:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA (1).docx",
+        "date": "2025-08-01 11:59:38"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA (2).docx",
+        "date": "2025-08-01 11:59:39"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA (3).docx",
+        "date": "2025-08-01 11:59:40"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA (4).docx",
+        "date": "2025-08-01 11:59:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA (5).docx",
+        "date": "2025-08-01 11:59:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA.docx",
+        "date": "2025-08-01 11:59:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx",
+        "date": "2025-08-01 11:59:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-01 11:59:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: logo (3).png",
+        "date": "2025-08-01 11:59:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: dotnet-sdk-9.0.302-win-x64.exe",
+        "date": "2025-08-01 11:59:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: LineInst.exe",
+        "date": "2025-08-01 11:59:44"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx",
+        "date": "2025-08-01 11:59:44"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Parents-Consent-Arino.pdf",
+        "date": "2025-08-01 11:59:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.docx",
+        "date": "2025-08-01 11:59:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.pdf",
+        "date": "2025-08-01 11:59:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: orders.sql",
+        "date": "2025-08-01 11:59:49"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: customers.sql",
+        "date": "2025-08-01 11:59:52"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 12:00:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1ea33614-080f-4112-9f54-2c9fd71b1035.jpg",
+        "date": "2025-08-01 12:00:31"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: !DOCTYPE html.txt",
+        "date": "2025-08-01 13:00:16"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:17:40"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:35:49"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:44:19"
+=======
         "date": "2025-08-03 15:36:29"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to admin panel",
+        "date": "2025-08-01 13:45:39"
+=======
         "activity": "Login",
         "date": "2025-08-03 15:40:22"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Logout",
+        "date": "2025-08-01 13:45:43"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:45:48"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Logout",
+        "date": "2025-08-01 13:46:09"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:46:24"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 13:52:33"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:07:56"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 14:08:16"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:08:23"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 14:08:30"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:09:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Claude-Setup-x64.exe",
+        "date": "2025-08-01 14:11:40"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Parents-Consent-Arino (1).pdf",
+        "date": "2025-08-01 14:11:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:17:01"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:20:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:20:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 14:20:53"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:20:58"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx",
+        "date": "2025-08-01 14:21:19"
+    },
+    {
+        "username": "risan",
+        "fullname": "risan",
+        "activity": "Logout",
+        "date": "2025-08-01 14:22:18"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:22:22"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-01 14:22:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:22:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:35:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:36:37"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-01 14:36:54"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Parents-Consent-Arino.pdf",
+        "date": "2025-08-01 14:36:55"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1.txt",
+        "date": "2025-08-01 14:36:59"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-Data-Management-and-Invoicing-System.docx",
+        "date": "2025-08-01 14:37:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM.docx",
+        "date": "2025-08-01 14:37:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: bryanBergonia-main-final project.zip",
+        "date": "2025-08-01 14:38:13"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 14:59:40"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:15:03"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Parents-certification.pdf",
+        "date": "2025-08-01 15:15:06"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT- Placement (1).pdf",
+        "date": "2025-08-01 15:15:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT- Placement (2).pdf",
+        "date": "2025-08-01 15:15:10"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:19:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT- Placement.pdf",
+        "date": "2025-08-01 15:19:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT- Placement (1).docx",
+        "date": "2025-08-01 15:19:52"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:22:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: OJT- Placement.docx",
+        "date": "2025-08-01 15:22:11"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 0ecc5c9f-c58f-4ff8-ab3f-6dd82c0c24ef.jpg",
+        "date": "2025-08-01 15:22:17"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:23:52"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-01 15:23:55"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:26:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Placement (1).pdf",
+        "date": "2025-08-01 15:26:10"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Placement.pdf",
+        "date": "2025-08-01 15:26:17"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:36:38"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:38:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: BERGONIA - COR.jpg",
+        "date": "2025-08-01 15:38:30"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver (1).docx",
+        "date": "2025-08-01 15:48:17"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-01 15:58:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 17:54:01"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx",
+        "date": "2025-08-03 17:54:13"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:06:33"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:07:04"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:10:58"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:14:33"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:15:03"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 18:15:06"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: CV.pdf",
+        "date": "2025-08-03 18:15:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: My_CV.pdf",
+        "date": "2025-08-03 18:15:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 18:15:16"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:24:19"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 18:24:23"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:30:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:34:43"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:38:00"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:39:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 18:39:10"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: myCV (1).pdf",
+        "date": "2025-08-03 18:39:12"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:39:40"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: myCV.pdf",
+        "date": "2025-08-03 18:39:44"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:44:52"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:50:06"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 518731264_1066521395131717_4616312988897449563_n.png",
+        "date": "2025-08-03 18:50:09"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: KMTI-MOA.docx",
+        "date": "2025-08-03 18:50:11"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:59:07"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 18:59:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:00:06"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx",
+        "date": "2025-08-03 19:00:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 19:00:09"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Parents-certification.pdf",
+        "date": "2025-08-03 19:00:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-03 19:06:33"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:06:38"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:12:14"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:13:05"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-03 19:13:12"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:13:17"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:16:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:17:19"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Placement.pdf",
+        "date": "2025-08-03 19:17:29"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: myCV.pdf",
+        "date": "2025-08-03 19:17:31"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:19:30"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Professional CV Resume (1).pdf",
+        "date": "2025-08-03 19:19:33"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Professional CV Resume.pdf",
+        "date": "2025-08-03 19:19:35"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:23:35"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:24:42"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 19:25:00"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:25:18"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: 1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+        "date": "2025-08-03 19:25:24"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:26:36"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:27:21"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-03 19:27:56"
+=======
         "activity": "Login",
         "date": "2025-08-03 15:58:34"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to user panel",
+        "date": "2025-08-03 19:28:00"
+=======
         "activity": "Login",
         "date": "2025-08-03 15:59:33"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Logout",
+        "date": "2025-08-03 19:28:03"
+=======
         "activity": "Login",
         "date": "2025-08-03 16:04:55"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to admin panel",
+        "date": "2025-08-03 19:28:10"
+=======
         "activity": "Login",
         "date": "2025-08-03 16:07:32"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Logout",
+        "date": "2025-08-03 19:28:15"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:15:46"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: Game-Development-Proposal.pdf",
+        "date": "2025-08-04 07:16:27"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Deleted file: family_pic1.jpg",
+        "date": "2025-08-04 07:16:28"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-04 07:16:54"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:19:36"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-04 07:28:08"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:28:14"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:30:21"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:31:22"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:32:20"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:34:06"
+=======
         "activity": "Login",
         "date": "2025-08-03 16:07:45"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Login to admin panel",
+        "date": "2025-08-04 07:36:55"
+=======
         "activity": "Login",
         "date": "2025-08-03 16:08:32"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     },
     {
         "username": "admin",
         "fullname": "Admin",
+<<<<<<< HEAD
+        "activity": "Logout",
+        "date": "2025-08-04 07:37:10"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:37:41"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:39:05"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:41:01"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Logout",
+        "date": "2025-08-04 07:43:45"
+    },
+    {
+        "username": "bryan",
+        "fullname": "bryan",
+        "activity": "Login to user panel",
+        "date": "2025-08-04 07:43:49"
+=======
         "activity": "Login",
         "date": "2025-08-03 16:08:46"
     },
@@ -488,5 +1788,6 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-03 16:11:27"
+>>>>>>> 1247ac2f96e1f7f40e4d03557b168a9c9fe01f53
     }
 ]
