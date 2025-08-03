@@ -108,7 +108,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         short_name = display_name if len(display_name) <= max_len else display_name[:max_len - 3] + "..."
 
         # Highlight selected
-        bg_color = "#DCEBFF" if selected_item["path"] == item else "transparent"
+        bg_color = ft.Colors.with_opacity(0.5, ft.Colors.GREY_800) if selected_item["path"] == item else "transparent"
 
         container = ft.Container(
             content=ft.Column([
@@ -124,7 +124,7 @@ def data_management(content: ft.Column, username: Optional[str]):
 
         # Hover effect
         def on_hover(e):
-            container.bgcolor = "#E6F2FF" if e.data == "true" and selected_item["path"] != item else bg_color
+            container.bgcolor =ft.Colors.with_opacity(0.2, ft.Colors.GREY_800) if e.data == "true" and selected_item["path"] != item else bg_color
             container.update()
 
         container.on_hover = on_hover
