@@ -2,7 +2,6 @@ import flet as ft
 import json
 import os
 from datetime import datetime
-from utils.logger import log_action
 from utils.session_logger import log_logout
 from flet import FontWeight, ScrollMode, CrossAxisAlignment, MainAxisAlignment, Colors
 from typing import Optional
@@ -12,6 +11,7 @@ from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
 from utils.session_logger import log_activity
+from user.user_panel import save_session, clear_session
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
@@ -28,6 +28,18 @@ def load_json(path, default):
         return default
 
 
+def load_users():
+    return load_json(USERS_FILE, {})
+
+
+def load_logs():
+    return load_json(ACTIVITY_LOGS_FILE, [])
+
+
+def load_metadata():
+    return load_json(ACTIVITY_METADATA_FILE, {})
+
+
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     BACKGROUND = ft.Colors.GREY_100
     PANEL_COLOR = "#FFFFFF"
@@ -38,22 +50,18 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     page.horizontal_alignment = CrossAxisAlignment.START
     page.bgcolor = BACKGROUND
 
+    page.padding = 0
+    page.margin = 0
+
     def logout(e):
+        print(f"[DEBUG] logout() called by username={username}")
         log_logout(username, "admin")
-        log_action(username, "Logged out")
         log_activity(username, "Logout")
+        clear_session()
+
         page.clean()
         from login_window import login_view
         login_view(page)
-
-    def load_users():
-        return load_json(USERS_FILE, {})
-
-    def load_logs():
-        return load_json(ACTIVITY_LOGS_FILE, [])
-
-    def load_metadata():
-        return load_json(ACTIVITY_METADATA_FILE, {})
 
     content = ft.Column(
         scroll=ScrollMode.AUTO,
@@ -61,61 +69,25 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         spacing=20,
         horizontal_alignment=CrossAxisAlignment.CENTER,
     )
-    users = load_users()
-    logs = load_logs()
-    metadata = load_metadata()
 
-    # Filter logs for today's date
-    today = datetime.now().strftime("%Y-%m-%d")
-    today_logs = [log for log in logs if log.get("date", "").startswith(today)]
+    # --- Utility functions that always reload logs dynamically ---
 
-    # Helper: Get the last activity type for a user
-    def get_last_activity(username_lookup: str) -> str:
-        # Find latest activity log entry for this username
-        for entry in reversed(logs):
+    def get_last_activity_entry(username_lookup: str):
+        fresh_logs = load_logs()  # Always reload logs
+        for entry in reversed(fresh_logs):
             if entry.get("username") == username_lookup:
-                return entry.get("activity", "")
-        return ""
+                return entry
+        return None
 
-    # Unified status check
     def is_user_online(user_data) -> bool:
         uname = user_data.get("username")
         if not uname:
             return False
-
-        # 1. Look up metadata for this username
-        session_entry = None
-        if isinstance(metadata, list):
-            for entry in metadata:
-                if entry.get("username") == uname:
-                    session_entry = entry
-                    break
-        elif isinstance(metadata, dict):
-            session_entry = metadata.get(uname, {})
-
-        # If no login info available
-        if not session_entry:
+        last_entry = get_last_activity_entry(uname)
+        if not last_entry:
             return False
+        return last_entry.get("activity") == "Login"
 
-        login_time = session_entry.get("login_time")
-        logout_time = session_entry.get("logout_time")
-
-        # If no login recorded, offline
-        if not login_time:
-            return False
-
-        # If logout_time exists, offline
-        if logout_time is not None:
-            return False
-
-        # Finally, check last activity logs
-        last_act = get_last_activity(uname)
-        if last_act == "Logged out" or last_act == "Logout":
-            return False
-
-        return True
-
-    # Returns Text object for DataTable
     def get_login_status(user_email, user_data):
         online = is_user_online(user_data)
         return ft.Text(
@@ -127,14 +99,51 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     def show_dashboard():
         content.controls.clear()
 
+        # Always reload latest data
+        users = load_users()
+        fresh_logs = load_logs()
+
+        # Sort logs by datetime for reliable "most recent"
+        def parse_datetime(log):
+            try:
+                return datetime.strptime(log.get("date", ""), "%Y-%m-%d %H:%M:%S")
+            except Exception:
+                return datetime.min
+
+        fresh_logs.sort(key=parse_datetime)
+
+        # Dashboard metrics
         total_users = len(users)
-
-        # Count active users using unified logic
         active_users = sum(1 for u in users.values() if is_user_online(u))
+        recent_activity_count = len(fresh_logs)
 
-        recent_activity_count = len(today_logs)
+        # Add title with Refresh button
+        refresh_button = ft.ElevatedButton(
+            "Refresh",
+            icon=ft.Icons.REFRESH,
+            on_click=lambda e: show_dashboard(),
+            style=ft.ButtonStyle(
+                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                        ft.ControlState.HOVERED: ft.Colors.BLUE},
+                color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+                side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE),
+                    ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
+                shape=ft.RoundedRectangleBorder(radius=5)
+            )
+        )
 
-        # Dashboard cards
+        content.controls.append(
+            ft.Row(
+                [
+                    refresh_button,
+                ],
+                alignment=MainAxisAlignment.END,
+            )
+        )
+
+
+        # --- Small metric cards ---
         def card(title_icon, title, value, icon_color=Colors.BLACK):
             return ft.Container(
                 content=ft.Column(
@@ -154,7 +163,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     spread_radius=1,
                     color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
                 ),
-                width=220,
+                width=250,
                 height=160,
             )
 
@@ -177,10 +186,11 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                 ],
                 spacing=20,
                 alignment=MainAxisAlignment.CENTER,
+                
             )
         )
 
-        # Recent Users Table
+        # --- Recent Users Table ---
         content.controls.append(
             ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111")
         )
@@ -218,12 +228,12 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             )
         )
 
-        # Recent Activities Table
+        # --- Recent Activities Section ---
         content.controls.append(
             ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111")
         )
 
-        # Build user info lookup
+        # Build user_info lookup
         user_info = {}
         for email, data in users.items():
             uname = data.get("username")
@@ -241,8 +251,11 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     "team": team_str,
                 }
 
+        # Only the latest 10 logs
+        last_10_logs = list(reversed(fresh_logs[-10:]))
+
         rows = []
-        for log in reversed(today_logs[-10:]):
+        for log in last_10_logs:
             uname = log.get("username", "")
             info = user_info.get(
                 uname,
@@ -291,7 +304,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
 
         content.update()
 
-    # Navigation handler (fixed order)
     def navigate_to_section(index: int):
         content.controls.clear()
         if index == 0:
@@ -312,20 +324,25 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     page.add(
         ft.Column(
             [
-                top_nav,
+                ft.Container(
+                    content=top_nav,
+                    padding=0,
+                    margin=0,
+                ),
                 ft.Container(
                     content=content,
                     expand=True,
                     padding=20,
                 ),
             ],
-            spacing=10,
+            spacing=0,
             expand=True,
         )
     )
 
     navigate_to_section(initial_tab)
 
-    log_action(username, "Login")
-    log_activity(username, "Login to admin panel")
-
+    log_activity(username, "Login")
+    save_session(username, "admin")
+    print(f"[DEBUG] Admin panel initialized for user: {username}")
+    page.update()
