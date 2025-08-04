@@ -1,0 +1,17 @@
+{
+    "username": "raysan",
+    "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
+    "is_admin": false,
+    "raysan": {
+        "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
+        "role": "admin"
+    },
+    "user": {
+        "password": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
+        "role": "user"
+    },
+    "bryan": {
+        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
+        "role": "USER"
+    }
+}

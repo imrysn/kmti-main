@@ -11,16 +11,17 @@ utils/__pycache__/
 # Virtual environment
 venv/
 
-# Logs
-data/logs/
+# Logs - only ignore these specific files
+data/logs/activity_logs.json
+data/logs/activity_metadata.json
+data/logs/activity.log
 
-# Specific JSON files in data folder
-data/config.json
-data/remember_me.json
-data/remembered_users.json
-data/session.json
-data/teams.json
-data/users.json
+# Keep all other files in data/
+!data/
+!data/**
+!data/logs/
+!data/export/
+!data/uploads/
 
 # OS / Editor files
 .DS_Store
