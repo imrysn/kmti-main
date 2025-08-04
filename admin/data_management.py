@@ -23,32 +23,31 @@ index_lock = threading.Lock()
 search_cache = {}
 search_lock = threading.Lock()
 
+# Delay for debounce (in seconds)
 SEARCH_DEBOUNCE = 0.3
 
-# Overlay components
+# Reference for the loading overlay
 loading_overlay = None
 loading_text = None
+loading_progress = None
 
 
-def post_to_main(page: ft.Page, fn):
-    """Utility to run a function safely on the main thread."""
-    page.add(ft.Text("", visible=False))
-    fn()
-    page.update()
+# ---------------- Indexing and Watchdog ----------------
 
-
-def show_progress_overlay(page: ft.Page, show: bool, text: str = ""):
+def show_loading_overlay(page: ft.Page, show: bool, progress: float = None):
     """
-    Show or hide a full-screen spinner overlay with percentage.
+    Show or hide a full-screen spinner overlay with progress.
     """
-    global loading_overlay, loading_text
+    global loading_overlay, loading_text, loading_progress
+
     if loading_overlay is None:
-        loading_text = ft.Text("", size=18, color=ft.Colors.WHITE, weight=FontWeight.BOLD)
+        loading_progress = ft.ProgressBar(width=300, value=0)
+        loading_text = ft.Text("Indexing...")
         loading_overlay = ft.Container(
             content=ft.Column(
                 [
-                    ft.ProgressRing(width=80, height=80, stroke_width=5),
                     loading_text,
+                    loading_progress,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -60,39 +59,49 @@ def show_progress_overlay(page: ft.Page, show: bool, text: str = ""):
         )
         page.overlay.append(loading_overlay)
 
-    loading_text.value = text
+    if progress is not None:
+        loading_progress.value = progress
+        loading_text.value = f"Indexing... {int(progress*100)}%"
+
     loading_overlay.visible = show
     page.update()
 
 
-def build_index_with_progress(base_dir: Path, page: ft.Page):
+def build_index(base_dir: Path, page: Optional[ft.Page] = None):
     """
-    Scans BASE_DIR and builds an index while updating the progress overlay.
+    Scans BASE_DIR and builds a list of all files and folders.
+    Shows spinner while processing.
     """
-    all_paths = []
-    total_items = 0
-    for _, dirs, files in os.walk(base_dir):
-        total_items += len(dirs) + len(files)
-
-    processed = 0
+    print(f"[DEBUG] Building index for {base_dir} ...")
     start_time = time.time()
+    index = []
+
+    # Count total for progress
+    total_items = sum(len(files) + len(dirs) for _, dirs, files in os.walk(base_dir))
+    processed = 0
+
+    if page:
+        show_loading_overlay(page, True, 0)
+
     for root, dirs, files in os.walk(base_dir):
         for d in dirs:
-            all_paths.append(str(Path(root) / d))
+            index.append(str(Path(root) / d))
             processed += 1
-            if processed % 50 == 0:
-                percent = int(processed / max(total_items, 1) * 100)
-                post_to_main(page, lambda p=percent: show_progress_overlay(page, True, f"Indexing... {p}%"))
         for f in files:
-            all_paths.append(str(Path(root) / f))
+            index.append(str(Path(root) / f))
             processed += 1
-            if processed % 50 == 0:
-                percent = int(processed / max(total_items, 1) * 100)
-                post_to_main(page, lambda p=percent: show_progress_overlay(page, True, f"Indexing... {p}%"))
+
+        if page and total_items > 0:
+            progress = processed / total_items
+            show_loading_overlay(page, True, progress)
 
     elapsed = time.time() - start_time
-    print(f"[DEBUG] Index built with {len(all_paths)} entries in {elapsed:.2f} seconds.")
-    return all_paths
+    print(f"[DEBUG] Index built with {len(index)} entries in {elapsed:.2f} seconds.")
+
+    if page:
+        show_loading_overlay(page, False)
+
+    return index
 
 
 def save_index_to_cache():
@@ -117,35 +126,28 @@ def load_index_from_cache():
 
 def refresh_index(page=None):
     """
-    Rebuild the index and display progress overlay.
+    Rebuilds index from disk and saves it to cache.
     """
     global global_file_index
     start_time = time.time()
-
-    def worker():
-        post_to_main(page, lambda: show_progress_overlay(page, True, "Indexing... 0%"))
-        idx = build_index_with_progress(BASE_DIR, page)
-        with index_lock:
-            global global_file_index
-            global_file_index = idx
-        save_index_to_cache()
-        elapsed = time.time() - start_time
-        print(f"[DEBUG] Index refreshed in {elapsed:.2f} seconds.")
-        if page:
-            def notify():
-                show_progress_overlay(page, False)
-                page.snack_bar = ft.SnackBar(
-                    ft.Text(f"Index refreshed in {elapsed:.2f}s ({len(global_file_index)} entries)")
-                )
-                page.snack_bar.open = True
-                page.update()
-
-            post_to_main(page, notify)
-
-    threading.Thread(target=worker, daemon=True).start()
+    with index_lock:
+        global_file_index = build_index(BASE_DIR, page)
+    save_index_to_cache()
+    elapsed = time.time() - start_time
+    print(f"[DEBUG] Index refreshed in {elapsed:.2f} seconds.")
+    if page:
+        page.snack_bar = ft.SnackBar(
+            ft.Text(f"Index refreshed in {elapsed:.2f}s ({len(global_file_index)} entries)")
+        )
+        page.snack_bar.open = True
+        page.update()
 
 
 class IndexWatcherHandler(FileSystemEventHandler):
+    """
+    Handles file system events (create, delete, modify).
+    """
+
     def __init__(self, page):
         super().__init__()
         self.page = page
@@ -153,13 +155,17 @@ class IndexWatcherHandler(FileSystemEventHandler):
 
     def on_any_event(self, event):
         now = time.time()
+        # Debounce: refresh at most once every 2 seconds
         if now - self.last_refresh > 2:
             print(f"[DEBUG] Detected change: {event.event_type} - {event.src_path}")
             self.last_refresh = now
-            refresh_index(self.page)
+            threading.Thread(target=lambda: refresh_index(self.page), daemon=True).start()
 
 
 def start_watcher(page):
+    """
+    Starts a watchdog observer to monitor BASE_DIR.
+    """
     print(f"[DEBUG] Starting watchdog on {BASE_DIR}")
     event_handler = IndexWatcherHandler(page)
     observer = Observer()
@@ -168,6 +174,8 @@ def start_watcher(page):
     observer.start()
     return observer
 
+
+# ---------------- Directory Listing ----------------
 
 def list_directory(path: Path):
     print(f"[DEBUG] Listing directory: {path}")
@@ -185,6 +193,9 @@ def list_directory(path: Path):
 
 
 def search_all(base: Path, query: str, max_results=500):
+    """
+    Search in the in-memory global_file_index for speed.
+    """
     print(f"[DEBUG] Searching index for '{query}'...")
     results = []
     q = query.lower()
@@ -199,6 +210,8 @@ def search_all(base: Path, query: str, max_results=500):
     return results
 
 
+# ---------------- UI ----------------
+
 def data_management(content: ft.Column, username: Optional[str]):
     print("[DEBUG] Initializing data management UI")
     content.controls.clear()
@@ -207,13 +220,17 @@ def data_management(content: ft.Column, username: Optional[str]):
     selected_item = {"path": None}
     last_click_time = {"time": 0}
     search_thread = {"thread": None, "stop": False}
+    search_timer = {"timer": None}
+
     page = content.page
 
+    # Load or build index
     global global_file_index
     global_file_index = load_index_from_cache()
     if not global_file_index:
-        refresh_index(page)
+        threading.Thread(target=lambda: refresh_index(page), daemon=True).start()
 
+    # Start background watcher
     start_watcher(page)
 
     grid = ft.GridView(
@@ -245,13 +262,17 @@ def data_management(content: ft.Column, username: Optional[str]):
         visible=False,
     )
 
+    # ---------------- Core functions ----------------
+
     def update_breadcrumb():
+        print(f"[DEBUG] Updating breadcrumb: {current_path[0]}")
         breadcrumb.controls.clear()
         parts = list(current_path[0].parts)
         for i, part in enumerate(parts):
             partial_path = Path(*parts[: i + 1])
 
             def go_to_path(_, p=partial_path):
+                print(f"[DEBUG] Breadcrumb clicked: {p}")
                 current_path[0] = p
                 refresh()
 
@@ -259,9 +280,7 @@ def data_management(content: ft.Column, username: Optional[str]):
                 ft.TextButton(
                     text=part,
                     on_click=go_to_path,
-                    style=ft.ButtonStyle(
-                        color={ft.ControlState.DEFAULT: ft.Colors.BLUE}
-                    ),
+                    style=ft.ButtonStyle(color={ft.ControlState.DEFAULT: ft.Colors.BLUE}),
                 )
             )
             if i < len(parts) - 1:
@@ -270,21 +289,43 @@ def data_management(content: ft.Column, username: Optional[str]):
         breadcrumb.update()
 
     def show_details(item: Path):
+        print(f"[DEBUG] Showing details for: {item}")
         details_panel.update_details(item)
 
     def highlight_selected():
+        print(f"[DEBUG] Highlighting selection: {selected_item['path']}")
         for tile in grid.controls:
             path = tile.data
-            tile.border = ft.border.all(2, ft.Colors.GREY_800) if path == selected_item["path"] else None
+            if path == selected_item["path"]:
+                tile.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.GREY_800)
+            else:
+                tile.bgcolor = "transparent"
             tile.update()
 
+    def deselect_all():
+        print("[DEBUG] Deselecting all items")
+        selected_item["path"] = None
+        for tile in grid.controls:
+            tile.bgcolor = "transparent"
+            tile.update()
+        details_panel.clear()
+
     def open_item(item: Path):
+        print(f"[DEBUG] Opening item: {item}")
         if item.is_dir():
+            # If search bar has text, clear it before opening folder
+            if search_field.value.strip():
+                print("[DEBUG] Clearing search bar after folder open")
+                search_field.value = ""
+                search_field.update()
+
             current_path[0] = item
             refresh()
         else:
             def confirm_open():
+                print(f"[DEBUG] Confirmed opening file: {item}")
                 os.startfile(item)
+
             show_confirm_dialog(
                 content.page,
                 "Open File",
@@ -292,19 +333,23 @@ def data_management(content: ft.Column, username: Optional[str]):
                 confirm_open,
             )
 
+
     def go_back():
         if current_path[0] != BASE_DIR:
+            print("[DEBUG] Going back")
             current_path[0] = current_path[0].parent
             refresh()
 
     def handle_click(item: Path):
         now = time.time()
+        print(f"[DEBUG] Item clicked: {item}")
         if selected_item["path"] != item or (now - last_click_time["time"]) > 0.5:
             selected_item["path"] = item
             last_click_time["time"] = now
             highlight_selected()
             show_details(item)
         else:
+            print(f"[DEBUG] Double-click detected: {item}")
             open_item(item)
             selected_item["path"] = None
             refresh()
@@ -320,7 +365,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         elif ext in [".zip", ".rar"]:
             return ft.Icons.FOLDER_ZIP, "orange"
         elif ext in [".icd", ".dwg"]:
-            return ft.Icons.ARCHITECTURE, "#f0a500"
+            return ft.Icons.ARCHITECTURE, "#555555"
         else:
             return ft.Icons.DESCRIPTION, "#000000"
 
@@ -328,7 +373,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         icon, color = get_icon_and_color(item)
         display_name = item.name
         max_len = 15
-        short_name = display_name if len(display_name) <= max_len else display_name[: max_len - 3] + "..."
+        short_name = display_name if len(display_name) <= max_len else display_name[:max_len - 3] + "..."
 
         container = ft.Container(
             content=ft.Column(
@@ -347,47 +392,63 @@ def data_management(content: ft.Column, username: Optional[str]):
 
         def on_hover(e):
             if selected_item["path"] != item:
-                container.bgcolor = (
-                    ft.Colors.with_opacity(0.2, ft.Colors.GREY_800)
-                    if e.data == "true"
-                    else "transparent"
-                )
+                container.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.GREY_800) if e.data == "true" else "transparent"
                 container.update()
 
         container.on_hover = on_hover
         return container
 
     def update_grid(results):
-        grid.controls.clear()
-        for item in results:
-            grid.controls.append(build_item_tile(item))
-        grid.update()
+        print(f"[DEBUG] Updating grid with {len(results)} results")
+
+        def do_update():
+            grid.controls.clear()
+            for item in results:
+                grid.controls.append(build_item_tile(item))
+            grid.update()
+
+        # Call directly since we are now on main thread
+        do_update()
 
     def perform_search(query: str):
+        print(f"[DEBUG] perform_search: '{query}'")
         with search_lock:
             if query in search_cache:
-                update_grid(search_cache[query])
+                print(f"[DEBUG] Cache hit for query: '{query}'")
+                cached_results = search_cache[query]
+                update_grid(cached_results)
                 return
+            else:
+                print(f"[DEBUG] Cache miss for query: '{query}'")
 
+        # Perform search
         results = search_all(current_path[0], query)
 
+        # Save results to cache and update UI (main thread)
         with search_lock:
             if not search_thread["stop"]:
+                print(f"[DEBUG] Caching results for '{query}'")
                 search_cache[query] = results
-                post_to_main(page, lambda: update_grid(results))
+                update_grid(results)
 
     def refresh():
+        print(f"[DEBUG] Refreshing UI for path: {current_path[0]}")
+        grid.controls.clear()
         path = current_path[0]
-        back_button.visible = path != BASE_DIR
+        back_button.visible = (path != BASE_DIR)
         update_breadcrumb()
+
         query = search_field.value.strip()
 
         if query:
+            print(f"[DEBUG] Refresh triggered search for '{query}'")
+            # Cancel previous search
             search_thread["stop"] = True
             if search_thread["thread"] and search_thread["thread"].is_alive():
                 pass
             search_thread["stop"] = False
 
+            # Debounce
             def delayed_search():
                 time.sleep(SEARCH_DEBOUNCE)
                 if not search_thread["stop"]:
@@ -398,15 +459,28 @@ def data_management(content: ft.Column, username: Optional[str]):
             t.start()
         else:
             folders, files = list_directory(path)
-            update_grid(folders + files)
+            for f in folders + files:
+                grid.controls.append(build_item_tile(f))
+            grid.update()
             back_button.update()
 
-    def on_search_submit(e):
-        refresh()
+    def on_key_press(e: ft.KeyboardEvent):
+        # Only trigger search when Enter is pressed
+        if e.key == "Enter":
+            refresh()
 
-    search_field.on_submit = on_search_submit
+    search_field.on_submit = lambda e: refresh()
+    page.on_keyboard_event = on_key_press
 
-    # --- UI Layout ---
+    # Add empty area click deselection
+    def clear_selection_area_tap(e):
+        deselect_all()
+
+    blank_click_area = ft.Container(
+        expand=True,
+        on_click=clear_selection_area_tap,
+        content=grid
+    )
 
     top_bar = ft.Row(
         [
@@ -421,34 +495,32 @@ def data_management(content: ft.Column, username: Optional[str]):
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
-    main_row = ft.Row(
+    main_row = ft.Column(
         [
             ft.Container(
-                content=ft.ListView(expand=True, controls=[grid]),
-                expand=3,
-                margin=10,
+                content=top_bar,
+                padding=10,
+                bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
+                expand=False,
             ),
-            ft.VerticalDivider(width=1),
-            ft.Container(
-                content=details_panel,
-                expand=1,
-                alignment=ft.alignment.top_left,
-                margin=10,
+            ft.Divider(),
+            ft.Row(
+                [
+                    ft.Container(
+                        content=blank_click_area,
+                        expand=3,
+                        margin=10,
+                    ),
+                    ft.VerticalDivider(width=1),
+                    ft.Container(content=details_panel, expand=1, alignment=ft.alignment.top_left, margin=10),
+                ],
+                expand=True,
             ),
         ],
         expand=True,
     )
 
-    content.controls.append(
-        ft.Column(
-            [
-                top_bar,
-                ft.Divider(),
-                main_row,
-            ],
-            expand=True,
-        )
-    )
+    content.controls.append(main_row)
     content.update()
 
     refresh()
