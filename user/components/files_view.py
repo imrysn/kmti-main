@@ -1,13 +1,15 @@
 import flet as ft
 import os
 import shutil
+import time
+import threading
 from datetime import datetime
 from ..services.file_service import FileService
 from .shared_ui import SharedUI
 from .dialogs import DialogManager
 
 class FilesView:
-    """Files view component for displaying and managing user files with real functionality"""
+    """Files view component for displaying and managing user files with simple upload animation"""
     
     def __init__(self, page: ft.Page, username: str, file_service: FileService):
         self.page = page
@@ -30,6 +32,52 @@ class FilesView:
         # Store reference to files table for direct updates
         self.files_table_ref = None
         self.files_container_ref = None
+        
+        # Simple success notification
+        self.success_notification = None
+    
+    def create_success_notification(self):
+        """Create simple success notification"""
+        self.success_notification = ft.Container(
+            content=ft.Row([
+                ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=24),
+                ft.Text("Files uploaded successfully!", color=ft.Colors.GREEN, weight=ft.FontWeight.BOLD)
+            ], spacing=10),
+            bgcolor=ft.Colors.GREEN_50,
+            border=ft.border.all(2, ft.Colors.GREEN),
+            border_radius=8,
+            padding=ft.padding.all(15),
+            top=20,
+            right=20,
+            animate_opacity=300,
+            opacity=0,
+            visible=False
+        )
+        
+        return self.success_notification
+    
+    def show_success_animation(self, file_count: int):
+        """Show simple success animation"""
+        if self.success_notification:
+            # Update the message
+            self.success_notification.content.controls[1].value = f"{file_count} file{'s' if file_count != 1 else ''} uploaded successfully!"
+            
+            # Show notification
+            self.success_notification.visible = True
+            self.success_notification.opacity = 1
+            self.page.update()
+            
+            # Hide after 2 seconds
+            def hide_notification():
+                time.sleep(2)
+                if self.success_notification:
+                    self.success_notification.opacity = 0
+                    self.page.update()
+                    time.sleep(0.3)  # Wait for fade out
+                    self.success_notification.visible = False
+                    self.page.update()
+            
+            threading.Thread(target=hide_notification, daemon=True).start()
     
     def set_navigation(self, navigation):
         """Set navigation functions"""
@@ -153,11 +201,15 @@ class FilesView:
             self.page.update()
     
     def upload_file(self, e: ft.FilePickerResultEvent):
-        """Handle file upload with duplicate support and instant refresh"""
+        """Handle file upload with simple success animation"""
         if e.files:
             try:
                 # Upload files with duplicate handling
                 uploaded_files, failed_files = self.upload_files_with_duplicates(e.files)
+                
+                # Show simple success animation
+                if uploaded_files:
+                    self.show_success_animation(len(uploaded_files))
                 
                 # Create success message
                 if uploaded_files:
@@ -198,7 +250,6 @@ class FilesView:
                             self.page.update()
                         
                         # Show error after 3 seconds
-                        import threading
                         timer = threading.Timer(3.0, show_error)
                         timer.start()
                     else:
@@ -471,36 +522,43 @@ class FilesView:
         return files_table
     
     def create_content(self):
-        """Create the main files content with maximized space utilization"""
+        """Create the main files content with simple success notification"""
         return ft.Container(
-            content=ft.Column([
-                # Back button
-                self.shared.create_back_button(
-                    lambda e: self.navigation['show_browser']() if self.navigation else None
-                ),
+            content=ft.Stack([
+                # Main content
+                ft.Column([
+                    # Back button
+                    self.shared.create_back_button(
+                        lambda e: self.navigation['show_browser']() if self.navigation else None
+                    ),
+                    
+                    # Main content card - MAXIMIZED SPACE
+                    ft.Container(
+                        content=ft.Row([
+                            # Left side - Avatar and menu (FIXED AT TOP)
+                            ft.Container(
+                                content=self.shared.create_user_sidebar("files"),
+                                alignment=ft.alignment.top_center,
+                                width=200  # FIXED WIDTH FOR USER SIDEBAR
+                            ),
+                            ft.Container(width=20),  # REDUCED SPACER EVEN MORE
+                            # Right side - Files content - EXPANDED TO USE REMAINING SPACE
+                            ft.Container(
+                                content=self.create_files_table(),
+                                expand=True  # USE ALL REMAINING HORIZONTAL SPACE
+                            )
+                        ], alignment=ft.MainAxisAlignment.START, 
+                           vertical_alignment=ft.CrossAxisAlignment.START,
+                           expand=True),  # MAKE THE ROW EXPAND VERTICALLY TOO
+                        margin=ft.margin.only(left=15, right=15, top=5, bottom=10),  # REDUCED ALL MARGINS
+                        expand=True  # USE FULL VERTICAL SPACE
+                    )
+                ], alignment=ft.MainAxisAlignment.START, spacing=0, expand=True),  # MAKE OUTER COLUMN EXPAND
                 
-                # Main content card - MAXIMIZED SPACE
-                ft.Container(
-                    content=ft.Row([
-                        # Left side - Avatar and menu (FIXED AT TOP)
-                        ft.Container(
-                            content=self.shared.create_user_sidebar("files"),
-                            alignment=ft.alignment.top_center,
-                            width=200  # FIXED WIDTH FOR USER SIDEBAR
-                        ),
-                        ft.Container(width=20),  # REDUCED SPACER EVEN MORE
-                        # Right side - Files content - EXPANDED TO USE REMAINING SPACE
-                        ft.Container(
-                            content=self.create_files_table(),
-                            expand=True  # USE ALL REMAINING HORIZONTAL SPACE
-                        )
-                    ], alignment=ft.MainAxisAlignment.START, 
-                       vertical_alignment=ft.CrossAxisAlignment.START,
-                       expand=True),  # MAKE THE ROW EXPAND VERTICALLY TOO
-                    margin=ft.margin.only(left=15, right=15, top=5, bottom=10),  # REDUCED ALL MARGINS
-                    expand=True  # USE FULL VERTICAL SPACE
-                )
-            ], alignment=ft.MainAxisAlignment.START, spacing=0, expand=True),  # MAKE OUTER COLUMN EXPAND
+                # Simple success notification (top-right corner)
+                self.create_success_notification()
+            ]),
             alignment=ft.alignment.top_center,
             expand=True
         )
+    

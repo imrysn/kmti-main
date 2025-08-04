@@ -1,202 +1,255 @@
 import flet as ft
+import os
+from typing import Optional
 
 class SharedUI:
-    """Shared UI components used across different views"""
+    """Shared UI components with clickable profile image support"""
     
     def __init__(self, page: ft.Page, username: str, user_data: dict):
         self.page = page
         self.username = username
         self.user_data = user_data
         self.navigation = None
+        
+        # Initialize profile image service for checking image existence
+        try:
+            from .profile_image_service import ProfileImageService
+            # Assume user folder structure
+            user_folder = f"data/uploads/{username}"
+            self.image_service = ProfileImageService(user_folder, username)
+        except:
+            self.image_service = None
     
     def set_navigation(self, navigation):
         """Set navigation functions"""
         self.navigation = navigation
     
-    def create_user_sidebar(self, active_tab: str = "profile"):
-        """Create the user sidebar with avatar and menu - FIXED ALIGNMENT"""
+    def create_user_avatar(self, size: int = 80, show_border: bool = True, clickable: bool = False, on_click=None) -> ft.Control:
+        """Create user avatar with profile image or default icon"""
+        
+        # Check if user has uploaded profile image
+        if self.image_service and self.image_service.has_profile_image():
+            # Show uploaded profile image
+            avatar_content = ft.Image(
+                src=self.image_service.get_profile_image_path(),
+                width=size,
+                height=size,
+                fit=ft.ImageFit.COVER,
+                border_radius=size // 2  # Circular image
+            )
+        else:
+            # Show default avatar
+            avatar_content = ft.Icon(
+                ft.Icons.PERSON,
+                size=size * 0.6,  # Icon size relative to container
+                color=ft.Colors.WHITE
+            )
+        
+        avatar_container = ft.Container(
+            content=avatar_content,
+            width=size,
+            height=size,
+            bgcolor=ft.Colors.BLUE_500 if not (self.image_service and self.image_service.has_profile_image()) else None,
+            border_radius=size // 2,
+            alignment=ft.alignment.center,
+            border=ft.border.all(2, ft.Colors.BLUE_500 if show_border else ft.Colors.TRANSPARENT),
+            padding=0
+        )
+        
+        if clickable and on_click:
+            avatar_container.on_click = on_click
+            avatar_container.tooltip = "Click to change profile image"
+            avatar_container.ink = True
+        
+        return avatar_container
+    
+    def create_user_info_card(self, clickable_avatar: bool = False, on_avatar_click=None) -> ft.Container:
+        """Create user information card with profile image"""
         return ft.Container(
             content=ft.Column([
-                # Fixed spacing container for avatar
-                ft.Container(height=20),
-                
-                # Avatar - centered and consistent
-                ft.Container(
-                    content=ft.CircleAvatar(
-                        bgcolor=ft.Colors.BLUE_400,
-                        radius=40,  # Consistent size
-                        content=ft.Icon(ft.Icons.PERSON_ROUNDED, size=40, color=ft.Colors.WHITE)
-                    ),
-                    alignment=ft.alignment.center,
-                    width=300,  # Fixed width for consistency
+                # Profile avatar - can be clickable
+                self.create_user_avatar(
+                    size=80, 
+                    show_border=True, 
+                    clickable=clickable_avatar,
+                    on_click=on_avatar_click
                 ),
                 
-                # Fixed spacing
-                ft.Container(height=20),
+                ft.Container(height=15),
                 
-                # User info - centered and aligned
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text("User", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
-                        ft.Text(self.user_data["full_name"], size=14, color=ft.Colors.GREY_700, text_align=ft.TextAlign.CENTER),
-                        ft.Text(self.user_data["email"], size=12, color=ft.Colors.GREY_600, text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
-                    width=300,
-                    alignment=ft.alignment.center,
+                # User name
+                ft.Text(
+                    self.user_data.get('fullname', 'User'),
+                    size=18,
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.Colors.BLACK87,
+                    text_align=ft.TextAlign.CENTER
                 ),
                 
-                # Fixed spacing before menu
-                ft.Container(height=30),
+                # Username
+                ft.Text(
+                    self.username,
+                    size=14,
+                    color=ft.Colors.GREY_600,
+                    text_align=ft.TextAlign.CENTER
+                ),
                 
-                # Menu items - FIXED ALIGNMENT - SAME SIDE, LOCKED IN PLACE
-                ft.Container(
-                    content=ft.Column([
-                        # Both items in exact same position with fixed alignment
-                        ft.Container(
-                            content=self.create_menu_item("Profile", "profile", active_tab),
-                            alignment=ft.alignment.center,
-                            width=300,
-                            height=44  # Fixed height container
-                        ),
-                        ft.Container(height=8),  # Fixed spacing between items
-                        ft.Container(
-                            content=self.create_menu_item("Files", "files", active_tab),
-                            alignment=ft.alignment.center, 
-                            width=300,
-                            height=44  # Fixed height container
-                        )
-                    ], 
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
-                    spacing=0,
-                    alignment=ft.alignment.center
+                # Email
+                ft.Text(
+                    self.user_data.get('email', f'{self.username}@gmail.com'),
+                    size=12,
+                    color=ft.Colors.GREY_500,
+                    text_align=ft.TextAlign.CENTER
+                ),
+                
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5),
+            padding=ft.padding.all(20),
+            bgcolor=ft.Colors.WHITE,
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            margin=ft.margin.only(bottom=15)
+        )
+    
+    def create_navigation_menu(self, current_page: str) -> ft.Container:
+        """Create navigation menu"""
+        
+        def create_menu_item(icon, label, page_key):
+            is_active = current_page == page_key
+            
+            return ft.Container(
+                content=ft.Row([
+                    ft.Icon(
+                        icon, 
+                        size=20, 
+                        color=ft.Colors.BLUE_600 if is_active else ft.Colors.GREY_600
                     ),
-                    width=300,
-                    alignment=ft.alignment.center,
-                )
-                
-            ], 
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=0  # Remove automatic spacing, use containers instead
-            ),
-            width=300,  # Fixed sidebar width
-            bgcolor=ft.Colors.GREY_100,  # Light background
-            padding=ft.padding.all(0),  # Remove default padding
-            alignment=ft.alignment.top_center
-        )
-    
-    def create_menu_item(self, label: str, tab_name: str, active_tab: str):
-        """Create a menu item for the sidebar - FIXED ALIGNMENT WITH SMOOTH HOVER"""
-        is_active = tab_name == active_tab
+                    ft.Container(width=12),
+                    ft.Text(
+                        label, 
+                        size=14, 
+                        weight=ft.FontWeight.BOLD if is_active else ft.FontWeight.NORMAL,
+                        color=ft.Colors.BLUE_600 if is_active else ft.Colors.GREY_700
+                    )
+                ]),
+                padding=ft.padding.symmetric(horizontal=15, vertical=12),
+                bgcolor=ft.Colors.BLUE_50 if is_active else ft.Colors.TRANSPARENT,
+                border_radius=8,
+                margin=ft.margin.only(bottom=5),
+                on_click=self.get_navigation_handler(page_key),
+                ink=True,
+                ink_color=ft.Colors.BLUE_100
+            )
         
-        def on_click(e):
-            if self.navigation:
-                if tab_name == "profile":
-                    self.navigation['show_profile']()
-                elif tab_name == "files":
-                    self.navigation['show_files']()
-        
-        def on_hover(e):
-            if not is_active:
-                if e.data == "true":  # Mouse enter
-                    e.control.bgcolor = ft.Colors.GREY_300
-                    e.control.content.color = ft.Colors.GREY_800
-                else:  # Mouse leave
-                    e.control.bgcolor = ft.Colors.TRANSPARENT
-                    e.control.content.color = ft.Colors.GREY_700
-                e.control.update()
-        
-        return ft.Container(
-            content=ft.Text(
-                label, 
-                color=ft.Colors.WHITE if is_active else ft.Colors.GREY_700,
-                text_align=ft.TextAlign.CENTER,
-                size=14,
-                weight=ft.FontWeight.W_500
-            ),
-            bgcolor=ft.Colors.GREY_600 if is_active else ft.Colors.TRANSPARENT,
-            padding=ft.padding.symmetric(horizontal=20, vertical=12),
-            border_radius=8,
-            width=140,  # LOCKED WIDTH - prevents shifting
-            height=44,   # LOCKED HEIGHT - prevents shifting
-            alignment=ft.alignment.center,  # LOCKED CENTER ALIGNMENT
-            on_click=on_click if not is_active else None,
-            on_hover=on_hover if not is_active else None,
-            ink=not is_active,
-            animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT) if not is_active else None,
-            # POSITION LOCK - prevents movement during state changes
-            margin=ft.margin.all(0),  # No margins that could shift
-            border=ft.border.all(0, ft.Colors.TRANSPARENT)  # Invisible border to maintain exact positioning
-        )
-    
-    def create_back_button(self, on_click_handler):
-        """Create a standardized back button - FIXED POSITIONING"""
-        return ft.Container(
-            content=ft.IconButton(
-                icon=ft.Icons.CHEVRON_LEFT,
-                icon_color=ft.Colors.GREY_700,
-                icon_size=24,
-                on_click=on_click_handler,
-                tooltip="Go back"
-            ),
-            alignment=ft.alignment.top_left,
-            margin=ft.margin.only(left=15, top=15),
-            width=50,
-            height=50
-        )
-    
-    def create_profile_content_area(self):
-        """Create the right side content area for profile editing"""
         return ft.Container(
             content=ft.Column([
-                # Header
-                ft.Container(
-                    content=ft.Row([
-                        ft.Text("Profile Settings", size=24, weight=ft.FontWeight.BOLD),
-                        ft.Container(expand=True),  # Push edit button to right
-                        ft.ElevatedButton(
-                            "Edit Profile",
-                            icon=ft.Icons.EDIT,
-                            on_click=lambda e: print("Edit profile clicked")
-                        )
-                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                    padding=ft.padding.all(20),
-                    bgcolor=ft.Colors.WHITE,
-                    border_radius=ft.border_radius.only(top_left=10, top_right=10)
-                ),
-                
-                # Form fields
-                ft.Container(
-                    content=ft.Column([
-                        self.create_form_field("Full Name:", self.user_data.get("full_name", "")),
-                        self.create_form_field("Email:", self.user_data.get("email", "")),
-                        self.create_form_field("Role:", "User"),  # You can customize this
-                        self.create_form_field("Join Date:", self.user_data.get("created_date", "")[:10] if self.user_data.get("created_date") else ""),
-                    ], spacing=20),
-                    padding=ft.padding.all(20),
-                    bgcolor=ft.Colors.WHITE,
-                    expand=True
-                )
+                create_menu_item(ft.Icons.DASHBOARD, "Folders", "browser"),
+                create_menu_item(ft.Icons.PERSON, "Profile", "profile"),
+                create_menu_item(ft.Icons.FOLDER, "Files", "files"),
             ], spacing=0),
             bgcolor=ft.Colors.WHITE,
-            border_radius=10,
-            expand=True,
-            margin=ft.margin.all(20)
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            padding=ft.padding.all(10)
         )
     
-    def create_form_field(self, label: str, value: str):
-        """Create a consistent form field"""
+    def get_navigation_handler(self, page_key: str):
+        """Get navigation handler for menu item"""
+        def handle_navigation(e):
+            if self.navigation:
+                if page_key == "browser":
+                    self.navigation['show_browser']()
+                elif page_key == "profile":
+                    self.navigation['show_profile']()
+                elif page_key == "files":
+                    self.navigation['show_files']()
+        
+        return handle_navigation
+    
+    def create_user_sidebar(self, current_page: str, clickable_avatar: bool = False, on_avatar_click=None) -> ft.Column:
+        """Create complete user sidebar with profile image"""
+        return ft.Column([
+            # User info card with profile image - can be clickable
+            self.create_user_info_card(
+                clickable_avatar=clickable_avatar,
+                on_avatar_click=on_avatar_click
+            ),
+            
+            # Navigation menu
+            self.create_navigation_menu(current_page)
+        ], spacing=0)
+    
+    def create_back_button(self, on_click_handler) -> ft.Container:
+        """Create back button"""
         return ft.Container(
-            content=ft.Column([
-                ft.Text(label, size=14, weight=ft.FontWeight.W_500, color=ft.Colors.GREY_700),
-                ft.Container(height=5),
-                ft.TextField(
-                    value=value,
-                    border_radius=8,
-                    bgcolor=ft.Colors.GREY_50,
-                    border_color=ft.Colors.GREY_300,
-                    focused_border_color=ft.Colors.BLUE_400,
-                    content_padding=ft.padding.symmetric(horizontal=15, vertical=10)
+            content=ft.Row([
+                ft.IconButton(
+                    icon=ft.Icons.ARROW_BACK,
+                    icon_color=ft.Colors.BLUE_600,
+                    icon_size=20,
+                    on_click=on_click_handler,
+                    tooltip="Back"
+                ),
+                ft.Text(
+                    "Back",
+                    size=14,
+                    color=ft.Colors.BLUE_600,
+                    weight=ft.FontWeight.W_500
                 )
-            ], spacing=0),
-            width=400
+            ], spacing=5),
+            margin=ft.margin.only(bottom=10),
+            on_click=on_click_handler,
+            ink=True
         )
+    
+    def create_mini_avatar(self, size: int = 40, clickable: bool = False, on_click=None) -> ft.Control:
+        """Create small avatar for headers/toolbars"""
+        
+        # Check if user has uploaded profile image
+        if self.image_service and self.image_service.has_profile_image():
+            # Show uploaded profile image
+            avatar = ft.Container(
+                content=ft.Image(
+                    src=self.image_service.get_profile_image_path(),
+                    width=size,
+                    height=size,
+                    fit=ft.ImageFit.COVER,
+                    border_radius=size // 2
+                ),
+                border=ft.border.all(1, ft.Colors.BLUE_400),
+                border_radius=(size // 2) + 1,
+                padding=0
+            )
+        else:
+            # Show default mini avatar
+            avatar = ft.Container(
+                content=ft.Icon(
+                    ft.Icons.PERSON,
+                    size=size * 0.6,
+                    color=ft.Colors.WHITE
+                ),
+                width=size,
+                height=size,
+                bgcolor=ft.Colors.BLUE_500,
+                border_radius=size // 2,
+                alignment=ft.alignment.center,
+                border=ft.border.all(1, ft.Colors.BLUE_400)
+            )
+        
+        if clickable and on_click:
+            avatar.on_click = on_click
+            avatar.tooltip = "Click to change profile image"
+            avatar.ink = True
+        
+        return avatar
+    
+    def refresh_avatar(self):
+        """Refresh avatar display (call after profile image changes)"""
+        # Reload image service to check for updated profile image
+        if self.image_service:
+            try:
+                # Re-initialize to pick up any changes
+                user_folder = f"data/uploads/{self.username}"
+                from .profile_image_service import ProfileImageService
+                self.image_service = ProfileImageService(user_folder, self.username)
+            except:
+                pass
