@@ -539,19 +539,28 @@ def data_management(content: ft.Column, username: Optional[str]):
             ft.Divider(),
             ft.Row(
                 [
-                    ft.Container(
-                        content=blank_click_area,
+                    ft.Column(
+                        [blank_click_area],
                         expand=3,
-                        margin=10,
+                        scroll=ft.ScrollMode.AUTO,
+                        spacing=0,
                     ),
                     ft.VerticalDivider(width=1),
-                    ft.Container(content=details_panel, expand=1, alignment=ft.alignment.top_left, margin=10),
+                    ft.Container(
+                        content=details_panel,
+                        width=300,
+                        height=400,  # Fixed height to prevent scrolling issues
+                        alignment=ft.alignment.top_left,
+                        margin=10,
+                    ),
                 ],
                 expand=True,
-            ),
+            )
         ],
         expand=True,
     )
+
+
 
     content.controls.append(main_row)
     content.update()
