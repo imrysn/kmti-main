@@ -273,6 +273,12 @@ def data_management(content: ft.Column, username: Optional[str]):
 
             def go_to_path(_, p=partial_path):
                 print(f"[DEBUG] Breadcrumb clicked: {p}")
+                # Clear search bar before navigating
+                if search_field.value.strip():
+                    print("[DEBUG] Clearing search bar due to breadcrumb navigation")
+                    search_field.value = ""
+                    search_field.update()
+
                 current_path[0] = p
                 refresh()
 
@@ -287,6 +293,7 @@ def data_management(content: ft.Column, username: Optional[str]):
                 breadcrumb.controls.append(ft.Text(">", weight=FontWeight.BOLD))
 
         breadcrumb.update()
+
 
     def show_details(item: Path):
         print(f"[DEBUG] Showing details for: {item}")
@@ -337,8 +344,15 @@ def data_management(content: ft.Column, username: Optional[str]):
     def go_back():
         if current_path[0] != BASE_DIR:
             print("[DEBUG] Going back")
+            # Clear search bar before going back
+            if search_field.value.strip():
+                print("[DEBUG] Clearing search bar due to back button")
+                search_field.value = ""
+                search_field.update()
+
             current_path[0] = current_path[0].parent
             refresh()
+
 
     def handle_click(item: Path):
         now = time.time()
@@ -485,8 +499,27 @@ def data_management(content: ft.Column, username: Optional[str]):
     top_bar = ft.Row(
         [
             back_button,
-            ft.ElevatedButton(icon=ft.Icons.UPLOAD, text="Upload"),
-            ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER, text="New Folder"),
+            ft.ElevatedButton(icon=ft.Icons.UPLOAD, 
+                              text="Upload",
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
+                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
+                                  ),
+            ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER, 
+                              text="New Folder",
+                              style=ft.ButtonStyle(
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
+                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))),
             breadcrumb,
             ft.Container(expand=True),
             search_field,
@@ -500,7 +533,6 @@ def data_management(content: ft.Column, username: Optional[str]):
             ft.Container(
                 content=top_bar,
                 padding=10,
-                bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
                 expand=False,
             ),
             ft.Divider(),
