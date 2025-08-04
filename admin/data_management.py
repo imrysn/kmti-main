@@ -315,7 +315,8 @@ def data_management(content: ft.Column, username: Optional[str]):
         for tile in grid.controls:
             tile.bgcolor = "transparent"
             tile.update()
-        details_panel.clear()
+        details_panel.clean()  # ← Use this instead of .clear()
+
 
     def open_item(item: Path):
         print(f"[DEBUG] Opening item: {item}")
