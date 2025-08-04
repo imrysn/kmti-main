@@ -5,9 +5,10 @@ from pathlib import Path
 import os
 import time
 import json
+import shutil
 import threading
 from utils.config_loader import get_base_dir
-from utils.dialog import show_confirm_dialog
+from utils.dialog import show_confirm_dialog, show_input_dialog
 from admin.details_pane import DetailsPane
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -224,13 +225,11 @@ def data_management(content: ft.Column, username: Optional[str]):
 
     page = content.page
 
-    # Load or build index
     global global_file_index
     global_file_index = load_index_from_cache()
     if not global_file_index:
         threading.Thread(target=lambda: refresh_index(page), daemon=True).start()
 
-    # Start background watcher
     start_watcher(page)
 
     grid = ft.GridView(
@@ -261,6 +260,45 @@ def data_management(content: ft.Column, username: Optional[str]):
         on_click=lambda e: go_back(),
         visible=False,
     )
+
+     # Upload files
+    def upload_files():
+        def handle_files(e: ft.FilePickerResultEvent):
+            if e.files:
+                for f in e.files:
+                    dst = current_path[0] / Path(f.name).name
+                    shutil.copy(f.path, dst)
+                refresh()
+
+        existing = next((c for c in page.overlay if isinstance(c, ft.FilePicker)), None)
+        if existing:
+            existing.on_result = handle_files
+            existing.pick_files(allow_multiple=True)
+        else:
+            file_picker = ft.FilePicker(on_result=handle_files)
+            page.overlay.append(file_picker)
+            page.update()
+            file_picker.pick_files(allow_multiple=True)
+
+    # New folder
+    def create_new_folder():
+        def on_submit(name):
+            if not name:
+                return
+            new = current_path[0] / name
+            try:
+                new.mkdir(exist_ok=False)
+                refresh()
+            except FileExistsError:
+                page.snack_bar = ft.SnackBar(ft.Text("Folder already exists"), open=True)
+                page.update()
+            except PermissionError:
+                page.snack_bar = ft.SnackBar(ft.Text("Permission denied: cannot create folder here"), open=True)
+                page.update()
+
+
+        show_input_dialog(page, "Create New Folder", "Folder name", on_submit)
+
 
     # ---------------- Core functions ----------------
 
@@ -405,6 +443,68 @@ def data_management(content: ft.Column, username: Optional[str]):
             data=item,
         )
 
+        def on_right_click(e):
+            print(f"[DEBUG] Right-clicked on: {item}")
+
+            def handle_refresh():
+                print(f"[DEBUG] Refreshing...")
+                refresh()
+
+            def handle_rename():
+                print(f"[DEBUG] Renaming: {item}")
+                def on_submit(new_name):
+                    if new_name:
+                        new_path = item.parent / new_name
+                        try:
+                            item.rename(new_path)
+                            refresh()
+                        except Exception as ex:
+                            page.snack_bar = ft.SnackBar(ft.Text(f"Rename failed: {ex}"), open=True)
+                            page.update()
+                show_input_dialog(page, "Rename", "New name:", on_submit)
+
+            def handle_delete():
+                print(f"[DEBUG] Deleting: {item}")
+                def confirm():
+                    try:
+                        if item.is_dir():
+                            os.rmdir(item)
+                        else:
+                            item.unlink()
+                        refresh()
+                    except Exception as ex:
+                        page.snack_bar = ft.SnackBar(ft.Text(f"Delete failed: {ex}"), open=True)
+                        page.update()
+                show_confirm_dialog(
+                    page,
+                    "Delete Item",
+                    f"Are you sure you want to delete '{item.name}'?",
+                    confirm
+                )
+
+            # Build custom popup menu
+            menu = ft.PopupMenuButton(
+                items=[
+                    ft.PopupMenuItem(text="🌀 Refresh", on_click=lambda e: handle_refresh()),
+                    ft.PopupMenuItem(text="✏️ Rename", on_click=lambda e: handle_rename()),
+                    ft.PopupMenuItem(text="🗑️ Delete", on_click=lambda e: handle_delete()),
+                ],
+                tooltip="Options"
+            )
+
+            # Embed the popup in a container and show manually
+            menu_container = ft.Container(content=menu, alignment=ft.alignment.top_left)
+            page.overlay.append(menu_container)
+            page.update()
+
+            # Open the menu manually (needs short delay)
+            def open_menu():
+                menu.open = True
+                page.update()
+            threading.Timer(0.01, open_menu).start()
+
+        container.on_secondary_tap = on_right_click  # right-click handler
+
         def on_hover(e):
             if selected_item["path"] != item:
                 container.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.GREY_800) if e.data == "true" else "transparent"
@@ -412,6 +512,8 @@ def data_management(content: ft.Column, username: Optional[str]):
 
         container.on_hover = on_hover
         return container
+
+
 
     def update_grid(results):
         print(f"[DEBUG] Updating grid with {len(results)} results")
@@ -500,33 +602,42 @@ def data_management(content: ft.Column, username: Optional[str]):
     top_bar = ft.Row(
         [
             back_button,
-            ft.ElevatedButton(icon=ft.Icons.UPLOAD, 
+            ft.ElevatedButton(icon=ft.Icons.UPLOAD,
                               text="Upload",
+                              on_click=lambda e: upload_files(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
                                            ft.ControlState.HOVERED: ft.Colors.GREEN},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
-                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                        ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
-                                  ),
-            ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER, 
+                              ),
+            ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER,
                               text="New Folder",
+                              on_click=lambda e: create_new_folder(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
                                            ft.ControlState.HOVERED: ft.Colors.GREEN},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
-                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
-                                  shape=ft.RoundedRectangleBorder(radius=5))),
+                                        ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
+                              ),
             breadcrumb,
             ft.Container(expand=True),
             search_field,
         ],
         alignment=ft.MainAxisAlignment.START,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    blank_click_area = ft.Container(
+        expand=True,
+        on_click=lambda e: deselect_all(),
+        content=grid
     )
 
     main_row = ft.Column(
@@ -549,7 +660,7 @@ def data_management(content: ft.Column, username: Optional[str]):
                     ft.Container(
                         content=details_panel,
                         width=300,
-                        height=400,  # Fixed height to prevent scrolling issues
+                        height=400,
                         alignment=ft.alignment.top_left,
                         margin=10,
                     ),
@@ -560,9 +671,6 @@ def data_management(content: ft.Column, username: Optional[str]):
         expand=True,
     )
 
-
-
     content.controls.append(main_row)
     content.update()
-
     refresh()
