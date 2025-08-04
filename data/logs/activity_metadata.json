@@ -35,7 +35,6 @@
         "runtime": "00:17:25",
         "date": "2025-07-31"
     },
-
     {
         "username": "raysan",
         "fullname": "Raysan Perez",
@@ -331,7 +330,6 @@
         "login_time": "2025-08-01 08:52:33",
         "logout_time": "2025-08-01 08:54:23",
         "runtime": "00:01:50",
-
         "date": "2025-08-01"
     },
     {
@@ -527,7 +525,6 @@
         "username": "user1",
         "fullname": "User Test",
         "role": "USER",
-
         "login_time": "2025-08-01 09:21:06",
         "logout_time": "2025-08-01 09:21:38",
         "runtime": "00:00:32",
@@ -537,7 +534,6 @@
         "username": "user1",
         "fullname": "User Test",
         "role": "USER",
-
         "login_time": "2025-08-01 09:21:38",
         "logout_time": "2025-08-01 09:22:09",
         "runtime": "00:00:31",
@@ -1433,8 +1429,6 @@
         "runtime": "01:05:36",
         "date": "2025-08-01"
     },
-
- 
     {
         "username": "bryan",
         "fullname": "bryan",
@@ -1575,8 +1569,17 @@
         "fullname": "Admin",
         "role": "ADMIN",
         "login_time": "2025-08-04 07:40:43",
+        "logout_time": "2025-08-04 08:22:45",
+        "runtime": "00:42:02",
+        "date": "2025-08-03"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "login_time": "2025-08-04 08:22:45",
         "logout_time": null,
         "runtime": null,
-        "date": "2025-08-03"
+        "date": "2025-08-04"
     }
 ]

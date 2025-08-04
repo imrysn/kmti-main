@@ -518,5 +518,39 @@
         "fullname": "Admin",
         "activity": "Login",
         "date": "2025-08-03 16:11:27"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-04 08:22:04",
+        "activity": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-04 08:22:04"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-04 08:22:38",
+        "activity": "Logout"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-04 08:22:38"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-04 08:22:45"
     }
 ]
