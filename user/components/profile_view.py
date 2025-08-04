@@ -351,15 +351,7 @@ class ProfileView:
                 self.create_clickable_profile_avatar(),
                 
                 ft.Container(height=15),
-                
-                # User name
-                ft.Text(
-                    "User",
-                    size=18,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.Colors.BLACK87,
-                    text_align=ft.TextAlign.CENTER
-                ),
+            
                 
                 # Username
                 ft.Text(

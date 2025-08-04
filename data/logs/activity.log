@@ -615,3 +615,6 @@
 >>>>>>> 04ecb401f4c961379dda4a8af77badf1643578de
 2025-08-04 08:22:04 - User Test (user1@example.com, USER) - Login
 2025-08-04 08:22:38 - User Test (user1@example.com, USER) - Logout
+2025-08-04 09:10:48 - Admin (admin@example.com, ADMIN) - Login
+2025-08-04 09:13:43 - Admin (admin@example.com, ADMIN) - Login
+2025-08-04 09:14:29 - Admin (admin@example.com, ADMIN) - Logout
