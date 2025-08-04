@@ -1,27 +1,29 @@
-# Python bytecode
+# Python cache
 __pycache__/
-*.py[cod]
-*$py.class
+admin/__pycache__/
+admin/utils/__pycache__/
+user/__pycache__/
+user/components/__pycache__/
+user/models/__pycache__/
+user/services/__pycache__/
+utils/__pycache__/
 
 # Virtual environment
 venv/
-ENV/
-env/
-.venv/
 
-# IDE settings
-.vscode/
-.idea/
+# Logs
+data/logs/
 
-# OS files
+# Specific JSON files in data folder
+data/config.json
+data/remember_me.json
+data/remembered_users.json
+data/session.json
+data/teams.json
+data/users.json
+
+# OS / Editor files
 .DS_Store
 Thumbs.db
-
-# Log files
-*.log
-
-# Flet specific cache (if any)
-*.flet/
-
-data/
-.data/
+.vscode/
+.idea/
