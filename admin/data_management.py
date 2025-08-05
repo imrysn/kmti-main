@@ -244,7 +244,7 @@ def data_management(content: ft.Column, username: Optional[str]):
     details_panel = DetailsPane()
 
     search_field = ft.TextField(
-        hint_text="Search (press Enter)...",
+        hint_text="Search...",
         width=300,
         height=40,
         border_radius=8,
@@ -257,6 +257,7 @@ def data_management(content: ft.Column, username: Optional[str]):
     back_button = ft.IconButton(
         ft.Icons.ARROW_BACK,
         tooltip="Back",
+        bgcolor= ft.Colors.BLACK,
         on_click=lambda e: go_back(),
         visible=False,
     )
@@ -324,7 +325,7 @@ def data_management(content: ft.Column, username: Optional[str]):
                 ft.TextButton(
                     text=part,
                     on_click=go_to_path,
-                    style=ft.ButtonStyle(color={ft.ControlState.DEFAULT: ft.Colors.BLUE}),
+                    style=ft.ButtonStyle(color={ft.ControlState.DEFAULT: ft.Colors.BLACK}),
                 )
             )
             if i < len(parts) - 1:
@@ -382,10 +383,8 @@ def data_management(content: ft.Column, username: Optional[str]):
 
     def go_back():
         if current_path[0] != BASE_DIR:
-            print("[DEBUG] Going back")
             # Clear search bar before going back
             if search_field.value.strip():
-                print("[DEBUG] Clearing search bar due to back button")
                 search_field.value = ""
                 search_field.update()
 
@@ -418,7 +417,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         elif ext in [".zip", ".rar"]:
             return ft.Icons.FOLDER_ZIP, "orange"
         elif ext in [".icd", ".dwg"]:
-            return ft.Icons.ARCHITECTURE, "#555555"
+            return ft.Icons.ARCHITECTURE, "#990000"
         else:
             return ft.Icons.DESCRIPTION, "#000000"
 
