@@ -257,7 +257,7 @@ def data_management(content: ft.Column, username: Optional[str]):
     back_button = ft.IconButton(
         ft.Icons.ARROW_BACK,
         tooltip="Back",
-        bgcolor= ft.Colors.BLACK,
+        icon_color=ft.Colors.BLACK,
         on_click=lambda e: go_back(),
         visible=False,
     )
@@ -408,7 +408,7 @@ def data_management(content: ft.Column, username: Optional[str]):
 
     def get_icon_and_color(item: Path):
         if item.is_dir():
-            return ft.Icons.FOLDER, "#000000"
+            return ft.Icons.FOLDER, "#FF9100"
         ext = item.suffix.lower()
         if ext == ".pdf":
             return ft.Icons.PICTURE_AS_PDF, "red"
@@ -417,7 +417,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         elif ext in [".zip", ".rar"]:
             return ft.Icons.FOLDER_ZIP, "orange"
         elif ext in [".icd", ".dwg"]:
-            return ft.Icons.ARCHITECTURE, "#990000"
+            return ft.Icons.ARCHITECTURE, "#DF0000"
         else:
             return ft.Icons.DESCRIPTION, "#000000"
 
@@ -606,11 +606,10 @@ def data_management(content: ft.Column, username: Optional[str]):
                               on_click=lambda e: upload_files(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                           ft.ControlState.HOVERED: ft.Colors.GREY_100},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
-                                        ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
             ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER,
@@ -618,11 +617,10 @@ def data_management(content: ft.Column, username: Optional[str]):
                               on_click=lambda e: create_new_folder(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                           ft.ControlState.HOVERED: ft.Colors.GREY_100},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
-                                        ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.GREEN)},
+                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
             breadcrumb,
