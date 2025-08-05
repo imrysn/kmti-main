@@ -175,7 +175,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         width=350,
         height=40,
         border_radius=8,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=ft.Colors.GREY_100,
         prefix_icon=ft.Icons.SEARCH,
         on_submit=lambda e: perform_search(e.control.value.strip()),
         on_change=lambda e: handle_search_change(e.control.value.strip())
@@ -185,7 +185,7 @@ def data_management(content: ft.Column, username: Optional[str]):
     def get_enhanced_icon_and_color(item: Path):
         """Get enhanced Icons and Colors"""
         if item.is_dir():
-            return ft.Icons.FOLDER, "#FFC107"
+            return ft.Icons.FOLDER, "#F1B500"
         
         ext = item.suffix.lower()
         
@@ -220,6 +220,9 @@ def data_management(content: ft.Column, username: Optional[str]):
             '.py': (ft.Icons.CODE, "#3776AB"),
             '.js': (ft.Icons.CODE, "#F7DF1E"),
             '.html': (ft.Icons.CODE, "#E34F26"),
+
+            '.icd': (ft.Icons.ARCHITECTURE, "#A00000"),
+            '.dwg': (ft.Icons.ARCHITECTURE_OUTLINED, "#535353"),
         }
         
         return icon_map.get(ext, (ft.Icons.INSERT_DRIVE_FILE, "#757575"))
@@ -361,7 +364,7 @@ def data_management(content: ft.Column, username: Optional[str]):
                     text=part,
                     on_click=go_to_path,
                     style=ft.ButtonStyle(
-                        color={ft.ControlState.DEFAULT: ft.Colors.BLUE_800}
+                        color={ft.ControlState.DEFAULT: ft.Colors.BLACK}
                     )
                 )
             )
@@ -578,37 +581,41 @@ def data_management(content: ft.Column, username: Optional[str]):
                 ft.Icons.ARROW_BACK,
                 tooltip="Back (Alt+Left)",
                 on_click=go_back,
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.HOVERED: ft.Colors.GREY_200}
-                )
+                icon_color=ft.Colors.BLACK,
             ),
             ft.IconButton(
                 ft.Icons.REFRESH,
                 tooltip="Refresh (F5)",
                 on_click=lambda e: refresh_current_view(),
-                style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.HOVERED: ft.Colors.GREY_200}
-                )
+                icon_color=ft.Colors.BLACK,
             ),
             
             # Action buttons
             ft.ElevatedButton(
-                "📤 Upload",
+                "Upload",
                 icon=ft.Icons.UPLOAD,
                 on_click=upload_files,
                 style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.BLUE},
-                    color={ft.ControlState.DEFAULT: ft.Colors.WHITE},
-                )
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
+                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
             ),
             ft.ElevatedButton(
-                "📁 New Folder",
+                "New Folder",
                 icon=ft.Icons.CREATE_NEW_FOLDER,
                 on_click=create_new_folder,
                 style=ft.ButtonStyle(
-                    bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREEN},
-                    color={ft.ControlState.DEFAULT: ft.Colors.WHITE},
-                )
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK),
+                                      ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLACK)},
+                                  shape=ft.RoundedRectangleBorder(radius=5))
             ),
             
             # Spacer
@@ -625,7 +632,6 @@ def data_management(content: ft.Column, username: Optional[str]):
             
         ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER),
         padding=15,
-        bgcolor=ft.Colors.WHITE,
         border_radius=ft.border_radius.only(top_left=8, top_right=8)
     )
     
