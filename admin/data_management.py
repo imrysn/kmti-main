@@ -248,7 +248,7 @@ def data_management(content: ft.Column, username: Optional[str]):
         width=300,
         height=40,
         border_radius=8,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=ft.Colors.GREY_100,
         prefix_icon=ft.Icons.SEARCH,
     )
 
@@ -605,8 +605,8 @@ def data_management(content: ft.Column, username: Optional[str]):
                               text="Upload",
                               on_click=lambda e: upload_files(),
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_100},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
+                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.BLACK},
                                   side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
@@ -616,8 +616,8 @@ def data_management(content: ft.Column, username: Optional[str]):
                               text="New Folder",
                               on_click=lambda e: create_new_folder(),
                               style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_100},
+                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
+                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
                                          ft.ControlState.HOVERED: ft.Colors.BLACK},
                                   side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
