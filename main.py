@@ -27,11 +27,41 @@ def restore_session(page: ft.Page):
     return False
 
 def main(page: ft.Page):
-    # Set window properties first
+    # ===== FULLSCREEN CONFIGURATION =====
     page.title = "KMTI Data Management System"
-    page.window_icon = "assets/kmti.ico" 
+    page.window_icon = "assets/kmti.ico"
     page.theme_mode = ft.ThemeMode.LIGHT
+    
+    # FULLSCREEN SETTINGS
+    page.window_maximized = True  # Start maximized
+    page.window_maximizable = True  # Allow maximize/restore
+    page.window_resizable = True  # Allow resizing
+    page.window_full_screen = False  # Don't force full screen (allows window controls)
+    
+    # Window size fallback if maximized doesn't work
+    page.window_width = 1200
+    page.window_height = 800
+    page.window_min_width = 800
+    page.window_min_height = 600
+    
+    # Padding and spacing optimizations for fullscreen
+    page.padding = 0
+    page.spacing = 0
+    
+    # ===== KEYBOARD SHORTCUTS FOR FULLSCREEN TOGGLE =====
+    def handle_keyboard(e: ft.KeyboardEvent):
+        # F11 to toggle fullscreen
+        if e.key == "F11":
+            page.window_full_screen = not page.window_full_screen
+            page.update()
+        # Ctrl+M to toggle maximized
+        elif e.key == "M" and e.ctrl:
+            page.window_maximized = not page.window_maximized
+            page.update()
+    
+    page.on_keyboard_event = handle_keyboard
 
+    # ===== SESSION RESTORATION =====
     # Attempt session restore
     if not restore_session(page):
         login_view(page)
@@ -42,4 +72,4 @@ ft.app(
     target=main,
     assets_dir="assets",
     view=ft.AppView.FLET_APP
-)
+)   
