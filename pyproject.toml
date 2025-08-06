@@ -1,0 +1,17 @@
+# Python Settings
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kmti"
+version = "1.0.0"
+description = "KMTI Data Management System"
+authors = [
+    { name = "KMTI Team" },
+]
+dependencies = []
+
+[tool.setuptools]
+packages = ["utils", "admin", "user", "data"]
+package-dir = {"" = "d:/RAYSAN/kmti-main"}

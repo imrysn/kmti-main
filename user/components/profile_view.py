@@ -1,6 +1,13 @@
 import flet as ft
 import os
+from datetime import datetime
+from pathlib import Path
 import sys
+
+# Set up imports
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APPROVAL_QUEUE = str(PROJECT_ROOT / "data/approval_queue")
+APPROVED_DB = str(PROJECT_ROOT / "data/approved/public_db")
 
 class ProfileImageService:
     """Inline ProfileImageService to avoid import issues"""
@@ -8,50 +15,70 @@ class ProfileImageService:
         self.user_folder = user_folder
         self.username = username
         self.profile_images_folder = os.path.join(user_folder, "profile_images")
+        self.approved_folder = os.path.join(APPROVED_DB, "profiles")
+        self.approval_queue = APPROVAL_QUEUE
         os.makedirs(self.profile_images_folder, exist_ok=True)
+        os.makedirs(self.approved_folder, exist_ok=True)
+        os.makedirs(os.path.join(self.approval_queue, username), exist_ok=True)
     
     def has_profile_image(self) -> bool:
-        """Check if user has uploaded a profile image"""
+        """Check if user has an approved profile image"""
         try:
-            if not os.path.exists(self.profile_images_folder):
-                return False
+            # Check approved profiles first
+            approved_path = os.path.join(self.approved_folder, f"{self.username}_profile")
             
             valid_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp']
-            for file in os.listdir(self.profile_images_folder):
-                if any(file.lower().endswith(ext) for ext in valid_extensions):
+            
+            # Look for profile image with any valid extension in approved folder
+            for ext in valid_extensions:
+                if os.path.exists(approved_path + ext):
                     return True
+                    
             return False
         except:
             return False
     
     def get_profile_image_path(self) -> str:
-        """Get the path to the user's profile image"""
+        """Get the path to the user's approved profile image"""
         try:
-            if not os.path.exists(self.profile_images_folder):
-                return None
-            
             valid_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp']
-            for file in os.listdir(self.profile_images_folder):
-                if any(file.lower().endswith(ext) for ext in valid_extensions):
-                    return os.path.join(self.profile_images_folder, file)
-            return None
+            base_path = os.path.join(self.approved_folder, f"{self.username}_profile")
+            
+            # Look for profile image with any valid extension in approved folder
+            for ext in valid_extensions:
+                full_path = base_path + ext
+                if os.path.exists(full_path):
+                    return full_path
+                    
+            # If no approved image found, return default image path or empty string
+            return ""
         except:
-            return None
+            return ""
     
     def upload_profile_image(self, source_path: str) -> bool:
-        """Upload a new profile image"""
+        """Upload a new profile image to approval queue"""
         try:
             import shutil
             
-            # Clear existing images
-            if os.path.exists(self.profile_images_folder):
-                for file in os.listdir(self.profile_images_folder):
-                    os.remove(os.path.join(self.profile_images_folder, file))
+            # Copy to approval queue
+            ext = os.path.splitext(source_path)[1]
+            filename = f"{self.username}_profile{ext}"
+            queue_path = os.path.join(self.approval_queue, self.username, filename)
+            shutil.copy2(source_path, queue_path)
             
-            # Copy new image
-            filename = f"profile{os.path.splitext(source_path)[1]}"
-            dest_path = os.path.join(self.profile_images_folder, filename)
-            shutil.copy2(source_path, dest_path)
+            # Keep copy in user's folder for preview
+            preview_path = os.path.join(self.profile_images_folder, filename)
+            shutil.copy2(source_path, preview_path)
+            
+            # Update approval metadata - we'll let FileService handle this
+            from ..services.file_service import FileService
+            file_service = FileService(os.path.dirname(queue_path), self.username)
+            file_service.add_to_approval_queue(
+                filename, 
+                "profile_image",
+                is_profile=True
+            )
+            
             return True
         except Exception as e:
             print(f"Upload error: {e}")

@@ -1,11 +1,17 @@
 import os
 import json
 import shutil
+import sys
 from datetime import datetime
 from typing import List, Dict, Optional
+
+# Set up import paths first
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from utils.file_manager import save_file
 from utils.logger import log_action
 from utils.session_logger import log_activity
+from utils.approval import load_metadata, save_metadata, APPROVAL_QUEUE, APPROVED_DB
 
 class FileService:
     """Service class to handle file operations with real file persistence"""
@@ -14,9 +20,17 @@ class FileService:
         self.user_folder = user_folder
         self.username = username
         self.metadata_file = os.path.join(user_folder, "files_metadata.json")
+        self.approval_queue = APPROVAL_QUEUE
+        self.approved_db = APPROVED_DB
         
-        # Ensure user folder exists
+        # Ensure all required directories exist
         os.makedirs(user_folder, exist_ok=True)
+        os.makedirs(os.path.join(self.approval_queue, username), exist_ok=True)
+        os.makedirs(self.approved_db, exist_ok=True)
+        
+        # Initialize metadata file if it doesn't exist
+        if not os.path.exists(self.metadata_file):
+            self.save_file_metadata({})
         
     def get_file_metadata(self) -> Dict:
         """Load file metadata from JSON file"""
@@ -118,50 +132,92 @@ class FileService:
         return self.scan_user_files()
     
     def upload_files(self, files):
-        """Handle file upload with real file saving"""
+        """Handle file upload with approval queue integration"""
         if files:
+            from utils.approval import load_metadata, save_metadata
+            
             for f in files:
                 try:
-                    # Save file using existing file manager
-                    save_file(f, self.user_folder)
-                    log_action(self.username, f"Uploaded file: {f.name}")
-                    log_activity(self.username, f"Uploaded file: {f.name}")
+                    # Prepare paths
+                    queue_path = os.path.join(self.approval_queue, self.username)
+                    os.makedirs(queue_path, exist_ok=True)
+                    os.makedirs(self.user_folder, exist_ok=True)
                     
-                    # Initialize metadata for new file
-                    metadata = self.get_file_metadata()
-                    if f.name not in metadata:
-                        metadata[f.name] = {
-                            "description": "",
-                            "tags": [],
-                            "uploaded_date": datetime.now().isoformat()
-                        }
-                        self.save_file_metadata(metadata)
+                    # Save to both locations
+                    save_file(f, queue_path)  # To approval queue
+                    save_file(f, self.user_folder)  # Local copy for user
+                    
+                    # Initialize metadata
+                    file_id = f"{self.username}/{f.name}"
+                    timestamp = datetime.now().isoformat()
+                    
+                    # Update user's local metadata
+                    local_metadata = self.get_file_metadata()
+                    local_metadata[f.name] = {
+                        "description": "",
+                        "tags": [],
+                        "uploaded_date": timestamp,
+                        "status": "pending_approval",
+                        "comments": [],
+                        "in_approval_queue": True  # Track approval status
+                    }
+                    self.save_file_metadata(local_metadata)
+                    
+                    # Update global approval metadata
+                    global_metadata = load_metadata()
+                    global_metadata[file_id] = {
+                        "status": "pending",
+                        "uploaded_by": self.username,
+                        "uploaded_at": timestamp,
+                        "comments": []
+                    }
+                    save_metadata(global_metadata)
+                    
+                    log_action(self.username, f"Uploaded file for approval: {f.name}")
+                    log_activity(self.username, f"Uploaded file for approval: {f.name}")
                         
                 except Exception as e:
                     print(f"Error uploading file {f.name}: {e}")
                     log_action(self.username, f"Failed to upload file: {f.name} - {str(e)}")
     
     def delete_file(self, filename: str) -> bool:
-        """Delete a file permanently"""
+        """Delete a file permanently from both user folder and approval queue"""
         try:
-            file_path = os.path.join(self.user_folder, filename)
+            success = False
             
+            # Delete from user folder
+            file_path = os.path.join(self.user_folder, filename)
             if os.path.exists(file_path):
-                # Delete the actual file
                 os.remove(file_path)
+                success = True
                 
-                # Remove from metadata
-                metadata = self.get_file_metadata()
-                if filename in metadata:
-                    del metadata[filename]
-                    self.save_file_metadata(metadata)
+            # Delete from approval queue if exists
+            queue_path = os.path.join(self.approval_queue, self.username, filename)
+            if os.path.exists(queue_path):
+                os.remove(queue_path)
+                success = True
+                
+            if success:
+                # Remove from both local and global metadata
+                local_metadata = self.get_file_metadata()
+                if filename in local_metadata:
+                    del local_metadata[filename]
+                    self.save_file_metadata(local_metadata)
+                
+                # Remove from global approval metadata
+                from utils.approval import load_metadata, save_metadata
+                global_metadata = load_metadata()
+                file_id = f"{self.username}/{filename}"
+                if file_id in global_metadata:
+                    del global_metadata[file_id]
+                    save_metadata(global_metadata)
                 
                 log_action(self.username, f"Deleted file: {filename}")
                 log_activity(self.username, f"Deleted file: {filename}")
                 return True
-            else:
-                print(f"File not found: {filename}")
-                return False
+                
+            print(f"File not found: {filename}")
+            return False
                 
         except Exception as e:
             print(f"Error deleting file {filename}: {e}")
@@ -189,6 +245,8 @@ class FileService:
                     log_action(self.username, f"Updated metadata for file: {filename}")
                     log_activity(self.username, f"Updated metadata for file: {filename}")
                     return True
+                else:
+                    return False
             else:
                 print(f"File not found: {filename}")
                 return False
@@ -226,28 +284,83 @@ class FileService:
             print(f"Error renaming file {old_filename}: {e}")
             return False
     
-    def get_file_info(self, filename: str) -> Optional[Dict]:
-        """Get detailed information about a specific file"""
+    def handle_file_approval(self, filename: str, approved: bool, comment: Optional[str] = None) -> bool:
+        """Handle file approval or rejection"""
         try:
-            file_path = os.path.join(self.user_folder, filename)
-            
-            if os.path.exists(file_path):
-                stat = os.stat(file_path)
-                metadata = self.get_file_metadata().get(filename, {})
+            metadata = self.get_file_metadata()
+            if filename not in metadata:
+                return False
                 
-                return {
-                    "name": filename,
-                    "path": file_path,
-                    "size": self.get_file_size_mb(file_path),
-                    "size_bytes": stat.st_size,
-                    "type": self.get_file_type(filename),
-                    "created": datetime.fromtimestamp(stat.st_ctime).strftime("%Y/%m/%d %I:%M %p"),
-                    "modified": datetime.fromtimestamp(stat.st_mtime).strftime("%Y/%m/%d %I:%M %p"),
-                    "description": metadata.get("description", ""),
-                    "tags": metadata.get("tags", []),
-                    "uploaded_date": metadata.get("uploaded_date", "")
-                }
+            queue_path = os.path.join(self.approval_queue, self.username, filename)
+            user_path = os.path.join(self.user_folder, filename)
+            
+            if approved:
+                # Move file to approved database
+                if os.path.exists(queue_path):
+                    shutil.move(queue_path, os.path.join(self.approved_db, filename))
+                    metadata[filename].update({
+                        "status": "approved",
+                        "approved_at": datetime.now().isoformat()
+                    })
+                    log_action(self.username, f"File approved: {filename}")
+            else:
+                # Handle rejection - file stays in user folder
+                if os.path.exists(queue_path):
+                    os.remove(queue_path)
+                metadata[filename].update({
+                    "status": "rejected",
+                    "rejected_at": datetime.now().isoformat()
+                })
+                log_action(self.username, f"File rejected: {filename}")
+            
+            # Add comment if provided
+            if comment:
+                if "comments" not in metadata[filename]:
+                    metadata[filename]["comments"] = []
+                metadata[filename]["comments"].append({
+                    "comment": comment,
+                    "timestamp": datetime.now().isoformat()
+                })
+            
+            self.save_file_metadata(metadata)
+            return True
+            
         except Exception as e:
-            print(f"Error getting file info for {filename}: {e}")
-        
-        return None
+            print(f"Error handling file approval for {filename}: {e}")
+            return False
+            
+    def add_to_approval_queue(self, filename: str, file_type: str, is_profile: bool = False) -> bool:
+        """Add a file to the approval queue with metadata"""
+        try:
+            # Initialize metadata
+            file_id = f"{self.username}/{filename}"
+            timestamp = datetime.now().isoformat()
+            
+            # Update global approval metadata
+            global_metadata = load_metadata()
+            global_metadata[file_id] = {
+                "status": "pending",
+                "uploaded_by": self.username,
+                "uploaded_at": timestamp,
+                "type": file_type,
+                "is_profile": is_profile,
+                "comments": []
+            }
+            save_metadata(global_metadata)
+            return True
+            
+        except Exception as e:
+            print(f"Error adding to approval queue: {e}")
+            return False
+            
+    def get_file_approval_status(self, filename: str) -> Dict:
+        """Get file approval status and comments"""
+        metadata = self.get_file_metadata()
+        if filename in metadata:
+            return {
+                "status": metadata[filename].get("status", "unknown"),
+                "comments": metadata[filename].get("comments", []),
+                "approved_at": metadata[filename].get("approved_at"),
+                "rejected_at": metadata[filename].get("rejected_at")
+            }
+        return {"status": "unknown", "comments": []}

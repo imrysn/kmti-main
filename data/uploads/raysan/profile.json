@@ -1,14 +1,14 @@
 {
   "username": "raysan",
-  "email": "raysan@example.com",
+  "email": "raysan@gmail.com",
   "full_name": "Raysan",
   "bio": "",
   "location": "",
   "phone": "",
   "website": "",
   "avatar_path": "",
-  "created_date": "2025-07-31T14:03:23.959748",
-  "last_modified": "2025-07-31T14:03:23.959760",
+  "created_date": "2025-08-06T16:02:21.718754",
+  "last_modified": "2025-08-06T16:02:21.718771",
   "preferences": {
     "theme": "light",
     "language": "en",
@@ -18,6 +18,6 @@
   "stats": {
     "files_uploaded": 0,
     "total_storage_used": 0,
-    "last_login": "2025-07-31T14:03:23.959756"
+    "last_login": "2025-08-06T16:02:21.718765"
   }
 }

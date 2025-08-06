@@ -6,6 +6,7 @@ def create_navbar(username: str, on_nav, on_logout):
 
     menu_items = [
         "Dashboard",
+        "File Approvals",
         "Data Management",
         "User Management",
         "Activity Logs",

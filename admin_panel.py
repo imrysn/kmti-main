@@ -1,21 +1,23 @@
+# admin_panel.py
+
 import flet as ft
 import json
 import os
 from datetime import datetime
-from utils.session_logger import log_logout
-from flet import FontWeight, ScrollMode, CrossAxisAlignment, MainAxisAlignment, Colors
 from typing import Optional
+
+from utils.session_logger import log_logout, log_activity
+from user.user_panel import save_session, clear_session
 from admin.navbar import create_navbar
 from admin.data_management import data_management
 from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
-from utils.session_logger import log_activity
-from user.user_panel import save_session, clear_session
+from admin.components.file_approval_panel import FileApprovalPanel
+from utils.approval import get_pending_files, approve_file, reject_file
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
-ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
 
 
 def load_json(path, default):
@@ -36,272 +38,186 @@ def load_logs():
     return load_json(ACTIVITY_LOGS_FILE, [])
 
 
-def load_metadata():
-    return load_json(ACTIVITY_METADATA_FILE, {})
-
-
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     BACKGROUND = ft.Colors.GREY_100
     PANEL_COLOR = "#FFFFFF"
     PANEL_RADIUS = 14
 
-    page.title = "KMTI Data Management Admin"
-    page.vertical_alignment = MainAxisAlignment.START
-    page.horizontal_alignment = CrossAxisAlignment.START
+    page.title = "KMTI Admin Panel"
+    page.vertical_alignment = ft.MainAxisAlignment.START
+    page.horizontal_alignment = ft.CrossAxisAlignment.START
     page.bgcolor = BACKGROUND
-
     page.padding = 0
     page.margin = 0
 
     def logout(e):
-        print(f"[DEBUG] logout() called by username={username}")
         log_logout(username, "admin")
         log_activity(username, "Logout")
         clear_session()
-
         page.clean()
         from login_window import login_view
         login_view(page)
 
     content = ft.Column(
-        scroll=ScrollMode.AUTO,
+        scroll=ft.ScrollMode.AUTO,
         expand=True,
         spacing=20,
-        horizontal_alignment=CrossAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
-    # --- Utility functions that always reload logs dynamically ---
-
-    def get_last_activity_entry(username_lookup: str):
-        fresh_logs = load_logs()  # Always reload logs
-        for entry in reversed(fresh_logs):
-            if entry.get("username") == username_lookup:
+    def get_last_activity_entry(uname: str):
+        logs = load_logs()
+        for entry in reversed(logs):
+            if entry.get("username") == uname:
                 return entry
         return None
 
-    def is_user_online(user_data) -> bool:
+    def is_user_online(user_data):
         uname = user_data.get("username")
-        if not uname:
-            return False
         last_entry = get_last_activity_entry(uname)
-        if not last_entry:
-            return False
-        return last_entry.get("activity") == "Login"
+        return last_entry and last_entry.get("activity") == "Login"
 
-    def get_login_status(user_email, user_data):
-        online = is_user_online(user_data)
+    def get_login_status(email, user_data):
         return ft.Text(
-            "Online" if online else "Offline",
-            color=Colors.GREEN if online else Colors.RED,
-            weight=FontWeight.BOLD
+            "Online" if is_user_online(user_data) else "Offline",
+            color=ft.Colors.GREEN if is_user_online(user_data) else ft.Colors.RED,
+            weight=ft.FontWeight.BOLD
         )
 
     def show_dashboard():
         content.controls.clear()
-
-        # Always reload latest data
         users = load_users()
-        fresh_logs = load_logs()
+        logs = load_logs()
 
-        # Sort logs by datetime for reliable "most recent"
-        def parse_datetime(log):
-            try:
-                return datetime.strptime(log.get("date", ""), "%Y-%m-%d %H:%M:%S")
-            except Exception:
-                return datetime.min
+        logs.sort(key=lambda x: datetime.strptime(x.get("date", ""), "%Y-%m-%d %H:%M:%S") if x.get("date") else datetime.min)
 
-        fresh_logs.sort(key=parse_datetime)
-
-        # Dashboard metrics
         total_users = len(users)
         active_users = sum(1 for u in users.values() if is_user_online(u))
-        recent_activity_count = len(fresh_logs)
+        recent_activity_count = len(logs)
 
-        # Add title with Refresh button
-        refresh_button = ft.ElevatedButton(
+        refresh_btn = ft.ElevatedButton(
             "Refresh",
             icon=ft.Icons.REFRESH,
-            on_click=lambda e: show_dashboard(),
-            style=ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                        ft.ControlState.HOVERED: ft.Colors.BLUE},
-                color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
-                    ft.ControlState.HOVERED: ft.Colors.WHITE},
-                side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE),
-                    ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
-                shape=ft.RoundedRectangleBorder(radius=5)
-            )
+            on_click=lambda e: show_dashboard()
         )
 
-        content.controls.append(
-            ft.Row(
-                [
-                    refresh_button,
-                ],
-                alignment=MainAxisAlignment.END,
-            )
-        )
-
-
-        # --- Small metric cards ---
-        def card(title_icon, title, value, icon_color=Colors.BLACK):
+        def card(icon, title, value, icon_color=ft.Colors.BLACK):
             return ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Icon(title_icon, size=40, color=icon_color),
-                        ft.Text(title, size=16, color="#333333"),
-                        ft.Text(value, size=26, weight=FontWeight.BOLD, color="#000000"),
-                    ],
-                    horizontal_alignment=CrossAxisAlignment.CENTER,
-                    spacing=8,
-                ),
-                padding=20,
+                content=ft.Column([
+                    ft.Icon(icon, size=40, color=icon_color),
+                    ft.Text(title),
+                    ft.Text(str(value), size=26, weight=ft.FontWeight.BOLD),
+                ], spacing=6, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
+                padding=20,
                 width=250,
-                height=160,
+                border_radius=PANEL_RADIUS,
+                shadow=ft.BoxShadow(blur_radius=8, spread_radius=1, color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK))
             )
 
+        content.controls.append(ft.Row([refresh_btn], alignment=ft.MainAxisAlignment.END))
         content.controls.append(
-            ft.Row(
-                [
-                    card(ft.Icons.PEOPLE, "Total Users", str(total_users)),
-                    card(
-                        ft.Icons.PERSON,
-                        "Active Users",
-                        str(active_users),
-                        icon_color=Colors.GREEN,
-                    ),
-                    card(
-                        ft.Icons.HISTORY,
-                        "Recent Activities",
-                        str(recent_activity_count),
-                        icon_color=Colors.BLUE,
-                    ),
-                ],
-                spacing=20,
-                alignment=MainAxisAlignment.CENTER,
-                
-            )
+            ft.Row([
+                card(ft.Icons.PEOPLE, "Total Users", total_users),
+                card(ft.Icons.PERSON, "Active Users", active_users, ft.Colors.GREEN),
+                card(ft.Icons.HISTORY, "Activity Logs", recent_activity_count, ft.Colors.BLUE),
+            ], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
         )
 
-        # --- Recent Users Table ---
-        content.controls.append(
-            ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111")
-        )
-
-        users_table = ft.DataTable(
+        # User table
+        user_table = ft.DataTable(
             heading_row_color="#FAFAFA",
             columns=[
-                ft.DataColumn(ft.Text("Name", weight=FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Status", weight=FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Name", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Email", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD)),
             ],
             rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(data.get("fullname", "Unknown"))),
-                        ft.DataCell(ft.Text(email)),
-                        ft.DataCell(get_login_status(email, data)),
-                    ]
-                )
-                for email, data in list(users.items())[:5]
-            ],
+                ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(u.get("fullname", ""))),
+                    ft.DataCell(ft.Text(email)),
+                    ft.DataCell(get_login_status(email, u)),
+                ])
+                for email, u in list(users.items())[:5]
+            ]
         )
 
         content.controls.append(
-            ft.Container(
-                content=ft.Row([users_table], alignment=MainAxisAlignment.CENTER),
-                bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                padding=20,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
-            )
+            ft.Container(user_table, bgcolor=PANEL_COLOR, padding=20, border_radius=PANEL_RADIUS)
         )
 
-        # --- Recent Activities Section ---
-        content.controls.append(
-            ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111")
-        )
+        # Activity Logs
+        recent_logs = list(reversed(logs[-10:]))
+        user_lookup = {
+            u.get("username"): {
+                "fullname": u.get("fullname"),
+                "email": email,
+                "role": u.get("role"),
+                "team": ", ".join(u.get("team_tags", [])) if isinstance(u.get("team_tags"), list) else ""
+            }
+            for email, u in users.items()
+        }
 
-        # Build user_info lookup
-        user_info = {}
-        for email, data in users.items():
-            uname = data.get("username")
-            if uname:
-                team = data.get("team_tags", [])
-                team_str = (
-                    ", ".join(team)
-                    if isinstance(team, list)
-                    else (str(team) if team else "")
-                )
-                user_info[uname] = {
-                    "fullname": data.get("fullname", uname),
-                    "email": email,
-                    "role": data.get("role", ""),
-                    "team": team_str,
-                }
-
-        # Only the latest 10 logs
-        last_10_logs = list(reversed(fresh_logs[-10:]))
-
-        rows = []
-        for log in last_10_logs:
-            uname = log.get("username", "")
-            info = user_info.get(
-                uname,
-                {"fullname": uname, "email": "", "role": "", "team": ""},
-            )
-            rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(info["fullname"])),
-                        ft.DataCell(ft.Text(info["email"])),
-                        ft.DataCell(ft.Text(uname)),
-                        ft.DataCell(ft.Text(info["role"])),
-                        ft.DataCell(ft.Text(info["team"])),
-                        ft.DataCell(ft.Text(log.get("date", "-"))),
-                        ft.DataCell(ft.Text(log.get("activity", ""))),
-                    ]
-                )
-            )
-
-        activities_table = ft.DataTable(
+        log_table = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("Full Name")),
                 ft.DataColumn(ft.Text("Email")),
                 ft.DataColumn(ft.Text("Username")),
                 ft.DataColumn(ft.Text("Role")),
                 ft.DataColumn(ft.Text("Team")),
-                ft.DataColumn(ft.Text("Date & Time")),
+                ft.DataColumn(ft.Text("Date")),
                 ft.DataColumn(ft.Text("Activity")),
             ],
-            rows=rows,
+            rows=[
+                ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(user_lookup.get(log.get("username"), {}).get("fullname", "-"))),
+                    ft.DataCell(ft.Text(user_lookup.get(log.get("username"), {}).get("email", "-"))),
+                    ft.DataCell(ft.Text(log.get("username"))),
+                    ft.DataCell(ft.Text(user_lookup.get(log.get("username"), {}).get("role", "-"))),
+                    ft.DataCell(ft.Text(user_lookup.get(log.get("username"), {}).get("team", "-"))),
+                    ft.DataCell(ft.Text(log.get("date", "-"))),
+                    ft.DataCell(ft.Text(log.get("activity", "-"))),
+                ])
+                for log in recent_logs
+            ]
         )
 
         content.controls.append(
-            ft.Container(
-                content=ft.Row([activities_table], alignment=MainAxisAlignment.CENTER),
-                bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                padding=20,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
-            )
+            ft.Container(log_table, bgcolor=PANEL_COLOR, padding=20, border_radius=PANEL_RADIUS)
         )
+        content.update()
 
+    def review_panel():
+        content.controls.clear()
+        metadata = load_metadata()
+        pending_files = [fname for fname, meta in metadata.items() if meta.get("status") == "pending"]
+
+        for fname in pending_files:
+            meta = metadata[fname]
+            comment_field = ft.TextField(label="Comment", multiline=True, width=400, height=60)
+
+            content.controls.append(
+                ft.Card(
+                    content=ft.Column([
+                        ft.Text(f"📄 {fname}", size=18, weight=ft.FontWeight.BOLD),
+                        ft.Text(f"Owner: {meta.get('owner')}"),
+                        comment_field,
+                        ft.Row([
+                            ft.ElevatedButton("✅ Approve", on_click=lambda e, f=fname, c=comment_field: approve_file(f, "admin", c.value)),
+                            ft.ElevatedButton("❌ Reject", on_click=lambda e, f=fname, c=comment_field: reject_file(f, "admin", c.value)),
+                        ])
+                    ])
+                )
+            )
+        content.update()
+
+    def show_file_approvals():
+        # Initialize the file approval panel
+        approval_panel = FileApprovalPanel(page, username)
+        
+        # Clear and update content
+        content.controls.clear()
+        content.controls.append(approval_panel.build())
         content.update()
 
     def navigate_to_section(index: int):
@@ -309,40 +225,31 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         if index == 0:
             show_dashboard()
         elif index == 1:
-            data_management(content, username)
+            show_file_approvals()
         elif index == 2:
-            user_management(content, username)
+            data_management(content, username)
         elif index == 3:
-            activity_logs(content, username)
+            user_management(content, username)
         elif index == 4:
+            activity_logs(content, username)
+        elif index == 5:
             system_settings(content, username)
+        elif index == 5:
+            review_panel()
 
     top_nav = create_navbar(username, navigate_to_section, lambda: logout(None))
 
     page.controls.clear()
-
     page.add(
-        ft.Column(
-            [
-                ft.Container(
-                    content=top_nav,
-                    padding=0,
-                    margin=0,
-                ),
-                ft.Container(
-                    content=content,
-                    expand=True,
-                    padding=20,
-                ),
-            ],
-            spacing=0,
-            expand=True,
-        )
+        ft.Column([
+            ft.Container(content=top_nav),
+            ft.Container(content=content, expand=True, padding=20),
+        ], spacing=0, expand=True)
     )
 
     navigate_to_section(initial_tab)
 
     log_activity(username, "Login")
     save_session(username, "admin")
-    print(f"[DEBUG] Admin panel initialized for user: {username}")
     page.update()
+    print(f"[DEBUG] Admin panel initialized for user: {username}")

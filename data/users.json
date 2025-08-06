@@ -5,10 +5,10 @@
         "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
         "role": "ADMIN",
         "team_tags": [
-            "IT"
+            "KUSAKABE"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-08-05T09:19:55.149771"
+        "runtime_start": "2025-08-06T16:26:37.926750"
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -16,10 +16,10 @@
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "ADMIN",
         "team_tags": [
-            "IT"
+            "KUSAKABE"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-08-05T15:54:23.180224"
+        "runtime_start": "2025-08-06T16:27:11.538881"
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
