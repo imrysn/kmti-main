@@ -1,9 +1,10 @@
 import flet as ft
 import os
 import sys
+import time
 
 class ProfileImageService:
-    """Inline ProfileImageService to avoid import issues"""
+    """ProfileImageService with proper image display handling"""
     def __init__(self, user_folder: str, username: str):
         self.user_folder = user_folder
         self.username = username
@@ -39,17 +40,21 @@ class ProfileImageService:
             return None
     
     def upload_profile_image(self, source_path: str) -> bool:
-        """Upload a new profile image"""
+        """Upload a new profile image with timestamp for cache busting"""
         try:
             import shutil
             
             # Clear existing images
             if os.path.exists(self.profile_images_folder):
                 for file in os.listdir(self.profile_images_folder):
-                    os.remove(os.path.join(self.profile_images_folder, file))
+                    file_path = os.path.join(self.profile_images_folder, file)
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
             
-            # Copy new image
-            filename = f"profile{os.path.splitext(source_path)[1]}"
+            # Copy new image with timestamp for cache busting
+            file_ext = os.path.splitext(source_path)[1]
+            timestamp = int(time.time())
+            filename = f"profile_{timestamp}{file_ext}"
             dest_path = os.path.join(self.profile_images_folder, filename)
             shutil.copy2(source_path, dest_path)
             return True
@@ -58,7 +63,7 @@ class ProfileImageService:
             return False
 
 class ProfileView:
-    """Profile view with sidebar profile image and real-time updates"""
+    """Profile view with camera icon at bottom of profile picture"""
     
     def __init__(self, page: ft.Page, username: str, profile_service):
         self.page = page
@@ -100,7 +105,7 @@ class ProfileView:
         self.navigation = navigation
     
     def on_image_selected(self, e: ft.FilePickerResultEvent):
-        """Handle profile image selection with real-time update"""
+        """Handle profile image selection with proper display update"""
         if e.files:
             selected_file = e.files[0]
             
@@ -126,17 +131,13 @@ class ProfileView:
                 except Exception as size_error:
                     self.show_message("Could not check file size, but proceeding...", False)
                 
-                # Try to upload the image
+                # Upload the image first
                 success = self.image_service.upload_profile_image(selected_file.path)
                 
                 if success:
                     self.show_message("Profile image updated successfully!", True)
-                    # Small delay to ensure file is written
-                    import time
-                    time.sleep(0.2)
-                    
-                    # Real-time update
-                    self.update_profile_image_realtime()
+                    # Force update the display
+                    self.force_update_profile_image()
                 else:
                     self.show_message("Failed to upload image. Please try again.", False)
                     
@@ -145,43 +146,32 @@ class ProfileView:
         else:
             self.show_message("No file selected", False)
     
-    def update_profile_image_realtime(self):
-        """Update profile image in real-time without page refresh"""
+    def force_update_profile_image(self):
+        """Force update the profile image display by recreating the entire container"""
         if self.profile_avatar_container:
-            # Re-initialize image service to get latest image
-            user_folder = f"data/uploads/{self.username}"
-            self.image_service = ProfileImageService(user_folder, self.username)
-            
-            # Get updated image status
-            has_image = self.image_service.has_profile_image()
-            
-            if has_image:
-                image_path = self.image_service.get_profile_image_path()
-                if image_path and os.path.exists(image_path):
-                    abs_path = os.path.abspath(image_path)
-                    
-                    # Update to show uploaded image
-                    new_content = ft.Image(
-                        src=abs_path,
-                        width=80,
-                        height=80,
-                        fit=ft.ImageFit.COVER,
-                        border_radius=40,
-                        error_content=ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
-                    )
-                    self.profile_avatar_container.bgcolor = None
-                else:
-                    new_content = ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
-                    self.profile_avatar_container.bgcolor = ft.Colors.BLUE_500
-            else:
-                new_content = ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
-                self.profile_avatar_container.bgcolor = ft.Colors.BLUE_500
-            
-            # Update the container content
-            self.profile_avatar_container.content = new_content
-            
-            # Force page update to reflect changes
-            self.page.update()
+            try:
+                # Recreate the entire avatar with camera icon
+                new_avatar = self.create_clickable_profile_avatar()
+                
+                # Replace the current avatar in the user info card
+                if self.user_info_card:
+                    # Find and replace the avatar in the user info card
+                    self.user_info_card.content.controls[0] = new_avatar
+                
+                # Force page update
+                self.page.update()
+                
+                # Small delay then try to refresh again (helps with Flet's image loading)
+                def delayed_update():
+                    import threading
+                    import time
+                    time.sleep(0.5)
+                    self.page.update()
+                
+                threading.Thread(target=delayed_update, daemon=True).start()
+                
+            except Exception as update_error:
+                print(f"Update error: {update_error}")
     
     def show_message(self, message: str, is_success: bool):
         """Show success or error message"""
@@ -215,13 +205,14 @@ class ProfileView:
             return False
     
     def create_clickable_profile_avatar(self):
-        """Create clickable profile avatar for sidebar with reference storage"""
+        """Create clickable profile avatar with camera icon at bottom"""
         has_image = self.image_service.has_profile_image()
         
         if has_image:
             image_path = self.image_service.get_profile_image_path()
             if image_path and os.path.exists(image_path):
                 abs_path = os.path.abspath(image_path)
+                print(f"[DEBUG] Loading image from: {abs_path}")
                 
                 avatar_content = ft.Image(
                     src=abs_path,
@@ -232,12 +223,14 @@ class ProfileView:
                     error_content=ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
                 )
             else:
+                print("[DEBUG] No valid image path, using default icon")
                 avatar_content = ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
         else:
+            print("[DEBUG] No profile image found, using default icon")
             avatar_content = ft.Icon(ft.Icons.PERSON, size=48, color=ft.Colors.WHITE)
         
         def trigger_file_picker(e):
-            """Trigger file picker with debugging"""
+            """Trigger file picker"""
             try:
                 self.image_picker.pick_files(
                     allow_multiple=False,
@@ -247,8 +240,8 @@ class ProfileView:
             except Exception as picker_error:
                 self.show_message(f"Error opening file picker: {str(picker_error)}", False)
         
-        # Store reference to the container for real-time updates
-        self.profile_avatar_container = ft.Container(
+        # Main avatar container
+        avatar_container = ft.Container(
             content=avatar_content,
             width=80,
             height=80,
@@ -256,18 +249,53 @@ class ProfileView:
             border_radius=40,
             alignment=ft.alignment.center,
             border=ft.border.all(2, ft.Colors.BLUE_500),
+            ink=True
+        )
+        
+        # Camera icon at bottom
+        camera_icon = ft.Container(
+            content=ft.Icon(
+                ft.Icons.CAMERA_ALT,
+                size=12,
+                color=ft.Colors.WHITE
+            ),
+            width=24,
+            height=24,
+            bgcolor=ft.Colors.BLUE_600,
+            border_radius=12,
+            alignment=ft.alignment.center,
+            border=ft.border.all(2, ft.Colors.WHITE)
+        )
+        
+        # Container that holds both avatar and camera icon with proper positioning
+        self.profile_avatar_container = ft.Container(
+            content=ft.Column([
+                # Avatar
+                avatar_container,
+                # Camera icon positioned at bottom with negative margin to overlap
+                ft.Container(
+                    content=camera_icon,
+                    margin=ft.margin.only(top=-15),  # Move up to overlap with avatar
+                    alignment=ft.alignment.center
+                )
+            ], 
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=0
+            ),
             on_click=trigger_file_picker,
             tooltip="Click to change profile picture",
-            ink=True
+            ink=True,
+            width=84,  # Slightly wider to accommodate any overflow
+            height=84   # Slightly taller to accommodate the camera icon
         )
         
         return self.profile_avatar_container
     
     def create_user_info_card(self):
-        """Create user info card with clickable profile image - ONLY profile image is clickable"""
+        """Create user info card with clickable profile image"""
         self.user_info_card = ft.Container(
             content=ft.Column([
-                # Clickable profile avatar - ONLY this is clickable
+                # Clickable profile avatar with camera icon - ONLY this is clickable
                 self.create_clickable_profile_avatar(),
                 
                 ft.Container(height=15),
@@ -314,7 +342,6 @@ class ProfileView:
                 color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
                 offset=ft.Offset(0, 2)
             )
-            # NO on_click handler on the container - only the avatar is clickable
         )
         
         return self.user_info_card
@@ -586,8 +613,6 @@ class ProfileView:
                 )
             ], spacing=5),
             margin=ft.margin.only(bottom=10)
-            # REMOVED: on_click=on_click_handler - This was making the entire container clickable
-            # REMOVED: ink=True - This was also contributing to the whole area being clickable
         )
     
     def create_content(self):
