@@ -26,7 +26,7 @@ class SharedUI:
         self.navigation = navigation
     
     def create_user_avatar(self, size: int = 80, show_border: bool = True, clickable: bool = False, on_click=None) -> ft.Control:
-        """Create user avatar with profile image or default icon"""
+        """Create user avatar with profile image or default icon - NO BLUE BORDER"""
         
         # Check if user has uploaded profile image
         if self.image_service and self.image_service.has_profile_image():
@@ -50,10 +50,10 @@ class SharedUI:
             content=avatar_content,
             width=size,
             height=size,
-            bgcolor=ft.Colors.BLUE_500 if not (self.image_service and self.image_service.has_profile_image()) else None,
+            bgcolor=ft.Colors.GREY_400 if not (self.image_service and self.image_service.has_profile_image()) else None,  # Changed from BLUE_500 to GREY_400
             border_radius=size // 2,
             alignment=ft.alignment.center,
-            border=ft.border.all(2, ft.Colors.BLUE_500 if show_border else ft.Colors.TRANSPARENT),
+            # REMOVED: border=ft.border.all(2, ft.Colors.BLUE_500 if show_border else ft.Colors.TRANSPARENT),
             padding=0
         )
         
@@ -244,7 +244,7 @@ class SharedUI:
         )
     
     def create_mini_avatar(self, size: int = 40, clickable: bool = False, on_click=None) -> ft.Control:
-        """Create small avatar for headers/toolbars"""
+        """Create small avatar for headers/toolbars - NO BLUE BORDER"""
         
         # Check if user has uploaded profile image
         if self.image_service and self.image_service.has_profile_image():
@@ -257,7 +257,7 @@ class SharedUI:
                     fit=ft.ImageFit.COVER,
                     border_radius=size // 2
                 ),
-                border=ft.border.all(1, ft.Colors.BLUE_400),
+                # REMOVED: border=ft.border.all(1, ft.Colors.BLUE_400),
                 border_radius=(size // 2) + 1,
                 padding=0
             )
@@ -271,10 +271,10 @@ class SharedUI:
                 ),
                 width=size,
                 height=size,
-                bgcolor=ft.Colors.BLUE_500,
+                bgcolor=ft.Colors.GREY_400,  # Changed from BLUE_500 to GREY_400
                 border_radius=size // 2,
                 alignment=ft.alignment.center,
-                border=ft.border.all(1, ft.Colors.BLUE_400)
+                # REMOVED: border=ft.border.all(1, ft.Colors.BLUE_400)
             )
         
         if clickable and on_click:

@@ -168,12 +168,19 @@ def start_watcher(page):
     Starts a watchdog observer to monitor BASE_DIR.
     """
     print(f"[DEBUG] Starting watchdog on {BASE_DIR}")
+
+    if not BASE_DIR.exists():
+        print(f"[ERROR] Watch path does not exist: {BASE_DIR}")
+        return None  # Don't start observer if path is missing
+
     event_handler = IndexWatcherHandler(page)
     observer = Observer()
+    print(f"[DEBUG] Watching directory: {BASE_DIR} - Exists: {BASE_DIR.exists()}")
     observer.schedule(event_handler, str(BASE_DIR), recursive=True)
     observer.daemon = True
     observer.start()
     return observer
+
 
 
 # ---------------- Directory Listing ----------------
