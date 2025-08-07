@@ -13,7 +13,6 @@ global_file_index = []
 index_lock = threading.Lock()
 search_cache = {}
 search_lock = threading.Lock()
-SEARCH_DEBOUNCE = 0.3
 
 
 def build_index(base_dir: Path):
@@ -45,19 +44,101 @@ def search_all(query: str, max_results=500):
 
 
 def get_icon_and_color(item: Path):
+    """Returns icon and color for files and folders."""
     if item.is_dir():
-        return "FOLDER", "#000000"
+        return "FOLDER", "#FF9C07"  # Gold color for folders
+    
     ext = item.suffix.lower()
-    if ext == ".pdf":
-        return "PICTURE_AS_PDF", "red"
-    elif ext in [".xlsx", ".xls"]:
-        return "TABLE_CHART", "green"
-    elif ext in [".zip", ".rar"]:
-        return "FOLDER_ZIP", "orange"
-    elif ext in [".icd", ".dwg"]:
-        return "ARCHITECTURE", "#990000"
+    filename = item.name.lower()
+    
+    # Microsoft/Windows files
+    if ext in [".msi", ".exe"]:
+        return "APPS", "#0078D4"  # Microsoft Blue
+    elif ext in [".dll", ".sys"]:
+        return "SETTINGS", "#6B73FF"  # Purple
+    elif "microsoft" in filename:
+        return "BUSINESS", "#00BCF2"  # Light Blue
+        
+    # Document files
+    elif ext == ".pdf":
+        return "PICTURE_AS_PDF", "#FF4444"  # Red
+    elif ext in [".doc", ".docx"]:
+        return "DESCRIPTION", "#2B5CE6"  # Blue
+    elif ext in [".txt", ".rtf"]:
+        return "TEXT_SNIPPET", "#FF6B35"  # Orange
+    elif ext in [".ppt", ".pptx"]:
+        return "SLIDESHOW", "#D24726"  # Red-Orange
+        
+    # Spreadsheet files
+    elif ext in [".xlsx", ".xls", ".csv"]:
+        return "TABLE_CHART", "#34A853"  # Green
+    
+    # Image files
+    elif ext in [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".ico"]:
+        return "IMAGE", "#3497E2"  # Orange
+    elif ext in [".psd", ".ai"]:
+        return "BRUSH", "#FF3366"  # Pink
+    
+    # Video files
+    elif ext in [".mp4", ".avi", ".mkv", ".mov", ".wmv"]:
+        return "MOVIE", "#9C27B0"  # Purple
+    
+    # Audio files
+    elif ext in [".mp3", ".wav", ".flac", ".aac", ".wma"]:
+        return "MUSIC_NOTE", "#E91E63"  # Pink
+    
+    # Archive files
+    elif ext in [".zip", ".rar", ".7z", ".tar", ".gz"]:
+        return "FOLDER_ZIP", "#FF9800"  # Orange
+    
+    # Code files
+    elif ext in [".py", ".js", ".html", ".css", ".java", ".cpp", ".c", ".php"]:
+        return "CODE", "#4CAF50"  # Green
+    elif ext in [".json", ".xml", ".yaml", ".yml"]:
+        return "DATA_OBJECT", "#9C27B0"  # Purple
+    
+    # CAD/Design files
+    elif ext in [".icd", ".dwg", ".dxf"]:
+        return "ARCHITECTURE", "#795548"  # Brown
+        
+    # Configuration files
+    elif ext in [".ini", ".cfg", ".conf"]:
+        return "TUNE", "#607D8B"  # Blue Gray
+        
+    # Log files
+    elif ext in [".log", ".txt"] and ("log" in filename):
+        return "ARTICLE", "#FF7043"  # Orange
+        
+    # Database files
+    elif ext in [".db", ".sqlite", ".mdb"]:
+        return "STORAGE", "#4DB6AC"  # Teal
+        
+    # Font files
+    elif ext in [".ttf", ".otf", ".woff"]:
+        return "FONT_DOWNLOAD", "#8E24AA"  # Purple
+    
+    # Default for unknown files - now more colorful!
     else:
-        return "DESCRIPTION", "#000000"
+        # Generate different colors based on first letter of filename
+        first_char = filename[0] if filename else 'a'
+        colors = [
+            "#FF5722",  # Deep Orange
+            "#E91E63",  # Pink
+            "#9C27B0",  # Purple
+            "#673AB7",  # Deep Purple
+            "#3F51B5",  # Indigo
+            "#2196F3",  # Blue
+            "#00BCD4",  # Cyan
+            "#009688",  # Teal
+            "#4CAF50",  # Green
+            "#8BC34A",  # Light Green
+            "#CDDC39",  # Lime
+            "#FFC107",  # Amber
+            "#FF9800",  # Orange
+            "#FF5722",  # Deep Orange
+        ]
+        color_index = ord(first_char) % len(colors)
+        return "INSERT_DRIVE_FILE", colors[color_index]
 
 
 class BrowserView:
@@ -92,17 +173,18 @@ class BrowserView:
             on_submit=self.refresh
         )
 
+        # Simplified loading overlay (rarely shown now)
         self.loading_overlay = ft.Container(
             content=ft.Column(
                 [
-                    ft.Text("Loading...", size=16),
-                    ft.ProgressBar(width=300, value=None)
+                    ft.ProgressRing(width=30, height=30, stroke_width=3),
+                    ft.Text("Loading...", size=14)
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER
             ),
             alignment=ft.alignment.center,
-            bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLACK),
+            bgcolor=ft.Colors.with_opacity(0.2, ft.Colors.BLACK),
             visible=False,
             expand=True
         )
@@ -110,18 +192,20 @@ class BrowserView:
         if self.loading_overlay not in self.page.overlay:
             self.page.overlay.append(self.loading_overlay)
 
-        self.search_thread = None
-        self.search_stop = False
-
-        # Load index on init
+        # Load index on init - keep this as background task since it doesn't update UI
         threading.Thread(target=refresh_index, daemon=True).start()
+        
+        # Initialize breadcrumb immediately to show correct path
+        self.update_breadcrumb()
 
     def set_navigation(self, navigation):
         self.navigation = navigation
 
     def show_loading(self, show: bool):
+        """Simple loading display without timers."""
         self.loading_overlay.visible = show
-        self.page.update()
+        if self.page:
+            self.page.update()
 
     def build_tile(self, item: Path):
         icon, color = get_icon_and_color(item)
@@ -137,6 +221,8 @@ class BrowserView:
                 self.show_details(item)
             else:
                 if item.is_dir():
+                    # Clear search when entering a directory
+                    self.search_field.value = ""
                     self.current_path[0] = item
                     self.refresh()
                 else:
@@ -148,34 +234,54 @@ class BrowserView:
 
                     show_confirm_dialog(self.page, "Open File", f"Open '{item.name}'?", confirm_open)
 
+        # Enhanced container with better hover effects
         container = ft.Container(
             content=ft.Column(
                 [
                     ft.Icon(getattr(ft.Icons, icon), size=64, color=color),
-                    ft.Text(short_name, size=14, text_align="center", no_wrap=True),
+                    ft.Text(
+                        short_name, 
+                        size=12, 
+                        text_align="center", 
+                        no_wrap=True,
+                        weight=ft.FontWeight.W_500
+                    ),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
+                spacing=8
             ),
             tooltip=item.name,
             on_click=on_click_tile,
             padding=10,
-            border_radius=8,
+            border_radius=10,
             data=item,
-            bgcolor="transparent"
+            bgcolor="transparent",
+            border=ft.border.all(1, ft.Colors.TRANSPARENT)
         )
 
         def on_hover(e):
             if self.selected_item["path"] != item:
-                container.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.GREY_800) if e.data == "true" else "transparent"
+                if e.data == "true":
+                    container.bgcolor = ft.Colors.with_opacity(0.1, ft.Colors.BLUE)
+                    container.border = ft.border.all(1, ft.Colors.with_opacity(0.3, ft.Colors.BLUE))
+                else:
+                    container.bgcolor = "transparent"
+                    container.border = ft.border.all(1, ft.Colors.TRANSPARENT)
                 container.update()
 
         container.on_hover = on_hover
         return container
 
     def highlight_selected(self):
+        """Highlight selected item with better visual feedback."""
         for tile in self.grid.controls:
             path = tile.data
-            tile.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.GREY_800) if path == self.selected_item["path"] else "transparent"
+            if path == self.selected_item["path"]:
+                tile.bgcolor = ft.Colors.with_opacity(0.2, ft.Colors.BLUE)
+                tile.border = ft.border.all(2, ft.Colors.BLUE)
+            else:
+                tile.bgcolor = "transparent"
+                tile.border = ft.border.all(1, ft.Colors.TRANSPARENT)
             tile.update()
 
     def show_details(self, item: Path):
@@ -185,78 +291,147 @@ class BrowserView:
         self.selected_item["path"] = None
         for tile in self.grid.controls:
             tile.bgcolor = "transparent"
+            tile.border = ft.border.all(1, ft.Colors.TRANSPARENT)
             tile.update()
         self.details_panel.clean()
 
     def go_back(self, e=None):
         if self.current_path[0] != BASE_DIR:
+            # Clear search when going back
+            self.search_field.value = ""
             self.current_path[0] = self.current_path[0].parent
             self.refresh()
 
     def update_breadcrumb(self):
-        if self.breadcrumb.page is None:
-            return
-        self.breadcrumb.controls.clear()
-        parts = list(self.current_path[0].parts)
-        for i, part in enumerate(parts):
-            partial_path = Path(*parts[:i + 1])
+        try:
+            self.breadcrumb.controls.clear()
+            parts = list(self.current_path[0].parts)
+            for i, part in enumerate(parts):
+                partial_path = Path(*parts[:i + 1])
 
-            def go_to_path(_, p=partial_path):
-                self.current_path[0] = p
-                self.refresh()
+                def create_breadcrumb_click(p):
+                    def go_to_path(e):
+                        # Clear search when clicking breadcrumb
+                        self.search_field.value = ""
+                        self.current_path[0] = p
+                        self.refresh()
+                    return go_to_path
 
-            self.breadcrumb.controls.append(
-                ft.TextButton(
-                    text=part,
-                    on_click=go_to_path,
-                    style=ft.ButtonStyle(color={ft.ControlState.DEFAULT: ft.Colors.BLACK})
+                # Enhanced breadcrumb styling
+                self.breadcrumb.controls.append(
+                    ft.TextButton(
+                        text=part,
+                        on_click=create_breadcrumb_click(partial_path),
+                        style=ft.ButtonStyle(
+                            color={
+                                ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                                ft.ControlState.HOVERED: ft.Colors.GREY_800
+                            },
+                            text_style=ft.TextStyle(weight=ft.FontWeight.W_500)
+                        )
+                    )
                 )
-            )
-            if i < len(parts) - 1:
-                self.breadcrumb.controls.append(ft.Text(">", weight=ft.FontWeight.BOLD))
-        self.breadcrumb.update()
+                if i < len(parts) - 1:
+                    self.breadcrumb.controls.append(
+                        ft.Text(
+                            ">", 
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.GREY_600
+                        )
+                    )
+            # Always try to update breadcrumb, handle page attachment gracefully
+            try:
+                if hasattr(self.breadcrumb, 'page') and self.breadcrumb.page:
+                    self.breadcrumb.update()
+            except:
+                pass  # Breadcrumb will be updated when page is attached
+        except Exception as ex:
+            print(f"[ERROR] Breadcrumb update failed: {ex}")
 
     def update_grid(self, items):
-        self.grid.controls.clear()
-        for item in items:
-            self.grid.controls.append(self.build_tile(item))
-        self.grid.update()
+        """Fast grid update without threading issues."""
+        try:
+            self.grid.controls.clear()
+            for item in items:
+                self.grid.controls.append(self.build_tile(item))
+            if self.grid.page:  # Only update if grid is attached to page
+                self.grid.update()
+        except Exception as ex:
+            print(f"[ERROR] Grid update failed: {ex}")
 
     def refresh(self, e=None):
-        self.show_loading(True)
+        """Instant refresh - now synchronous to avoid threading issues."""
+        # Always update breadcrumb first to show correct path
         self.update_breadcrumb()
+        
         query = self.search_field.value.strip()
-
-        def run_search():
-            time.sleep(SEARCH_DEBOUNCE)
-            if self.search_stop:
-                return
+        
+        # Simple synchronous approach - no threading issues
+        try:
             results = []
             if query:
                 results = search_all(query)
             else:
-                try:
-                    results = sorted(self.current_path[0].iterdir())
-                except Exception as ex:
-                    print(f"[ERROR] Cannot read dir: {ex}")
-            self.page.controls.append(ft.Container())  # Force UI update trigger
+                results = sorted(self.current_path[0].iterdir())
+            
+            # Update UI directly on main thread
             self.update_grid(results)
             self.show_loading(False)
+            
+        except Exception as ex:
+            print(f"[ERROR] Refresh failed: {ex}")
+            self.show_loading(False)
 
-        self.search_stop = True
-        if self.search_thread and self.search_thread.is_alive():
-            self.search_thread.join()
-        self.search_stop = False
-        self.search_thread = threading.Thread(target=run_search, daemon=True)
-        self.search_thread.start()
+    def clear_search(self, e=None):
+        """Clear search and return to current directory."""
+        self.search_field.value = ""
+        self.refresh()
 
     def create_toolbar(self):
+        """Enhanced toolbar with better styling."""
         return ft.Row(
             [
-                ft.IconButton(ft.Icons.ARROW_BACK, tooltip="Back", on_click=self.go_back),
-                self.breadcrumb,
-                ft.Container(expand=True),
-                self.search_field,
+                ft.Container(
+                    content=ft.IconButton(
+                        ft.Icons.ARROW_BACK, 
+                        tooltip="Back",
+                        on_click=self.go_back,
+                        icon_color=ft.Colors.BLACK,
+                        style=ft.ButtonStyle(
+                            bgcolor={
+                                ft.ControlState.DEFAULT: ft.Colors.TRANSPARENT,
+                                ft.ControlState.HOVERED: ft.Colors.with_opacity(0.1, ft.Colors.GREY)
+                            },
+                            shape=ft.CircleBorder()
+                        )
+                    ),
+                    margin=ft.margin.only(right=10)
+                ),
+                ft.Container(
+                    content=ft.IconButton(
+                        ft.Icons.REFRESH, 
+                        tooltip="Refresh",
+                        on_click=self.refresh,
+                        icon_color=ft.Colors.BLACK,
+                        style=ft.ButtonStyle(
+                            bgcolor={
+                                ft.ControlState.DEFAULT: ft.Colors.TRANSPARENT,
+                                ft.ControlState.HOVERED: ft.Colors.with_opacity(0.1, ft.Colors.GREY)
+                            },
+                            shape=ft.CircleBorder()
+                        )
+                    ),
+                    margin=ft.margin.only(right=10)
+               
+                ),
+                ft.Container(
+                    content=self.breadcrumb,
+                    expand=True
+                ),
+                ft.Container(
+                    content=self.search_field,
+                    margin=ft.margin.only(left=10)
+                ),
             ],
             alignment=ft.MainAxisAlignment.START,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -264,17 +439,22 @@ class BrowserView:
 
     def create_content(self):
         layout = ft.Column([
-            ft.Container(content=self.create_toolbar(), padding=10),
-            ft.Divider(),
+            ft.Container(
+                content=self.create_toolbar(),
+                padding=15,
+                bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.GREY),
+                border_radius=8
+            ),
             ft.Row([
                 ft.Container(
                     expand=True,
                     content=ft.GestureDetector(
                         on_tap=lambda e: self.deselect_all(),
                         content=self.grid
-                    )
+                    ),
+                    margin=10
                 ),
-                ft.VerticalDivider(width=1),
+                ft.VerticalDivider(width=1, color=ft.Colors.GREY_300),
                 ft.Container(
                     content=self.details_panel,
                     width=300,
@@ -285,5 +465,11 @@ class BrowserView:
             ], expand=True),
         ], expand=True)
 
-        threading.Timer(0.05, self.refresh).start()
+        # Initialize breadcrumb and load content immediately
+        try:
+            self.update_breadcrumb()  # Ensure breadcrumb shows correct path
+            self.refresh()  # Load the files
+        except Exception as ex:
+            print(f"[ERROR] Initial load failed: {ex}")
+        
         return layout
