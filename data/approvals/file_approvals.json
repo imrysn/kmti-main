@@ -6,7 +6,7 @@
     "user_team": "IT",
     "file_size": 2,
     "submission_date": "2025-08-07T11:44:58.892962",
-    "status": "pending",
+    "status": "approved",
     "description": "wow",
     "tags": [
       "urgent"
@@ -17,9 +17,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T11:44:58.892969",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T14:35:04.736579",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/raysan\\approval_notifications.json"
+    "file_path": "data/uploads/raysan\\approval_notifications.json",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T14:35:04.736570",
+    "last_updated": "2025-08-07T14:35:04.736576"
   },
   "78b178b7-4ef6-4099-9b56-71854670c8f0": {
     "file_id": "78b178b7-4ef6-4099-9b56-71854670c8f0",
@@ -28,7 +37,7 @@
     "user_team": "IT",
     "file_size": 956,
     "submission_date": "2025-08-07T11:49:45.092621",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -37,9 +46,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T11:49:45.092628",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T14:35:01.488591",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/raysan\\file_approval_status.json"
+    "file_path": "data/uploads/raysan\\file_approval_status.json",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T14:35:01.488582",
+    "last_updated": "2025-08-07T14:35:01.488588"
   },
   "9504b368-0442-4567-a1d6-548c10902a6e": {
     "file_id": "9504b368-0442-4567-a1d6-548c10902a6e",
@@ -48,7 +66,7 @@
     "user_team": "IT",
     "file_size": 6833,
     "submission_date": "2025-08-07T11:49:47.637476",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -57,9 +75,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T11:49:47.637483",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T14:34:58.672575",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/raysan\\data_management.py"
+    "file_path": "data/uploads/raysan\\data_management.py",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T14:34:58.672565",
+    "last_updated": "2025-08-07T14:34:58.672572"
   },
   "43a5092b-000a-4e50-9c4c-e7bdb72894b5": {
     "file_id": "43a5092b-000a-4e50-9c4c-e7bdb72894b5",
@@ -68,7 +95,7 @@
     "user_team": "IT",
     "file_size": 49453,
     "submission_date": "2025-08-07T11:53:35.405536",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -77,9 +104,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T11:53:35.405541",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T14:34:55.712633",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx"
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T14:34:55.712622",
+    "last_updated": "2025-08-07T14:34:55.712629"
   },
   "e3f835f6-f4ff-458d-b0b5-f0710a4639d4": {
     "file_id": "e3f835f6-f4ff-458d-b0b5-f0710a4639d4",
@@ -88,6 +124,394 @@
     "user_team": "IT",
     "file_size": 49453,
     "submission_date": "2025-08-07T11:53:36.757335",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [
+      {
+        "admin_id": "admin",
+        "comment": "Test comment",
+        "timestamp": "2025-08-07T14:34:37.865449"
+      }
+    ],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:53:36.757342",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T14:34:47.596656",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T14:34:47.596644",
+    "last_updated": "2025-08-07T14:34:47.596652"
+  },
+  "401126e6-2480-4a36-8354-0096c5e99d07": {
+    "file_id": "401126e6-2480-4a36-8354-0096c5e99d07",
+    "original_filename": "kmti.ico",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 4286,
+    "submission_date": "2025-08-07T14:36:36.552558",
+    "status": "changes_requested",
+    "description": "test",
+    "tags": [
+      "test"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:36:36.552565",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "changes_requested",
+        "timestamp": "2025-08-07T14:47:10.084542",
+        "admin_id": "admin",
+        "comment": "test"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\kmti.ico",
+    "rejected_by": "admin",
+    "rejected_date": "2025-08-07T14:47:10.084527",
+    "rejection_reason": "test",
+    "last_updated": "2025-08-07T14:47:10.084538"
+  },
+  "e46254a3-a419-4bb9-a380-da91c77e0fba": {
+    "file_id": "e46254a3-a419-4bb9-a380-da91c77e0fba",
+    "original_filename": "kmti_logo.png",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 154477,
+    "submission_date": "2025-08-07T14:36:38.377092",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:36:38.377099",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T16:05:35.076799",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\kmti_logo.png",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T16:05:35.076778",
+    "last_updated": "2025-08-07T16:05:35.076795"
+  },
+  "8c2c6e9f-d50d-419b-a348-0bb4b9bce260": {
+    "file_id": "8c2c6e9f-d50d-419b-a348-0bb4b9bce260",
+    "original_filename": "PC-Wallpaper-Anime-Aesthetic-HD.jpg",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1366317,
+    "submission_date": "2025-08-07T14:36:39.977268",
+    "status": "changes_requested",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:36:39.977275",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "changes_requested",
+        "timestamp": "2025-08-07T14:39:52.504562",
+        "admin_id": "admin",
+        "comment": "test reject"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\PC-Wallpaper-Anime-Aesthetic-HD.jpg",
+    "rejected_by": "admin",
+    "rejected_date": "2025-08-07T14:39:52.504549",
+    "rejection_reason": "test reject",
+    "last_updated": "2025-08-07T14:39:52.504558"
+  },
+  "db1e8037-8f94-4edc-b01e-927de338d5a9": {
+    "file_id": "db1e8037-8f94-4edc-b01e-927de338d5a9",
+    "original_filename": "data_management.py",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 6833,
+    "submission_date": "2025-08-07T14:55:00.942880",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:00.942886",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T17:01:37.962992",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\data_management.py",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T17:01:37.962980",
+    "last_updated": "2025-08-07T17:01:37.962988"
+  },
+  "7c827356-d62a-4648-b659-85496b883bde": {
+    "file_id": "7c827356-d62a-4648-b659-85496b883bde",
+    "original_filename": "dialog.py",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1507,
+    "submission_date": "2025-08-07T14:55:02.073770",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:02.073796",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:20:20.446687",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\dialog.py",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:20:20.446677",
+    "last_updated": "2025-08-07T15:20:20.446684"
+  },
+  "92089d6a-a0a3-4dc9-83f5-626a1f461e7b": {
+    "file_id": "92089d6a-a0a3-4dc9-83f5-626a1f461e7b",
+    "original_filename": "dialog.py",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1507,
+    "submission_date": "2025-08-07T14:55:03.199521",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:03.199528",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:38:50.204538",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\dialog.py",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:38:50.204516",
+    "last_updated": "2025-08-07T15:38:50.204535"
+  },
+  "7429e6e7-731b-4d9c-a920-e0f48a048923": {
+    "file_id": "7429e6e7-731b-4d9c-a920-e0f48a048923",
+    "original_filename": "kmti.ico",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 4286,
+    "submission_date": "2025-08-07T14:55:04.303538",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:04.303545",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:23:57.439140",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\kmti.ico",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:23:57.439131",
+    "last_updated": "2025-08-07T15:23:57.439137"
+  },
+  "5d590663-c9ff-4db2-b56f-ef0cee88f89b": {
+    "file_id": "5d590663-c9ff-4db2-b56f-ef0cee88f89b",
+    "original_filename": "kmti_logo.png",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 154477,
+    "submission_date": "2025-08-07T14:55:05.392167",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:05.392174",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:23:54.142515",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\kmti_logo.png",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:23:54.142505",
+    "last_updated": "2025-08-07T15:23:54.142512"
+  },
+  "46041246-84be-41c5-afd4-e6fbe9a6dd8e": {
+    "file_id": "46041246-84be-41c5-afd4-e6fbe9a6dd8e",
+    "original_filename": "PC-Wallpaper-Anime-Aesthetic-HD.jpg",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1366317,
+    "submission_date": "2025-08-07T14:55:06.833058",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:06.833065",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:02:23.639642",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\PC-Wallpaper-Anime-Aesthetic-HD.jpg",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:02:23.639631",
+    "last_updated": "2025-08-07T15:02:23.639638"
+  },
+  "708e35d5-7c7c-4305-8579-949aee563d62": {
+    "file_id": "708e35d5-7c7c-4305-8579-949aee563d62",
+    "original_filename": "file_approval_status.json",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 2739,
+    "submission_date": "2025-08-07T14:55:08.541222",
+    "status": "approved",
+    "description": "",
+    "tags": [],
+    "admin_comments": [
+      {
+        "admin_id": "admin",
+        "comment": "ano to",
+        "timestamp": "2025-08-07T15:02:40.271191"
+      }
+    ],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T14:55:08.541230",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-07T15:20:31.942960",
+        "admin_id": "admin",
+        "comment": "File approved"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\file_approval_status.json",
+    "approved_by": "admin",
+    "approved_date": "2025-08-07T15:20:31.942950",
+    "last_updated": "2025-08-07T15:20:31.942956"
+  },
+  "a9906a7e-c0aa-44a0-80d4-77c24de50798": {
+    "file_id": "a9906a7e-c0aa-44a0-80d4-77c24de50798",
+    "original_filename": "CP91024U01_PCMU.icd",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1202096,
+    "submission_date": "2025-08-07T17:05:19.453591",
+    "status": "pending",
+    "description": "For checking",
+    "tags": [
+      "urgent"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:05:19.453597",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\CP91024U01_PCMU.icd"
+  },
+  "78d16ab0-5d61-4421-8834-71b77b98428e": {
+    "file_id": "78d16ab0-5d61-4421-8834-71b77b98428e",
+    "original_filename": "CP91020U01_PCMU.icd",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 1489144,
+    "submission_date": "2025-08-07T17:05:31.561855",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [
+      {
+        "admin_id": "admin",
+        "comment": "Good job!",
+        "timestamp": "2025-08-07T17:07:14.438667"
+      },
+      {
+        "admin_id": "admin",
+        "comment": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+        "timestamp": "2025-08-07T17:13:36.415192"
+      }
+    ],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:05:31.561863",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\CP91020U01_PCMU.icd"
+  },
+  "1ab179b7-658c-44e4-9e42-6ff7013089df": {
+    "file_id": "1ab179b7-658c-44e4-9e42-6ff7013089df",
+    "original_filename": "CP91018U01_PCMU.icd",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 4159308,
+    "submission_date": "2025-08-07T17:05:39.440800",
     "status": "pending",
     "description": "",
     "tags": [],
@@ -95,10 +519,11 @@
     "status_history": [
       {
         "status": "pending",
-        "timestamp": "2025-08-07T11:53:36.757342",
+        "timestamp": "2025-08-07T17:05:39.440807",
         "comment": "File submitted for approval"
       }
     ],
+
     "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
   },
   "066dba29-cf65-40c8-afa2-121425372747": {
@@ -384,5 +809,8 @@
       }
     ],
     "file_path": "data/uploads/bryan\\Flow.txt"
+
+    "file_path": "data/uploads/raysan\\CP91018U01_PCMU.icd"
+
   }
 }
