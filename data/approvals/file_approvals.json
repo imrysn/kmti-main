@@ -1,0 +1,104 @@
+{
+  "1dc2dadc-bf6e-48b2-aceb-bde084e0561a": {
+    "file_id": "1dc2dadc-bf6e-48b2-aceb-bde084e0561a",
+    "original_filename": "approval_notifications.json",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 2,
+    "submission_date": "2025-08-07T11:44:58.892962",
+    "status": "pending",
+    "description": "wow",
+    "tags": [
+      "urgent"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:44:58.892969",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\approval_notifications.json"
+  },
+  "78b178b7-4ef6-4099-9b56-71854670c8f0": {
+    "file_id": "78b178b7-4ef6-4099-9b56-71854670c8f0",
+    "original_filename": "file_approval_status.json",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 956,
+    "submission_date": "2025-08-07T11:49:45.092621",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:49:45.092628",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\file_approval_status.json"
+  },
+  "9504b368-0442-4567-a1d6-548c10902a6e": {
+    "file_id": "9504b368-0442-4567-a1d6-548c10902a6e",
+    "original_filename": "data_management.py",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 6833,
+    "submission_date": "2025-08-07T11:49:47.637476",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:49:47.637483",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\data_management.py"
+  },
+  "43a5092b-000a-4e50-9c4c-e7bdb72894b5": {
+    "file_id": "43a5092b-000a-4e50-9c4c-e7bdb72894b5",
+    "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx",
+    "user_id": "user1",
+    "user_team": "IT",
+    "file_size": 49453,
+    "submission_date": "2025-08-07T11:53:35.405536",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:53:35.405541",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual (1).docx"
+  },
+  "e3f835f6-f4ff-458d-b0b5-f0710a4639d4": {
+    "file_id": "e3f835f6-f4ff-458d-b0b5-f0710a4639d4",
+    "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "user_id": "user1",
+    "user_team": "IT",
+    "file_size": 49453,
+    "submission_date": "2025-08-07T11:53:36.757335",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T11:53:36.757342",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+  }
+}

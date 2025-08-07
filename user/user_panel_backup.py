@@ -6,11 +6,8 @@ from typing import Optional
 from .components.browser_view import BrowserView
 from .components.profile_view import ProfileView
 from .components.files_view import FilesView
-from .components.approval_files_view import ApprovalFilesView
-from .components.notifications_view import NotificationsView
 from .services.profile_service import ProfileService
 from .services.file_service import FileService
-from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action  
 from utils.session_logger import log_activity
 
@@ -33,17 +30,12 @@ def user_panel(page: ft.Page, username: Optional[str]):
     user_folder = f"data/uploads/{username}"
     os.makedirs(user_folder, exist_ok=True)
     
-    # Initialize services
     profile_service = ProfileService(user_folder, username)
     file_service = FileService(user_folder, username)
-    approval_service = ApprovalFileService(user_folder, username)
     
-    # Initialize views
     browser_view = BrowserView(page, username)
     profile_view = ProfileView(page, username, profile_service)
     files_view = FilesView(page, username, file_service)
-    approval_files_view = ApprovalFilesView(page, username, approval_service)
-    notifications_view = NotificationsView(page, username, approval_service)
 
     current_view = "browser"
 
@@ -73,16 +65,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
         current_view = "files"
         update_content()
     
-    def show_approval_files_view():
-        nonlocal current_view
-        current_view = "approval_files"
-        update_content()
-    
-    def show_notifications_view():
-        nonlocal current_view
-        current_view = "notifications"
-        update_content()
-    
     def show_browser_view():
         nonlocal current_view
         current_view = "browser"
@@ -91,28 +73,12 @@ def user_panel(page: ft.Page, username: Optional[str]):
     navigation = {
         'show_profile': show_profile_view,
         'show_files': show_files_view,
-        'show_approval_files': show_approval_files_view,
-        'show_notifications': show_notifications_view,
         'show_browser': show_browser_view
     }
     
-    # Set navigation for all views
     browser_view.set_navigation(navigation)
     profile_view.set_navigation(navigation)
     files_view.set_navigation(navigation)
-    approval_files_view.set_navigation(navigation)
-    notifications_view.set_navigation(navigation)
-
-    def get_notification_status():
-        """Get notification count and text for app bar"""
-        try:
-            unread_count = approval_service.get_unread_notification_count()
-            if unread_count > 0:
-                return f"({unread_count})", ft.Icons.NOTIFICATIONS_ACTIVE
-            else:
-                return "", ft.Icons.NOTIFICATIONS_NONE
-        except:
-            return "", ft.Icons.NOTIFICATIONS_NONE
 
     def update_content():
         print(f"[DEBUG] Updating content: {current_view}")
@@ -121,50 +87,13 @@ def user_panel(page: ft.Page, username: Optional[str]):
                 content = profile_view.create_content()
             elif current_view == "files":
                 content = files_view.create_content()
-            elif current_view == "approval_files":
-                content = approval_files_view.create_content()
-            elif current_view == "notifications":
-                content = notifications_view.create_content()
             else:
                 content = browser_view.create_content()
 
             page.controls.clear()
-            
-            # Get notification status for app bar
-            notification_badge, notification_icon = get_notification_status()
-            
             page.appbar = ft.AppBar(
                 title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
                 actions=[
-                    ft.Container(
-                        content=ft.Stack([
-                            ft.IconButton(
-                                icon=notification_icon,
-                                icon_color=ft.Colors.WHITE,
-                                tooltip="Notifications",
-                                on_click=lambda e: show_notifications_view()
-                            ),
-                            ft.Container(
-                                content=ft.Text(
-                                    notification_badge,
-                                    size=10,
-                                    color=ft.Colors.WHITE,
-                                    weight=ft.FontWeight.BOLD
-                                ),
-                                bgcolor=ft.Colors.RED,
-                                border_radius=8,
-                                padding=ft.padding.symmetric(horizontal=4, vertical=2),
-                                top=5,
-                                right=5,
-                                visible=bool(notification_badge)
-                            )
-                        ])
-                    ) if notification_badge else ft.IconButton(
-                        icon=notification_icon,
-                        icon_color=ft.Colors.WHITE,
-                        tooltip="Notifications",
-                        on_click=lambda e: show_notifications_view()
-                    ),
                     ft.TextButton(
                         f"Hi, {username}" if username else "Hi, User",
                         style=ft.ButtonStyle(color=ft.Colors.WHITE),
