@@ -9,7 +9,7 @@ from .shared_ui import SharedUI
 from .dialogs import DialogManager
 
 class FilesView:
-    """Files view component for displaying and managing user files with real-time updates"""
+    """Files view component with CONSISTENT UI DESIGN"""
     
     def __init__(self, page: ft.Page, username: str, file_service: FileService):
         self.page = page
@@ -562,7 +562,7 @@ class FilesView:
         )
     
     def create_files_table(self):
-        """IMPROVED: Create the files table with simplified, more reliable structure"""
+        """Create the files table with simplified, more reliable structure"""
         files = self.file_service.get_files()
         
         file_count = len(files)
@@ -669,27 +669,28 @@ class FilesView:
         )
     
     def create_content(self):
-        """Create the main files content with real-time updates - FIXED BACK BUTTON"""
+        """Create the main files content with CONSISTENT UI DESIGN"""
         return ft.Container(
             content=ft.Stack([
                 # Main content
                 ft.Column([
-                    # Back button
+                    # Back button - CONSISTENT DESIGN
                     self.shared.create_back_button(
                         lambda e: self.navigation['show_browser']() if self.navigation else None,
                         text="Back"
                     ),
                     
-                    # Main content card
+                    # Main content layout - CONSISTENT WITH IMAGE 1
                     ft.Container(
                         content=ft.Row([
-                            # Left side - Avatar and menu
+                            # Left sidebar - CONSISTENT USER INFO CARD + NAVIGATION
                             ft.Container(
                                 content=self.shared.create_user_sidebar("files"),
-                                alignment=ft.alignment.top_center,
                                 width=200
                             ),
+                            
                             ft.Container(width=20),
+                            
                             # Right side - Files content
                             ft.Container(
                                 content=self.create_files_table(),

@@ -6,7 +6,7 @@ from .shared_ui import SharedUI
 from typing import Dict, Optional
 
 class NotificationsView:
-    """Standalone notifications view accessible from header bar"""
+    """Notifications view with CONSISTENT UI DESIGN"""
     
     def __init__(self, page: ft.Page, username: str, approval_service: ApprovalFileService):
         self.page = page
@@ -93,7 +93,7 @@ class NotificationsView:
                     ft.Icon(ft.Icons.NOTIFICATIONS_NONE, size=64, color=ft.Colors.GREY_400),
                     ft.Text("No notifications", size=16, color=ft.Colors.GREY_600),
                     ft.Text("Approval status updates and admin comments will appear here", 
-                           size=12, color=ft.Colors.GREY_500)
+                           size=12, color=ft.Colors.GREY_500, text_align=ft.TextAlign.CENTER)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 alignment=ft.alignment.center,
                 height=300
@@ -140,48 +140,75 @@ class NotificationsView:
         return ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text("Notifications", size=24, weight=ft.FontWeight.BOLD),
-                    ft.Text(f"{unread_count} unread of {total_count} total", size=14, color=ft.Colors.GREY_600)
+                    ft.Text("Notifications", size=20, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"{unread_count} unread of {total_count} total", size=12, color=ft.Colors.GREY_600)
                 ]),
                 ft.Container(expand=True),
                 ft.ElevatedButton(
                     "Mark All Read",
                     icon=ft.Icons.DONE_ALL,
                     on_click=lambda e: self.mark_all_notifications_read(),
-                    disabled=unread_count == 0
+                    disabled=unread_count == 0,
+                    bgcolor=ft.Colors.BLUE_600,
+                    color=ft.Colors.WHITE
                 ) if unread_count > 0 else ft.Container()
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            margin=ft.margin.only(bottom=20)
+            margin=ft.margin.only(bottom=15)
+        )
+    
+    def create_main_content(self):
+        """Create main notifications content"""
+        return ft.Container(
+            content=ft.Column([
+                # Header section
+                self.create_header_section(),
+                
+                # Notifications content
+                self.create_notifications_content()
+            ], expand=True),
+            bgcolor=ft.Colors.WHITE,
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            padding=20,
+            expand=True,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=3,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            )
         )
     
     def create_content(self):
-        """Create the main notifications content"""
+        """Create the main notifications content with CONSISTENT UI DESIGN"""
         return ft.Container(
             content=ft.Column([
-                # Back button to profile
-                ft.Container(
-                    content=ft.TextButton(
-                        icon=ft.Icons.ARROW_BACK,
-                        on_click=lambda e: self.navigation['show_profile']() if self.navigation else None,
-                        style=ft.ButtonStyle(color=ft.Colors.BLACK)
-                    ),
-                    margin=ft.margin.only(left=10, top=10, bottom=10)
+                # Back button - CONSISTENT DESIGN
+                self.shared.create_back_button(
+                    lambda e: self.navigation['show_browser']() if self.navigation else None,
+                    text="Back"
                 ),
                 
-                # Main content
+                # Main content layout - CONSISTENT WITH IMAGE 1
                 ft.Container(
-                    content=ft.Column([
-                        # Header section
-                        self.create_header_section(),
+                    content=ft.Row([
+                        # Left sidebar - CONSISTENT USER INFO CARD + NAVIGATION
+                        ft.Container(
+                            content=self.shared.create_user_sidebar("notifications"),
+                            width=200
+                        ),
                         
-                        # Notifications content
-                        self.create_notifications_content()
-                    ], expand=True),
-                    bgcolor=ft.Colors.WHITE,
-                    border_radius=12,
-                    border=ft.border.all(1, ft.Colors.GREY_200),
-                    padding=20,
-                    margin=ft.margin.all(20),
+                        ft.Container(width=20),
+                        
+                        # Right side - Notifications content
+                        ft.Container(
+                            content=self.create_main_content(),
+                            expand=True
+                        )
+                    ], alignment=ft.MainAxisAlignment.START, 
+                       vertical_alignment=ft.CrossAxisAlignment.START,
+                       expand=True),
+                    margin=ft.margin.only(left=15, right=15, top=5, bottom=10),
                     expand=True
                 )
             ], alignment=ft.MainAxisAlignment.START, spacing=0, expand=True),
