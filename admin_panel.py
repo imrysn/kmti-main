@@ -12,11 +12,11 @@ from admin.system_settings import system_settings
 from admin.user_management import user_management
 from utils.session_logger import log_activity
 from user.user_panel import save_session, clear_session
+from admin.components.file_approval_panel import FileApprovalPanel
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
 ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
-
 
 def load_json(path, default):
     if not os.path.exists(path):
@@ -301,8 +301,29 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                 ),
             )
         )
-
         content.update()
+
+    def show_file_approval():
+        """Show the File Approval panel"""
+        content.controls.clear()
+        try:
+            approval_panel = FileApprovalPanel(page, username)
+            approval_interface = approval_panel.create_approval_interface()
+            content.controls.append(approval_interface)
+            content.update()
+        except Exception as e:
+            print(f"[ERROR] Failed to load File Approval panel: {e}")
+            content.controls.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Text("File Approval Panel", size=24, weight=ft.FontWeight.BOLD),
+                        ft.Text(f"Error loading panel: {e}", color=ft.Colors.RED),
+                        ft.ElevatedButton("Refresh", on_click=lambda e: show_file_approval())
+                    ]),
+                    padding=20
+                )
+            )
+            content.update()
 
     def navigate_to_section(index: int):
         content.controls.clear()
@@ -311,10 +332,12 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         elif index == 1:
             data_management(content, username)
         elif index == 2:
-            user_management(content, username)
+            user_management(content, username) 
         elif index == 3:
             activity_logs(content, username)
-        elif index == 4:
+        elif index == 4:  
+            show_file_approval()    
+        elif index == 5: 
             system_settings(content, username)
 
     top_nav = create_navbar(username, navigate_to_section, lambda: logout(None))

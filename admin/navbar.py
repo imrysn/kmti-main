@@ -9,6 +9,7 @@ def create_navbar(username: str, on_nav, on_logout):
         "Data Management",
         "User Management",
         "Activity Logs",
+        "File Approval",
         "Settings",
     ]
 
