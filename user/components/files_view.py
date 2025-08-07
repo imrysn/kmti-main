@@ -499,14 +499,20 @@ class FilesView:
                 ft.Container(
                     content=ft.Row([
                         ft.ElevatedButton(
-                            "Submit" if not is_submitted else "Submitted",
-                            icon=ft.Icons.SEND if not is_submitted else ft.Icons.CHECK,
-                            on_click=lambda e, filename=file_info["name"]: self.show_submit_dialog(filename) if not is_submitted else None,
-                            disabled=is_submitted,
-                            bgcolor=ft.Colors.GREEN_100 if not is_submitted else ft.Colors.GREY_100,
-                            color=ft.Colors.GREEN_700 if not is_submitted else ft.Colors.GREY_500,
-                            height=32,
-                            width=85
+                           content=ft.Row([
+                        ft.Icon(ft.Icons.SEND if not is_submitted else ft.Icons.CHECK, size=16),
+                        ft.Text("Submit" if not is_submitted else "Submitted", size=12)
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                    
+                    on_click=lambda e, filename=file_info["name"]: self.show_submit_dialog(filename) if not is_submitted else None,
+                    disabled=is_submitted,
+                    bgcolor=ft.Colors.GREEN_100 if not is_submitted else ft.Colors.GREY_100,
+                    color=ft.Colors.GREEN_700 if not is_submitted else ft.Colors.GREY_500,
+                    height=36,
+                    width=100,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12))
                         ),
                         ft.Container(width=5),
                         ft.ElevatedButton(
@@ -520,9 +526,9 @@ class FilesView:
                             bgcolor=ft.Colors.RED_50,
                             color=ft.Colors.RED_700,
                             height=32,
-                            width=75
+                            width=85
                         )
-                    ], spacing=0),
+                    ], spacing=10),
                     expand=2,
                     alignment=ft.alignment.center
                 )
