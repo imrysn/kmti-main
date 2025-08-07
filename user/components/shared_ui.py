@@ -49,7 +49,7 @@ class SharedUI:
             menu_items.append(
                 ft.Container(
                     content=ft.TextButton(
-                        "📁 My Files",
+                        "📁 Files",
                         on_click=lambda e: self.navigation.get('show_files', lambda: None)(),
                         style=ft.ButtonStyle(color=files_color)
                     ),

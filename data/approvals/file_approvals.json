@@ -523,6 +523,294 @@
         "comment": "File submitted for approval"
       }
     ],
+
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+  },
+  "066dba29-cf65-40c8-afa2-121425372747": {
+    "file_id": "066dba29-cf65-40c8-afa2-121425372747",
+    "original_filename": "Parents-Consent-Arino - Copy (2) (1).pdf",
+    "user_id": "risan",
+    "user_team": "IT",
+    "file_size": 310709,
+    "submission_date": "2025-08-07T13:31:37.640782",
+    "status": "pending",
+    "description": "wahhh\n",
+    "tags": [
+      "urgent"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T13:31:37.640798",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/risan\\Parents-Consent-Arino - Copy (2) (1).pdf"
+  },
+  "90b4ef6a-ec70-4584-93d8-f05abaa94f8a": {
+    "file_id": "90b4ef6a-ec70-4584-93d8-f05abaa94f8a",
+    "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 49453,
+    "submission_date": "2025-08-07T17:01:04.261016",
+    "status": "pending",
+    "description": "/\n",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:01:04.261028",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+  },
+  "8531a6f1-6338-43f0-a67b-5f9d2e72e0bd": {
+    "file_id": "8531a6f1-6338-43f0-a67b-5f9d2e72e0bd",
+    "original_filename": "file_approval_status.json",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 999,
+    "submission_date": "2025-08-07T17:15:57.116314",
+    "status": "pending",
+    "description": "final",
+    "tags": [
+      "urgent"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:15:57.116326",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\file_approval_status.json"
+  },
+  "f6a2a1ba-1e45-4787-acb1-a52619127c34": {
+    "file_id": "f6a2a1ba-1e45-4787-acb1-a52619127c34",
+    "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 49453,
+    "submission_date": "2025-08-07T17:17:23.724184",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:17:23.724197",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+  },
+  "e21695a8-4c3d-4abe-b94d-a540666b7325": {
+    "file_id": "e21695a8-4c3d-4abe-b94d-a540666b7325",
+    "original_filename": "Astro Runner-Nodes.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 91842,
+    "submission_date": "2025-08-07T17:17:27.455106",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:17:27.455123",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\Astro Runner-Nodes.docx"
+  },
+  "643b6176-a21e-4f3c-913c-315d9fe72950": {
+    "file_id": "643b6176-a21e-4f3c-913c-315d9fe72950",
+    "original_filename": "file_approval_status.json",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 1430,
+    "submission_date": "2025-08-07T17:17:34.009627",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:17:34.009643",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\file_approval_status.json"
+  },
+  "94aa583b-7e33-4e39-ac45-b82abcbddd87": {
+    "file_id": "94aa583b-7e33-4e39-ac45-b82abcbddd87",
+    "original_filename": "Astro Runner-Nodes.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 91842,
+    "submission_date": "2025-08-07T17:18:46.040202",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:18:46.040215",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\Astro Runner-Nodes.docx"
+  },
+  "3e4a103a-f197-4399-a05f-fed998f188e8": {
+    "file_id": "3e4a103a-f197-4399-a05f-fed998f188e8",
+    "original_filename": "file_approval_status.json",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 927,
+    "submission_date": "2025-08-07T17:19:26.608109",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:19:26.608128",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\file_approval_status.json"
+  },
+  "86ebe5a0-4290-4a04-91a7-5a9a84f97f79": {
+    "file_id": "86ebe5a0-4290-4a04-91a7-5a9a84f97f79",
+    "original_filename": "BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 523769,
+    "submission_date": "2025-08-07T17:19:54.253427",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:19:54.253441",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\BERGONIA BRYAN - Final Project MY PERSONAL PORTFOLIO.docx"
+  },
+  "c5ec87d2-ac84-4042-a518-ea3e4a1b0f4d": {
+    "file_id": "c5ec87d2-ac84-4042-a518-ea3e4a1b0f4d",
+    "original_filename": "bryanBergonia-main.zip",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 41790522,
+    "submission_date": "2025-08-07T17:20:04.448938",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:20:04.448952",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\bryanBergonia-main.zip"
+  },
+  "8774106a-0cdb-4015-821e-01e41dc3bf40": {
+    "file_id": "8774106a-0cdb-4015-821e-01e41dc3bf40",
+    "original_filename": "Astro Runner-Nodes.docx",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 91842,
+    "submission_date": "2025-08-07T17:24:06.693851",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:24:06.693866",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\Astro Runner-Nodes.docx"
+  },
+  "25e1c107-68a4-4613-8529-0cd412a54b57": {
+    "file_id": "25e1c107-68a4-4613-8529-0cd412a54b57",
+    "original_filename": "import flet as ft.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 23009,
+    "submission_date": "2025-08-07T17:36:11.928047",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:36:11.928058",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\import flet as ft.txt"
+  },
+  "6c3defb5-ac9e-4ddb-918e-db9faee1ba14": {
+    "file_id": "6c3defb5-ac9e-4ddb-918e-db9faee1ba14",
+    "original_filename": "import flet as ft.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 23009,
+    "submission_date": "2025-08-07T17:36:13.375083",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:36:13.375096",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\import flet as ft.txt"
+  },
+  "dc26081c-44fd-4402-b90d-771e86a136e6": {
+    "file_id": "dc26081c-44fd-4402-b90d-771e86a136e6",
+    "original_filename": "Flow.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 1094,
+    "submission_date": "2025-08-07T17:36:17.245049",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:36:17.245066",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\Flow.txt"
+
     "file_path": "data/uploads/raysan\\CP91018U01_PCMU.icd"
+
   }
 }
