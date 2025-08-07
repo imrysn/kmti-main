@@ -186,7 +186,7 @@ class FileApprovalPanel:
                 ft.Icon(ft.Icons.ERROR_OUTLINE, size=64, color=ft.Colors.RED),
                 ft.Text("File Approval Panel", size=24, weight=ft.FontWeight.BOLD),
                 ft.Text("Error loading approval system", size=16, color=ft.Colors.RED),
-                ft.Text(f"Details: {error_msg}", size=12, color=ft.Colors.GREY_600),
+                ft.Text(f"Details: {error_msg}", size=16, color=ft.Colors.GREY_600),
                 ft.Container(height=20),
                 ft.ElevatedButton(
                     "Retry",
@@ -195,7 +195,7 @@ class FileApprovalPanel:
                 ),
                 ft.Container(height=20),
                 ft.Text("Please check that all required services are running and data files exist.", 
-                       size=12, color=ft.Colors.GREY_600, text_align=ft.TextAlign.CENTER)
+                       size=16, color=ft.Colors.GREY_600, text_align=ft.TextAlign.CENTER)
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             padding=50,
             expand=True
@@ -220,9 +220,9 @@ class FileApprovalPanel:
         return ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text("File Approval Center", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text("File Approval", size=24, weight=ft.FontWeight.BOLD),
                     ft.Text(f"Managing approvals for: {', '.join(self.admin_teams)}", 
-                           size=12, color=ft.Colors.GREY_600)
+                           size=16, color=ft.Colors.GREY_600)
                 ]),
                 ft.Container(expand=True),
                 ft.Row([
@@ -241,13 +241,13 @@ class FileApprovalPanel:
         return ft.Container(
             content=ft.Column([
                 ft.Text(value, size=24, weight=ft.FontWeight.BOLD, color=color),
-                ft.Text(label, size=11, color=ft.Colors.GREY_600, text_align=ft.TextAlign.CENTER)
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
+                ft.Text(label, size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER)
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
             bgcolor=ft.Colors.GREY_50,
             border_radius=10,
             padding=15,
             width=110,
-            height=70,
+            height=80,
             alignment=ft.alignment.center
         )
     
@@ -337,7 +337,7 @@ class FileApprovalPanel:
         
         # Bulk operations bar (shown when bulk mode is active)
         bulk_bar = ft.Row([
-            ft.Text(f"Selected: {len(self.selected_files)}", size=14, weight=ft.FontWeight.BOLD),
+            ft.Text(f"Selected: {len(self.selected_files)}", size=16, weight=ft.FontWeight.BOLD),
             ft.Container(width=20),
             ft.ElevatedButton(
                 "Bulk Approve",
@@ -564,17 +564,17 @@ class FileApprovalPanel:
                 ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD))
             ],
             rows=[],
-            column_spacing=8,  # Reduced spacing for better fit
+            column_spacing=20, 
             horizontal_margin=5,
             data_row_max_height=50,
-            data_row_min_height=40
+            data_row_min_height=40,
         )
         
         self.refresh_files_table()
         
         return ft.Container(
             content=ft.Column([
-                ft.Text("Pending Files", size=16, weight=ft.FontWeight.BOLD),
+                ft.Text("Pending Files", size=22, weight=ft.FontWeight.BOLD),
                 ft.Container(
                     content=ft.Column([self.files_table], scroll=ft.ScrollMode.ALWAYS),
                     height=650,
@@ -591,7 +591,7 @@ class FileApprovalPanel:
             ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=12, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO)
         
         return ft.Container(
@@ -693,14 +693,14 @@ class FileApprovalPanel:
                             ft.Text(
                                 display_filename, 
                                 tooltip=original_filename,  # Show full filename on hover
-                                size=12,
+                                size=16,
                                 overflow=ft.TextOverflow.ELLIPSIS
                             )
                         ),
-                        ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=12)),
-                        ft.DataCell(ft.Text(file_data.get('user_team', 'Unknown'), size=12)),
-                        ft.DataCell(ft.Text(size_str, size=12)),
-                        ft.DataCell(ft.Text(date_str, size=12)),
+                        ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=16)),
+                        ft.DataCell(ft.Text(file_data.get('user_team', 'Unknown'), size=16)),
+                        ft.DataCell(ft.Text(size_str, size=16)),
+                        ft.DataCell(ft.Text(date_str, size=16)),
                         ft.DataCell(ft.Container(
                             content=ft.Text("PENDING", color=ft.Colors.WHITE, size=10),
                             bgcolor=ft.Colors.ORANGE,
@@ -771,12 +771,12 @@ class FileApprovalPanel:
             
             # Create comment field
             self.comment_field = ft.TextField(
-                label="Add comment (optional)",
+                label="Add comment",
                 multiline=True,
                 min_lines=2,
                 max_lines=4,
-                width=300,
-                text_size=14  # Larger text
+                width=500,
+                text_size=16  # Larger text
             )
             
             # Create reason field for rejection
@@ -785,8 +785,8 @@ class FileApprovalPanel:
                 multiline=True,
                 min_lines=2,
                 max_lines=3,
-                width=300,
-                text_size=14  # Larger text
+                width=500,
+                text_size=16  # Larger text
             )
             
             # Format submission date
@@ -798,18 +798,18 @@ class FileApprovalPanel:
             
             # File info - larger text sizes
             file_info = ft.Column([
-                ft.Text("File Details", size=20, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("File Details", size=22, weight=ft.FontWeight.BOLD),  # Larger
                 ft.Divider(),
-                ft.Text(f"📄 {file_data.get('original_filename', 'Unknown')}", size=16, weight=ft.FontWeight.W_500),  # Larger
-                ft.Text(f"👤 User: {file_data.get('user_id', 'Unknown')}", size=14),  # Larger
-                ft.Text(f"🏢 Team: {file_data.get('user_team', 'Unknown')}", size=14),  # Larger
-                ft.Text(f"📏 Size: {self.format_file_size(file_data.get('file_size', 0))}", size=14),  # Larger
-                ft.Text(f"📅 Submitted: {submit_date}", size=14),  # Larger
+                ft.Text(f"File name: {file_data.get('original_filename', 'Unknown')}", size=16, weight=ft.FontWeight.W_500),  # Larger
+                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=16),  # Larger
+                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=16),  # Larger
+                ft.Text(f"Size: {self.format_file_size(file_data.get('file_size', 0))}", size=16),  # Larger
+                ft.Text(f"Submitted: {submit_date}", size=16),  # Larger
                 ft.Container(height=10),
-                ft.Text("Description:", size=14, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),  # Larger
                 ft.Text(file_data.get('description', 'No description provided'), size=13, color=ft.Colors.GREY_600),  # Larger
                 ft.Container(height=10),
-                ft.Text("Tags:", size=14, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("Tags:", size=16, weight=ft.FontWeight.BOLD),  # Larger
                 ft.Text(', '.join(file_data.get('tags', [])) or 'No tags', size=13, color=ft.Colors.GREY_600),  # Larger
                 
                 # Download and Open buttons - centered below info
@@ -849,25 +849,21 @@ class FileApprovalPanel:
             comment_controls = []
             if comments:
                 for comment in comments:
-                    try:
-                        timestamp = datetime.fromisoformat(comment['timestamp']).strftime('%Y-%m-%d %H:%M')
-                    except:
-                        timestamp = "Unknown"
-                    
                     comment_controls.append(
-                        ft.Text(f"{comment['admin_id']} ({timestamp}): {comment['comment']}", size=12)  # Larger
+                        ft.Text(f"{comment['admin_id']}: {comment['comment']}", size=16)  # Larger
                     )
             else:
-                comment_controls.append(ft.Text("No comments yet", size=12, color=ft.Colors.GREY_500))  # Larger
+                comment_controls.append(ft.Text("No comments yet", size=16, color=ft.Colors.GREY_500))  # Larger
             
             comments_section = ft.Column([
-                ft.Text("Comments", size=16, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("Comments", size=22, weight=ft.FontWeight.BOLD),  # Larger
                 ft.Container(
                     content=ft.Column(comment_controls),
                     height=100,
                     bgcolor=ft.Colors.GREY_50,
                     padding=10,
-                    border_radius=4
+                    border_radius=4,
+                    alignment=ft.alignment.center_left
                 )
             ])
             
@@ -889,7 +885,7 @@ class FileApprovalPanel:
                                         ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                 ),
-                ft.Container(height=15),
+                ft.Container(height=10),
                 ft.Divider(),
                 ft.Container(height=10),
                 self.reason_field,
@@ -1158,7 +1154,7 @@ class FileApprovalPanel:
             ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=12, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ])
     
     def show_snackbar(self, message: str, color: str):
