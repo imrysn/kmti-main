@@ -63,7 +63,7 @@ class ProfileImageService:
             return False
 
 class ProfileView:
-    """Profile view with camera icon at bottom of profile picture"""
+    """Profile view with consistent UI design"""
     
     def __init__(self, page: ft.Page, username: str, profile_service):
         self.page = page
@@ -76,6 +76,7 @@ class ProfileView:
         except:
             self.user_data = {
                 'fullname': username.title(),
+                'full_name': username.title(),  # Support both key formats
                 'email': f'{username}@example.com',
                 'role': 'User',
                 'join_date': 'N/A'
@@ -292,15 +293,111 @@ class ProfileView:
         return self.profile_avatar_container
     
     def create_user_info_card(self):
-        """Create user info card with clickable profile image"""
+        """Create user info card with clickable profile image - CONSISTENT DESIGN"""
+        # Get user's initials for fallback
+        full_name = self.user_data.get('fullname') or self.user_data.get('full_name', self.username or 'User')
+        name_parts = full_name.split()
+        if len(name_parts) >= 2:
+            initials = f"{name_parts[0][0].upper()}{name_parts[1][0].upper()}"
+        else:
+            initials = full_name[:2].upper() if full_name else "U"
+        
+        # Create avatar - either uploaded image or initials
+        has_image = self.image_service.has_profile_image()
+        
+        if has_image:
+            image_path = self.image_service.get_profile_image_path()
+            if image_path and os.path.exists(image_path):
+                abs_path = os.path.abspath(image_path)
+                avatar_content = ft.Image(
+                    src=abs_path,
+                    width=80,
+                    height=80,
+                    fit=ft.ImageFit.COVER,
+                    border_radius=40,
+                    error_content=ft.Text(
+                        initials,
+                        size=24,
+                        color=ft.Colors.WHITE,
+                        weight=ft.FontWeight.BOLD,
+                        text_align=ft.TextAlign.CENTER
+                    )
+                )
+            else:
+                avatar_content = ft.Text(
+                    initials,
+                    size=24,
+                    color=ft.Colors.WHITE,
+                    weight=ft.FontWeight.BOLD,
+                    text_align=ft.TextAlign.CENTER
+                )
+        else:
+            avatar_content = ft.Text(
+                initials,
+                size=24,
+                color=ft.Colors.WHITE,
+                weight=ft.FontWeight.BOLD,
+                text_align=ft.TextAlign.CENTER
+            )
+        
+        def trigger_file_picker(e):
+            """Trigger file picker"""
+            try:
+                self.image_picker.pick_files(
+                    allow_multiple=False,
+                    allowed_extensions=['jpg', 'jpeg', 'png', 'bmp', 'gif', 'webp'],
+                    dialog_title="Select Profile Picture"
+                )
+            except Exception as picker_error:
+                self.show_message(f"Error opening file picker: {str(picker_error)}", False)
+        
+        # Main avatar container with camera icon overlay
+        avatar_stack = ft.Stack([
+            # Main avatar
+            ft.Container(
+                content=avatar_content,
+                width=80,
+                height=80,
+                bgcolor=ft.Colors.BLUE_500,
+                border_radius=40,
+                alignment=ft.alignment.center,
+                border=ft.border.all(2, ft.Colors.BLUE_500)
+            ),
+            # Camera icon at bottom right
+            ft.Container(
+                content=ft.Icon(
+                    ft.Icons.CAMERA_ALT,
+                    size=12,
+                    color=ft.Colors.WHITE
+                ),
+                width=24,
+                height=24,
+                bgcolor=ft.Colors.BLUE_600,
+                border_radius=12,
+                alignment=ft.alignment.center,
+                border=ft.border.all(2, ft.Colors.WHITE),
+                bottom=0,
+                right=0
+            )
+        ])
+        
+        clickable_avatar = ft.Container(
+            content=avatar_stack,
+            on_click=trigger_file_picker,
+            tooltip="Click to change profile picture",
+            ink=True,
+            width=84,
+            height=84
+        )
+        
         self.user_info_card = ft.Container(
             content=ft.Column([
-                # Clickable profile avatar with camera icon - ONLY this is clickable
-                self.create_clickable_profile_avatar(),
+                # Clickable profile avatar with camera icon
+                clickable_avatar,
                 
                 ft.Container(height=15),
                 
-                # Username - NOT clickable
+                # Username
                 ft.Text(
                     f"@{self.username}",
                     size=14,
@@ -308,7 +405,7 @@ class ProfileView:
                     text_align=ft.TextAlign.CENTER
                 ),
                 
-                # Email - NOT clickable
+                # Email
                 ft.Text(
                     self.user_data.get('email', f'{self.username}@example.com'),
                     size=12,
@@ -316,10 +413,10 @@ class ProfileView:
                     text_align=ft.TextAlign.CENTER
                 ),
                 
-                # Role badge - NOT clickable
+                # Role badge
                 ft.Container(
                     content=ft.Text(
-                        self.user_data.get('role', 'User').upper(),
+                        self.user_data.get('role', 'USER').upper(),
                         size=10,
                         weight=ft.FontWeight.BOLD,
                         color=ft.Colors.WHITE
@@ -347,7 +444,7 @@ class ProfileView:
         return self.user_info_card
     
     def create_menu_item(self, icon, label, page_key):
-        """Create navigation menu item"""
+        """Create navigation menu item with consistent styling"""
         is_active = page_key == "profile"
         
         return ft.Container(
@@ -384,15 +481,18 @@ class ProfileView:
                     self.navigation['show_profile']()
                 elif page_key == "files":
                     self.navigation['show_files']()
+                elif page_key == "approval_files":
+                    self.navigation['show_approval_files']()
         
         return handle_navigation
     
     def create_navigation_menu(self):
-        """Create navigation menu"""
+        """Create navigation menu with ALL options"""
         return ft.Container(
             content=ft.Column([
                 self.create_menu_item(ft.Icons.ACCOUNT_CIRCLE, "Profile", "profile"),
                 self.create_menu_item(ft.Icons.INSERT_DRIVE_FILE, "Files", "files"),
+                self.create_menu_item(ft.Icons.CHECK_CIRCLE, "File Approvals", "approval_files"),
             ], spacing=0),
             bgcolor=ft.Colors.WHITE,
             border_radius=12,
@@ -416,142 +516,12 @@ class ProfileView:
             self.create_navigation_menu()
         ], spacing=0)
     
-    def show_edit_profile_dialog(self):
-        """Show edit profile dialog"""
-        # Create form fields
-        name_field = ft.TextField(
-            label="Full Name",
-            value=self.user_data.get("fullname", ""),
-            width=300,
-            border_color=ft.Colors.GREY_400,
-            focused_border_color=ft.Colors.BLUE_400,
-            content_padding=ft.padding.symmetric(horizontal=12, vertical=8)
-        )
-        
-        email_field = ft.TextField(
-            label="Email",
-            value=self.user_data.get("email", ""),
-            width=300,
-            border_color=ft.Colors.GREY_400,
-            focused_border_color=ft.Colors.BLUE_400,
-            content_padding=ft.padding.symmetric(horizontal=12, vertical=8)
-        )
-        
-        def save_profile(e):
-            # Basic validation
-            if not name_field.value.strip():
-                self.show_message("Name cannot be empty", False)
-                return
-            
-            if not email_field.value.strip():
-                self.show_message("Email cannot be empty", False)
-                return
-            
-            # Update user data
-            self.user_data["fullname"] = name_field.value.strip()
-            self.user_data["email"] = email_field.value.strip()
-            
-            # Save to file
-            try:
-                if self.profile_service.save_profile(self.user_data):
-                    dialog.open = False
-                    self.page.update()
-                    self.show_message("Profile updated successfully!", True)
-                    # Refresh the view
-                    if self.navigation:
-                        self.navigation['show_profile']()
-                else:
-                    self.show_message("Error saving profile!", False)
-            except:
-                self.show_message("Error saving profile!", False)
-        
-        def cancel_edit(e):
-            dialog.open = False
-            self.page.update()
-        
-        # Create dialog
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Row([
-                ft.Text("Edit Profile", size=18, weight=ft.FontWeight.BOLD),
-                ft.Container(expand=True),
-                ft.IconButton(
-                    icon=ft.Icons.CLOSE,
-                    icon_color=ft.Colors.GREY_600,
-                    on_click=cancel_edit
-                )
-            ]),
-            content=ft.Container(
-                width=500,
-                height=300,
-                content=ft.Column([
-                    ft.Container(
-                        content=ft.Column([
-                            ft.Row([
-                                ft.Text("Full Name:", size=14, weight=ft.FontWeight.W_500, width=80),
-                                ft.Container(width=20),
-                                name_field
-                            ], alignment=ft.MainAxisAlignment.START),
-                            
-                            ft.Container(height=20),
-                            
-                            ft.Row([
-                                ft.Text("Email:", size=14, weight=ft.FontWeight.W_500, width=80),
-                                ft.Container(width=20),
-                                email_field
-                            ], alignment=ft.MainAxisAlignment.START),
-                            
-                            ft.Container(height=20),
-                            
-                            ft.Row([
-                                ft.Text("Role:", size=14, weight=ft.FontWeight.W_500, width=80),
-                                ft.Container(width=20),
-                                ft.Text(self.user_data.get("role", "User"), size=14, color=ft.Colors.GREY_700)
-                            ], alignment=ft.MainAxisAlignment.START),
-                            
-                        ], spacing=0),
-                        padding=ft.padding.all(20)
-                    )
-                ], spacing=0)
-            ),
-            actions=[
-                ft.Container(
-                    content=ft.Row([
-                        ft.Container(expand=True),
-                        ft.TextButton(
-                            "Cancel",
-                            on_click=cancel_edit,
-                            style=ft.ButtonStyle(
-                                color=ft.Colors.GREY_700,
-                                bgcolor=ft.Colors.TRANSPARENT
-                            )
-                        ),
-                        ft.Container(width=10),
-                        ft.ElevatedButton(
-                            "Save",
-                            on_click=save_profile,
-                            bgcolor=ft.Colors.BLACK,
-                            color=ft.Colors.WHITE,
-                            style=ft.ButtonStyle(
-                                shape=ft.RoundedRectangleBorder(radius=5)
-                            )
-                        )
-                    ], alignment=ft.MainAxisAlignment.END),
-                    padding=ft.padding.only(right=10, bottom=10)
-                )
-            ],
-            actions_padding=ft.padding.all(0)
-        )
-        
-        self.page.dialog = dialog
-        dialog.open = True
-        self.page.update()
-    
+
     def create_profile_details(self):
         """Create profile details section"""
         return ft.Container(
             content=ft.Column([
-                # Header without edit button
+                # Header
                 ft.Row([
                     ft.Text("Profile Details", size=20, weight=ft.FontWeight.BOLD),
                 ]),
@@ -561,7 +531,7 @@ class ProfileView:
                 # Profile details
                 ft.Row([
                     ft.Text("Full Name:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("fullname", "N/A"), size=14)
+                    ft.Text(self.user_data.get("fullname") or self.user_data.get("full_name", "N/A"), size=14)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
@@ -593,10 +563,9 @@ class ProfileView:
         )
     
     def create_back_button(self, on_click_handler, text: str = "Back"):
-        """Create back button - ONLY the arrow icon is clickable"""
+        """Create back button - consistent with other views"""
         return ft.Container(
             content=ft.Row([
-                # Only this arrow icon is clickable
                 ft.IconButton(
                     icon=ft.Icons.ARROW_BACK,
                     icon_color=ft.Colors.BLUE_600,
@@ -604,7 +573,6 @@ class ProfileView:
                     on_click=on_click_handler,
                     tooltip="Go back"
                 ),
-                # This text is just for display - NOT clickable
                 ft.Text(
                     text,
                     size=14,
@@ -616,7 +584,7 @@ class ProfileView:
         )
     
     def create_content(self):
-        """Create main profile content with sidebar profile image"""
+        """Create main profile content with consistent sidebar layout"""
         return ft.Container(
             content=ft.Column([
                 # Back button

@@ -9,7 +9,7 @@ from .dialogs import DialogManager
 from typing import Dict
 
 class ApprovalFilesView:
-    """Files view component for approval system - submissions only"""
+    """Files view component for approval system with CONSISTENT UI DESIGN"""
     
     def __init__(self, page: ft.Page, username: str, approval_service: ApprovalFileService):
         self.page = page
@@ -222,7 +222,7 @@ class ApprovalFilesView:
                         "Go to Files",
                         icon=ft.Icons.FOLDER,
                         on_click=lambda e: self.navigation['show_files']() if self.navigation else None,
-                        bgcolor=ft.Colors.BLUE,
+                        bgcolor=ft.Colors.BLUE_600,
                         color=ft.Colors.WHITE
                     )
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -420,32 +420,40 @@ class ApprovalFilesView:
         
         return ft.Container(
             content=content,
-            bgcolor=ft.Colors.GREY_50,
-            border_radius=8,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200),
             padding=20,
-            expand=True
+            expand=True,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=3,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            )
         )
     
     def create_content(self):
-        """Create the main approval files content"""
+        """Create the main approval files content with CONSISTENT UI DESIGN"""
         return ft.Container(
             content=ft.Column([
-                # Back button
+                # Back button - CONSISTENT DESIGN
                 self.shared.create_back_button(
                     lambda e: self.navigation['show_browser']() if self.navigation else None,
-                    text="Back to Dashboard"
+                    text="Back"
                 ),
                 
-                # Main content card
+                # Main content layout - CONSISTENT WITH IMAGE 1
                 ft.Container(
                     content=ft.Row([
-                        # Left side - User sidebar
+                        # Left sidebar - CONSISTENT USER INFO CARD + NAVIGATION  
                         ft.Container(
                             content=self.shared.create_user_sidebar("approvals"),
-                            alignment=ft.alignment.top_center,
                             width=200
                         ),
+                        
                         ft.Container(width=20),
+                        
                         # Right side - Approval content
                         ft.Container(
                             content=self.create_main_content(),
