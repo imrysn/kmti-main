@@ -5,7 +5,7 @@
     "admin_id": "admin",
     "comment": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
     "timestamp": "2025-08-07T17:13:36.507767",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
@@ -13,7 +13,7 @@
     "admin_id": "admin",
     "comment": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
     "timestamp": "2025-08-07T17:13:36.437326",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
@@ -21,7 +21,7 @@
     "admin_id": "admin",
     "comment": "Good job!",
     "timestamp": "2025-08-07T17:07:14.450432",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
@@ -29,6 +29,6 @@
     "admin_id": "admin",
     "comment": "Good job!",
     "timestamp": "2025-08-07T17:07:14.442319",
-    "read": false
+    "read": true
   }
 ]

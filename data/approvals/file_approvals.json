@@ -835,5 +835,85 @@
     "approved_by": "admin",
     "approved_date": "2025-08-08T10:07:46.174073",
     "last_updated": "2025-08-08T10:07:46.174080"
+  },
+  "552e72e9-f842-4785-86fc-8a9a0c58e0e2": {
+    "file_id": "552e72e9-f842-4785-86fc-8a9a0c58e0e2",
+    "original_filename": "import flet as ft.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 23009,
+    "submission_date": "2025-08-08T14:37:23.327751",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T14:37:23.327766",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\import flet as ft.txt"
+  },
+  "049af3fd-1416-4ab6-8ddf-34023778b84a": {
+    "file_id": "049af3fd-1416-4ab6-8ddf-34023778b84a",
+    "original_filename": "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy (2).pdf",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 309474,
+    "submission_date": "2025-08-08T14:37:24.506735",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T14:37:24.506756",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy (2).pdf"
+  },
+  "ee7e30c5-fc73-4b08-a0b8-56ec3856d263": {
+    "file_id": "ee7e30c5-fc73-4b08-a0b8-56ec3856d263",
+    "original_filename": "fkafhaskl.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 1350,
+    "submission_date": "2025-08-08T14:37:25.898294",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T14:37:25.898307",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\fkafhaskl.txt"
+  },
+  "43644719-92a9-4306-a592-c9339397f464": {
+    "file_id": "43644719-92a9-4306-a592-c9339397f464",
+    "original_filename": "1.txt",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 4372,
+    "submission_date": "2025-08-08T15:04:01.332461",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T15:04:01.332475",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\1.txt"
   }
 }

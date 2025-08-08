@@ -7,7 +7,7 @@
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-08T14:16:21.046370",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -17,6 +17,6 @@
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-08T14:16:18.512215",
-    "read": false
+    "read": true
   }
 ]
