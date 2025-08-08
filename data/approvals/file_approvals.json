@@ -523,7 +523,6 @@
         "comment": "File submitted for approval"
       }
     ],
-
     "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
   },
   "066dba29-cf65-40c8-afa2-121425372747": {
@@ -809,8 +808,5 @@
       }
     ],
     "file_path": "data/uploads/bryan\\Flow.txt"
-
-    "file_path": "data/uploads/raysan\\CP91018U01_PCMU.icd"
-
   }
 }

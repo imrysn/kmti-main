@@ -78,24 +78,49 @@
     ]
   },
   "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy.docx": {
-    "status": "not_submitted",
-    "submitted_for_approval": false,
-    "submission_date": null,
+    "file_id": "5aa843c1-97be-48ba-96cf-fb2eb0d428b9",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-08T14:15:31.023099",
+    "description": "",
+    "tags": [],
     "admin_comments": [],
     "status_history": [
       {
         "status": "pending",
-        "timestamp": "2025-08-08T11:42:06.362435",
+        "timestamp": "2025-08-08T14:15:31.023111",
         "comment": "File submitted for approval"
       },
       {
-        "status": "withdrawn",
-        "timestamp": "2025-08-08T11:42:10.609651",
-        "comment": "Submission withdrawn by user"
+        "status": "approved",
+        "timestamp": "2025-08-08T14:16:21.044565",
+        "admin_id": "admin",
+        "comment": ""
       }
     ],
+    "last_updated": "2025-08-08T14:16:21.044547"
+  },
+  "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy.pdf": {
+    "file_id": "f3222540-480d-4313-894f-3f9e94877531",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-08T14:15:32.548740",
     "description": "",
     "tags": [],
-    "withdrawn_date": "2025-08-08T11:42:10.609675"
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T14:15:32.548754",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-08T14:16:18.509945",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-08T14:16:18.509926"
   }
 }

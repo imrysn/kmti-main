@@ -1,0 +1,22 @@
+[
+  {
+    "type": "status_update",
+    "filename": "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy.docx",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-08T14:16:21.046370",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy.pdf",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-08T14:16:18.512215",
+    "read": false
+  }
+]
