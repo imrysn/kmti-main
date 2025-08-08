@@ -8,7 +8,9 @@ import pathlib
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
-
+BACKGROUND = ft.Colors.GREY_100
+PANEL_COLOR = "#FFFFFF"
+PANEL_RADIUS = 14
 
 def load_json(file_path, default):
     """Utility to load JSON safely."""
@@ -19,7 +21,6 @@ def load_json(file_path, default):
             return json.load(f)
     except Exception:
         return default
-
 
 def activity_logs(content: ft.Column, username: str):
     # Clear previous content
@@ -73,35 +74,51 @@ def activity_logs(content: ft.Column, username: str):
             ]).lower()
 
             if search_text in combined:
+                # Create role badge
+                role = info["role"].upper()
+                role_color = ft.Colors.BLUE if role == "ADMIN" else ft.Colors.GREEN
+                role_badge = ft.Container(
+                    content=ft.Text(role, color=ft.Colors.WHITE, size=10, weight=FontWeight.BOLD),
+                    bgcolor=role_color,
+                    padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                    border_radius=4
+                ) if role else ft.Text("", size=14)
+
                 filtered_rows.append(
                     ft.DataRow(
                         cells=[
-                            ft.DataCell(ft.Text(info["fullname"])),
-                            ft.DataCell(ft.Text(info["email"])),
-                            ft.DataCell(ft.Text(uname)),
-                            ft.DataCell(ft.Text(info["role"])),
-                            ft.DataCell(ft.Text(info["team"])),
-                            ft.DataCell(ft.Text(dt_display)),
-                            ft.DataCell(ft.Text(description)),
+                            ft.DataCell(ft.Text(info["fullname"], size=14, weight=FontWeight.BOLD)),
+                            ft.DataCell(ft.Text(info["email"], size=14)),
+                            ft.DataCell(ft.Text(uname, size=14)),
+                            ft.DataCell(role_badge),
+                            ft.DataCell(ft.Text(info["team"], size=14)),
+                            ft.DataCell(ft.Text(dt_display, size=14)),
+                            ft.DataCell(ft.Text(description, size=14)),
                         ]
                     )
                 )
 
         return filtered_rows
 
-    # DataTable
+    # DataTable with dashboard styling
     table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Full Name")),
-            ft.DataColumn(ft.Text("Email")),
-            ft.DataColumn(ft.Text("Username")),
-            ft.DataColumn(ft.Text("Role")),
-            ft.DataColumn(ft.Text("Team")),
-            ft.DataColumn(ft.Text("Date & Time")),
-            ft.DataColumn(ft.Text("Activity")),
+            ft.DataColumn(ft.Text("Full Name", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Username", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Role", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Team", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Date & Time", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Activity", weight=FontWeight.BOLD, size=14)),
         ],
         rows=build_rows(),
         expand=False,
+        heading_row_color="#FAFAFA",
+        data_row_color={ft.ControlState.HOVERED: "#B9B9B9"},
+        column_spacing=80,
+        horizontal_margin=40,
+        data_row_max_height=50,
+        data_row_min_height=40,
     )
 
     # Function to refresh table with search text
@@ -227,71 +244,83 @@ def activity_logs(content: ft.Column, username: str):
         pdf.output(str(export_file))
         print(f"[DEBUG] Logs exported to {export_file}")
 
-    # Controls
+    # Controls with dashboard styling
     search_field = ft.TextField(
         label="Search / Filter",
-        width=250,
-        height=40,
-        on_change=refresh_table,
+        width=300,
         border_radius=10,
+        border_color=ft.Colors.GREY_400,
+        bgcolor=ft.Colors.WHITE,
+        on_change=refresh_table,
     )
+    
     export_button = ft.ElevatedButton(
         "Export Logs",
         icon=ft.Icons.UPLOAD_OUTLINED,
         on_click=lambda e: export_logs_action(e),
         style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
-                                  shape=ft.RoundedRectangleBorder(radius=5))
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                     ft.ControlState.HOVERED: ft.Colors.BLUE},
+            color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE),
+                  ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
+            shape=ft.RoundedRectangleBorder(radius=8)
         )
+    )
 
     clear_button = ft.ElevatedButton(
-        "Clear",
+        "Clear Filtered",
         icon=ft.Icons.CLEAR_OUTLINED,
         on_click=lambda e: show_center_sheet(
             content.page,
             title="Confirm Delete Filtered Logs",
-            message="Are you sure you want to delete this filtered logs? Only filtered logs will be deleted",
+            message="Are you sure you want to delete these filtered logs? Only filtered logs will be deleted.",
             on_confirm=lambda: clear_logs_action(e),
         ),
         style=ft.ButtonStyle(
-                                  bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.RED},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
-                                  shape=ft.RoundedRectangleBorder(radius=5))
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                     ft.ControlState.HOVERED: ft.Colors.RED},
+            color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                   ft.ControlState.HOVERED: ft.Colors.WHITE},
+            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED),
+                  ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
+            shape=ft.RoundedRectangleBorder(radius=8)
         )
-    
+    )
 
-    # Top row layout
+    # Top row layout with dashboard styling
     top_controls = ft.Row(
         controls=[
-            ft.Text("Activity Logs", size=22, weight=FontWeight.BOLD),
+            ft.Text("Activity Logs", size=22, weight=FontWeight.BOLD, color="#111111"),
             ft.Container(expand=True),
             search_field,
             export_button,
             clear_button,
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        spacing=10
     )
 
+    # Table container with dashboard styling
     table_container = ft.Container(
-        content=ft.Row(
-            controls=[table],
-            alignment=ft.MainAxisAlignment.CENTER,
-            expand=True
+        content=ft.Column([
+            table
+        ], expand=True, scroll=ft.ScrollMode.AUTO),
+        bgcolor=PANEL_COLOR,
+        border_radius=PANEL_RADIUS,
+        padding=20,
+        shadow=ft.BoxShadow(
+            blur_radius=8,
+            spread_radius=1,
+            color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
         ),
-        expand=True,
-        padding=10,
+        expand=True
     )
 
     content.controls.extend([
         top_controls,
-        ft.Divider(),
+        ft.Container(height=20),
         table_container
     ])
     content.update()

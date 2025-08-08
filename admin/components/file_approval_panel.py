@@ -37,11 +37,8 @@ class FileApprovalPanel:
         self.current_team_filter = "ALL"
         self.current_sort = "submission_date"
         
-        # V13 Advanced features
-        self.selected_files = set()  # For bulk operations
-        self.bulk_mode = False
+        # Search features
         self.search_query = ""
-        self.date_range_filter = {"start": None, "end": None}
     
     def get_admin_teams(self) -> List[str]:
         """Get admin's team tags safely"""
@@ -136,33 +133,31 @@ class FileApprovalPanel:
             # Header with stats
             header = self.create_header()
             
-            # Filters and controls (without search bar)
+            # Filters and controls
             filters = self.create_filters_bar()
             
-            # Main content area - back to original layout
-            main_content = ft.Row([
+            # Main content area - responsive layout
+            main_content = ft.ResponsiveRow([
                 # Left: Files table
                 ft.Container(
                     content=self.create_files_table(),
-                    expand=2,
+                    col={"sm": 12, "md": 7, "lg": 8},
                     bgcolor=ft.Colors.WHITE,
                     border_radius=8,
                     border=ft.border.all(1, ft.Colors.GREY_300),
-                    padding=10
+                    padding=20
                 ),
-                
-                ft.Container(width=20),
                 
                 # Right: Preview and actions
                 ft.Container(
                     content=self.create_preview_panel(),
-                    expand=1,
+                    col={"sm": 12, "md": 5, "lg": 4},
                     bgcolor=ft.Colors.WHITE,
                     border_radius=8,
                     border=ft.border.all(1, ft.Colors.GREY_300),
                     padding=10
                 )
-            ], expand=True)
+            ])
             
             return ft.Container(
                 content=ft.Column([
@@ -171,7 +166,7 @@ class FileApprovalPanel:
                     filters,
                     ft.Container(height=10),
                     main_content
-                ], expand=True),
+                ], expand=True, scroll=ft.ScrollMode.HIDDEN),  # Prevent page-level scrolling
                 padding=20,
                 expand=True
             )
@@ -243,7 +238,7 @@ class FileApprovalPanel:
                 ft.Text(value, size=24, weight=ft.FontWeight.BOLD, color=color),
                 ft.Text(label, size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER)
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
-            bgcolor=ft.Colors.GREY_50,
+            bgcolor=ft.Colors.WHITE,
             border_radius=10,
             padding=15,
             width=110,
@@ -252,7 +247,7 @@ class FileApprovalPanel:
         )
     
     def create_filters_bar(self) -> ft.Row:
-        """Create enhanced filters bar with bulk operations and advanced search"""
+        """Create filters bar with search and controls"""
         try:
             # Load teams from data/teams.json
             teams_file = "data/teams.json"
@@ -283,8 +278,8 @@ class FileApprovalPanel:
             except:
                 team_options = [ft.dropdown.Option("ALL", "All Teams")]
         
-        # V13 Enhanced filters
-        filters_row1 = ft.Row([
+        # Filters row
+        filters_row = ft.Row([
             ft.TextField(
                 hint_text="Search files...",
                 width=200,
@@ -313,15 +308,6 @@ class FileApprovalPanel:
             ),
             ft.Container(expand=True),
             ft.ElevatedButton(
-                "Bulk Mode" if not self.bulk_mode else "Exit Bulk",
-                icon=ft.Icons.CHECKLIST if not self.bulk_mode else ft.Icons.CANCEL,
-                on_click=self.toggle_bulk_mode,
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.PURPLE if not self.bulk_mode else ft.Colors.GREY,
-                    color=ft.Colors.WHITE
-                )
-            ),
-            ft.ElevatedButton(
                 "Refresh",
                 icon=ft.Icons.REFRESH,
                 on_click=lambda e: self.refresh_files_table(),
@@ -335,202 +321,54 @@ class FileApprovalPanel:
             )
         ])
         
-        # Bulk operations bar (shown when bulk mode is active)
-        bulk_bar = ft.Row([
-            ft.Text(f"Selected: {len(self.selected_files)}", size=16, weight=ft.FontWeight.BOLD),
-            ft.Container(width=20),
-            ft.ElevatedButton(
-                "Bulk Approve",
-                icon=ft.Icons.CHECK_CIRCLE,
-                on_click=self.bulk_approve_files,
-                style=ft.ButtonStyle(bgcolor=ft.Colors.GREEN, color=ft.Colors.WHITE),
-                disabled=len(self.selected_files) == 0
-            ),
-            ft.ElevatedButton(
-                "Bulk Reject",
-                icon=ft.Icons.CANCEL,
-                on_click=self.bulk_reject_files,
-                style=ft.ButtonStyle(bgcolor=ft.Colors.RED, color=ft.Colors.WHITE),
-                disabled=len(self.selected_files) == 0
-            ),
-            ft.ElevatedButton(
-                "Select All",
-                icon=ft.Icons.SELECT_ALL,
-                on_click=self.select_all_files
-            ),
-            ft.ElevatedButton(
-                "Clear Selection",
-                icon=ft.Icons.CLEAR,
-                on_click=self.clear_selection_bulk
-            )
-        ], visible=self.bulk_mode)
-        
         return ft.Column([
-            filters_row1,
-            ft.Container(height=5),
-            bulk_bar
+            filters_row,
         ], spacing=5)
     
-    # V13 Advanced filter methods
     def on_search_changed(self, e):
-        """Handle search input change with debouncing"""
+        """Handle search input change"""
         self.search_query = e.control.value.lower()
         self.refresh_files_table()
     
-    def toggle_bulk_mode(self, e):
-        """Toggle bulk selection mode"""
-        self.bulk_mode = not self.bulk_mode
-        self.selected_files.clear()
-        self.refresh_files_table()
-        self.page.update()
-    
-    def select_all_files(self, e):
-        """Select all visible files"""
+    def get_container_size_category(self) -> str:
+        """Determine container size category based on page width"""
         try:
-            # Get current filtered files
-            reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
-            all_pending = []
-            for team in reviewable_teams:
-                team_files = self.approval_service.get_pending_files_by_team(team, self.is_super_admin)
-                all_pending.extend(team_files)
-            
-            # Apply current filters
-            filtered_files = self.apply_filters(all_pending)
-            
-            for file_data in filtered_files:
-                self.selected_files.add(file_data['file_id'])
-            
-            self.refresh_files_table()
-        except Exception as e:
-            print(f"Error selecting all files: {e}")
+            page_width = self.page.width if self.page.width else 1200
+            if page_width < 600:
+                return "xs"
+            elif page_width < 900:
+                return "sm"
+            elif page_width < 1200:
+                return "md"
+            else:
+                return "lg"
+        except:
+            return "lg"  # Default to large if can't determine
     
-    def clear_selection_bulk(self, e):
-        """Clear all selected files"""
-        self.selected_files.clear()
-        self.refresh_files_table()
-    
-    def bulk_approve_files(self, e):
-        """Approve multiple selected files"""
-        if not self.selected_files:
-            self.show_snackbar("No files selected", ft.Colors.ORANGE)
+    def update_table_columns_for_size(self, size_category: str):
+        """Update table columns based on container size"""
+        if not hasattr(self, 'column_configs'):
             return
-        
-        try:
-            success_count = 0
-            for file_id in self.selected_files.copy():
-                # Find file data
-                file_data = self.get_file_data_by_id(file_id)
-                if file_data:
-                    if self.approval_service.approve_file(file_id, self.admin_user):
-                        # Send notification
-                        self.notification_service.notify_approval_status(
-                            file_data['user_id'],
-                            file_data['original_filename'],
-                            ApprovalStatus.APPROVED.value,
-                            self.admin_user
-                        )
-                        success_count += 1
             
-            self.selected_files.clear()
-            self.show_snackbar(f"Bulk approved {success_count} files", ft.Colors.GREEN)
-            self.refresh_files_table()
-            self.refresh_interface()
-            
-        except Exception as e:
-            print(f"Error bulk approving files: {e}")
-            self.show_snackbar("Error during bulk approval", ft.Colors.RED)
-    
-    def bulk_reject_files(self, e):
-        """Reject multiple selected files"""
-        if not self.selected_files:
-            self.show_snackbar("No files selected", ft.Colors.ORANGE)
-            return
+        config = self.column_configs.get(size_category, self.column_configs["lg"])
         
-        # Show dialog for bulk rejection reason
-        self.show_bulk_reject_dialog()
-    
-    def show_bulk_reject_dialog(self):
-        """Show dialog to enter rejection reason for bulk operation"""
-        reason_field = ft.TextField(
-            label="Reason for bulk rejection",
-            multiline=True,
-            min_lines=3,
-            max_lines=5,
-            width=400
-        )
+        # Rebuild columns based on size
+        new_columns = []
+        if config.get("file", True):
+            new_columns.append(ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD, size=16)))
+        if config.get("user", True):
+            new_columns.append(ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD, size=16)))
+        if config.get("team", True):
+            new_columns.append(ft.DataColumn(ft.Text("Team", weight=ft.FontWeight.BOLD, size=16)))
+        if config.get("size", True):
+            new_columns.append(ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD, size=16)))
+        if config.get("submitted", True):
+            new_columns.append(ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)))
+        if config.get("status", True):
+            new_columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
         
-        def confirm_bulk_reject(e):
-            if not reason_field.value:
-                self.show_snackbar("Please provide a reason", ft.Colors.ORANGE)
-                return
-                
-            try:
-                success_count = 0
-                for file_id in self.selected_files.copy():
-                    file_data = self.get_file_data_by_id(file_id)
-                    if file_data:
-                        if self.approval_service.reject_file(file_id, self.admin_user, reason_field.value, False):
-                            # Send notification
-                            self.notification_service.notify_approval_status(
-                                file_data['user_id'],
-                                file_data['original_filename'],
-                                ApprovalStatus.REJECTED.value,
-                                self.admin_user,
-                                reason_field.value
-                            )
-                            success_count += 1
-                
-                self.selected_files.clear()
-                self.show_snackbar(f"Bulk rejected {success_count} files", ft.Colors.RED)
-                self.refresh_files_table()
-                self.refresh_interface()
-                dialog.open = False
-                self.page.update()
-                
-            except Exception as e:
-                print(f"Error bulk rejecting files: {e}")
-                self.show_snackbar("Error during bulk rejection", ft.Colors.RED)
-        
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(f"Bulk Reject {len(self.selected_files)} Files"),
-            content=ft.Container(
-                content=reason_field,
-                width=400,
-                height=150
-            ),
-            actions=[
-                ft.TextButton("Cancel", on_click=lambda e: self.close_dialog(dialog)),
-                ft.ElevatedButton(
-                    "Reject All", 
-                    on_click=confirm_bulk_reject,
-                    style=ft.ButtonStyle(bgcolor=ft.Colors.RED, color=ft.Colors.WHITE)
-                )
-            ]
-        )
-        
-        self.page.dialog = dialog
-        dialog.open = True
-        self.page.update()
-    
-    def close_dialog(self, dialog):
-        """Close dialog helper"""
-        dialog.open = False
-        self.page.update()
-    
-    def get_file_data_by_id(self, file_id: str) -> Optional[Dict]:
-        """Get file data by file ID"""
-        try:
-            reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
-            for team in reviewable_teams:
-                team_files = self.approval_service.get_pending_files_by_team(team, self.is_super_admin)
-                for file_data in team_files:
-                    if file_data['file_id'] == file_id:
-                        return file_data
-            return None
-        except Exception as e:
-            print(f"Error getting file data by ID: {e}")
-            return None
+        self.files_table.columns = new_columns
+        return config
     
     def apply_filters(self, files: List[Dict]) -> List[Dict]:
         """Apply current filters to file list"""
@@ -553,55 +391,101 @@ class FileApprovalPanel:
         return filtered_files
     
     def create_files_table(self) -> ft.Container:
-        """Create responsive files table that adapts to screen size"""
+        """Create responsive files table that adapts to container size using ResponsiveRow"""
+        
+        # Define columns that will be shown based on container size
+        def get_columns_for_size(col_config):
+            columns = []
+            if col_config.get("file", True):
+                columns.append(ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("user", True):
+                columns.append(ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("team", True):
+                columns.append(ft.DataColumn(ft.Text("Team", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("size", True):
+                columns.append(ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("submitted", True):
+                columns.append(ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("status", True):
+                columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
+            return columns
+        
+        # Store column configurations for different sizes
+        self.column_configs = {
+            "xs": {"file": True, "user": False, "team": False, "size": False, "submitted": False, "status": True},  # Very small: only file and status
+            "sm": {"file": True, "user": True, "team": False, "size": False, "submitted": False, "status": True},  # Small: add user
+            "md": {"file": True, "user": True, "team": True, "size": False, "submitted": True, "status": True},  # Medium: add team and date
+            "lg": {"file": True, "user": True, "team": True, "size": True, "submitted": True, "status": True}   # Large: all columns
+        }
+        
+        # Create responsive data table
         self.files_table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Team", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD))
-            ],
+            columns=get_columns_for_size(self.column_configs["lg"]),  # Start with all columns
             rows=[],
-            column_spacing=20, 
+            column_spacing=10,
             horizontal_margin=5,
             data_row_max_height=50,
             data_row_min_height=40,
+            expand=True,
         )
+        
+        # Create responsive container for the table
+        table_content = ft.ResponsiveRow([
+            ft.Container(
+                content=self.files_table,
+                col={"xs": 12, "sm": 12, "md": 12, "lg": 12},  
+                bgcolor=ft.Colors.WHITE,
+                border_radius=8,
+                padding=5,
+                expand=True
+            )
+        ])
         
         self.refresh_files_table()
         
         return ft.Container(
             content=ft.Column([
-                ft.Text("Pending Files", size=22, weight=ft.FontWeight.BOLD),
-                ft.Container(
-                    content=ft.Column([self.files_table], scroll=ft.ScrollMode.ALWAYS),
-                    height=650,
-                    expand=True
-                )
-            ])
+                ft.ResponsiveRow([
+                    ft.Container(
+                        content=ft.Text("Pending Files", size=20, weight=ft.FontWeight.BOLD),
+                        col={"xs": 12, "sm": 12, "md": 12, "lg": 12}
+                    )
+                ]),
+                ft.Divider(),
+                ft.Container(height=10),
+                table_content
+            ], expand=True, spacing=0),
+            expand=True,
+            padding=0
         )
     
     def create_preview_panel(self) -> ft.Container:
-        """Create file preview and action panel with proper scrolling"""
+        """Create file preview and action panel with proper scrolling contained within panel"""
         self.preview_panel = ft.Column([
             ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, text_align=ft.TextAlign.CENTER),
             ft.Container(height=20),
             ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO)
         
         return ft.Container(
-            content=self.preview_panel,
-            height=685,  # Same height as files table
-            expand=True
+            content=ft.Container(
+                content=self.preview_panel,
+                expand=True,
+                padding=15,
+                bgcolor=ft.Colors.WHITE,
+                border_radius=8,
+                border=ft.border.all(1, ft.Colors.GREY_200)
+            ),
+            expand=True,
+            height=None,  # Let container determine height
+            padding=0
         )
     
     def on_team_filter_changed(self, e):
-        """Handle team filter change - functional"""
+        """Handle team filter change"""
         self.current_team_filter = e.control.value
         self.refresh_files_table()
     
@@ -611,8 +495,12 @@ class FileApprovalPanel:
         self.refresh_files_table()
     
     def refresh_files_table(self):
-        """Refresh the files table with enhanced filtering and bulk selection"""
+        """Refresh the files table with filtering, sorting, and responsive columns"""
         try:
+            # Determine container size and update columns accordingly
+            size_category = self.get_container_size_category()
+            column_config = self.update_table_columns_for_size(size_category)
+            
             # Get reviewable teams for this admin
             reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
             
@@ -646,17 +534,14 @@ class FileApprovalPanel:
             self.files_table.rows.clear()
             
             if not pending_files:
-                # Show "No files" message
-                self.files_table.rows.append(
-                    ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("No pending files found", style=ft.TextStyle(italic=True))),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text(""))
-                    ])
-                )
+                # Show "No files" message - adapt cells to visible columns
+                empty_cells = []
+                if column_config.get("file", True):
+                    empty_cells.append(ft.DataCell(ft.Text("No pending files found", style=ft.TextStyle(italic=True))))
+                for i in range(len(self.files_table.columns) - 1):
+                    empty_cells.append(ft.DataCell(ft.Text("")))
+                
+                self.files_table.rows.append(ft.DataRow(cells=empty_cells))
             else:
                 for file_data in pending_files:
                     # Format file size
@@ -672,83 +557,56 @@ class FileApprovalPanel:
                     
                     # Get filename with length limit for responsive display
                     original_filename = file_data.get('original_filename', 'Unknown')
-                    display_filename = self.limit_filename_display(original_filename, 35)
+                    # Adjust filename length based on container size
+                    max_filename_length = 20 if size_category in ["xs", "sm"] else 30
+                    display_filename = self.limit_filename_display(original_filename, max_filename_length)
                     
                     file_id = file_data['file_id']
-                    is_selected = file_id in self.selected_files
                     
-                    # Create row with optional checkbox for bulk mode
+                    # Build cells based on visible columns
                     cells = []
-                    
-                    # Add checkbox column if in bulk mode
-                    if self.bulk_mode:
-                        checkbox = ft.Checkbox(
-                            value=is_selected,
-                            on_change=lambda e, fid=file_id: self.toggle_file_selection(fid, e.control.value)
-                        )
-                        cells.append(ft.DataCell(checkbox))
-                    
-                    cells.extend([
-                        ft.DataCell(
+                    if column_config.get("file", True):
+                        cells.append(ft.DataCell(
                             ft.Text(
                                 display_filename, 
-                                tooltip=original_filename,  # Show full filename on hover
-                                size=16,
+                                tooltip=original_filename,
+                                size=14,
                                 overflow=ft.TextOverflow.ELLIPSIS
                             )
-                        ),
-                        ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=16)),
-                        ft.DataCell(ft.Text(file_data.get('user_team', 'Unknown'), size=16)),
-                        ft.DataCell(ft.Text(size_str, size=16)),
-                        ft.DataCell(ft.Text(date_str, size=16)),
-                        ft.DataCell(ft.Container(
+                        ))
+                    if column_config.get("user", True):
+                        cells.append(ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)))
+                    if column_config.get("team", True):
+                        cells.append(ft.DataCell(ft.Text(file_data.get('user_team', 'Unknown'), size=14)))
+                    if column_config.get("size", True):
+                        cells.append(ft.DataCell(ft.Text(size_str, size=14)))
+                    if column_config.get("submitted", True):
+                        cells.append(ft.DataCell(ft.Text(date_str, size=14)))
+                    if column_config.get("status", True):
+                        cells.append(ft.DataCell(ft.Container(
                             content=ft.Text("PENDING", color=ft.Colors.WHITE, size=10),
                             bgcolor=ft.Colors.ORANGE,
                             padding=ft.padding.symmetric(horizontal=6, vertical=3),
                             border_radius=4
-                        ))
-                    ])
+                        )))
                     
                     row = ft.DataRow(
                         cells=cells,
-                        selected=is_selected if self.bulk_mode else False,
-                        on_select_changed=None if self.bulk_mode else lambda e, file_data=file_data: self.select_file(file_data)
+                        on_select_changed=lambda e, file_data=file_data: self.select_file(file_data)
                     )
                     
                     self.files_table.rows.append(row)
-            
-            # Update table columns for bulk mode
-            if self.bulk_mode and len(self.files_table.columns) == 6:
-                # Add checkbox column
-                self.files_table.columns.insert(0, ft.DataColumn(ft.Text("☑", weight=ft.FontWeight.BOLD)))
-            elif not self.bulk_mode and len(self.files_table.columns) == 7:
-                # Remove checkbox column
-                self.files_table.columns.pop(0)
             
             self.page.update()
         except Exception as e:
             print(f"Error refreshing files table: {e}")
             # Show error message in the table
             self.files_table.rows.clear()
-            self.files_table.rows.append(
-                ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(f"Error loading files: {e}", color=ft.Colors.RED)),
-                    ft.DataCell(ft.Text("")),
-                    ft.DataCell(ft.Text("")),
-                    ft.DataCell(ft.Text("")),
-                    ft.DataCell(ft.Text("")),
-                    ft.DataCell(ft.Text(""))
-                ])
-            )
+            error_cells = [ft.DataCell(ft.Text(f"Error loading files: {e}", color=ft.Colors.RED))]
+            for i in range(len(self.files_table.columns) - 1):
+                error_cells.append(ft.DataCell(ft.Text("")))
+            self.files_table.rows.append(ft.DataRow(cells=error_cells))
             self.page.update()
-    
-    def toggle_file_selection(self, file_id: str, selected: bool):
-        """Toggle file selection for bulk operations"""
-        if selected:
-            self.selected_files.add(file_id)
-        else:
-            self.selected_files.discard(file_id)
-        self.page.update()
     
     def select_file(self, file_data: Dict):
         """Select a file for review"""
@@ -759,7 +617,7 @@ class FileApprovalPanel:
             print(f"Error selecting file: {e}")
     
     def update_preview_panel(self):
-        """Update the preview panel with selected file info - larger text"""
+        """Update the preview panel with selected file info"""
         if not self.selected_file:
             return
         
@@ -775,8 +633,7 @@ class FileApprovalPanel:
                 multiline=True,
                 min_lines=2,
                 max_lines=4,
-                width=500,
-                text_size=16  # Larger text
+                text_size=14
             )
             
             # Create reason field for rejection
@@ -785,8 +642,7 @@ class FileApprovalPanel:
                 multiline=True,
                 min_lines=2,
                 max_lines=3,
-                width=500,
-                text_size=16  # Larger text
+                text_size=14
             )
             
             # Format submission date
@@ -796,23 +652,23 @@ class FileApprovalPanel:
             except:
                 pass
             
-            # File info - larger text sizes
+            # File info
             file_info = ft.Column([
-                ft.Text("File Details", size=22, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("File Details", size=18, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
-                ft.Text(f"File name: {file_data.get('original_filename', 'Unknown')}", size=16, weight=ft.FontWeight.W_500),  # Larger
-                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=16),  # Larger
-                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=16),  # Larger
-                ft.Text(f"Size: {self.format_file_size(file_data.get('file_size', 0))}", size=16),  # Larger
-                ft.Text(f"Submitted: {submit_date}", size=16),  # Larger
+                ft.Text(f"File name: {file_data.get('original_filename', 'Unknown')}", size=14, weight=ft.FontWeight.W_500),
+                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=14),
+                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=14),
+                ft.Text(f"Size: {self.format_file_size(file_data.get('file_size', 0))}", size=14),
+                ft.Text(f"Submitted: {submit_date}", size=14),
                 ft.Container(height=10),
-                ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),  # Larger
-                ft.Text(file_data.get('description', 'No description provided'), size=13, color=ft.Colors.GREY_600),  # Larger
+                ft.Text("Description:", size=14, weight=ft.FontWeight.BOLD),
+                ft.Text(file_data.get('description', 'No description provided'), size=12, color=ft.Colors.GREY_600),
                 ft.Container(height=10),
-                ft.Text("Tags:", size=16, weight=ft.FontWeight.BOLD),  # Larger
-                ft.Text(', '.join(file_data.get('tags', [])) or 'No tags', size=13, color=ft.Colors.GREY_600),  # Larger
+                ft.Text("Tags:", size=14, weight=ft.FontWeight.BOLD),
+                ft.Text(', '.join(file_data.get('tags', [])) or 'No tags', size=12, color=ft.Colors.GREY_600),
                 
-                # Download and Open buttons - centered below info
+                # Download and Open buttons
                 ft.Container(height=15),
                 ft.Row([
                     ft.ElevatedButton(
@@ -845,18 +701,18 @@ class FileApprovalPanel:
                 ], alignment=ft.MainAxisAlignment.CENTER)
             ])
             
-            # Comments section - larger text
+            # Comments section
             comment_controls = []
             if comments:
                 for comment in comments:
                     comment_controls.append(
-                        ft.Text(f"{comment['admin_id']}: {comment['comment']}", size=16)  # Larger
+                        ft.Text(f"{comment['admin_id']}: {comment['comment']}", size=14)
                     )
             else:
-                comment_controls.append(ft.Text("No comments yet", size=16, color=ft.Colors.GREY_500))  # Larger
+                comment_controls.append(ft.Text("No comments yet", size=14, color=ft.Colors.GREY_500))
             
             comments_section = ft.Column([
-                ft.Text("Comments", size=22, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("Comments", size=16, weight=ft.FontWeight.BOLD),
                 ft.Container(
                     content=ft.Column(comment_controls),
                     height=100,
@@ -867,9 +723,9 @@ class FileApprovalPanel:
                 )
             ])
             
-            # Action buttons - removed "Request Changes" button
+            # Action buttons
             actions = ft.Column([
-                ft.Text("Actions", size=16, weight=ft.FontWeight.BOLD),  # Larger
+                ft.Text("Actions", size=16, weight=ft.FontWeight.BOLD),
                 self.comment_field,
                 ft.Container(height=5),
                 ft.ElevatedButton(
@@ -931,8 +787,9 @@ class FileApprovalPanel:
                 actions
             ])
             
-            # Ensure the preview panel has scroll enabled
+            # Ensure the preview panel has scroll enabled and is contained
             self.preview_panel.scroll = ft.ScrollMode.AUTO
+            self.preview_panel.expand = True
             
             self.page.update()
         except Exception as e:
@@ -1102,7 +959,7 @@ class FileApprovalPanel:
             self.show_snackbar("Error approving file", ft.Colors.RED)
     
     def reject_file(self, e):
-        """Reject file and notify user - removed request_changes parameter"""
+        """Reject file and notify user"""
         if not self.selected_file:
             return
         
@@ -1154,8 +1011,11 @@ class FileApprovalPanel:
             ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ])
+        # Maintain scroll and expand properties
+        self.preview_panel.scroll = ft.ScrollMode.AUTO
+        self.preview_panel.expand = True
     
     def show_snackbar(self, message: str, color: str):
         """Show snackbar message with enhanced styling"""
