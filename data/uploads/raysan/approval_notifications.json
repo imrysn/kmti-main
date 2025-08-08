@@ -1,5 +1,24 @@
 [
   {
+    "type": "approval_status",
+    "filename": "CP91018U01_PCMU.icd",
+    "status": "approved",
+    "admin_id": "admin",
+    "reason": "",
+    "timestamp": "2025-08-08T10:08:13.856384",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "CP91018U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "File approved",
+    "timestamp": "2025-08-08T10:08:13.785429",
+    "read": false
+  },
+  {
     "type": "comment_added",
     "filename": "CP91020U01_PCMU.icd",
     "admin_id": "admin",

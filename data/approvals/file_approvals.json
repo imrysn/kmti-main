@@ -512,7 +512,7 @@
     "user_team": "IT",
     "file_size": 4159308,
     "submission_date": "2025-08-07T17:05:39.440800",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -521,10 +521,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T17:05:39.440807",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-08T10:08:13.782257",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-
-    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    "file_path": "data/uploads/user1\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "approved_by": "admin",
+    "approved_date": "2025-08-08T10:08:13.782248",
+    "last_updated": "2025-08-08T10:08:13.782254"
   },
   "066dba29-cf65-40c8-afa2-121425372747": {
     "file_id": "066dba29-cf65-40c8-afa2-121425372747",
@@ -597,7 +605,7 @@
     "user_team": "IT",
     "file_size": 49453,
     "submission_date": "2025-08-07T17:17:23.724184",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -606,9 +614,18 @@
         "status": "pending",
         "timestamp": "2025-08-07T17:17:23.724197",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-08T10:07:16.022472",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/bryan\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
+    "file_path": "data/uploads/bryan\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
+    "approved_by": "admin",
+    "approved_date": "2025-08-08T10:07:16.022461",
+    "last_updated": "2025-08-08T10:07:16.022468"
   },
   "e21695a8-4c3d-4abe-b94d-a540666b7325": {
     "file_id": "e21695a8-4c3d-4abe-b94d-a540666b7325",
@@ -797,7 +814,7 @@
     "user_team": "IT",
     "file_size": 1094,
     "submission_date": "2025-08-07T17:36:17.245049",
-    "status": "pending",
+    "status": "approved",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -806,9 +823,17 @@
         "status": "pending",
         "timestamp": "2025-08-07T17:36:17.245066",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-08T10:07:46.174084",
+        "admin_id": "admin",
+        "comment": "File approved"
       }
     ],
-    "file_path": "data/uploads/bryan\\Flow.txt"
-
+    "file_path": "data/uploads/bryan\\Flow.txt",
+    "approved_by": "admin",
+    "approved_date": "2025-08-08T10:07:46.174073",
+    "last_updated": "2025-08-08T10:07:46.174080"
   }
 }
