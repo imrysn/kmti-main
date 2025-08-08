@@ -1,0 +1,101 @@
+{
+  "import flet as ft.txt": {
+    "file_id": "41a59e1a-a90e-4ca0-9a73-bb70d156236b",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-08T13:13:14.305592",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T13:13:14.305607",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "Flow.txt": {
+    "file_id": "dc26081c-44fd-4402-b90d-771e86a136e6",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-07T17:36:17.220889",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T17:36:17.220900",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "essay.txt": {
+    "status": "not_submitted",
+    "submitted_for_approval": false,
+    "submission_date": null,
+    "admin_comments": [],
+    "status_history": [],
+    "description": "",
+    "tags": []
+  },
+  "fkafhaskl.txt": {
+    "status": "not_submitted",
+    "submitted_for_approval": false,
+    "submission_date": null,
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-07T20:31:31.994093",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "withdrawn",
+        "timestamp": "2025-08-08T11:20:32.880514",
+        "comment": "Submission withdrawn by user"
+      }
+    ],
+    "description": "",
+    "tags": [],
+    "withdrawn_date": "2025-08-08T11:20:32.880535"
+  },
+  "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy (2).pdf": {
+    "file_id": "25cc2983-c9d7-45c6-afc3-3605b7a26de4",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-08T11:42:03.666115",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T11:42:03.666129",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "PARENTS-CERTIFICATION-OF-WAIVER-OF-OJT_PRACTICUM - Copy.docx": {
+    "status": "not_submitted",
+    "submitted_for_approval": false,
+    "submission_date": null,
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-08T11:42:06.362435",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "withdrawn",
+        "timestamp": "2025-08-08T11:42:10.609651",
+        "comment": "Submission withdrawn by user"
+      }
+    ],
+    "description": "",
+    "tags": [],
+    "withdrawn_date": "2025-08-08T11:42:10.609675"
+  }
+}

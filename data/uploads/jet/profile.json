@@ -1,0 +1,23 @@
+{
+  "username": "jet",
+  "email": "jet@gmail.com",
+  "full_name": "Jet",
+  "bio": "",
+  "location": "",
+  "phone": "",
+  "website": "",
+  "avatar_path": "",
+  "created_date": "2025-08-08T09:50:20.071114",
+  "last_modified": "2025-08-08T09:50:20.071147",
+  "preferences": {
+    "theme": "light",
+    "language": "en",
+    "notifications": true,
+    "file_upload_limit": 10
+  },
+  "stats": {
+    "files_uploaded": 0,
+    "total_storage_used": 0,
+    "last_login": "2025-08-08T09:50:20.071138"
+  }
+}
