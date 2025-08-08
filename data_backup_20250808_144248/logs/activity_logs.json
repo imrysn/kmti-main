@@ -1,0 +1,286 @@
+[
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:31:34",
+        "activity": "Login"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-08 13:31:34"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "email": "admin@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:31:53",
+        "activity": "Logout"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-08 13:31:54"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-08 13:32:01"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-08 13:32:41"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:32:50",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:32:50"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:33:20",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-08 13:33:21"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:33:29"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:37:55"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Changed base directory to Y:\\PROJECTS",
+        "date": "2025-08-08 13:39:09"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:39:23"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:40:11"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-08 13:41:11"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-08 13:41:29",
+        "activity": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-08 13:41:30"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-08 13:42:32",
+        "activity": "Login"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Login",
+        "date": "2025-08-08 13:42:33"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "email": "user1@example.com",
+        "role": "USER",
+        "date": "2025-08-08 13:44:05",
+        "activity": "Logout"
+    },
+    {
+        "username": "user1",
+        "fullname": "User Test",
+        "activity": "Logout",
+        "date": "2025-08-08 13:44:06"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:44:53",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:44:53"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:45:01",
+        "activity": "Deleted file: approval_notifications.json"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Deleted file: approval_notifications.json",
+        "date": "2025-08-08 13:45:02"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:46:02",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-08 13:46:03"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Login",
+        "date": "2025-08-08 13:46:08"
+    },
+    {
+        "username": "admin",
+        "fullname": "Admin",
+        "activity": "Logout",
+        "date": "2025-08-08 13:46:42"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:46:50",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 13:46:50"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 13:47:11",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-08 13:47:11"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 14:07:12",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 14:07:13"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 14:07:17",
+        "activity": "Logout"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Logout",
+        "date": "2025-08-08 14:07:17"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 14:12:34",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 14:12:34"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "email": "raysan@example.com",
+        "role": "ADMIN",
+        "date": "2025-08-08 14:13:12",
+        "activity": "Login"
+    },
+    {
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "activity": "Login",
+        "date": "2025-08-08 14:13:13"
+    }
+]

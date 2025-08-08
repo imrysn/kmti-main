@@ -1,0 +1,23 @@
+{
+  "username": "admin",
+  "email": "admin@example.com",
+  "full_name": "Admin",
+  "bio": "",
+  "location": "",
+  "phone": "",
+  "website": "",
+  "avatar_path": "",
+  "created_date": "2025-07-31T14:02:55.482919",
+  "last_modified": "2025-07-31T14:02:55.482931",
+  "preferences": {
+    "theme": "light",
+    "language": "en",
+    "notifications": true,
+    "file_upload_limit": 10
+  },
+  "stats": {
+    "files_uploaded": 0,
+    "total_storage_used": 0,
+    "last_login": "2025-07-31T14:02:55.482928"
+  }
+}

@@ -1,0 +1,40 @@
+[
+  {
+    "type": "approval_status",
+    "filename": "CP91024U01_PCMU.icd",
+    "status": "approved",
+    "admin_id": "admin",
+    "reason": "",
+    "timestamp": "2025-08-08T13:46:35.496546",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "CP91024U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "File approved",
+    "timestamp": "2025-08-08T13:46:35.272088",
+    "read": false
+  },
+  {
+    "type": "approval_status",
+    "filename": "CP91020U01_PCMU.icd",
+    "status": "approved",
+    "admin_id": "admin",
+    "reason": "",
+    "timestamp": "2025-08-08T13:46:24.034651",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "CP91020U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "File approved",
+    "timestamp": "2025-08-08T13:46:23.892489",
+    "read": false
+  }
+]

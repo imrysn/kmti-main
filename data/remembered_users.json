@@ -1,1 +1,12 @@
-{"raysan": {"password_hash": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e", "is_admin": false}}
+{
+  "raysan": {
+    "email": "raysan@example.com",
+    "last_login": "2025-08-08T14:59:40.300574",
+    "login_count": 10
+  },
+  "admin": {
+    "email": "admin@example.com",
+    "last_login": "2025-08-08T15:00:18.759460",
+    "login_count": 5
+  }
+}

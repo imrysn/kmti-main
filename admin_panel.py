@@ -2,370 +2,349 @@ import flet as ft
 import json
 import os
 from datetime import datetime
-from utils.session_logger import log_logout
-from flet import FontWeight, ScrollMode, CrossAxisAlignment, MainAxisAlignment, Colors
-from typing import Optional
-from admin.navbar import create_navbar
-from admin.data_management import data_management
-from admin.activity_logs import activity_logs
-from admin.system_settings import system_settings
-from admin.user_management import user_management
-from utils.session_logger import log_activity
-from user.user_panel import save_session, clear_session
-from admin.components.file_approval_panel import FileApprovalPanel
+from pathlib import Path
 
-USERS_FILE = "data/users.json"
-ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
-ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
-
-def load_json(path, default):
-    if not os.path.exists(path):
-        return default
+def admin_panel(page: ft.Page, username: str):
+    """Simple admin panel with hybrid backend"""
+    
+    page.title = f"KMTI Admin - {username}"
+    page.clean()
+    
+    # Get hybrid app
     try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return default
-
-
-def load_users():
-    return load_json(USERS_FILE, {})
-
-
-def load_logs():
-    return load_json(ACTIVITY_LOGS_FILE, [])
-
-
-def load_metadata():
-    return load_json(ACTIVITY_METADATA_FILE, {})
-
-
-def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
-    BACKGROUND = ft.Colors.GREY_100
-    PANEL_COLOR = "#FFFFFF"
-    PANEL_RADIUS = 14
-
-    page.title = "KMTI Data Management Admin"
-    page.vertical_alignment = MainAxisAlignment.START
-    page.horizontal_alignment = CrossAxisAlignment.START
-    page.bgcolor = BACKGROUND
-
-    page.padding = 0
-    page.margin = 0
-
-    def logout(e):
-        print(f"[DEBUG] logout() called by username={username}")
-        log_logout(username, "admin")
-        log_activity(username, "Logout")
-        clear_session()
-
-        page.clean()
-        from login_window import login_view
-        login_view(page)
-
-    content = ft.Column(
-        scroll=ScrollMode.AUTO,
-        expand=True,
-        spacing=20,
-        horizontal_alignment=CrossAxisAlignment.CENTER,
-    )
-
-    # --- Utility functions that always reload logs dynamically ---
-
-    def get_last_activity_entry(username_lookup: str):
-        fresh_logs = load_logs()  # Always reload logs
-        for entry in reversed(fresh_logs):
-            if entry.get("username") == username_lookup:
-                return entry
-        return None
-
-    def is_user_online(user_data) -> bool:
-        uname = user_data.get("username")
-        if not uname:
-            return False
-        last_entry = get_last_activity_entry(uname)
-        if not last_entry:
-            return False
-        return last_entry.get("activity") == "Login"
-
-    def get_login_status(user_email, user_data):
-        online = is_user_online(user_data)
-        return ft.Text(
-            "Online" if online else "Offline",
-            color=Colors.GREEN if online else Colors.RED,
-            weight=FontWeight.BOLD
-        )
-
-    def show_dashboard():
-        content.controls.clear()
-
-        # Always reload latest data
-        users = load_users()
-        fresh_logs = load_logs()
-
-        # Sort logs by datetime for reliable "most recent"
-        def parse_datetime(log):
-            try:
-                return datetime.strptime(log.get("date", ""), "%Y-%m-%d %H:%M:%S")
-            except Exception:
-                return datetime.min
-
-        fresh_logs.sort(key=parse_datetime)
-
-        # Dashboard metrics
-        total_users = len(users)
-        active_users = sum(1 for u in users.values() if is_user_online(u))
-        recent_activity_count = len(fresh_logs)
-
-        # Add title with Refresh button
-        refresh_button = ft.ElevatedButton(
-            "Refresh",
-            icon=ft.Icons.REFRESH,
-            on_click=lambda e: show_dashboard(),
-            style=ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
-                        ft.ControlState.HOVERED: ft.Colors.BLUE},
-                color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
-                    ft.ControlState.HOVERED: ft.Colors.WHITE},
-                side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE),
-                    ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.BLUE)},
-                shape=ft.RoundedRectangleBorder(radius=5)
-            )
-        )
-
-        content.controls.append(
-            ft.Row(
-                [
-                    refresh_button,
-                ],
-                alignment=MainAxisAlignment.END,
-            )
-        )
-
-
-        # --- Small metric cards ---
-        def card(title_icon, title, value, icon_color=Colors.BLACK):
-            return ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Icon(title_icon, size=40, color=icon_color),
-                        ft.Text(title, size=16, color="#333333"),
-                        ft.Text(value, size=26, weight=FontWeight.BOLD, color="#000000"),
-                    ],
-                    horizontal_alignment=CrossAxisAlignment.CENTER,
-                    spacing=8,
-                ),
-                padding=20,
-                bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
-                width=250,
-                height=160,
-            )
-
-        content.controls.append(
-            ft.Row(
-                [
-                    card(ft.Icons.PEOPLE, "Total Users", str(total_users)),
-                    card(
-                        ft.Icons.PERSON,
-                        "Active Users",
-                        str(active_users),
-                        icon_color=Colors.GREEN,
-                    ),
-                    card(
-                        ft.Icons.HISTORY,
-                        "Recent Activities",
-                        str(recent_activity_count),
-                        icon_color=Colors.BLUE,
-                    ),
-                ],
-                spacing=20,
-                alignment=MainAxisAlignment.CENTER,
-                
-            )
-        )
-
-        # --- Recent Users Table ---
-        content.controls.append(
-            ft.Text("Recent Users", size=22, weight=FontWeight.BOLD, color="#111111")
-        )
-
-        users_table = ft.DataTable(
-            heading_row_color="#FAFAFA",
-            columns=[
-                ft.DataColumn(ft.Text("Name", weight=FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Status", weight=FontWeight.BOLD)),
-            ],
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(data.get("fullname", "Unknown"))),
-                        ft.DataCell(ft.Text(email)),
-                        ft.DataCell(get_login_status(email, data)),
-                    ]
-                )
-                for email, data in list(users.items())[:5]
-            ],
-        )
-
-        content.controls.append(
-            ft.Container(
-                content=ft.Row([users_table], alignment=MainAxisAlignment.CENTER),
-                bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                padding=20,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
-            )
-        )
-
-        # --- Recent Activities Section ---
-        content.controls.append(
-            ft.Text("Recent Activities", size=22, weight=FontWeight.BOLD, color="#111111")
-        )
-
-        # Build user_info lookup
-        user_info = {}
-        for email, data in users.items():
-            uname = data.get("username")
-            if uname:
-                team = data.get("team_tags", [])
-                team_str = (
-                    ", ".join(team)
-                    if isinstance(team, list)
-                    else (str(team) if team else "")
-                )
-                user_info[uname] = {
-                    "fullname": data.get("fullname", uname),
-                    "email": email,
-                    "role": data.get("role", ""),
-                    "team": team_str,
-                }
-
-        # Only the latest 10 logs
-        last_10_logs = list(reversed(fresh_logs[-10:]))
-
-        rows = []
-        for log in last_10_logs:
-            uname = log.get("username", "")
-            info = user_info.get(
-                uname,
-                {"fullname": uname, "email": "", "role": "", "team": ""},
-            )
-            rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(info["fullname"])),
-                        ft.DataCell(ft.Text(info["email"])),
-                        ft.DataCell(ft.Text(uname)),
-                        ft.DataCell(ft.Text(info["role"])),
-                        ft.DataCell(ft.Text(info["team"])),
-                        ft.DataCell(ft.Text(log.get("date", "-"))),
-                        ft.DataCell(ft.Text(log.get("activity", ""))),
-                    ]
-                )
-            )
-
-        activities_table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Full Name")),
-                ft.DataColumn(ft.Text("Email")),
-                ft.DataColumn(ft.Text("Username")),
-                ft.DataColumn(ft.Text("Role")),
-                ft.DataColumn(ft.Text("Team")),
-                ft.DataColumn(ft.Text("Date & Time")),
-                ft.DataColumn(ft.Text("Activity")),
-            ],
-            rows=rows,
-        )
-
-        content.controls.append(
-            ft.Container(
-                content=ft.Row([activities_table], alignment=MainAxisAlignment.CENTER),
-                bgcolor=PANEL_COLOR,
-                border_radius=PANEL_RADIUS,
-                padding=20,
-                shadow=ft.BoxShadow(
-                    blur_radius=8,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
-                ),
-            )
-        )
-        content.update()
-
-    def show_file_approval():
-        """Show the File Approval panel"""
-        content.controls.clear()
+        from main import get_hybrid_app
+        hybrid_app = get_hybrid_app(page)
+    except:
+        hybrid_app = None
+    
+    # Get user info
+    current_user = None
+    user_role = "ADMIN"
+    user_teams = []
+    
+    if hybrid_app:
+        current_user = hybrid_app.get_current_user()
+        if current_user:
+            user_role = current_user['role']
+            user_teams = current_user.get('team_tags', [])
+    else:
+        # Legacy user lookup
         try:
-            approval_panel = FileApprovalPanel(page, username)
-            approval_interface = approval_panel.create_approval_interface()
-            content.controls.append(approval_interface)
-            content.update()
-        except Exception as e:
-            print(f"[ERROR] Failed to load File Approval panel: {e}")
-            content.controls.append(
+            with open("data/users.json", "r") as f:
+                users_data = json.load(f)
+                for email, user_data in users_data.items():
+                    if user_data['username'] == username:
+                        user_role = user_data.get('role', 'ADMIN')
+                        user_teams = user_data.get('team_tags', [])
+                        break
+        except:
+            pass
+    
+    print(f"Admin panel: {username} ({user_role}) Teams: {user_teams}")
+    
+    # Header with logout
+    def logout_clicked(e):
+        try:
+            if hybrid_app:
+                hybrid_app.logout()
+            else:
+                # Legacy logout
+                session_file = "data/session.json"
+                if os.path.exists(session_file):
+                    os.remove(session_file)
+            
+            from login_window import login_view
+            login_view(page)
+            
+        except Exception as error:
+            print(f"Logout error: {error}")
+    
+    header = ft.Container(
+        content=ft.Row([
+            ft.Row([
+                ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS, size=28, color=ft.Colors.BLUE),
+                ft.Column([
+                    ft.Text("KMTI Admin Panel", size=18, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Welcome, {username}", size=12, color=ft.Colors.GREY_700)
+                ], spacing=0)
+            ], spacing=10),
+            
+            ft.Row([
+                # Role badge
                 ft.Container(
-                    content=ft.Column([
-                        ft.Text("File Approval Panel", size=24, weight=ft.FontWeight.BOLD),
-                        ft.Text(f"Error loading panel: {e}", color=ft.Colors.RED),
-                        ft.ElevatedButton("Refresh", on_click=lambda e: show_file_approval())
-                    ]),
-                    padding=20
+                    content=ft.Text(user_role, color="white", size=12, weight=ft.FontWeight.BOLD),
+                    bgcolor=ft.Colors.RED if user_role == "ADMIN" else ft.Colors.BLUE,
+                    padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                    border_radius=12
+                ),
+                
+                # System status
+                ft.Container(
+                    content=ft.Text(
+                        "NAS Connected" if hybrid_app else "Legacy Mode", 
+                        size=11, 
+                        color=ft.Colors.GREEN if hybrid_app else ft.Colors.ORANGE
+                    ),
+                    bgcolor=ft.Colors.GREEN_100 if hybrid_app else ft.Colors.ORANGE_100,
+                    padding=6,
+                    border_radius=10
+                ),
+                
+                # Logout
+                ft.ElevatedButton(
+                    text="Logout",
+                    icon=ft.Icons.LOGOUT,
+                    on_click=logout_clicked,
+                    bgcolor=ft.Colors.RED_400,
+                    color="white"
                 )
-            )
-            content.update()
-
-    def navigate_to_section(index: int):
-        content.controls.clear()
-        if index == 0:
-            show_dashboard()
-        elif index == 1:
-            data_management(content, username)
-        elif index == 2:
-            user_management(content, username) 
-        elif index == 3:
-            activity_logs(content, username)
-        elif index == 4:  
-            show_file_approval()    
-        elif index == 5: 
-            system_settings(content, username)
-
-    top_nav = create_navbar(username, navigate_to_section, lambda: logout(None))
-
-    page.controls.clear()
-
-    page.add(
-        ft.Column(
-            [
-                ft.Container(
-                    content=top_nav,
-                    padding=0,
-                    margin=0,
-                ),
-                ft.Container(
-                    content=content,
-                    expand=True,
-                    padding=20,
-                ),
-            ],
-            spacing=0,
-            expand=True,
-        )
+            ], spacing=10)
+        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        bgcolor=ft.Colors.BLUE_50,
+        padding=15,
+        border_radius=8,
+        margin=ft.margin.only(bottom=20)
     )
-
-    navigate_to_section(initial_tab)
-
-    log_activity(username, "Login")
-    save_session(username, "admin")
-    print(f"[DEBUG] Admin panel initialized for user: {username}")
+    
+    # File Approval Tab
+    def create_file_approval_content():
+        """Simple file approval interface"""
+        
+        # Get pending files
+        pending_files = []
+        
+        if hybrid_app:
+            try:
+                pending_files = hybrid_app.file_service.get_files_for_approval()
+            except Exception as e:
+                print(f"Error loading files: {e}")
+        else:
+            # Legacy file loading - simplified
+            try:
+                approval_queue_path = Path("data/approval_queue")
+                if approval_queue_path.exists():
+                    for file_path in approval_queue_path.glob("*.json"):
+                        with open(file_path, 'r') as f:
+                            file_data = json.load(f)
+                            
+                            # Simple team filtering
+                            file_teams = file_data.get('team_tags', [])
+                            if user_role == 'ADMIN' or not user_teams or \
+                               any(team in user_teams for team in file_teams):
+                                pending_files.append(file_data)
+            except Exception as e:
+                print(f"Legacy file loading error: {e}")
+        
+        # Show team context for team leaders
+        if user_role == "TEAM_LEADER":
+            team_text = ft.Container(
+                content=ft.Text(
+                    f"Your Teams: {', '.join(user_teams)}", 
+                    size=14, 
+                    color=ft.Colors.BLUE_700,
+                    weight=ft.FontWeight.BOLD
+                ),
+                bgcolor=ft.Colors.BLUE_50,
+                padding=10,
+                border_radius=8,
+                margin=ft.margin.only(bottom=15)
+            )
+        else:
+            team_text = ft.Container()
+        
+        # File approval function
+        def approve_file(file_id: str, approved: bool):
+            try:
+                if hybrid_app:
+                    hybrid_app.file_service.approve_file(file_id, approved)
+                else:
+                    # Legacy approval - simplified
+                    print(f"Legacy: {'Approve' if approved else 'Reject'} file {file_id}")
+                
+                # Show success and refresh
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"File {'approved' if approved else 'rejected'}!"),
+                    bgcolor=ft.Colors.GREEN if approved else ft.Colors.RED
+                )
+                page.snack_bar.open = True
+                page.update()
+                
+                # Refresh the view
+                admin_panel(page, username)
+                
+            except Exception as e:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Error: {e}"),
+                    bgcolor=ft.Colors.RED
+                )
+                page.snack_bar.open = True
+                page.update()
+        
+        # File list
+        if not pending_files:
+            files_content = ft.Container(
+                content=ft.Column([
+                    ft.Icon(ft.Icons.FOLDER_OPEN, size=48, color=ft.Colors.GREY_400),
+                    ft.Text("No files pending approval", size=16, color=ft.Colors.GREY_600),
+                    ft.Text("Files will appear here when uploaded", size=12, color=ft.Colors.GREY_500)
+                ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10),
+                alignment=ft.alignment.center,
+                height=200
+            )
+        else:
+            files_list = []
+            
+            for file_data in pending_files:
+                file_id = file_data.get('id', 'unknown')
+                filename = file_data.get('filename', 'Unknown File')
+                file_teams = file_data.get('team_tags', [])
+                creator = file_data.get('creator_name', file_data.get('created_by', 'Unknown'))
+                
+                file_card = ft.Card(
+                    content=ft.Container(
+                        content=ft.Row([
+                            # File info
+                            ft.Column([
+                                ft.Text(filename, weight=ft.FontWeight.BOLD),
+                                ft.Text(f"Teams: {', '.join(file_teams) if file_teams else 'No teams'}", size=12),
+                                ft.Text(f"By: {creator}", size=11, color=ft.Colors.GREY_600)
+                            ], expand=True, spacing=4),
+                            
+                            # Actions
+                            ft.Row([
+                                ft.ElevatedButton(
+                                    text="Approve",
+                                    icon=ft.Icons.CHECK,
+                                    on_click=lambda e, fid=file_id: approve_file(fid, True),
+                                    bgcolor=ft.Colors.GREEN,
+                                    color="white"
+                                ),
+                                ft.ElevatedButton(
+                                    text="Reject", 
+                                    icon=ft.Icons.CLOSE,
+                                    on_click=lambda e, fid=file_id: approve_file(fid, False),
+                                    bgcolor=ft.Colors.RED,
+                                    color="white"
+                                )
+                            ], spacing=8)
+                        ]),
+                        padding=15
+                    ),
+                    margin=ft.margin.only(bottom=10)
+                )
+                files_list.append(file_card)
+            
+            files_content = ft.Column(files_list, scroll=ft.ScrollMode.AUTO)
+        
+        return ft.Column([
+            team_text,
+            files_content
+        ])
+    
+    # User Management (Admin only)
+    def create_user_management_content():
+        """Simple user management"""
+        if user_role != "ADMIN":
+            return ft.Text("Access denied - Admin only", color=ft.Colors.RED)
+        
+        # Get all users
+        all_users = []
+        
+        if hybrid_app:
+            try:
+                all_users = hybrid_app.user_service.get_users()
+            except Exception as e:
+                print(f"Error loading users: {e}")
+        else:
+            # Legacy user loading
+            try:
+                with open("data/users.json", "r") as f:
+                    users_data = json.load(f)
+                    for email, user_data in users_data.items():
+                        user_info = user_data.copy()
+                        user_info['email'] = email
+                        all_users.append(user_info)
+            except Exception as e:
+                print(f"Legacy user loading error: {e}")
+        
+        # Simple user list
+        users_list = []
+        
+        for user in all_users:
+            user_card = ft.Card(
+                content=ft.Container(
+                    content=ft.Row([
+                        ft.Column([
+                            ft.Text(user.get('fullname', 'Unknown'), weight=ft.FontWeight.BOLD),
+                            ft.Text(user.get('username', ''), size=12),
+                            ft.Text(f"Role: {user.get('role', 'USER')}", size=11, color=ft.Colors.GREY_600)
+                        ], expand=True),
+                        
+                        ft.Column([
+                            ft.Text("Teams:", size=11, color=ft.Colors.GREY_600),
+                            ft.Text(', '.join(user.get('team_tags', [])) or 'None', size=12)
+                        ])
+                    ]),
+                    padding=15
+                ),
+                margin=ft.margin.only(bottom=8)
+            )
+            users_list.append(user_card)
+        
+        return ft.Column([
+            ft.Text(f"Total Users: {len(all_users)}", size=16, weight=ft.FontWeight.BOLD),
+            ft.Divider(),
+            ft.Column(users_list, scroll=ft.ScrollMode.AUTO, height=400)
+        ])
+    
+    # Create tabs based on role
+    tabs = []
+    
+    # File Approval (both admin and team leader)
+    if user_role in ["ADMIN", "TEAM_LEADER"]:
+        tabs.append(ft.Tab(
+            text="📋 File Approval",
+            content=ft.Container(
+                content=create_file_approval_content(),
+                padding=15
+            )
+        ))
+    
+    # User Management (admin only)
+    if user_role == "ADMIN":
+        tabs.append(ft.Tab(
+            text="👥 Users",
+            content=ft.Container(
+                content=create_user_management_content(),
+                padding=15
+            )
+        ))
+        
+        # System Info (admin only)
+        system_info = ft.Column([
+            ft.Text("System Information", size=16, weight=ft.FontWeight.BOLD),
+            ft.Divider(),
+            ft.Text(f"Backend: {'Hybrid (SQLite)' if hybrid_app else 'Legacy (JSON)'}"),
+            ft.Text(f"Database: {'\\\\KMTI-NAS\\SHARED\\data\\kmti.db' if hybrid_app else 'Local JSON files'}"),
+            ft.Text(f"Users: {len(all_users) if 'all_users' in locals() else 'Unknown'}")
+        ])
+        
+        tabs.append(ft.Tab(
+            text="⚙️ System",
+            content=ft.Container(
+                content=system_info,
+                padding=15
+            )
+        ))
+    
+    # Main content
+    main_content = ft.Column([
+        header,
+        ft.Tabs(
+            tabs=tabs,
+            selected_index=0
+        )
+    ], spacing=0)
+    
+    page.add(main_content)
     page.update()

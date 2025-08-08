@@ -1,0 +1,16 @@
+2025-08-08 13:31:34 - Admin (admin@example.com, ADMIN) - Login
+2025-08-08 13:31:53 - Admin (admin@example.com, ADMIN) - Logout
+2025-08-08 13:32:49 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-08-08 13:33:20 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-08-08 13:41:29 - User Test (user1@example.com, USER) - Login
+2025-08-08 13:42:32 - User Test (user1@example.com, USER) - Login
+2025-08-08 13:44:05 - User Test (user1@example.com, USER) - Logout
+2025-08-08 13:44:53 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-08-08 13:45:01 - Raysan Perez (raysan@example.com, ADMIN) - Deleted file: approval_notifications.json
+2025-08-08 13:46:02 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-08-08 13:46:50 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-08-08 13:47:11 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-08-08 14:07:12 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-08-08 14:07:17 - Raysan Perez (raysan@example.com, ADMIN) - Logout
+2025-08-08 14:12:34 - Raysan Perez (raysan@example.com, ADMIN) - Login
+2025-08-08 14:13:12 - Raysan Perez (raysan@example.com, ADMIN) - Login

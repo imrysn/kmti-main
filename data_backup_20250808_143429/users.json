@@ -1,0 +1,68 @@
+{
+    "raysan@example.com": {
+        "fullname": "Raysan Perez",
+        "username": "raysan",
+        "password": "18eb360aa6177b0bf0af8d6c3785a540d675bc30fa93dba1fbf9beccf7d10e0e",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-08T14:12:33.751060"
+    },
+    "admin@example.com": {
+        "fullname": "Admin",
+        "username": "admin",
+        "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-08T13:46:08.528816"
+    },
+    "mg@example.com": {
+        "fullname": "Mary Grace Castellano",
+        "username": "emji",
+        "password": "e010fd1ce1acc173e3b4835b7635f8d4600d774869102adb5cb7b5d7895649ba",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-01T11:25:06.663429"
+    },
+    "user1@example.com": {
+        "fullname": "User Test",
+        "username": "user1",
+        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-08T13:41:26.925303"
+    },
+    "bryan@gmail.com": {
+        "fullname": "bryan",
+        "username": "bryan",
+        "password": "0bcf62b62f026b799d6245fc98591b58f6428db3a828303791f135360461d4ca",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-07T20:47:33.934618"
+    },
+    "risan@gmail.com": {
+        "fullname": "risan",
+        "username": "risan",
+        "password": "0b65db402ec5840bfa032d43adc9d2559dd1c921810373c9c3d6b131ca455244",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-07T17:16:21.942874"
+    }
+}

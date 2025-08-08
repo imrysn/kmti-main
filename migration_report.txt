@@ -1,0 +1,69 @@
+============================================================
+KMTI HYBRID MIGRATION REPORT
+============================================================
+Migration Date: 2025-08-08 14:42:56
+Database Location: Y:\APP DEVELOPMENT\kmti-main\data\kmti_hybrid.db
+NAS Available: Yes
+Backup Location: Y:\APP DEVELOPMENT\kmti-main\data_backup_20250808_144248
+
+MIGRATION LOG:
+----------------------------------------
+[14:42:48] NAS detected - database will be created on network share
+[14:42:48] Starting KMTI Hybrid Migration
+[14:42:48] ==================================================
+[14:42:48] Creating backup at: Y:\APP DEVELOPMENT\kmti-main\data_backup_20250808_144248
+[14:42:48]   Backed up users.json
+[14:42:48]   Backed up teams.json
+[14:42:48]   Backed up permissions.json
+[14:42:48]   Backed up session.json
+[14:42:48]   Backed up config.json
+[14:42:48]   Backed up remembered_users.json
+[14:42:55]   Backed up directory uploads
+[14:42:55]   Backed up directory approvals
+[14:42:55]   Backed up directory export
+[14:42:55]   Backed up directory logs
+[14:42:55] Backup complete - 10 items backed up
+[14:42:56] Hybrid system initialized - Database: Y:\APP DEVELOPMENT\kmti-main\data\kmti_hybrid.db
+[14:42:56] Starting users migration...
+[14:42:56] Migrating 6 users...
+[14:42:56] Successfully migrated 6 users
+[14:42:56] Starting teams migration...
+[14:42:56] Teams data is a list with 8 items - converting to dict format
+[14:42:56] Migrating 8 teams...
+[14:42:56]   Migrated team: Minatogumi -> Minatogumi
+[14:42:56]   Migrated team: SOLID WORKS -> SOLID WORKS
+[14:42:56]   Migrated team: WINDSMILE -> WINDSMILE
+[14:42:56]   Migrated team: AGCC Project -> AGCC Project
+[14:42:56]   Migrated team: KMTI PJ -> KMTI PJ
+[14:42:56]   Migrated team: KUSAKABE -> KUSAKABE
+[14:42:56]   Migrated team: ADMIN -> ADMIN
+[14:42:56]   Migrated team: IT -> IT
+[14:42:56] Successfully migrated 8 teams
+[14:42:56] Starting files migration...
+[14:42:56] Scanning uploads directory...
+[14:42:56] Scanning approvals directory...
+[14:42:56]   Failed to migrate file Y:\APP DEVELOPMENT\kmti-main\data\approvals\approval_comments.json: FOREIGN KEY constraint failed
+[14:42:56]   Failed to migrate file Y:\APP DEVELOPMENT\kmti-main\data\approvals\file_approvals.json: FOREIGN KEY constraint failed
+[14:42:56] Successfully migrated 0/2 files
+[14:42:56] Created migration flag: Y:\APP DEVELOPMENT\kmti-main\data\.migration_done
+[14:42:56] Testing hybrid system...
+[14:42:56]   Database contains:
+[14:42:56]     - 6 users
+[14:42:56]     - 8 teams
+[14:42:56]     - 0 files
+[14:42:56]   Found admin user: raysan
+[14:42:56]   Sample teams:
+[14:42:56]     - Minatogumi: Minatogumi
+[14:42:56]     - SOLID WORKS: SOLID WORKS
+[14:42:56]     - WINDSMILE: WINDSMILE
+[14:42:56]     - AGCC Project: AGCC Project
+[14:42:56]     - KMTI PJ: KMTI PJ
+[14:42:56] Migration completed successfully!
+
+NEXT STEPS:
+----------------------------------------
+1. Update your main.py to use the hybrid system
+2. Test login functionality
+3. Verify file approval workflow
+4. Train team leaders on new features
+5. Monitor NAS performance and connectivity
