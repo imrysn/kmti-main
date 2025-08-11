@@ -2,67 +2,56 @@
     "admin@example.com": {
         "fullname": "Admin",
         "username": "admin",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "password": "",
         "role": "ADMIN",
         "team_tags": [
             "ADMIN"
         ],
         "join_date": "",
-        "last_login": "2025-08-11T09:19:44.176369"
+        "last_login": null
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
         "username": "emji",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "password": "",
         "role": "ADMIN",
         "team_tags": [
             "IT"
         ],
         "join_date": "",
-        "last_login": "2025-08-01T11:25:06.663429"
+        "last_login": null
     },
     "raysan@example.com": {
         "fullname": "Raysan Perez",
         "username": "raysan",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "password": "",
         "role": "ADMIN",
         "team_tags": [
             "IT"
         ],
         "join_date": "",
-        "last_login": "2025-08-11T07:31:03.619030"
+        "last_login": null
     },
     "user1@example.com": {
         "fullname": "User Test",
         "username": "user1",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "password": "",
         "role": "USER",
         "team_tags": [
             "IT"
         ],
         "join_date": "",
-        "last_login": "2025-08-11T09:16:21.412860"
+        "last_login": null
     },
     "bryan@gmail.com": {
         "fullname": "bryan",
         "username": "bryan",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "password": "",
         "role": "USER",
         "team_tags": [
             "IT"
         ],
         "join_date": "",
-        "last_login": "2025-08-07T20:47:33.934618"
-    },
-    "risan@gmail.com": {
-        "fullname": "risan",
-        "username": "risan",
-        "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "role": "USER",
-        "team_tags": [
-            "IT"
-        ],
-        "join_date": "",
-        "last_login": "2025-08-07T17:16:21.942874"
+        "last_login": null
     }
 }

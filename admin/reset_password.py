@@ -257,9 +257,9 @@ def reset_password_hybrid_page(content: ft.Column, page: ft.Page, admin_username
     def go_back(e):
         """Return to user management"""
         if hybrid_app:
-            from admin.user_management_hybrid import user_management_hybrid
+            from admin.user_management import user_management
             content.controls.clear()
-            user_management_hybrid(content, admin_username, hybrid_app)
+            user_management(content, admin_username)
         else:
             from admin.user_management import user_management
             content.controls.clear()

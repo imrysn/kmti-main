@@ -119,8 +119,8 @@ def main(page: ft.Page):
     page.title = "KMTI Data Management System"
     page.window_icon = "assets/kmti.ico"
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.window_width = 1200
-    page.window_height = 800
+    page.window_width = 1980
+    page.window_height = 1020
     page.window_min_width = 800
     page.window_min_height = 600
     

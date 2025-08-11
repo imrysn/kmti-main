@@ -24,8 +24,8 @@ def load_saved_credentials():
 def get_hybrid_app():
     """Get hybrid app instance from main module"""
     try:
-        from main import get_hybrid_app_for_module
-        return get_hybrid_app_for_module()
+        from main import get_hybrid_app
+        return get_hybrid_app(page=None)
     except ImportError:
         return None
 

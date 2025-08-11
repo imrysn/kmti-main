@@ -116,7 +116,7 @@ def add_user_hybrid_page(content: ft.Column, page: ft.Page, username: Optional[s
         """Get team options from hybrid or legacy system"""
         if hybrid_app:
             try:
-                teams = hybrid_app.team_service.get_teams()
+                teams = hybrid_app.team_service()
                 return [ft.dropdown.Option(team) for team in teams]
             except Exception as e:
                 print(f"⚠️ Error loading hybrid teams: {e}")
@@ -282,9 +282,9 @@ def add_user_hybrid_page(content: ft.Column, page: ft.Page, username: Optional[s
     def go_back(e):
         """Return to user management"""
         if hybrid_app:
-            from admin.user_management_hybrid import user_management_hybrid
+            from admin.user_management import user_management
             content.controls.clear()
-            user_management_hybrid(content, username, hybrid_app)
+            user_management(content, username)
         else:
             from admin.user_management import user_management
             content.controls.clear()
