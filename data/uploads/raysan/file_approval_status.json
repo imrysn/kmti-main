@@ -161,5 +161,21 @@
         "comment": "File submitted for approval"
       }
     ]
+  },
+  "CP97013U01_PCMU.icd": {
+    "file_id": "a83ca4de-78a9-4539-8fd5-aee235782342",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-11T07:32:01.541762",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:32:01.541772",
+        "comment": "File submitted for approval"
+      }
+    ]
   }
 }

@@ -853,5 +853,65 @@
     "approved_by": "admin",
     "approved_date": "2025-08-08T10:07:46.174073",
     "last_updated": "2025-08-08T10:07:46.174080"
+  },
+  "a83ca4de-78a9-4539-8fd5-aee235782342": {
+    "file_id": "a83ca4de-78a9-4539-8fd5-aee235782342",
+    "original_filename": "CP97013U01_PCMU.icd",
+    "user_id": "raysan",
+    "user_team": "IT",
+    "file_size": 504480,
+    "submission_date": "2025-08-11T07:32:02.101233",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:32:02.101251",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/raysan\\CP97013U01_PCMU.icd"
+  },
+  "8f29e9b0-e289-45a8-a96c-f903e29ff204": {
+    "file_id": "8f29e9b0-e289-45a8-a96c-f903e29ff204",
+    "original_filename": "approval_notifications.json",
+    "user_id": "user1",
+    "user_team": "IT",
+    "file_size": 1678,
+    "submission_date": "2025-08-11T07:33:38.138951",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:33:38.138962",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\approval_notifications.json"
+  },
+  "fca3a85e-1976-41b8-8158-eabbba15dc13": {
+    "file_id": "fca3a85e-1976-41b8-8158-eabbba15dc13",
+    "original_filename": "file_approval_status.json",
+    "user_id": "user1",
+    "user_team": "IT",
+    "file_size": 2801,
+    "submission_date": "2025-08-11T07:33:39.917820",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:33:39.917832",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\file_approval_status.json"
   }
 }

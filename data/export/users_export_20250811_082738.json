@@ -1,0 +1,86 @@
+[
+    {
+        "email": "admin@example.com",
+        "username": "admin",
+        "fullname": "Admin",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-11T07:33:50.988260",
+        "runtime_start": "2025-08-11T07:33:50.988260",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    },
+    {
+        "email": "mg@example.com",
+        "username": "emji",
+        "fullname": "Mary Grace Castellano",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-01T11:25:06.663429",
+        "runtime_start": "2025-08-01T11:25:06.663429",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    },
+    {
+        "email": "raysan@example.com",
+        "username": "raysan",
+        "fullname": "Raysan Perez",
+        "role": "ADMIN",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-11T07:31:03.619030",
+        "runtime_start": "2025-08-11T07:31:03.619030",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    },
+    {
+        "email": "user1@example.com",
+        "username": "user1",
+        "fullname": "User Test",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-11T07:32:19.430317",
+        "runtime_start": "2025-08-11T07:32:19.430317",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    },
+    {
+        "email": "bryan@gmail.com",
+        "username": "bryan",
+        "fullname": "bryan",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-07T20:47:33.934618",
+        "runtime_start": "2025-08-07T20:47:33.934618",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    },
+    {
+        "email": "risan@gmail.com",
+        "username": "risan",
+        "fullname": "risan",
+        "role": "USER",
+        "team_tags": [
+            "IT"
+        ],
+        "join_date": "2025-07-28",
+        "last_login": "2025-08-07T17:16:21.942874",
+        "runtime_start": "2025-08-07T17:16:21.942874",
+        "is_active": 1,
+        "created_date": "2025-08-11 00:27:14"
+    }
+]

@@ -6,7 +6,7 @@
     "admin_id": "admin",
     "reason": "",
     "timestamp": "2025-08-07T14:34:55.758951",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -16,7 +16,7 @@
     "admin_id": "admin",
     "comment": "File approved",
     "timestamp": "2025-08-07T14:34:55.722517",
-    "read": false
+    "read": true
   },
   {
     "type": "approval_status",
@@ -25,7 +25,7 @@
     "admin_id": "admin",
     "reason": "",
     "timestamp": "2025-08-07T14:34:47.684189",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -35,7 +35,7 @@
     "admin_id": "admin",
     "comment": "File approved",
     "timestamp": "2025-08-07T14:34:47.630842",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
@@ -43,7 +43,7 @@
     "admin_id": "admin",
     "comment": "Test comment",
     "timestamp": "2025-08-07T14:34:38.049620",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
@@ -51,6 +51,6 @@
     "admin_id": "admin",
     "comment": "Test comment",
     "timestamp": "2025-08-07T14:34:37.942070",
-    "read": false
+    "read": true
   }
 ]

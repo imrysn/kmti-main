@@ -61,5 +61,37 @@
       }
     ],
     "last_updated": "2025-08-07T14:34:47.630186"
+  },
+  "approval_notifications.json": {
+    "file_id": "8f29e9b0-e289-45a8-a96c-f903e29ff204",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-11T07:33:37.872750",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:33:37.872761",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "file_approval_status.json": {
+    "file_id": "fca3a85e-1976-41b8-8158-eabbba15dc13",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-11T07:33:39.666752",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-11T07:33:39.666760",
+        "comment": "File submitted for approval"
+      }
+    ]
   }
 }
