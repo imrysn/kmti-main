@@ -2,6 +2,7 @@ import flet as ft
 import os
 import json
 from typing import Optional
+from datetime import datetime
 
 from .components.browser_view import BrowserView
 from .components.profile_view import ProfileView
@@ -13,34 +14,68 @@ from .components.notifications_window import NotificationsWindow  # ADDED - Impo
 from .services.profile_service import ProfileService
 from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
-from utils.logger import log_action  
+from utils.logger import log_action
 from utils.session_logger import log_activity
 
-SESSION_FILE = "data/session.json"
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
 
-def save_session(username: str, role: str = "user"):
-    print(f"[DEBUG] Saving session for {username} with role {role}")
-    os.makedirs("data", exist_ok=True)
-    with open(SESSION_FILE, "w") as f:
-        json.dump({"username": username, "role": role}, f)
 
-def clear_session():
-    print("[DEBUG] Clearing session")
-    if os.path.exists(SESSION_FILE):
-        os.remove(SESSION_FILE)
+def safe_username_for_file(username: str) -> str:
+    """Return a filename-safe username."""
+    return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
+
+
+def save_session(username: str, role: str, panel: str = "user"):
+    """Save the current session for a user, including last panel."""
+    safe_name = safe_username_for_file(username)
+    user_dir = os.path.join(SESSION_ROOT, safe_name)
+    os.makedirs(user_dir, exist_ok=True)
+    session_data = {
+        "username": username,
+        "role": role,
+        "panel": panel,
+        "last_login": datetime.utcnow().isoformat()
+    }
+    with open(os.path.join(user_dir, "session.json"), "w", encoding="utf-8") as f:
+        json.dump(session_data, f, indent=4)
+    print(f"[DEBUG] Session saved for {username} at {user_dir}")
+
+
+def load_session(username: str) -> Optional[dict]:
+    """Load session data for a given user."""
+    safe_name = safe_username_for_file(username)
+    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
+    if os.path.exists(session_file):
+        with open(session_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+
+def clear_session(username: str):
+    """Remove only this user's session file."""
+    safe_name = safe_username_for_file(username)
+    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
+    if os.path.exists(session_file):
+        os.remove(session_file)
+        print(f"[DEBUG] Removed session file {session_file}")
+
 
 def user_panel(page: ft.Page, username: Optional[str]):
-    save_session(username, "user")
+    if not username:
+        from login_window import login_view
+        login_view(page)
+        return
+
+    # Save persistent session (with panel user)
+    save_session(username, "USER", panel="user")
 
     user_folder = f"data/uploads/{username}"
     os.makedirs(user_folder, exist_ok=True)
-    
-    # Initialize services
+
     profile_service = ProfileService(user_folder, username)
     file_service = FileService(user_folder, username)
     approval_service = ApprovalFileService(user_folder, username)
-    
-    # Initialize views
+
     browser_view = BrowserView(page, username)
     profile_view = ProfileView(page, username, profile_service)
     files_view = FilesView(page, username, file_service)
@@ -58,7 +93,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
     def logout(e):
         log_action(username, "Logout")
         log_activity(username, "Logout")
-        clear_session()
+        clear_session(username)
         page.controls.clear()
         page.appbar = None
         page.overlay.clear()
@@ -67,32 +102,32 @@ def user_panel(page: ft.Page, username: Optional[str]):
         page.update()
         from login_window import login_view
         login_view(page)
-    
-    def show_profile_view():
+
+    def show_profile_view(): 
         nonlocal current_view
         current_view = "profile"
         notifications_popup.hide()  # ADDED - Hide popup when changing views
         update_content()
-    
-    def show_files_view():
+
+    def show_files_view(): 
         nonlocal current_view
         current_view = "files"
         notifications_popup.hide()  # ADDED - Hide popup when changing views
         update_content()
-    
-    def show_approval_files_view():
+
+    def show_approval_files_view(): 
         nonlocal current_view
         current_view = "approval_files"
         notifications_popup.hide()  # ADDED - Hide popup when changing views
         update_content()
-    
-    def show_notifications_view():
+
+    def show_notifications_view(): 
         nonlocal current_view
         current_view = "notifications"
         notifications_popup.hide()  # ADDED - Hide popup when changing views
         update_content()
-    
-    def show_browser_view():
+
+    def show_browser_view(): 
         nonlocal current_view
         current_view = "browser"
         notifications_popup.hide()  # ADDED - Hide popup when changing views
@@ -115,8 +150,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
         'show_notifications': show_notifications_view,
         'show_browser': show_browser_view
     }
-    
-    # Set navigation for all views
+
     browser_view.set_navigation(navigation)
     profile_view.set_navigation(navigation)
     files_view.set_navigation(navigation)
@@ -127,7 +161,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
     notifications_popup.set_close_callback(on_notifications_updated)
 
     def get_notification_status():
-        """Get notification count and text for app bar"""
         try:
             unread_count = approval_service.get_unread_notification_count()
             if unread_count > 0:
@@ -204,10 +237,30 @@ def user_panel(page: ft.Page, username: Optional[str]):
                 content = browser_view.create_content()
 
             page.controls.clear()
-            
-            # CHANGED - Use new update_appbar function
-            update_appbar()
-            
+            notification_badge, notification_icon = get_notification_status()
+
+            page.appbar = ft.AppBar(
+                title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
+                actions=[
+                    ft.IconButton(
+                        icon=notification_icon,
+                        icon_color=ft.Colors.WHITE,
+                        tooltip="Notifications",
+                        on_click=lambda e: show_notifications_view()
+                    ),
+                    ft.TextButton(
+                        f"Hi, {username}" if username else "Hi, User",
+                        style=ft.ButtonStyle(color=ft.Colors.WHITE),
+                        on_click=lambda e: show_profile_view()
+                    ),
+                    ft.TextButton(
+                        "Logout",
+                        style=ft.ButtonStyle(color=ft.Colors.WHITE),
+                        on_click=logout
+                    )
+                ],
+                bgcolor=ft.Colors.GREY_800
+            )
             page.add(content)
             page.update()
             print("[DEBUG] Content added and page updated.")
@@ -217,7 +270,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
             page.add(ft.Text(f"An error occurred: {e}", color=ft.Colors.RED))
             page.update()
 
-    # Initialize page
     page.title = "KMTI Data Management Users"
     page.bgcolor = ft.Colors.GREY_200
     update_content()
