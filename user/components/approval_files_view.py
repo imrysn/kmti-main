@@ -264,11 +264,21 @@ class ApprovalFilesView:
             self.page.update()
     
     def confirm_withdraw(self, filename: str):
-        """Confirm withdrawal of submission"""
+        """Confirm withdrawal of submission - FIXED FOR INSTANT UI UPDATE"""
         def handle_withdraw():
             if self.approval_service.withdraw_submission(filename):
-                self.dialogs.show_success_notification(f"Withdrawn: {filename}")
+                # FIX: Refresh content FIRST for instant UI feedback
                 self.refresh_content()
+                
+                # Then show notification after UI updates
+                import threading
+                import time
+                
+                def delayed_notification():
+                    time.sleep(0.1)  # Small delay to ensure UI completes
+                    self.dialogs.show_success_notification(f"Withdrawn: {filename}")
+                
+                threading.Thread(target=delayed_notification, daemon=True).start()
             else:
                 self.dialogs.show_error_notification("Failed to withdraw submission")
         

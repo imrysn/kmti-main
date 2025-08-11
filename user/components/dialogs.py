@@ -26,7 +26,7 @@ class DialogManager:
             self.page.overlay.pop()
             self.page.update()
             if on_confirm:
-                on_confirm()
+                on_confirm()  # This calls handle_withdraw() which has the timing issue
         
         def handle_cancel(e):
             self.page.overlay.pop()
@@ -257,7 +257,7 @@ class DialogManager:
                                 message: str, 
                                 duration: int = 3,
                                 icon: str = ft.Icons.CHECK_CIRCLE):
-        """Show a temporary success notification"""
+        """Show a temporary success notification - POTENTIAL TIMING ISSUE"""
         
         notification = ft.Container(
             content=ft.Row([
@@ -279,7 +279,7 @@ class DialogManager:
         )
         
         self.page.overlay.append(notification)
-        self.page.update()
+        self.page.update()  # This page update might interfere with the content refresh
         
         def hide_notification():
             time.sleep(duration)
@@ -310,9 +310,9 @@ class DialogManager:
             shadow=ft.BoxShadow(
                 blur_radius=5,
                 spread_radius=1,
-                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK)
+                color=ft.Colors.BLACK)
             )
-        )
+        
         
         self.page.overlay.append(notification)
         self.page.update()

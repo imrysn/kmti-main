@@ -8,7 +8,9 @@
             "IT"
         ],
         "join_date": "2025-07-28",
+
         "runtime_start": "2025-08-11T16:18:08.410344"
+
     },
     "admin@example.com": {
         "fullname": "Admin",
@@ -19,7 +21,9 @@
             "IT"
         ],
         "join_date": "2025-07-28",
+
         "runtime_start": "2025-08-11T15:51:06.805797"
+
     },
     "mg@example.com": {
         "fullname": "Mary Grace Castellano",
@@ -52,7 +56,7 @@
             "IT"
         ],
         "join_date": "2025-07-28",
-        "runtime_start": "2025-08-07T20:47:33.934618"
+        "runtime_start": "2025-08-11T15:12:44.699233"
     },
     "risan@gmail.com": {
         "fullname": "risan",
@@ -64,5 +68,14 @@
         ],
         "join_date": "2025-07-28",
         "runtime_start": "2025-08-07T17:16:21.942874"
+    },
+    "jet@gmail.com": {
+        "fullname": "jet",
+        "username": "jet",
+        "password": "a64f46febefb8eca968e04bc25b4bd7f09c64a322cc4bcdb2ffaa585481d1246",
+        "role": "USER",
+        "team_tags": [],
+        "join_date": "2025-07-28",
+        "runtime_start": "2025-08-08T10:47:26.843334"
     }
 }

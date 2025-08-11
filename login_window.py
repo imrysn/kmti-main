@@ -209,6 +209,27 @@ def login_view(page: ft.Page):
     login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500)
     success_snackbar = ft.SnackBar(content=ft.Text("Password remembered successfully!"))
 
+    def auto_login(username_val: str, role: str):
+        """Handle automatic login for shortcut credentials"""
+        # Log login action
+        log_login(username_val, role)
+        reset_runtime_start(username_val)
+        
+        # Clear the page and navigate
+        page.clean()
+        if role == "ADMIN":
+            admin_panel(page, username_val)
+        else:
+            user_panel(page, username_val)
+
+    def check_auto_login(username_val: str):
+        """Check if username matches auto-login shortcuts"""
+        if username_val.lower() == 'user acc':
+            return True, "USER", "user_account"
+        elif username_val.lower() == 'admin':
+            return True, "ADMIN", "admin_account"
+        return False, None, None
+
     def login_action(e):
         nonlocal saved_credentials
         saved_credentials = load_saved_credentials()
@@ -218,7 +239,6 @@ def login_view(page: ft.Page):
 
         uname = (username.value or "").strip()
         pwd = password.value or ""
-
         role = validate_login(uname, pwd, is_admin_login)
         error_text.value = ""
 
@@ -267,6 +287,24 @@ def login_view(page: ft.Page):
         else:
             error_text.value = "Invalid credentials!"
             page.update()
+
+    def on_username_submit(e):
+        """Handle Enter key press in username field"""
+        # Check for auto-login shortcuts
+        is_auto, auto_role, auto_username = check_auto_login(username.value)
+        if is_auto:
+            auto_login(auto_username, auto_role)
+        else:
+            # If not auto-login, focus on password field
+            password.focus()
+
+    def on_password_submit(e):
+        """Handle Enter key press in password field"""
+        login_action(e)
+
+    # Add submit handlers to text fields
+    username.on_submit = on_username_submit
+    password.on_submit = on_password_submit
 
     def toggle_login_type(e):
         nonlocal is_admin_login
