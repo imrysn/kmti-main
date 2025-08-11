@@ -1,5 +1,25 @@
 [
   {
+    "type": "status_update",
+    "filename": "CP91024U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "raysan",
+    "comment": "",
+    "timestamp": "2025-08-11T08:19:52.698540",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "CP91020U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "raysan",
+    "comment": "",
+    "timestamp": "2025-08-11T08:19:50.182243",
+    "read": false
+  },
+  {
     "type": "comment_added",
     "filename": "CP91020U01_PCMU.icd",
     "admin_id": "admin",

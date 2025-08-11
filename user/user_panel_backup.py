@@ -92,7 +92,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
 
             page.controls.clear()
             page.appbar = ft.AppBar(
-                title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
+                title=ft.Text("", color=ft.Colors.WHITE),
                 actions=[
                     ft.TextButton(
                         f"Hi, {username}" if username else "Hi, User",
