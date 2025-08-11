@@ -10,19 +10,20 @@ from admin.data_management import data_management
 from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
-from user.user_panel import save_session, clear_session
+from user.user_panel import save_session, clear_session  # reuse session funcs
 from admin.components.file_approval_panel import FileApprovalPanel
 
 USERS_FILE = "data/users.json"
 ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
 ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
-SESSION_BASE_DIR = "sessions"
+
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"  # Updated root session folder
 
 def load_json(path, default):
     if not os.path.exists(path):
         return default
     try:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except json.JSONDecodeError:
         return default
@@ -36,9 +37,14 @@ def load_logs():
 def load_metadata():
     return load_json(ACTIVITY_METADATA_FILE, {})
 
+def safe_username_for_file(username: str) -> str:
+    """Return a safe filename for session folders."""
+    return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
+
 def get_session_path(username: str):
     """Get the per-user session file path."""
-    user_dir = os.path.join(SESSION_BASE_DIR, username)
+    safe_name = safe_username_for_file(username)
+    user_dir = os.path.join(SESSION_ROOT, safe_name)
     os.makedirs(user_dir, exist_ok=True)
     return os.path.join(user_dir, "session.json")
 
@@ -286,6 +292,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
     navigate_to_section(initial_tab)
 
     log_activity(username, "Login")
-    save_session(username, "admin")  # will save inside sessions/<username>/session.json
+    save_session(username, "ADMIN", panel="admin")  # save session with panel info
     print(f"[DEBUG] Admin panel initialized for user: {username}")
     page.update()

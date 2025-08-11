@@ -63,7 +63,7 @@ def safe_username_for_file(username: str) -> str:
 # Session functions
 # -------------------------
 
-SESSION_ROOT = "session"  # directory containing per-user folders
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
 
 
 def save_session(username: str, role: str, panel: str):

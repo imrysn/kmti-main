@@ -15,7 +15,7 @@ from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action
 from utils.session_logger import log_activity
 
-SESSION_BASE_DIR = os.path.join("session")  # central session folder
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
 
 
 def safe_username_for_file(username: str) -> str:
@@ -23,17 +23,18 @@ def safe_username_for_file(username: str) -> str:
     return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
 
 
-def save_session(username: str, role: str):
-    """Save the current session for a user."""
+def save_session(username: str, role: str, panel: str = "user"):
+    """Save the current session for a user, including last panel."""
     safe_name = safe_username_for_file(username)
-    user_dir = os.path.join(SESSION_BASE_DIR, safe_name)
+    user_dir = os.path.join(SESSION_ROOT, safe_name)
     os.makedirs(user_dir, exist_ok=True)
     session_data = {
         "username": username,
         "role": role,
-        "last_login": datetime.now().isoformat()
+        "panel": panel,
+        "last_login": datetime.utcnow().isoformat()
     }
-    with open(os.path.join(user_dir, "session.json"), "w") as f:
+    with open(os.path.join(user_dir, "session.json"), "w", encoding="utf-8") as f:
         json.dump(session_data, f, indent=4)
     print(f"[DEBUG] Session saved for {username} at {user_dir}")
 
@@ -41,9 +42,9 @@ def save_session(username: str, role: str):
 def load_session(username: str) -> Optional[dict]:
     """Load session data for a given user."""
     safe_name = safe_username_for_file(username)
-    session_file = os.path.join(SESSION_BASE_DIR, safe_name, "session.json")
+    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
     if os.path.exists(session_file):
-        with open(session_file, "r") as f:
+        with open(session_file, "r", encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -51,7 +52,7 @@ def load_session(username: str) -> Optional[dict]:
 def clear_session(username: str):
     """Remove only this user's session file."""
     safe_name = safe_username_for_file(username)
-    session_file = os.path.join(SESSION_BASE_DIR, safe_name, "session.json")
+    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
     if os.path.exists(session_file):
         os.remove(session_file)
         print(f"[DEBUG] Removed session file {session_file}")
@@ -63,8 +64,8 @@ def user_panel(page: ft.Page, username: Optional[str]):
         login_view(page)
         return
 
-    # Save persistent session
-    save_session(username, "user")
+    # Save persistent session (with panel user)
+    save_session(username, "USER", panel="user")
 
     user_folder = f"data/uploads/{username}"
     os.makedirs(user_folder, exist_ok=True)
