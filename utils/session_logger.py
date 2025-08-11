@@ -4,7 +4,55 @@ from datetime import datetime
 
 LOG_FILE = "data/logs/activity_metadata.json"
 USERS_FILE = "data/users.json"
+SESSION_DIR = "session"  # New: root directory for per-user sessions
 
+
+# --------------------------
+# Session management helpers
+# --------------------------
+
+def save_session(username: str, session_data: dict):
+    """
+    Save session data in session/<username>/session.json.
+    """
+    user_session_dir = os.path.join(SESSION_DIR, username)
+    os.makedirs(user_session_dir, exist_ok=True)
+    session_file = os.path.join(user_session_dir, "session.json")
+
+    with open(session_file, "w") as f:
+        json.dump(session_data, f, indent=4)
+
+
+def load_session(username: str):
+    """
+    Load session for a given username.
+    Returns dict if session exists, else None.
+    """
+    session_file = os.path.join(SESSION_DIR, username, "session.json")
+    if not os.path.exists(session_file):
+        return None
+    try:
+        with open(session_file, "r") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def clear_session(username: str):
+    """
+    Remove a user's session.json file.
+    """
+    session_file = os.path.join(SESSION_DIR, username, "session.json")
+    if os.path.exists(session_file):
+        try:
+            os.remove(session_file)
+        except Exception:
+            pass
+
+
+# --------------------------
+# Logging helpers
+# --------------------------
 
 def get_fullname(username: str) -> str:
     """
