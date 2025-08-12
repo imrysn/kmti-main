@@ -9,7 +9,7 @@ from .dialogs import DialogManager
 from typing import Dict
 
 class ApprovalFilesView:
-    """Files view component for approval system with CONSISTENT UI DESIGN"""
+    """Files view component for approval system with FILE CARD LAYOUT DESIGN"""
     
     def __init__(self, page: ft.Page, username: str, approval_service: ApprovalFileService):
         self.page = page
@@ -28,14 +28,268 @@ class ApprovalFilesView:
         # UI references
         self.submissions_container_ref = None
         self.stats_ref = None
+        self.file_count_text_ref = None
     
     def set_navigation(self, navigation):
         """Set navigation functions"""
         self.navigation = navigation
         self.shared.set_navigation(navigation)
     
+    def get_file_type_info(self, filename: str):
+        """Get file type icon and color based on filename extension"""
+        extension = filename.split('.')[-1].upper() if '.' in filename else 'FILE'
+        
+        if extension in ["JPG", "JPEG", "PNG", "GIF", "BMP", "WEBP"]:
+            return ft.Icons.IMAGE_ROUNDED, ft.Colors.WHITE, ft.Colors.GREEN
+        elif extension == "PDF":
+            return ft.Icons.PICTURE_AS_PDF_ROUNDED, ft.Colors.WHITE, ft.Colors.RED
+        elif extension in ["DOC", "DOCX", "TXT", "RTF"]:
+            return ft.Icons.DESCRIPTION_ROUNDED, ft.Colors.WHITE, ft.Colors.BLUE
+        elif extension in ["ZIP", "RAR", "7Z"]:
+            return ft.Icons.ARCHIVE_ROUNDED, ft.Colors.WHITE, ft.Colors.ORANGE
+        elif extension in ["MP4", "AVI", "MOV", "WMV"]:
+            return ft.Icons.VIDEO_FILE_ROUNDED, ft.Colors.WHITE, ft.Colors.PURPLE
+        elif extension in ["MP3", "WAV", "FLAC", "OGG"]:
+            return ft.Icons.AUDIO_FILE_ROUNDED, ft.Colors.WHITE, ft.Colors.PINK
+        elif extension in ["XLS", "XLSX", "CSV"]:
+            return ft.Icons.TABLE_CHART_ROUNDED, ft.Colors.WHITE, ft.Colors.GREEN_700
+        elif extension in ["PPT", "PPTX"]:
+            return ft.Icons.SLIDESHOW_ROUNDED, ft.Colors.WHITE, ft.Colors.ORANGE_700
+        else:
+            return ft.Icons.INSERT_DRIVE_FILE_ROUNDED, ft.Colors.WHITE, ft.Colors.GREY_600
+    
+    def format_file_size(self, file_size: int) -> str:
+        """Format file size for display"""
+        if file_size > 1024 * 1024:
+            return f"{file_size / (1024 * 1024):.1f} MB"
+        elif file_size > 1024:
+            return f"{file_size / 1024:.1f} KB"
+        else:
+            return f"{file_size} bytes"
+    
+    def get_status_details(self, status: str):
+        """Get status icon, color and text"""
+        status_map = {
+            "pending": (ft.Icons.SCHEDULE, ft.Colors.ORANGE, "Pending Review"),
+            "approved": (ft.Icons.VERIFIED, ft.Colors.GREEN, "Approved"),
+            "rejected": (ft.Icons.CANCEL, ft.Colors.RED, "Rejected"),
+            "changes_requested": (ft.Icons.EDIT, ft.Colors.BLUE, "Changes Requested")
+        }
+        return status_map.get(status, (ft.Icons.HELP, ft.Colors.GREY, "Unknown"))
+    
+    def create_submission_card(self, submission: Dict):
+        """Create a file card similar to Files view layout"""
+        filename = submission.get("original_filename", "Unknown")
+        status = submission.get("status", "pending")
+        file_size = submission.get("file_size", 0)
+        
+        # Get file type info
+        icon, icon_color, badge_color = self.get_file_type_info(filename)
+        
+        # Get status details
+        status_icon, status_color, status_text = self.get_status_details(status)
+        
+        # File icon container
+        file_icon = ft.Container(
+            content=ft.Icon(icon, color=icon_color, size=24),
+            bgcolor=badge_color,
+            width=50,
+            height=50,
+            border_radius=8,
+            alignment=ft.alignment.center
+        )
+        
+        # File info
+        file_name_text = ft.Text(
+            filename, 
+            size=14,
+            weight=ft.FontWeight.W_500, 
+            overflow=ft.TextOverflow.ELLIPSIS,
+            max_lines=1
+        )
+        
+        file_size_text = ft.Text(
+            self.format_file_size(file_size), 
+            size=12,
+            color=ft.Colors.GREY_600
+        )
+        
+        file_info_column = ft.Column(
+            controls=[file_name_text, file_size_text],
+            spacing=2, 
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+        
+        # Status display
+        status_display = ft.Container(
+            content=ft.Row([
+                ft.Icon(status_icon, color=status_color, size=16),
+                ft.Text(status_text, size=12, color=status_color, weight=ft.FontWeight.BOLD)
+            ], spacing=5),
+            margin=ft.margin.only(right=15)
+        )
+        
+        # Action buttons based on status
+        action_buttons = []
+        
+        if status == "pending":
+            # Withdraw button
+            def handle_withdraw(e, fn=filename):
+                e.control.page.update()
+                self.confirm_withdraw(fn)
+            
+            withdraw_button = ft.ElevatedButton(
+                content=ft.Row([
+                    ft.Icon(ft.Icons.REMOVE_CIRCLE, size=16),
+                    ft.Text("Withdraw", size=12)
+                ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+                on_click=handle_withdraw,
+                bgcolor=ft.Colors.RED_50,
+                color=ft.Colors.RED_700,
+                height=35,
+                width=100,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=8),
+                    elevation=0
+                )
+            )
+            action_buttons.append(withdraw_button)
+            
+        elif status in ["rejected", "changes_requested"]:
+            # Resubmit button
+            def handle_resubmit(e, sub=submission):
+                e.control.page.update()
+                self.show_resubmit_dialog(sub)
+            
+            resubmit_button = ft.ElevatedButton(
+                content=ft.Row([
+                    ft.Icon(ft.Icons.REFRESH, size=16),
+                    ft.Text("Resubmit", size=12)
+                ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+                on_click=handle_resubmit,
+                bgcolor=ft.Colors.BLUE_50,
+                color=ft.Colors.BLUE_700,
+                height=35,
+                width=100,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=8),
+                    elevation=0
+                )
+            )
+            action_buttons.append(resubmit_button)
+        
+        # Details button (always present)
+        def handle_details(e, sub=submission):
+            e.control.page.update()
+            self.show_submission_details(sub)
+        
+        details_button = ft.ElevatedButton(
+            content=ft.Row([
+                ft.Icon(ft.Icons.VISIBILITY, size=16),
+                ft.Text("Details", size=12)
+            ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+            on_click=handle_details,
+            bgcolor=ft.Colors.GREY_100,
+            color=ft.Colors.GREY_700,
+            height=35,
+            width=90,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=8),
+                elevation=0
+            )
+        )
+        action_buttons.append(details_button)
+        
+        # Action buttons container
+        action_buttons_container = ft.Container(
+            content=ft.Row(
+                controls=action_buttons + [ft.Container(width=10)] if len(action_buttons) > 1 else action_buttons,
+                spacing=10
+            ),
+            on_click=lambda e: None,  # Absorb clicks
+            ink=False
+        )
+        
+        # Main content row
+        main_row = ft.Row([
+            file_icon,
+            ft.Container(width=15),
+            ft.Container(
+                content=file_info_column,
+                expand=True,
+                alignment=ft.alignment.center_left
+            ),
+            status_display,
+            action_buttons_container
+        ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+        
+        # Final card container
+        return ft.Container(
+            content=main_row,
+            padding=ft.padding.all(20),
+            margin=ft.margin.only(bottom=10),
+            bgcolor=ft.Colors.WHITE,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            border_radius=12,
+            shadow=ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=4,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            ),
+            ink=False
+        )
+    
+    def separate_submissions_by_status(self, submissions):
+        """Separate submissions by status"""
+        pending_submissions = [s for s in submissions if s.get("status") == "pending"]
+        approved_submissions = [s for s in submissions if s.get("status") == "approved"]
+        rejected_submissions = [s for s in submissions if s.get("status") == "rejected"]
+        changes_requested = [s for s in submissions if s.get("status") == "changes_requested"]
+        
+        return {
+            "pending": pending_submissions,
+            "approved": approved_submissions,
+            "rejected": rejected_submissions,
+            "changes_requested": changes_requested
+        }
+    
+    def create_section_header(self, title: str, count: int, icon: str, color: str):
+        """Create section header similar to Files view"""
+        return ft.Container(
+            content=ft.Row([
+                ft.Icon(icon, color=color, size=20),
+                ft.Text(title, size=16, weight=ft.FontWeight.BOLD, color=color),
+                ft.Text(f"({count})", size=14, color=ft.Colors.GREY_600)
+            ], spacing=8),
+            margin=ft.margin.only(bottom=10, top=5)
+        )
+    
+    def create_empty_state(self):
+        """Create empty state when no submissions exist"""
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(height=40),
+                ft.Icon(ft.Icons.UPLOAD_FILE, size=64, color=ft.Colors.GREY_400),
+                ft.Container(height=20),
+                ft.Text("No file submissions yet", size=16, color=ft.Colors.GREY_600),
+                ft.Text("Upload files in the Files page, then submit them for approval", size=12, color=ft.Colors.GREY_500),
+                ft.Container(height=20),
+                ft.ElevatedButton(
+                    "Go to Files",
+                    icon=ft.Icons.FOLDER,
+                    on_click=lambda e: self.navigation['show_files']() if self.navigation else None,
+                    bgcolor=ft.Colors.BLUE_600,
+                    color=ft.Colors.WHITE
+                ),
+                ft.Container(height=40)
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            alignment=ft.alignment.center,
+            height=300
+        )
+    
     def create_stats_summary(self):
-        """Create statistics summary"""
+        """Create statistics summary cards"""
         submissions = self.approval_service.get_user_submissions()
         
         # Count by status
@@ -55,7 +309,13 @@ class ApprovalFilesView:
                 border=ft.border.all(1, ft.Colors.GREY_200),
                 border_radius=8,
                 padding=15,
-                width=130
+                width=130,
+                shadow=ft.BoxShadow(
+                    spread_radius=0,
+                    blur_radius=2,
+                    color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                    offset=ft.Offset(0, 1)
+                )
             )
         
         self.stats_ref = ft.Row([
@@ -67,218 +327,180 @@ class ApprovalFilesView:
         
         return ft.Container(
             content=self.stats_ref,
-            margin=ft.margin.only(bottom=20)
+            margin=ft.margin.only(bottom=25)
         )
-    
-    def get_status_color(self, status: str) -> str:
-        """Get color for status"""
-        colors = {
-            "pending": ft.Colors.ORANGE,
-            "approved": ft.Colors.GREEN,
-            "rejected": ft.Colors.RED,
-            "changes_requested": ft.Colors.BLUE,
-            "not_submitted": ft.Colors.GREY
-        }
-        return colors.get(status, ft.Colors.GREY)
-    
-    def get_status_icon(self, status: str) -> str:
-        """Get icon for status"""
-        icons = {
-            "pending": ft.Icons.SCHEDULE,
-            "approved": ft.Icons.CHECK_CIRCLE,
-            "rejected": ft.Icons.CANCEL,
-            "changes_requested": ft.Icons.EDIT,
-            "not_submitted": ft.Icons.UPLOAD_FILE
-        }
-        return icons.get(status, ft.Icons.HELP)
-    
-    def format_status_text(self, status: str) -> str:
-        """Format status text for display"""
-        status_map = {
-            "pending": "Pending Review",
-            "approved": "Approved",
-            "rejected": "Rejected",
-            "changes_requested": "Changes Requested",
-            "not_submitted": "Not Submitted"
-        }
-        return status_map.get(status, status.title())
-    
-    def create_submission_card(self, submission: Dict):
-        """Create card for a submission"""
-        status = submission.get("status", "unknown")
-        
-        def show_details(e):
-            self.show_submission_details(submission)
-        
-        def withdraw_submission(e):
-            if submission.get("status") == "pending":
-                self.confirm_withdraw(submission["original_filename"])
-        
-        def resubmit_file(e):
-            if submission.get("status") in ["rejected", "changes_requested"]:
-                self.show_resubmit_dialog(submission)
-        
-        # Action buttons based on status
-        action_buttons = []
-        if status == "pending":
-            action_buttons.append(
-                ft.ElevatedButton(
-                    "Withdraw",
-                    icon=ft.Icons.REMOVE_CIRCLE,
-                    on_click=withdraw_submission,
-                    bgcolor=ft.Colors.RED_100,
-                    color=ft.Colors.RED_700
-                )
-            )
-        elif status in ["rejected", "changes_requested"]:
-            action_buttons.append(
-                ft.ElevatedButton(
-                    "Resubmit",
-                    icon=ft.Icons.REFRESH,
-                    on_click=resubmit_file,
-                    bgcolor=ft.Colors.BLUE_100,
-                    color=ft.Colors.BLUE_700
-                )
-            )
-        
-        action_buttons.append(
-            ft.TextButton(
-                "View Details",
-                icon=ft.Icons.VISIBILITY,
-                on_click=show_details,
-                style=ft.ButtonStyle(color=ft.Colors.BLUE_700)
-            )
-        )
-        
-        # Format dates
-        try:
-            submission_date = datetime.fromisoformat(submission["submission_date"]).strftime('%Y-%m-%d %H:%M') if submission.get("submission_date") else "Unknown"
-        except:
-            submission_date = "Unknown"
-        
-        # Format file size
-        file_size = submission.get("file_size", 0)
-        if file_size > 1024 * 1024:
-            size_str = f"{file_size / (1024 * 1024):.1f} MB"
-        elif file_size > 1024:
-            size_str = f"{file_size / 1024:.1f} KB"
-        else:
-            size_str = f"{file_size} bytes"
-        
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Icon(ft.Icons.DESCRIPTION, size=20, color=ft.Colors.BLUE_700),
-                    ft.Column([
-                        ft.Text(submission["original_filename"], size=14, weight=ft.FontWeight.BOLD),
-                        ft.Text(f"Size: {size_str} • Submitted: {submission_date}", 
-                                size=11, color=ft.Colors.GREY_600)
-                    ], spacing=2, expand=True),
-                    ft.Container(
-                        content=ft.Row([
-                            ft.Icon(self.get_status_icon(status), size=16, color=self.get_status_color(status)),
-                            ft.Text(self.format_status_text(status), size=12, color=self.get_status_color(status))
-                        ], spacing=5),
-                        bgcolor=f"{self.get_status_color(status)}20",
-                        border_radius=15,
-                        padding=ft.padding.symmetric(horizontal=10, vertical=5)
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                
-                # Description and tags if available
-                ft.Container(height=5),
-                ft.Text(submission.get("description", "No description"), size=12, color=ft.Colors.GREY_700, max_lines=2),
-                
-                # Tags
-                ft.Row([
-                    ft.Text("Tags:", size=10, color=ft.Colors.GREY_500),
-                    ft.Text(", ".join(submission.get("tags", [])) or "None", size=10, color=ft.Colors.GREY_600)
-                ], spacing=5) if submission.get("tags") else ft.Container(),
-                
-                # Action buttons
-                ft.Container(height=10),
-                ft.Row(action_buttons, spacing=10)
-            ], spacing=8),
-            bgcolor=ft.Colors.WHITE,
-            border=ft.border.all(1, ft.Colors.GREY_200),
-            border_radius=8,
-            padding=15,
-            margin=ft.margin.only(bottom=10)
-        )
-    
-    def create_submissions_view(self):
-        """Create submissions view"""
+
+    def create_submissions_list(self):
+        """Create submissions list with card-based design similar to Files view"""
         submissions = self.approval_service.get_user_submissions()
         
-        if not submissions:
-            empty_state = ft.Container(
-                content=ft.Column([
-                    ft.Icon(ft.Icons.UPLOAD_FILE, size=64, color=ft.Colors.GREY_400),
-                    ft.Text("No file submissions yet", size=16, color=ft.Colors.GREY_600),
-                    ft.Text("Upload files in the Files page, then submit them for approval", 
-                           size=12, color=ft.Colors.GREY_500, text_align=ft.TextAlign.CENTER),
-                    ft.Container(height=20),
-                    ft.ElevatedButton(
-                        "Go to Files",
-                        icon=ft.Icons.FOLDER,
-                        on_click=lambda e: self.navigation['show_files']() if self.navigation else None,
-                        bgcolor=ft.Colors.BLUE_600,
-                        color=ft.Colors.WHITE
-                    )
-                ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                alignment=ft.alignment.center,
-                height=300
-            )
-            
-            self.submissions_container_ref = ft.Container(content=empty_state)
-        else:
-            submission_cards = [self.create_submission_card(sub) for sub in submissions]
-            
-            self.submissions_container_ref = ft.Container(
-                content=ft.Column(
-                    submission_cards,
-                    scroll=ft.ScrollMode.AUTO
-                ),
-                expand=True
-            )
+        # Sort submissions by submission date (newest first)
+        submissions = sorted(submissions, key=lambda x: x.get("submission_date", ""), reverse=True)
         
-        return self.submissions_container_ref
-    
-    def refresh_stats(self):
-        """Refresh statistics"""
-        if self.stats_ref:
-            new_stats = self.create_stats_summary()
-            self.stats_ref.controls = new_stats.content.controls
-            self.page.update()
+        file_count = len(submissions)
+        file_count_text = f"{file_count} submission{'s' if file_count != 1 else ''}"
+        
+        self.file_count_text_ref = ft.Text(file_count_text, size=12, color=ft.Colors.GREY_600)
+        
+        # Create file cards organized by status
+        file_cards = []
+        
+        if submissions:
+            # Separate by status
+            status_groups = self.separate_submissions_by_status(submissions)
+            
+            # Add sections in order: Pending, Changes Requested, Rejected, Approved
+            sections = [
+                ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
+                ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
+                ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
+                ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
+            ]
+            
+            sections_added = 0
+            for status_key, title, icon, color in sections:
+                status_submissions = status_groups.get(status_key, [])
+                if status_submissions:
+                    # Add spacing between sections (except first)
+                    if sections_added > 0:
+                        file_cards.append(ft.Container(height=20))
+                    
+                    # Section header
+                    section_header = self.create_section_header(title, len(status_submissions), icon, color)
+                    file_cards.append(section_header)
+                    
+                    # Add submission cards
+                    for submission in status_submissions:
+                        file_cards.append(self.create_submission_card(submission))
+                    
+                    sections_added += 1
+        else:
+            file_cards.append(self.create_empty_state())
+        
+        # Create scrollable content
+        scrollable_content = ft.Column(file_cards, spacing=0)
+        self.submissions_container_ref = ft.Container(
+            content=scrollable_content,
+            expand=True
+        )
+        
+        # Header container
+        header_container = ft.Container(
+            content=ft.Row([
+                ft.Column([
+                    ft.Text("File Approvals", size=20, weight=ft.FontWeight.BOLD),
+                    self.file_count_text_ref
+                ], spacing=4),
+                ft.Container(expand=True),
+                ft.Text(
+                    "💡 Submit files from the Files page",
+                    size=12,
+                    color=ft.Colors.GREY_600,
+                    italic=True
+                )
+            ]),
+            margin=ft.margin.only(bottom=20)
+        )
+        
+        # Main column with stats at the top
+        main_column = ft.Column([
+            # Statistics summary at the top
+            self.create_stats_summary(),
+            
+            header_container,
+            
+            # Files list container
+            ft.Container(
+                content=ft.Column([
+                    self.submissions_container_ref
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
+                expand=True,
+                bgcolor=ft.Colors.GREY_50,
+                padding=ft.padding.all(15),
+                border_radius=12,
+                border=ft.border.all(1, ft.Colors.GREY_200)
+            )
+        ], expand=True)
+        
+        return ft.Container(
+            content=main_column,
+            bgcolor=ft.Colors.WHITE,
+            padding=ft.padding.all(20),
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            expand=True
+        )
     
     def refresh_content(self):
-        """Refresh current content"""
-        self.refresh_stats()
-        self.refresh_submissions()
-    
-    def refresh_submissions(self):
-        """Refresh submissions display"""
+        """Refresh submissions display and stats"""
+        # Refresh stats
+        if self.stats_ref:
+            submissions = self.approval_service.get_user_submissions()
+            
+            # Count by status
+            pending_count = len([s for s in submissions if s.get("status") == "pending"])
+            approved_count = len([s for s in submissions if s.get("status") == "approved"])
+            rejected_count = len([s for s in submissions if s.get("status") == "rejected"])
+            changes_count = len([s for s in submissions if s.get("status") == "changes_requested"])
+            
+            # Update stat cards
+            if len(self.stats_ref.controls) >= 4:
+                self.stats_ref.controls[0].content.controls[1].value = str(pending_count)  # Pending count
+                self.stats_ref.controls[1].content.controls[1].value = str(approved_count)  # Approved count
+                self.stats_ref.controls[2].content.controls[1].value = str(changes_count)  # Changes count  
+                self.stats_ref.controls[3].content.controls[1].value = str(rejected_count)  # Rejected count
+        
+        # Refresh submissions list
         if self.submissions_container_ref:
-            new_content = self.create_submissions_view()
-            self.submissions_container_ref.content = new_content.content
+            # Get updated submissions
+            submissions = self.approval_service.get_user_submissions()
+            submissions = sorted(submissions, key=lambda x: x.get("submission_date", ""), reverse=True)
+            
+            # Update file count
+            file_count = len(submissions)
+            file_count_text = f"{file_count} submission{'s' if file_count != 1 else ''}"
+            if self.file_count_text_ref:
+                self.file_count_text_ref.value = file_count_text
+            
+            # Rebuild content
+            file_cards = []
+            
+            if submissions:
+                status_groups = self.separate_submissions_by_status(submissions)
+                sections = [
+                    ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
+                    ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
+                    ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
+                    ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
+                ]
+                
+                sections_added = 0
+                for status_key, title, icon, color in sections:
+                    status_submissions = status_groups.get(status_key, [])
+                    if status_submissions:
+                        if sections_added > 0:
+                            file_cards.append(ft.Container(height=20))
+                        
+                        section_header = self.create_section_header(title, len(status_submissions), icon, color)
+                        file_cards.append(section_header)
+                        
+                        for submission in status_submissions:
+                            file_cards.append(self.create_submission_card(submission))
+                        
+                        sections_added += 1
+            else:
+                file_cards.append(self.create_empty_state())
+            
+            # Update container content
+            self.submissions_container_ref.content = ft.Column(file_cards, spacing=0)
             self.page.update()
     
     def confirm_withdraw(self, filename: str):
-        """Confirm withdrawal of submission - FIXED FOR INSTANT UI UPDATE"""
+        """Confirm withdrawal of submission"""
         def handle_withdraw():
             if self.approval_service.withdraw_submission(filename):
-                # FIX: Refresh content FIRST for instant UI feedback
                 self.refresh_content()
-                
-                # Then show notification after UI updates
-                import threading
-                import time
-                
-                def delayed_notification():
-                    time.sleep(0.1)  # Small delay to ensure UI completes
-                    self.dialogs.show_success_notification(f"Withdrawn: {filename}")
-                
-                threading.Thread(target=delayed_notification, daemon=True).start()
+                self.dialogs.show_success_notification(f"Withdrawn: {filename}")
             else:
                 self.dialogs.show_error_notification("Failed to withdraw submission")
         
@@ -369,20 +591,11 @@ class ApprovalFilesView:
                 )
             )
         
-        # Format file size
-        file_size = submission.get("file_size", 0)
-        if file_size > 1024 * 1024:
-            size_str = f"{file_size / (1024 * 1024):.1f} MB"
-        elif file_size > 1024:
-            size_str = f"{file_size / 1024:.1f} KB"
-        else:
-            size_str = f"{file_size} bytes"
-        
         # Create details content
         details_content = ft.Column([
             ft.Text(f"File: {submission['original_filename']}", size=14, weight=ft.FontWeight.BOLD),
-            ft.Text(f"Status: {self.format_status_text(submission.get('status', 'unknown'))}", size=12),
-            ft.Text(f"Size: {size_str}", size=12),
+            ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=12),
+            ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=12),
             ft.Divider(),
             ft.Text("Description:", size=12, weight=ft.FontWeight.BOLD),
             ft.Text(submission.get("description", "No description"), size=11),
@@ -401,46 +614,6 @@ class ApprovalFilesView:
             content=details_content,
             width=600,
             height=500
-        )
-    
-    def create_main_content(self):
-        """Create main content area - only submissions"""
-        content = ft.Column([
-            # Statistics summary
-            self.create_stats_summary(),
-            
-            # Header
-            ft.Container(
-                content=ft.Row([
-                    ft.Text("My Submissions", size=20, weight=ft.FontWeight.BOLD),
-                    ft.Container(expand=True),
-                    ft.Text(
-                        "💡 Submit files from the Files page using the Submit button",
-                        size=12,
-                        color=ft.Colors.GREY_600,
-                        italic=True
-                    )
-                ]),
-                margin=ft.margin.only(bottom=15)
-            ),
-            
-            # Submissions content
-            self.create_submissions_view()
-        ], expand=True)
-        
-        return ft.Container(
-            content=content,
-            bgcolor=ft.Colors.WHITE,
-            border_radius=12,
-            border=ft.border.all(1, ft.Colors.GREY_200),
-            padding=20,
-            expand=True,
-            shadow=ft.BoxShadow(
-                spread_radius=1,
-                blur_radius=3,
-                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
-                offset=ft.Offset(0, 2)
-            )
         )
     
     def create_content(self):
@@ -464,9 +637,9 @@ class ApprovalFilesView:
                         
                         ft.Container(width=20),
                         
-                        # Right side - Approval content
+                        # Right side - Approval content with FILES LAYOUT
                         ft.Container(
-                            content=self.create_main_content(),
+                            content=self.create_submissions_list(),
                             expand=True
                         )
                     ], alignment=ft.MainAxisAlignment.START, 

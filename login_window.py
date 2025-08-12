@@ -63,7 +63,7 @@ def safe_username_for_file(username: str) -> str:
 # Session functions
 # -------------------------
 
-SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
+SESSION_ROOT = "data/sessions"  # Use consistent path
 
 
 def save_session(username: str, role: str, panel: str):
@@ -72,9 +72,8 @@ def save_session(username: str, role: str, panel: str):
     panel should be 'admin' or 'user'.
     """
     safe_name = safe_username_for_file(username)
-    user_session_dir = os.path.join(SESSION_ROOT, safe_name)
-    os.makedirs(user_session_dir, exist_ok=True)
-    session_file = os.path.join(user_session_dir, "session.json")
+    session_file = os.path.join(SESSION_ROOT, f"{safe_name}.json")
+    os.makedirs(SESSION_ROOT, exist_ok=True)
     session_payload = {
         "username": username,
         "role": role,
@@ -92,7 +91,7 @@ def save_session(username: str, role: str, panel: str):
 def clear_session(username: str):
     """Clear session per user (on explicit logout)."""
     safe_name = safe_username_for_file(username)
-    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
+    session_file = os.path.join(SESSION_ROOT, f"{safe_name}.json")
     try:
         if os.path.exists(session_file):
             os.remove(session_file)
@@ -113,15 +112,17 @@ def _read_session_file(path: str) -> dict | None:
 
 def check_existing_session(page: ft.Page):
     """
-    Find the most-recent session file under session/*/session.json and open its recorded panel.
+    Find the most-recent session file under sessions/*.json and open its recorded panel.
     Returns True if it opened a panel, False otherwise.
     """
     if not os.path.exists(SESSION_ROOT):
         return False
 
     best = None  # tuple (timestamp, data)
-    for user_folder in os.listdir(SESSION_ROOT):
-        session_file = os.path.join(SESSION_ROOT, user_folder, "session.json")
+    for session_filename in os.listdir(SESSION_ROOT):
+        if not session_filename.endswith(".json"):
+            continue
+        session_file = os.path.join(SESSION_ROOT, session_filename)
         if not os.path.exists(session_file):
             continue
         data = _read_session_file(session_file)

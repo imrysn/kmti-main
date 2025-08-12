@@ -6,7 +6,7 @@ from typing import Dict, Optional, Callable
 
 def show_center_sheet(page: ft.Page, title: str, message: str, on_confirm):
     """
-    Creates a custom centered confirmation dialog that appears as an overlay.
+    Creates a custom centered confirmation dialog with CONSISTENT DESIGN to match DialogManager
     """
     def close_overlay(e=None):
         print(f"DEBUG: Closing overlay - Cancel clicked")
@@ -30,57 +30,88 @@ def show_center_sheet(page: ft.Page, title: str, message: str, on_confirm):
         except Exception as ex:
             print(f"DEBUG: Error in confirm action: {ex}")
 
+    # Smart filename truncation for better display
+    display_message = _format_delete_message(message)
+
     overlay = ft.Container(
         content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text(title, size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
-                    ft.Container(height=10),
-                    ft.Text(message, size=14, color=ft.Colors.BLACK),
-                    ft.Container(height=30),
-                    ft.Row(
-                        [
-                            ft.ElevatedButton(
-                                text="Cancel", 
-                                on_click=close_overlay,
-                                width=100,
-                                height=40,
-                                style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.GREY_200,
-                                    color=ft.Colors.BLACK,
-                                    shape=ft.RoundedRectangleBorder(radius=8),
-                                ),
-                            ),
-                            ft.ElevatedButton(
-                                text="Delete",
-                                on_click=confirm_action,
-                                width=100,
-                                height=40,
-                                style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.RED,
-                                    color=ft.Colors.WHITE,
-                                    shape=ft.RoundedRectangleBorder(radius=8),
-                                ),
-                            ),
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=10,
+            content=ft.Column([
+                # Title with consistent height
+                ft.Container(
+                    content=ft.Text(
+                        title, 
+                        size=18, 
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.GREY_800
                     ),
-                ],
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=0,
-            ),
+                    height=30,
+                    alignment=ft.alignment.center_left
+                ),
+                
+                ft.Container(height=15),
+                
+                # Message with fixed height and smart text handling
+                ft.Container(
+                    content=ft.Text(
+                        display_message, 
+                        size=14,
+                        text_align=ft.TextAlign.LEFT,
+                        color=ft.Colors.GREY_700,
+                        max_lines=4,  # Allow up to 4 lines
+                        overflow=ft.TextOverflow.VISIBLE
+                    ),
+                    height=90,  # Increased height to accommodate 4 lines
+                    width=440,
+                    alignment=ft.alignment.top_left,
+                    padding=ft.padding.symmetric(horizontal=5, vertical=5)
+                ),
+                
+                # Warning text
+                ft.Container(
+                    content=ft.Text(
+                        "This action cannot be undone.",
+                        size=12,
+                        color=ft.Colors.GREY_600,
+                        italic=True
+                    ),
+                    height=20,
+                    alignment=ft.alignment.center_left
+                ),
+                
+                ft.Container(height=15),
+                
+                # Buttons with consistent styling to match DialogManager
+                ft.Row([
+                    ft.ElevatedButton(
+                        "Cancel",
+                        on_click=close_overlay,
+                        bgcolor=ft.Colors.GREY_100,
+                        color=ft.Colors.GREY_700,
+                        style=ft.ButtonStyle(
+                            shape=ft.RoundedRectangleBorder(radius=6)
+                        )
+                    ),
+                    ft.ElevatedButton(
+                        "Delete",
+                        on_click=confirm_action,
+                        bgcolor=ft.Colors.RED,
+                        color=ft.Colors.WHITE,
+                        style=ft.ButtonStyle(
+                            shape=ft.RoundedRectangleBorder(radius=6)
+                        )
+                    )
+                ], alignment=ft.MainAxisAlignment.END, spacing=15)
+            ], spacing=0, tight=True),
             padding=30,
             bgcolor=ft.Colors.WHITE,
             border_radius=12,
-            width=400,
-            height=220,
+            width=500,   # CONSISTENT width to match DialogManager
+            height=240,  # CONSISTENT height to match DialogManager
             shadow=ft.BoxShadow(
-                spread_radius=1,
                 blur_radius=10,
-                color=ft.Colors.BLACK26,
-                offset=ft.Offset(0, 4),
-            ),
+                spread_radius=2,
+                color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK)
+            )
         ),
         alignment=ft.alignment.center,
         bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLACK),
@@ -93,6 +124,35 @@ def show_center_sheet(page: ft.Page, title: str, message: str, on_confirm):
         print(f"DEBUG: Overlay dialog created and added to page")
     except Exception as ex:
         print(f"DEBUG: Error creating overlay: {ex}")
+
+def _format_delete_message(message: str) -> str:
+    """Smart formatting for delete confirmation messages with filename handling"""
+    # Extract filename from delete messages
+    if "Are you sure you want to delete" in message and "?" in message:
+        try:
+            # Extract the filename between quotes
+            start = message.find("'") + 1
+            end = message.rfind("'")
+            if start > 0 and end > start:
+                filename = message[start:end]
+                
+                # Smart filename truncation
+                if len(filename) > 45:
+                    # For very long filenames, show beginning and end
+                    name, ext = filename.rsplit('.', 1) if '.' in filename else (filename, '')
+                    if len(name) > 35:
+                        truncated_name = name[:20] + "..." + name[-12:]
+                        filename = f"{truncated_name}.{ext}" if ext else truncated_name
+                
+                return f"Are you sure you want to delete '{filename}'?"
+        except:
+            pass
+    
+    # For other messages, just ensure reasonable length
+    if len(message) > 150:
+        return message[:147] + "..."
+    
+    return message
 
 def show_confirm_dialog(page: ft.Page, title: str, message: str, on_confirm):
     """
@@ -173,7 +233,7 @@ class NotificationsWindow:
             print(f"DEBUG: Error showing delete animation: {e}")
     
     def show_delete_confirmation_dialog(self, filename: str, delete_callback):
-        """Show delete confirmation dialog using custom overlay system"""
+        """Show delete confirmation dialog using custom overlay system - CONSISTENT WITH DialogManager"""
         print(f"DEBUG: Showing confirmation dialog for '{filename}'")
         
         def on_confirm():
@@ -186,7 +246,7 @@ class NotificationsWindow:
         show_confirm_dialog(
             self.page,
             "Delete Notification",
-            f"Are you sure you want to delete '{filename}'?\n\nThis action cannot be undone.",
+            f"Are you sure you want to delete '{filename}'?",
             on_confirm
         )
         print(f"DEBUG: Dialog displayed successfully")
@@ -305,7 +365,7 @@ class NotificationsWindow:
             self.show_error_message(error_msg)
     
     def show_delete_all_confirmation_dialog(self, count: int, delete_callback):
-        """Show confirmation dialog for deleting all notifications using custom overlay system"""
+        """Show confirmation dialog for deleting all notifications - CONSISTENT WITH DialogManager"""
         def on_confirm():
             try:
                 print(f"DEBUG: Delete all confirmed")
@@ -316,7 +376,7 @@ class NotificationsWindow:
         show_confirm_dialog(
             self.page,
             "Delete All Notifications",
-            f"Are you sure you want to delete all {count} notifications?\n\nThis action cannot be undone.",
+            f"Are you sure you want to delete all {count} notifications?",
             on_confirm
         )
         print(f"DEBUG: Delete all dialog displayed successfully")

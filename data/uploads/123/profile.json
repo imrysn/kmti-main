@@ -1,0 +1,23 @@
+{
+  "username": "123",
+  "email": "123@gmail.com",
+  "full_name": "123",
+  "bio": "",
+  "location": "",
+  "phone": "",
+  "website": "",
+  "avatar_path": "",
+  "created_date": "2025-08-12T08:01:31.900956",
+  "last_modified": "2025-08-12T08:01:31.900956",
+  "preferences": {
+    "theme": "light",
+    "language": "en",
+    "notifications": true,
+    "file_upload_limit": 10
+  },
+  "stats": {
+    "files_uploaded": 0,
+    "total_storage_used": 0,
+    "last_login": "2025-08-12T08:01:31.900956"
+  }
+}

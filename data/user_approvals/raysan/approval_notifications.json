@@ -1,13 +1,23 @@
 [
   {
     "type": "status_update",
+    "filename": "CP91019U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "raysan",
+    "comment": "",
+    "timestamp": "2025-08-12T11:57:07.297108",
+    "read": false
+  },
+  {
+    "type": "status_update",
     "filename": "CP91024U01_PCMU.icd",
     "old_status": "pending",
     "new_status": "approved",
     "admin_id": "raysan",
     "comment": "",
     "timestamp": "2025-08-11T08:19:52.698540",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -17,7 +27,7 @@
     "admin_id": "raysan",
     "comment": "",
     "timestamp": "2025-08-11T08:19:50.182243",
-    "read": false
+    "read": true
   },
   {
     "type": "comment_added",
