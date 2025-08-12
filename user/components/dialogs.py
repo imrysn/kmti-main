@@ -20,19 +20,22 @@ class DialogManager:
                                 cancel_text: str = "Cancel",
                                 confirm_color: str = ft.Colors.BLUE,
                                 is_destructive: bool = False):
-        """Show a confirmation dialog"""
+        """Show a confirmation dialog with CONSISTENT SIZE and improved filename handling"""
         
         def handle_confirm(e):
             self.page.overlay.pop()
             self.page.update()
             if on_confirm:
-                on_confirm()  # This calls handle_withdraw() which has the timing issue
+                on_confirm()
         
         def handle_cancel(e):
             self.page.overlay.pop()
             self.page.update()
             if on_cancel:
                 on_cancel()
+        
+        # Smart filename truncation for better display
+        display_message = self._format_delete_message(message)
         
         # Create modal background
         modal_background = ft.Container(
@@ -41,33 +44,80 @@ class DialogManager:
             on_click=handle_cancel
         )
         
-        # Create dialog content
+        # Create dialog content with FIXED DIMENSIONS
         dialog_content = ft.Container(
             content=ft.Column([
-                ft.Text(title, size=18, weight=ft.FontWeight.BOLD),
-                ft.Container(height=10),
-                ft.Text(message, size=14),
-                ft.Container(height=20),
+                # Title with consistent height
+                ft.Container(
+                    content=ft.Text(
+                        title, 
+                        size=18, 
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.GREY_800
+                    ),
+                    height=30,
+                    alignment=ft.alignment.center_left
+                ),
+                
+                ft.Container(height=15),
+                
+                # Message with fixed height and smart text handling
+                ft.Container(
+                    content=ft.Text(
+                        display_message, 
+                        size=14,
+                        text_align=ft.TextAlign.LEFT,
+                        color=ft.Colors.GREY_700,
+                        max_lines=4,  # Allow up to 4 lines
+                        overflow=ft.TextOverflow.VISIBLE
+                    ),
+                    height=90,  # Increased height to accommodate 4 lines
+                    width=440,
+                    alignment=ft.alignment.top_left,
+                    padding=ft.padding.symmetric(horizontal=5, vertical=5)
+                ),
+                
+                # Warning text
+                ft.Container(
+                    content=ft.Text(
+                        "This action cannot be undone.",
+                        size=12,
+                        color=ft.Colors.GREY_600,
+                        italic=True
+                    ),
+                    height=20,
+                    alignment=ft.alignment.center_left
+                ),
+                
+                ft.Container(height=15),
+                
+                # Buttons with consistent styling
                 ft.Row([
-                    ft.TextButton(
+                    ft.ElevatedButton(
                         cancel_text,
                         on_click=handle_cancel,
+                        bgcolor=ft.Colors.GREY_100,
+                        color=ft.Colors.GREY_700,
                         style=ft.ButtonStyle(
-                            color=ft.Colors.GREY_700
+                            shape=ft.RoundedRectangleBorder(radius=6)
                         )
                     ),
                     ft.ElevatedButton(
                         confirm_text,
                         on_click=handle_confirm,
                         bgcolor=ft.Colors.RED if is_destructive else confirm_color,
-                        color=ft.Colors.WHITE
+                        color=ft.Colors.WHITE,
+                        style=ft.ButtonStyle(
+                            shape=ft.RoundedRectangleBorder(radius=6)
+                        )
                     )
-                ], alignment=ft.MainAxisAlignment.END, spacing=10)
-            ], spacing=10, tight=True),
+                ], alignment=ft.MainAxisAlignment.END, spacing=15)
+            ], spacing=0, tight=True),
             bgcolor=ft.Colors.WHITE,
             padding=30,
             border_radius=12,
-            width=400,
+            width=500,   # Consistent width
+            height=240,  # Consistent height
             shadow=ft.BoxShadow(
                 blur_radius=10,
                 spread_radius=2,
@@ -87,6 +137,35 @@ class DialogManager:
         self.page.overlay.append(dialog_stack)
         self.page.update()
     
+    def _format_delete_message(self, message: str) -> str:
+        """Smart formatting for delete confirmation messages with filename handling"""
+        # Extract filename from delete messages
+        if "Are you sure you want to delete" in message and "?" in message:
+            try:
+                # Extract the filename between quotes
+                start = message.find("'") + 1
+                end = message.rfind("'")
+                if start > 0 and end > start:
+                    filename = message[start:end]
+                    
+                    # Smart filename truncation
+                    if len(filename) > 45:
+                        # For very long filenames, show beginning and end
+                        name, ext = filename.rsplit('.', 1) if '.' in filename else (filename, '')
+                        if len(name) > 35:
+                            truncated_name = name[:20] + "..." + name[-12:]
+                            filename = f"{truncated_name}.{ext}" if ext else truncated_name
+                    
+                    return f"Are you sure you want to delete '{filename}'?"
+            except:
+                pass
+        
+        # For other messages, just ensure reasonable length
+        if len(message) > 150:
+            return message[:147] + "..."
+        
+        return message
+    
     def show_input_dialog(self,
                          title: str,
                          fields: List[Dict],
@@ -105,7 +184,7 @@ class DialogManager:
                     label=field["label"],
                     hint_text=field.get("hint", ""),
                     value=field.get("value", ""),
-                    width=400
+                    width=440
                 )
             elif field["type"] == "multiline":
                 control = ft.TextField(
@@ -115,7 +194,7 @@ class DialogManager:
                     multiline=True,
                     min_lines=field.get("min_lines", 2),
                     max_lines=field.get("max_lines", 4),
-                    width=400
+                    width=440
                 )
             else:
                 continue
@@ -173,7 +252,7 @@ class DialogManager:
             bgcolor=ft.Colors.WHITE,
             padding=30,
             border_radius=12,
-            width=500,
+            width=540,
             shadow=ft.BoxShadow(
                 blur_radius=10,
                 spread_radius=2,
@@ -257,7 +336,7 @@ class DialogManager:
                                 message: str, 
                                 duration: int = 3,
                                 icon: str = ft.Icons.CHECK_CIRCLE):
-        """Show a temporary success notification - POTENTIAL TIMING ISSUE"""
+        """Show a temporary success notification"""
         
         notification = ft.Container(
             content=ft.Row([
@@ -279,7 +358,7 @@ class DialogManager:
         )
         
         self.page.overlay.append(notification)
-        self.page.update()  # This page update might interfere with the content refresh
+        self.page.update()
         
         def hide_notification():
             time.sleep(duration)
@@ -310,9 +389,9 @@ class DialogManager:
             shadow=ft.BoxShadow(
                 blur_radius=5,
                 spread_radius=1,
-                color=ft.Colors.BLACK)
+                color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK)
             )
-        
+        )
         
         self.page.overlay.append(notification)
         self.page.update()

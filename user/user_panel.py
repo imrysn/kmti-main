@@ -13,68 +13,62 @@ from .components.notifications_window import NotificationsWindow
 from .services.profile_service import ProfileService
 from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
-from utils.logger import log_action
+from utils.logger import log_action  
 from utils.session_logger import log_activity
 
-SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
-
+# Use consistent session management with login_window.py
+SESSION_ROOT = "data/sessions"
 
 def safe_username_for_file(username: str) -> str:
     """Return a filename-safe username."""
     return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
 
-
-def save_session(username: str, role: str, panel: str = "user"):
-    """Save the current session for a user, including last panel."""
+def save_session(username: str, role: str = "user", panel: str = "user"):
+    """Save session per user including which panel was opened and login_time."""
+    print(f"[DEBUG] Saving session for {username} with role {role}, panel={panel}")
     safe_name = safe_username_for_file(username)
-    user_dir = os.path.join(SESSION_ROOT, safe_name)
-    os.makedirs(user_dir, exist_ok=True)
-    session_data = {
+    session_file = os.path.join(SESSION_ROOT, f"{safe_name}.json")
+    os.makedirs(SESSION_ROOT, exist_ok=True)
+    
+    session_payload = {
         "username": username,
         "role": role,
         "panel": panel,
-        "last_login": datetime.utcnow().isoformat()
+        "login_time": datetime.utcnow().isoformat()
     }
-    with open(os.path.join(user_dir, "session.json"), "w", encoding="utf-8") as f:
-        json.dump(session_data, f, indent=4)
-    print(f"[DEBUG] Session saved for {username} at {user_dir}")
-
-
-def load_session(username: str) -> Optional[dict]:
-    """Load session data for a given user."""
-    safe_name = safe_username_for_file(username)
-    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
-    if os.path.exists(session_file):
-        with open(session_file, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return None
-
+    
+    try:
+        with open(session_file, "w", encoding="utf-8") as f:
+            json.dump(session_payload, f, indent=4)
+        print(f"[DEBUG] Saved session for {username} -> {session_file}")
+    except Exception as ex:
+        print(f"[DEBUG] save_session error: {ex}")
 
 def clear_session(username: str):
-    """Remove only this user's session file."""
+    """Clear session per user (on explicit logout)."""
+    print(f"[DEBUG] Clearing session for {username}")
     safe_name = safe_username_for_file(username)
-    session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
-    if os.path.exists(session_file):
-        os.remove(session_file)
-        print(f"[DEBUG] Removed session file {session_file}")
-
+    session_file = os.path.join(SESSION_ROOT, f"{safe_name}.json")
+    
+    try:
+        if os.path.exists(session_file):
+            os.remove(session_file)
+            print(f"[DEBUG] Cleared session for {username}")
+    except Exception as ex:
+        print(f"[DEBUG] clear_session error: {ex}")
 
 def user_panel(page: ft.Page, username: Optional[str]):
-    if not username:
-        from login_window import login_view
-        login_view(page)
-        return
-
-    # Save persistent session (with panel user)
-    save_session(username, "USER", panel="user")
+    save_session(username, "USER", "user")
 
     user_folder = f"data/uploads/{username}"
     os.makedirs(user_folder, exist_ok=True)
-
+    
+    # Initialize services
     profile_service = ProfileService(user_folder, username)
     file_service = FileService(user_folder, username)
     approval_service = ApprovalFileService(user_folder, username)
-
+    
+    # Initialize views
     browser_view = BrowserView(page, username)
     profile_view = ProfileView(page, username, profile_service)
     files_view = FilesView(page, username, file_service)
@@ -90,7 +84,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
     def logout(e):
         log_action(username, "Logout")
         log_activity(username, "Logout")
-        clear_session(username)
+        clear_session(username)  # Pass username parameter
         page.controls.clear()
         page.appbar = None
         page.overlay.clear()
@@ -99,43 +93,47 @@ def user_panel(page: ft.Page, username: Optional[str]):
         page.update()
         from login_window import login_view
         login_view(page)
-
-    def show_profile_view(): 
+    
+    def show_profile_view():
         nonlocal current_view
+        print("[DEBUG] Switching to Profile view")
         current_view = "profile"
-        notifications_popup.hide()  # ADDED - Hide popup when changing views
+        notifications_popup.hide()
         update_content()
-
-    def show_files_view(): 
+    
+    def show_files_view():
         nonlocal current_view
+        print("[DEBUG] Switching to Files view")
         current_view = "files"
-        notifications_popup.hide()  # ADDED - Hide popup when changing views
+        notifications_popup.hide()
         update_content()
-
-    def show_approval_files_view(): 
+    
+    def show_approval_files_view():
         nonlocal current_view
+        print("[DEBUG] Switching to Approval Files view")
         current_view = "approval_files"
-        notifications_popup.hide()  # ADDED - Hide popup when changing views
+        notifications_popup.hide()
         update_content()
-
-    def show_notifications_view(): 
+    
+    def show_notifications_view():
         nonlocal current_view
+        print("[DEBUG] Switching to Notifications view")
         current_view = "notifications"
-        notifications_popup.hide()  # ADDED - Hide popup when changing views
+        notifications_popup.hide()
         update_content()
-
-    def show_browser_view(): 
+    
+    def show_browser_view():
         nonlocal current_view
+        print("[DEBUG] Switching to Browser view")
         current_view = "browser"
-        notifications_popup.hide()  # ADDED - Hide popup when changing views
+        notifications_popup.hide()
         update_content()
 
-    # ADDED - New function to show full-screen notifications popup
     def show_notifications_popup(e):
         """Show full-screen notifications popup"""
+        print("[DEBUG] Showing notifications popup")
         notifications_popup.toggle()
 
-    # ADDED - Callback for when notifications are updated
     def on_notifications_updated():
         """Update app bar when notifications change"""
         update_appbar()
@@ -147,17 +145,19 @@ def user_panel(page: ft.Page, username: Optional[str]):
         'show_notifications': show_notifications_view,
         'show_browser': show_browser_view
     }
-
+    
+    # Set navigation for all views
     browser_view.set_navigation(navigation)
     profile_view.set_navigation(navigation)
     files_view.set_navigation(navigation)
     approval_files_view.set_navigation(navigation)
     notifications_view.set_navigation(navigation)
 
-    # ADDED - Set callback for notifications popup
+    # Set callback for notifications popup
     notifications_popup.set_close_callback(on_notifications_updated)
 
     def get_notification_status():
+        """Get notification count and text for app bar"""
         try:
             unread_count = approval_service.get_unread_notification_count()
             if unread_count > 0:
@@ -167,13 +167,12 @@ def user_panel(page: ft.Page, username: Optional[str]):
         except:
             return "", ft.Icons.NOTIFICATIONS_NONE
 
-    # ADDED - Separate function to update app bar
     def update_appbar():
-        """Update only the app bar"""
+        """Update app bar"""
         notification_badge, notification_icon = get_notification_status()
         
         page.appbar = ft.AppBar(
-            title=ft.Text("", color=ft.Colors.WHITE),
+            title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
             actions=[
                 ft.Container(
                     content=ft.Stack([
@@ -181,7 +180,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
                             icon=notification_icon,
                             icon_color=ft.Colors.WHITE,
                             tooltip="Notifications",
-                            on_click=show_notifications_popup  # CHANGED - Use popup instead of full page
+                            on_click=show_notifications_popup
                         ),
                         ft.Container(
                             content=ft.Text(
@@ -202,7 +201,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
                     icon=notification_icon,
                     icon_color=ft.Colors.WHITE,
                     tooltip="Notifications",
-                    on_click=show_notifications_popup  # CHANGED - Use popup instead of full page
+                    on_click=show_notifications_popup
                 ),
                 ft.TextButton(
                     f"Hi, {username}" if username else "Hi, User",
@@ -220,53 +219,45 @@ def user_panel(page: ft.Page, username: Optional[str]):
         page.update()
 
     def update_content():
-        print(f"[DEBUG] Updating content: {current_view}")
+        """Update content immediately - simple and reliable"""
+        print(f"[DEBUG] Updating content to: {current_view}")
         try:
+            # Get the appropriate content based on current view
             if current_view == "profile":
                 content = profile_view.create_content()
+                print("[DEBUG] Created profile content")
             elif current_view == "files":
                 content = files_view.create_content()
+                print("[DEBUG] Created files content")
             elif current_view == "approval_files":
                 content = approval_files_view.create_content()
+                print("[DEBUG] Created approval files content")
             elif current_view == "notifications":
                 content = notifications_view.create_content()
+                print("[DEBUG] Created notifications content")
             else:
                 content = browser_view.create_content()
+                print("[DEBUG] Created browser content")
 
+            # Clear current content and add new content
             page.controls.clear()
-            notification_badge, notification_icon = get_notification_status()
-
-            page.appbar = ft.AppBar(
-                title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
-                actions=[
-                    ft.IconButton(
-                        icon=notification_icon,
-                        icon_color=ft.Colors.WHITE,
-                        tooltip="Notifications",
-                        on_click=lambda e: show_notifications_view()
-                    ),
-                    ft.TextButton(
-                        f"Hi, {username}" if username else "Hi, User",
-                        style=ft.ButtonStyle(color=ft.Colors.WHITE),
-                        on_click=lambda e: show_profile_view()
-                    ),
-                    ft.TextButton(
-                        "Logout",
-                        style=ft.ButtonStyle(color=ft.Colors.WHITE),
-                        on_click=logout
-                    )
-                ],
-                bgcolor=ft.Colors.GREY_800
-            )
+            update_appbar()
             page.add(content)
             page.update()
-            print("[DEBUG] Content added and page updated.")
+            
+            print(f"[DEBUG] Successfully updated to {current_view}")
+            
         except Exception as e:
             print(f"[ERROR] Failed to update content: {e}")
+            import traceback
+            traceback.print_exc()
+            
+            # Show error message
             page.controls.clear()
             page.add(ft.Text(f"An error occurred: {e}", color=ft.Colors.RED))
             page.update()
 
+    # Initialize page
     page.title = "KMTI Data Management Users"
     page.bgcolor = ft.Colors.GREY_200
     update_content()

@@ -4,7 +4,7 @@ from datetime import datetime
 
 LOG_FILE = "data/logs/activity_metadata.json"
 USERS_FILE = "data/users.json"
-SESSION_ROOT = r"\\KMTI-NAS\Shared\data"  # New: root directory for per-user sessions
+SESSION_ROOT = "/data"  # New: root directory for per-user sessions
 
 
 # --------------------------

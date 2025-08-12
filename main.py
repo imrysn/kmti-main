@@ -13,25 +13,71 @@ OLD_SESSION_FILE = os.path.join(DATA_DIR, "session.json")   # legacy single sess
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REMEMBER_ME_FILE = os.path.join(DATA_DIR, "remember_me.json")
 
+# Also check for the old session folder format and migrate if needed
+OLD_SESSION_ROOT = os.path.join(DATA_DIR, "session")
+
+
+def safe_username_for_file(username: str) -> str:
+    """Return a filename-safe username."""
+    return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
 
 def migrate_old_session():
     """
-    If the legacy data/session.json exists, migrate it to data/sessions/<username>.json
-    then delete the old file. Safe to call repeatedly.
+    Migrate legacy sessions to the new format:
+    1. data/session.json -> data/sessions/<username>.json
+    2. data/session/<username>/session.json -> data/sessions/<username>.json
+    Safe to call repeatedly.
     """
     try:
-        if not os.path.exists(OLD_SESSION_FILE):
-            return
-        os.makedirs(SESSIONS_DIR, exist_ok=True)
-        with open(OLD_SESSION_FILE, "r", encoding="utf-8") as f:
-            old = json.load(f)
-        username = old.get("username")
-        if username:
-            new_path = os.path.join(SESSIONS_DIR, f"{username}.json")
-            with open(new_path, "w", encoding="utf-8") as nf:
-                json.dump(old, nf, indent=4)
-        # remove old legacy file after migration
-        os.remove(OLD_SESSION_FILE)
+        # Migrate legacy single session file
+        if os.path.exists(OLD_SESSION_FILE):
+            os.makedirs(SESSIONS_DIR, exist_ok=True)
+            with open(OLD_SESSION_FILE, "r", encoding="utf-8") as f:
+                old = json.load(f)
+            username = old.get("username")
+            if username:
+                safe_name = safe_username_for_file(username)
+                new_path = os.path.join(SESSIONS_DIR, f"{safe_name}.json")
+                # Ensure it has the new format
+                session_data = {
+                    "username": username,
+                    "role": old.get("role", "USER"),
+                    "panel": "user" if old.get("role", "USER").upper() != "ADMIN" else "admin",
+                    "login_time": old.get("login_time", datetime.now().isoformat())
+                }
+                with open(new_path, "w", encoding="utf-8") as nf:
+                    json.dump(session_data, nf, indent=4)
+            os.remove(OLD_SESSION_FILE)
+            print(f"[DEBUG] Migrated legacy session file for {username}")
+        
+        # Migrate old session folder structure (data/session/<username>/session.json)
+        if os.path.exists(OLD_SESSION_ROOT) and os.path.isdir(OLD_SESSION_ROOT):
+            os.makedirs(SESSIONS_DIR, exist_ok=True)
+            for user_folder in os.listdir(OLD_SESSION_ROOT):
+                old_session_path = os.path.join(OLD_SESSION_ROOT, user_folder, "session.json")
+                if os.path.exists(old_session_path):
+                    with open(old_session_path, "r", encoding="utf-8") as f:
+                        old_data = json.load(f)
+                    username = old_data.get("username")
+                    if username:
+                        safe_name = safe_username_for_file(username)
+                        new_path = os.path.join(SESSIONS_DIR, f"{safe_name}.json")
+                        with open(new_path, "w", encoding="utf-8") as nf:
+                            json.dump(old_data, nf, indent=4)
+                        os.remove(old_session_path)
+                        print(f"[DEBUG] Migrated session for {username} from old folder structure")
+            
+            # Clean up empty directories
+            try:
+                for user_folder in os.listdir(OLD_SESSION_ROOT):
+                    folder_path = os.path.join(OLD_SESSION_ROOT, user_folder)
+                    if os.path.isdir(folder_path) and not os.listdir(folder_path):
+                        os.rmdir(folder_path)
+                if not os.listdir(OLD_SESSION_ROOT):
+                    os.rmdir(OLD_SESSION_ROOT)
+            except:
+                pass
+                
     except Exception as e:
         print(f"[WARN] Failed to migrate old session: {e}")
 
@@ -75,7 +121,8 @@ def choose_session_file():
 
         remembered = load_remembered_username()
         if remembered:
-            candidate = os.path.join(SESSIONS_DIR, f"{remembered}.json")
+            safe_name = safe_username_for_file(remembered)
+            candidate = os.path.join(SESSIONS_DIR, f"{safe_name}.json")
             if os.path.exists(candidate):
                 return candidate
 

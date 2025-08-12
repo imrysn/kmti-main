@@ -65,12 +65,14 @@
         "join_date": "2025-07-28",
         "runtime_start": "2025-08-07T17:16:21.942874"
     },
-    "jet@gmail.com": {
-        "fullname": "jet",
-        "username": "jet",
-        "password": "a64f46febefb8eca968e04bc25b4bd7f09c64a322cc4bcdb2ffaa585481d1246",
+    "123@gmail.com": {
+        "fullname": "123",
+        "username": "123",
+        "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
         "role": "USER",
-        "team_tags": [],
+        "team_tags": [
+            "KMTI PJ"
+        ],
         "join_date": "2025-07-28",
         "runtime_start": "2025-08-08T10:47:26.843334"
     },

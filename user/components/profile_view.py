@@ -79,6 +79,7 @@ class ProfileView:
                 'full_name': username.title(),  # Support both key formats
                 'email': f'{username}@example.com',
                 'role': 'User',
+                'team_tags': [],  # Default empty team tags
                 'join_date': 'N/A'
             }
         
@@ -516,6 +517,28 @@ class ProfileView:
             self.create_navigation_menu()
         ], spacing=0)
     
+    def get_team_display(self):
+        """Get team display text from team_tags"""
+        team_tags = self.user_data.get('team_tags', [])
+        print(f"[DEBUG] ProfileView.get_team_display() - team_tags: {team_tags}")
+        print(f"[DEBUG] ProfileView.get_team_display() - user_data keys: {list(self.user_data.keys())}")
+        
+        if isinstance(team_tags, list):
+            if team_tags:
+                result = ", ".join(team_tags)
+                print(f"[DEBUG] Team display result: '{result}'")
+                return result
+            else:
+                print(f"[DEBUG] Team tags list is empty, returning N/A")
+                return "N/A"
+        elif isinstance(team_tags, str):
+            result = team_tags if team_tags else "N/A"
+            print(f"[DEBUG] Team display result (string): '{result}'")
+            return result
+        else:
+            print(f"[DEBUG] Team tags is not list or string, type: {type(team_tags)}, returning N/A")
+            return "N/A"
+    
 
     def create_profile_details(self):
         """Create profile details section"""
@@ -542,6 +565,12 @@ class ProfileView:
                 ft.Row([
                     ft.Text("Role:", size=14, weight=ft.FontWeight.BOLD, width=100),
                     ft.Text(self.user_data.get("role", "User"), size=14)
+                ]),
+                ft.Container(height=20),
+                # NEW: Team field added here
+                ft.Row([
+                    ft.Text("Team:", size=14, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.get_team_display(), size=14)
                 ]),
                 ft.Container(height=20),
                 ft.Row([

@@ -73,5 +73,28 @@
         "comment": "File submitted for approval"
       }
     ]
+  },
+  "CP91019U01_PCMU.icd": {
+    "file_id": "9b42ae16-5150-4570-a5bf-eba9bfe6e049",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T09:13:37.186138",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T09:13:37.186138",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-12T11:57:07.294656",
+        "admin_id": "raysan",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-12T11:57:07.294656"
   }
 }

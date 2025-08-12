@@ -9,7 +9,7 @@ from .shared_ui import SharedUI
 from .dialogs import DialogManager
 
 class FilesView:
-    """Files view component with CONSISTENT UI DESIGN"""
+    """Files view component with CARD-BASED UI DESIGN + ADMIN APPROVAL STATUS"""
     
     def __init__(self, page: ft.Page, username: str, file_service: FileService):
         self.page = page
@@ -220,7 +220,7 @@ class FilesView:
             
             if self.approval_service.submit_file_for_approval(filename, description, tags):
                 self.dialogs.show_success_notification(f"'{filename}' submitted for approval!")
-                self.rebuild_files_table_completely()
+                self.rebuild_files_list_completely()
             else:
                 self.dialogs.show_error_notification("Failed to submit file for approval")
         
@@ -261,9 +261,9 @@ class FilesView:
                 
                 if deletion_result:
                     self.show_delete_success_animation(filename)
-                    print(f"DEBUG: Starting complete table rebuild after deletion")
-                    self.rebuild_files_table_completely()
-                    print(f"DEBUG: Complete table rebuild completed")
+                    print(f"DEBUG: Starting complete list rebuild after deletion")
+                    self.rebuild_files_list_completely()
+                    print(f"DEBUG: Complete list rebuild completed")
                     self.page.update()
                 else:
                     self.page.snack_bar = ft.SnackBar(
@@ -289,6 +289,51 @@ class FilesView:
             confirm_text="Delete",
             is_destructive=True
         )
+    
+    def open_file(self, filename: str):
+        """Open file using the default system application"""
+        try:
+            file_path = os.path.join(self.file_service.user_folder, filename)
+            
+            if not os.path.exists(file_path):
+                self.page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"❌ File '{filename}' not found!"),
+                    bgcolor=ft.Colors.RED
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
+                return
+            
+            # Open file with default system application
+            import subprocess
+            import platform
+            
+            system = platform.system()
+            if system == "Windows":
+                os.startfile(file_path)
+            elif system == "Darwin":  # macOS
+                subprocess.call(["open", file_path])
+            else:  # Linux and others
+                subprocess.call(["xdg-open", file_path])
+            
+            print(f"DEBUG: Opened file: {filename}")
+            
+            # Show success notification
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"📂 Opening '{filename}'..."),
+                bgcolor=ft.Colors.BLUE
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+            
+        except Exception as ex:
+            print(f"DEBUG: Error opening file {filename}: {str(ex)}")
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"❌ Could not open '{filename}': {str(ex)}"),
+                bgcolor=ft.Colors.RED
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
     
     def upload_file(self, e: ft.FilePickerResultEvent):
         """Handle file upload with immediate real-time updates"""
@@ -344,9 +389,9 @@ class FilesView:
                         self.page.snack_bar.open = True
                 
                 if uploaded_files:
-                    print(f"DEBUG: Starting complete table rebuild after upload")
-                    self.rebuild_files_table_completely()
-                    print(f"DEBUG: Upload table rebuild completed")
+                    print(f"DEBUG: Starting complete list rebuild after upload")
+                    self.rebuild_files_list_completely()
+                    print(f"DEBUG: Upload list rebuild completed")
                 
                 self.page.update()
                 
@@ -358,13 +403,122 @@ class FilesView:
                 self.page.snack_bar.open = True
                 self.page.update()
     
-    def rebuild_files_table_completely(self):
-        """IMPROVED: Completely rebuild the files table and file count - more reliable approach"""
+    def sort_files_by_date(self, files):
+        """Sort files by creation/modification time (newest first) - use the most recent timestamp"""
         try:
-            print(f"DEBUG: Starting complete files table rebuild")
+            def get_file_timestamp(file_info):
+                try:
+                    file_path = os.path.join(self.file_service.user_folder, file_info["name"])
+                    # Get both creation and modification time, use the most recent one
+                    mtime = os.path.getmtime(file_path)
+                    ctime = os.path.getctime(file_path)
+                    # Return the most recent timestamp (max of creation and modification time)
+                    return max(mtime, ctime)
+                except:
+                    return 0
+            
+            # Sort by timestamp, newest first
+            sorted_files = sorted(files, key=get_file_timestamp, reverse=True)
+            print(f"DEBUG: Sorted {len(sorted_files)} files by timestamp (newest first)")
+            
+            # Debug: print first few file timestamps
+            for i, file_info in enumerate(sorted_files[:3]):
+                try:
+                    file_path = os.path.join(self.file_service.user_folder, file_info["name"])
+                    mtime = os.path.getmtime(file_path)
+                    ctime = os.path.getctime(file_path)
+                    print(f"DEBUG: File {i+1}: {file_info['name']} - mtime: {mtime}, ctime: {ctime}, max: {max(mtime, ctime)}")
+                except:
+                    pass
+            
+            return sorted_files
+        except Exception as ex:
+            print(f"DEBUG: Error sorting files by date: {ex}")
+            # Fall back to original order if sorting fails
+            return files
+    
+    def separate_files_by_submission_status(self, files):
+        """Separate files into submitted and non-submitted lists"""
+        submitted_files = []
+        not_submitted_files = []
+        
+        for file_info in files:
+            approval_status = self.approval_service.get_file_approval_status(file_info["name"])
+            is_submitted = approval_status.get("submitted_for_approval", False)
+            
+            if is_submitted:
+                submitted_files.append(file_info)
+            else:
+                not_submitted_files.append(file_info)
+        
+        print(f"DEBUG: Separated files - {len(not_submitted_files)} not submitted, {len(submitted_files)} submitted")
+        return not_submitted_files, submitted_files
+    
+    def get_file_approval_status_detailed(self, filename: str):
+        """Get detailed approval status including admin approval status"""
+        try:
+            # Get basic approval status (submitted_for_approval)
+            approval_status = self.approval_service.get_file_approval_status(filename)
+            
+            # Check if file has been approved by admin by looking at submissions
+            submissions = self.approval_service.get_user_submissions()
+            for submission in submissions:
+                if submission.get("original_filename") == filename:
+                    status = submission.get("status", "")
+                    return {
+                        "submitted_for_approval": approval_status.get("submitted_for_approval", False),
+                        "admin_status": status,
+                        "is_approved": status == "approved",
+                        "is_rejected": status == "rejected",
+                        "needs_changes": status == "changes_requested",
+                        "is_pending": status == "pending"
+                    }
+            
+            # If not found in submissions but marked as submitted, it's pending
+            if approval_status.get("submitted_for_approval", False):
+                return {
+                    "submitted_for_approval": True,
+                    "admin_status": "pending",
+                    "is_approved": False,
+                    "is_rejected": False,
+                    "needs_changes": False,
+                    "is_pending": True
+                }
+            
+            # File not submitted for approval
+            return {
+                "submitted_for_approval": False,
+                "admin_status": None,
+                "is_approved": False,
+                "is_rejected": False,
+                "needs_changes": False,
+                "is_pending": False
+            }
+            
+        except Exception as e:
+            print(f"DEBUG: Error getting detailed approval status for {filename}: {e}")
+            return {
+                "submitted_for_approval": False,
+                "admin_status": None,
+                "is_approved": False,
+                "is_rejected": False,
+                "needs_changes": False,
+                "is_pending": False
+            }
+    
+    def rebuild_files_list_completely(self):
+        """IMPROVED: Completely rebuild the files list - separated by submission status with newest files first"""
+        try:
+            print(f"DEBUG: Starting complete files list rebuild")
             
             files = self.file_service.get_files()
             print(f"DEBUG: Found {len(files)} files in filesystem")
+            
+            # Sort files by timestamp (newest first)
+            files = self.sort_files_by_date(files)
+            
+            # Separate files by submission status
+            not_submitted_files, submitted_files = self.separate_files_by_submission_status(files)
             
             file_count = len(files)
             total_size = self.calculate_total_size_immediately(files) if files else 0
@@ -377,166 +531,279 @@ class FilesView:
                 print(f"DEBUG: Updated file count to: {file_count_text}")
             
             if self.files_scrollable_container_ref:
-                print(f"DEBUG: Rebuilding scrollable container content")
+                print(f"DEBUG: Rebuilding scrollable container content with separated sections")
                 
                 self.files_scrollable_container_ref.content.controls.clear()
                 
                 if files:
-                    for file in files:
-                        file_row = self.create_file_row(file)
-                        self.files_scrollable_container_ref.content.controls.append(file_row)
-                    print(f"DEBUG: Added {len(files)} file rows")
+                    # Add "Not Submitted" section if there are unsubmitted files
+                    if not_submitted_files:
+                        # Section header for not submitted files
+                        section_header = ft.Container(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.UPLOAD_FILE, color=ft.Colors.BLUE, size=20),
+                                ft.Text("Not Submitted", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE),
+                                ft.Text(f"({len(not_submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                            ], spacing=8),
+                            margin=ft.margin.only(bottom=10, top=5)
+                        )
+                        self.files_scrollable_container_ref.content.controls.append(section_header)
+                        
+                        # Add not submitted file cards
+                        for file in not_submitted_files:
+                            file_card = self.create_file_card(file)
+                            self.files_scrollable_container_ref.content.controls.append(file_card)
+                    
+                    # Add spacing between sections if both exist
+                    if not_submitted_files and submitted_files:
+                        spacing = ft.Container(height=20)
+                        self.files_scrollable_container_ref.content.controls.append(spacing)
+                    
+                    # Add "Submitted" section if there are submitted files
+                    if submitted_files:
+                        # Section header for submitted files
+                        section_header = ft.Container(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=20),
+                                ft.Text("Submitted for Approval", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN),
+                                ft.Text(f"({len(submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                            ], spacing=8),
+                            margin=ft.margin.only(bottom=10, top=5)
+                        )
+                        self.files_scrollable_container_ref.content.controls.append(section_header)
+                        
+                        # Add submitted file cards
+                        for file in submitted_files:
+                            file_card = self.create_file_card(file)
+                            self.files_scrollable_container_ref.content.controls.append(file_card)
+                    
+                    print(f"DEBUG: Added {len(not_submitted_files)} not submitted + {len(submitted_files)} submitted file cards")
                 else:
                     empty_state = self.create_empty_state()
                     self.files_scrollable_container_ref.content.controls.append(empty_state)
                     print(f"DEBUG: Added empty state")
                 
-                print(f"DEBUG: Files table rebuild completed successfully")
+                print(f"DEBUG: Files list rebuild completed successfully")
             else:
                 print(f"DEBUG: files_scrollable_container_ref is None - cannot rebuild")
             
         except Exception as ex:
-            print(f"DEBUG: Error during complete table rebuild: {ex}")
+            print(f"DEBUG: Error during complete list rebuild: {ex}")
     
-    def create_file_row(self, file_info):
-        """Create a file row for the files table with responsive design and proper text handling"""
+    def create_file_card(self, file_info):
+        """Create a file card with ADMIN APPROVAL STATUS - FIXED to prevent hover tooltip on action buttons"""
         
-        # Check if file is already submitted for approval
-        approval_status = self.approval_service.get_file_approval_status(file_info["name"])
-        is_submitted = approval_status.get("submitted_for_approval", False)
+        # Check detailed approval status including admin decision
+        detailed_status = self.get_file_approval_status_detailed(file_info["name"])
+        is_submitted = detailed_status["submitted_for_approval"]
+        is_approved = detailed_status["is_approved"]
+        is_rejected = detailed_status["is_rejected"]
+        needs_changes = detailed_status["needs_changes"]
+        is_pending = detailed_status["is_pending"]
         
-        # Create file icon based on type
+        # Determine file type and icon
         file_type = file_info.get("type", "FILE").upper()
         if file_type in ["JPG", "JPEG", "PNG", "GIF"]:
             icon = ft.Icons.IMAGE_ROUNDED
-            icon_color = ft.Colors.GREEN
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.GREEN
         elif file_type in ["PDF"]:
             icon = ft.Icons.PICTURE_AS_PDF_ROUNDED
-            icon_color = ft.Colors.RED
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.RED
         elif file_type in ["DOC", "DOCX", "TXT"]:
             icon = ft.Icons.DESCRIPTION_ROUNDED
-            icon_color = ft.Colors.BLUE
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.BLUE
         elif file_type in ["ZIP", "RAR"]:
             icon = ft.Icons.ARCHIVE_ROUNDED
-            icon_color = ft.Colors.ORANGE
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.ORANGE
         elif file_type in ["MP4", "AVI"]:
             icon = ft.Icons.VIDEO_FILE_ROUNDED
-            icon_color = ft.Colors.PURPLE
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.PURPLE
         elif file_type in ["ICAD", "SLDPRT", "DWG"]:
             icon = ft.Icons.ENGINEERING_ROUNDED
-            icon_color = ft.Colors.TEAL
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.TEAL
         else:
             icon = ft.Icons.INSERT_DRIVE_FILE_ROUNDED
-            icon_color = ft.Colors.GREY_600
+            icon_color = ft.Colors.WHITE
+            badge_color = ft.Colors.GREY_600
         
-        return ft.Container(
-            content=ft.Row([
-                # File name column
-                ft.Container(
-                    content=ft.Row([
-                        ft.Icon(icon, size=16, color=icon_color),
-                        ft.Container(width=6),
-                        ft.Column([
-                            ft.Container(
-                                content=ft.Text(
-                                    file_info["name"], 
-                                    size=12,
-                                    weight=ft.FontWeight.W_500, 
-                                    overflow=ft.TextOverflow.ELLIPSIS,
-                                    max_lines=1,
-                                    no_wrap=True
-                                ),
-                                width=None,
-                            ),
-                            ft.Text(
-                                file_info['size'], 
-                                size=10,
-                                color=ft.Colors.GREY_500,
-                                overflow=ft.TextOverflow.ELLIPSIS,
-                                max_lines=1
-                            ) if file_info.get('size') else ft.Container()
-                        ], spacing=1, alignment=ft.MainAxisAlignment.CENTER, tight=True)
-                    ], alignment=ft.MainAxisAlignment.START, tight=True),
-                    expand=4,
-                    alignment=ft.alignment.center_left
-                ),
-                
-                # Date modified column
-                ft.Container(
-                    content=ft.Text(
-                        file_info["date_modified"], 
-                        size=10,
-                        text_align=ft.TextAlign.CENTER,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                        max_lines=1,
-                        no_wrap=True
-                    ),
-                    expand=3,
-                    alignment=ft.alignment.center
-                ),
-                
-                # Type badge column
-                ft.Container(
-                    content=ft.Container(
-                        content=ft.Text(
-                            file_info["type"], 
-                            size=9,
-                            color=ft.Colors.WHITE,
-                            text_align=ft.TextAlign.CENTER
-                        ),
-                        bgcolor=icon_color,
-                        padding=ft.padding.symmetric(horizontal=8, vertical=4),
-                        border_radius=6,
-                        height=32,
-                        alignment=ft.alignment.center,
-                        width=80,
-                    ),
-                    expand=1,
-                    alignment=ft.alignment.center
-                ),
-                
-                # Actions column - Submit or Delete
-                ft.Container(
-                    content=ft.Row([
-                        ft.ElevatedButton(
-                           content=ft.Row([
-                        ft.Icon(ft.Icons.SEND if not is_submitted else ft.Icons.CHECK, size=16),
-                        ft.Text("Submit" if not is_submitted else "Submitted", size=12)
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                    
-                    on_click=lambda e, filename=file_info["name"]: self.show_submit_dialog(filename) if not is_submitted else None,
-                    disabled=is_submitted,
-                    bgcolor=ft.Colors.GREEN_100 if not is_submitted else ft.Colors.GREY_100,
-                    color=ft.Colors.GREEN_700 if not is_submitted else ft.Colors.GREY_500,
-                    height=36,
-                    width=100,
-                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12))
-                        ),
-                        ft.Container(width=5),
-                        ft.ElevatedButton(
-                            "Delete",
-                            icon=ft.Icons.DELETE_OUTLINE_ROUNDED,
-                            on_click=lambda e, filename=file_info["name"]: self.show_delete_confirmation(
-                                filename, 
-                                self.file_service, 
-                                self.rebuild_files_table_completely
-                            ),
-                            bgcolor=ft.Colors.RED_50,
-                            color=ft.Colors.RED_700,
-                            height=32,
-                            width=85
-                        )
-                    ], spacing=10),
-                    expand=2,
-                    alignment=ft.alignment.center
-                )
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, tight=True),
-            padding=ft.padding.symmetric(horizontal=15, vertical=8),
-            border=ft.border.only(bottom=ft.BorderSide(1, ft.Colors.GREY_200)),
-            height=60
+        # Build the card components step by step
+        file_icon = ft.Container(
+            content=ft.Icon(icon, color=icon_color, size=24),
+            bgcolor=badge_color,
+            width=50,
+            height=50,
+            border_radius=8,
+            alignment=ft.alignment.center
         )
+        
+        file_name_text = ft.Text(
+            file_info["name"], 
+            size=14,
+            weight=ft.FontWeight.W_500, 
+            overflow=ft.TextOverflow.ELLIPSIS,
+            max_lines=1
+        )
+        
+        file_size_text = ft.Text(
+            file_info.get('size', ''), 
+            size=12,
+            color=ft.Colors.GREY_600
+        )
+        
+        file_info_column = ft.Column(
+            controls=[file_name_text, file_size_text],
+            spacing=2, 
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+        
+        file_info_container = ft.Container(
+            content=file_info_column,
+            expand=True,
+            alignment=ft.alignment.center_left,
+            on_click=lambda e, fn=file_info["name"]: self.open_file(fn),
+            ink=True,
+            border_radius=8,
+            padding=ft.padding.symmetric(horizontal=5, vertical=5),
+            tooltip=f"Click to open '{file_info['name']}'"
+        )
+        
+        # Submission status - show different statuses based on admin decision
+        submission_status_controls = []
+
+        # Approved status
+        if is_approved:
+            submission_status_controls.append(ft.Row([
+                ft.Icon(ft.Icons.VERIFIED, color=ft.Colors.GREEN, size=16),
+                ft.Text("Approved by admin", size=12, color=ft.Colors.GREEN, weight=ft.FontWeight.BOLD)
+            ], spacing=5))
+
+        # Rejected status
+        elif is_rejected:
+            submission_status_controls.append(ft.Row([
+                ft.Icon(ft.Icons.CANCEL, color=ft.Colors.RED, size=16),
+                ft.Text("Rejected by admin", size=12, color=ft.Colors.RED, weight=ft.FontWeight.BOLD)
+            ], spacing=5))
+
+        # Changes requested status
+        elif needs_changes:
+            submission_status_controls.append(ft.Row([
+                ft.Icon(ft.Icons.EDIT, color=ft.Colors.ORANGE, size=16),
+                ft.Text("Changes requested", size=12, color=ft.Colors.ORANGE, weight=ft.FontWeight.BOLD)
+            ], spacing=5))
+
+        # Pending approval status
+        elif is_pending:
+            submission_status_controls.append(ft.Row([
+                ft.Icon(ft.Icons.SCHEDULE, color=ft.Colors.BLUE, size=16),
+                ft.Text("Pending approval", size=12, color=ft.Colors.BLUE, weight=ft.FontWeight.BOLD)
+            ], spacing=5))
+
+        # Original submitted status (fallback)
+        elif is_submitted:
+            submission_status_controls.append(ft.Row([
+                ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=16),
+                ft.Text("Submitted for approval", size=12, color=ft.Colors.GREEN, italic=True)
+            ], spacing=5))
+
+        # Create the submission status container
+        if submission_status_controls:
+            submission_status = ft.Container(
+                content=submission_status_controls[0],
+                visible=True
+            )
+        else:
+            submission_status = ft.Container()
+        
+        # Submit button with event stopping - UPDATED LOGIC FOR ADMIN APPROVAL
+        def handle_submit_click(e, fn=file_info["name"]):
+            e.control.page.update()  # Stop event propagation
+            if not is_submitted or is_rejected or needs_changes:
+                self.show_submit_dialog(fn)
+        
+        submit_button = ft.ElevatedButton(
+            content=ft.Row([
+                ft.Icon(ft.Icons.SEND if not is_submitted or is_rejected or needs_changes else ft.Icons.CHECK, size=16),
+                ft.Text("Submit" if not is_submitted or is_rejected or needs_changes else "Submitted", size=12)
+            ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+            on_click=handle_submit_click,
+            disabled=is_submitted and not is_rejected and not needs_changes,
+            bgcolor=ft.Colors.GREEN_100 if not is_submitted or is_rejected or needs_changes else ft.Colors.GREY_100,
+            color=ft.Colors.GREEN_700 if not is_submitted or is_rejected or needs_changes else ft.Colors.GREY_500,
+            height=35,
+            width=100,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=8),
+                elevation=0
+            ),
+            visible=not is_approved  # Hide submit button if already approved
+        )
+        
+        # Delete button with event stopping
+        def handle_delete_click(e, fn=file_info["name"]):
+            e.control.page.update()  # Stop event propagation
+            self.show_delete_confirmation(fn, self.file_service, self.rebuild_files_list_completely)
+        
+        delete_button = ft.ElevatedButton(
+            content=ft.Row([
+                ft.Icon(ft.Icons.DELETE_OUTLINE, size=16),
+                ft.Text("Delete", size=12)
+            ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+            on_click=handle_delete_click,
+            bgcolor=ft.Colors.RED_50,
+            color=ft.Colors.RED_700,
+            height=35,
+            width=90,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=8),
+                elevation=0
+            )
+        )
+        
+        # Action buttons container that prevents click-through
+        action_buttons_container = ft.Container(
+            content=ft.Row(
+                controls=[submit_button, ft.Container(width=10), delete_button] if not is_approved else [ft.Container(width=110), delete_button],
+                spacing=0
+            ),
+            # This container will absorb clicks and prevent them from reaching the parent
+            on_click=lambda e: None,  # Absorb the click event
+            ink=False  # Remove ink effect for this container
+        )
+        
+        # Main content row
+        main_row = ft.Row([
+            file_icon,
+            ft.Container(width=15),
+            file_info_container,
+            submission_status,
+            ft.Container(width=15),
+            action_buttons_container
+        ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+        
+        # Final container - removed the on_click and tooltip from here to prevent conflicts
+        card_container = ft.Container(
+            content=main_row,
+            padding=ft.padding.all(20),
+            margin=ft.margin.only(bottom=10),
+            bgcolor=ft.Colors.WHITE,
+            border=ft.border.all(1, ft.Colors.GREY_200),
+            border_radius=12,
+            shadow=ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=4,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            ),
+            ink=False
+        )
+        
+        return card_container
     
     def create_empty_state(self):
         """Create empty state when no files are present"""
@@ -561,9 +828,15 @@ class FilesView:
             height=300
         )
     
-    def create_files_table(self):
-        """Create the files table with simplified, more reliable structure"""
+    def create_files_list(self):
+        """Create the files list with card-based design - separated by submission status with newest files first"""
         files = self.file_service.get_files()
+        
+        # Sort files by timestamp (newest first)
+        files = self.sort_files_by_date(files)
+        
+        # Separate files by submission status
+        not_submitted_files, submitted_files = self.separate_files_by_submission_status(files)
         
         file_count = len(files)
         total_size = self.calculate_total_size_immediately(files) if files else 0
@@ -573,14 +846,50 @@ class FilesView:
         
         self.file_count_text_ref = ft.Text(file_count_text, size=12, color=ft.Colors.GREY_600)
         
-        file_rows = []
+        file_cards = []
         if files:
-            for file in files:
-                file_rows.append(self.create_file_row(file))
+            # Add "Not Submitted" section if there are unsubmitted files
+            if not_submitted_files:
+                # Section header for not submitted files
+                section_header = ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.UPLOAD_FILE, color=ft.Colors.BLUE, size=20),
+                        ft.Text("Not Submitted", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE),
+                        ft.Text(f"({len(not_submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                    ], spacing=8),
+                    margin=ft.margin.only(bottom=10, top=5)
+                )
+                file_cards.append(section_header)
+                
+                # Add not submitted file cards
+                for file in not_submitted_files:
+                    file_cards.append(self.create_file_card(file))
+            
+            # Add spacing between sections if both exist
+            if not_submitted_files and submitted_files:
+                spacing = ft.Container(height=20)
+                file_cards.append(spacing)
+            
+            # Add "Submitted" section if there are submitted files
+            if submitted_files:
+                # Section header for submitted files
+                section_header = ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=20),
+                        ft.Text("Submitted for Approval", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN),
+                        ft.Text(f"({len(submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                    ], spacing=8),
+                    margin=ft.margin.only(bottom=10, top=5)
+                )
+                file_cards.append(section_header)
+                
+                # Add submitted file cards
+                for file in submitted_files:
+                    file_cards.append(self.create_file_card(file))
         else:
-            file_rows.append(self.create_empty_state())
+            file_cards.append(self.create_empty_state())
         
-        scrollable_content = ft.Column(file_rows, spacing=0)
+        scrollable_content = ft.Column(file_cards, spacing=0)
         self.files_scrollable_container_ref = ft.Container(
             content=scrollable_content,
             expand=True
@@ -604,56 +913,22 @@ class FilesView:
                     )
                 )
             ]),
-            margin=ft.margin.only(bottom=15)
+            margin=ft.margin.only(bottom=20)
         )
         
         main_files_column = ft.Column([
             header_container,
             
+            # Files list container
             ft.Container(
                 content=ft.Column([
-                    # Table header
-                    ft.Container(
-                        content=ft.Row([
-                            ft.Container(
-                                content=ft.Text("File", color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD, size=12),
-                                expand=4,
-                                alignment=ft.alignment.center_left,
-                                padding=ft.padding.only(left=22)
-                            ),
-                            ft.Container(
-                                content=ft.Text("Modified", color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD, size=12),
-                                expand=3,
-                                alignment=ft.alignment.center
-                            ),
-                            ft.Container(
-                                content=ft.Text("Type", color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD, size=12),
-                                expand=1,
-                                alignment=ft.alignment.center
-                            ),
-                            ft.Container(
-                                content=ft.Text("Actions", color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD, size=12),
-                                expand=2,
-                                alignment=ft.alignment.center
-                            )
-                        ], tight=True),
-                        bgcolor=ft.Colors.GREY_700,
-                        padding=ft.padding.symmetric(horizontal=15, vertical=10),
-                    ),
-                    
-                    # DIRECT SCROLLABLE CONTAINER
-                    ft.Container(
-                        content=ft.Column([
-                            self.files_scrollable_container_ref
-                        ], scroll=ft.ScrollMode.AUTO),
-                        expand=True,
-                        width=None
-                    )
-                ], expand=True),
-                bgcolor=ft.Colors.WHITE,
-                border=ft.border.all(1, ft.Colors.GREY_300),
-                border_radius=8,
-                expand=True
+                    self.files_scrollable_container_ref
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
+                expand=True,
+                bgcolor=ft.Colors.GREY_50,
+                padding=ft.padding.all(15),
+                border_radius=12,
+                border=ft.border.all(1, ft.Colors.GREY_200)
             )
         ], expand=True)
         
@@ -693,7 +968,7 @@ class FilesView:
                             
                             # Right side - Files content
                             ft.Container(
-                                content=self.create_files_table(),
+                                content=self.create_files_list(),
                                 expand=True
                             )
                         ], alignment=ft.MainAxisAlignment.START, 
