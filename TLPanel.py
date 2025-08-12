@@ -5,8 +5,7 @@ from utils.session_logger import log_logout
 
 def TLPanel(page: ft.Page, username: str):
     page.title = "KMTI Data Management System Team Leader"
-    page.bgcolor = ft.Colors.WHITE
-    page.scroll = ft.ScrollMode.AUTO
+    page.bgcolor = ft.Colors.GREY_100
     page.padding = 0
 
     content = ft.Column(expand=True, spacing=0)

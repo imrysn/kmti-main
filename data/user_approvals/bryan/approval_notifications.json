@@ -1,6 +1,16 @@
 [
   {
     "type": "status_update",
+    "filename": "kmti_logo.png",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-12T11:54:48.150324",
+    "read": false
+  },
+  {
+    "type": "status_update",
     "filename": "Placement - Copy.pdf",
     "old_status": "pending",
     "new_status": "approved",

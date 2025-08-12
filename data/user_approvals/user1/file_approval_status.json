@@ -100,5 +100,69 @@
         "comment": "File submitted for approval"
       }
     ]
+  },
+  "003.JPG": {
+    "file_id": "b4745ab1-0244-41a1-b746-05f42b2f39c5",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T11:01:41.987096",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T11:01:41.987112",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "002.JPG": {
+    "file_id": "3324cd92-dfa1-4ea3-9276-d26554f9ebaa",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T11:01:43.577420",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T11:01:43.577429",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "2911 problem 01.jpg": {
+    "file_id": "4195f59c-8f29-4f18-b26c-1de0017f3c88",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T11:01:45.417518",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T11:01:45.417526",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "2911 problem 02.jpg": {
+    "file_id": "a4ece2dd-fb63-4b15-bf5f-f41e8ae9bcf4",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T11:01:46.895456",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T11:01:46.895473",
+        "comment": "File submitted for approval"
+      }
+    ]
   }
 }
