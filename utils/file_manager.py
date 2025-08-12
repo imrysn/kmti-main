@@ -1,8 +1,3 @@
-"""
-Enhanced file_manager.py - Adds security and performance to your existing file operations.
-Maintains backward compatibility with your existing save_file function.
-"""
-
 import shutil
 import os
 import re
@@ -80,18 +75,6 @@ class SecureFileManager:
         return filename
     
     def sanitize_user_id(self, user_id: str) -> str:
-        """
-        Sanitize user ID for secure file operations.
-        
-        Args:
-            user_id: User identifier
-            
-        Returns:
-            Sanitized user ID
-            
-        Raises:
-            SecurityError: If user ID is invalid
-        """
         if not user_id or not isinstance(user_id, str):
             raise SecurityError("Invalid user ID provided")
         
@@ -106,18 +89,6 @@ class SecureFileManager:
         return user_id
     
     def validate_file_path(self, file_path: str | Path) -> Path:
-        """
-        Validate that file path is within allowed directories.
-        
-        Args:
-            file_path: File path to validate
-            
-        Returns:
-            Validated Path object
-            
-        Raises:
-            SecurityError: If path is outside allowed directories
-        """
         try:
             path = Path(file_path).resolve()
             
@@ -131,20 +102,6 @@ class SecureFileManager:
             raise SecurityError(f"Invalid file path: {file_path}") from e
     
     def secure_save_file(self, file, dest_folder: str, user_id: str = None) -> bool:
-        """
-        Enhanced version of save_file with security validation.
-        
-        Args:
-            file: File object to save
-            dest_folder: Destination folder path
-            user_id: Optional user ID for additional validation
-            
-        Returns:
-            True if file saved successfully
-            
-        Raises:
-            SecurityError: If security validation fails
-        """
         try:
             # Validate and sanitize inputs
             safe_filename = self.sanitize_filename(file.name)
@@ -186,17 +143,6 @@ class SecureFileManager:
     
     @lru_cache(maxsize=100)
     def resolve_file_path(self, user_id: str, file_id: str, filename: str) -> Optional[Path]:
-        """
-        Efficiently resolve file path with caching.
-        
-        Args:
-            user_id: User identifier
-            file_id: Unique file identifier
-            filename: Original filename
-            
-        Returns:
-            Resolved Path if found, None otherwise
-        """
         cache_key = f"{user_id}:{file_id}:{filename}"
         
         if cache_key in self._path_cache:
@@ -234,15 +180,6 @@ class SecureFileManager:
         return None
     
     def safe_file_exists(self, file_path: str | Path) -> bool:
-        """
-        Safely check if file exists within allowed directories.
-        
-        Args:
-            file_path: Path to check
-            
-        Returns:
-            True if file exists and is accessible
-        """
         try:
             validated_path = self.validate_file_path(file_path)
             return validated_path.exists() and validated_path.is_file()
@@ -253,18 +190,6 @@ class SecureFileManager:
             return False
     
     def safe_read_file(self, file_path: str | Path) -> Optional[bytes]:
-        """
-        Safely read file content with validation.
-        
-        Args:
-            file_path: Path to file
-            
-        Returns:
-            File content as bytes, or None if failed
-            
-        Raises:
-            SecurityError: If security validation fails
-        """
         validated_path = self.validate_file_path(file_path)
         
         if not validated_path.exists():
@@ -287,15 +212,6 @@ class SecureFileManager:
             raise SecurityError(f"Permission denied reading file: {file_path}")
     
     def get_safe_download_path(self, filename: str) -> Path:
-        """
-        Get safe path for downloaded files.
-        
-        Args:
-            filename: Original filename
-            
-        Returns:
-            Safe download path
-        """
         safe_filename = self.sanitize_filename(filename)
         
         # Try user's Downloads folder first
@@ -308,15 +224,7 @@ class SecureFileManager:
         return downloads_dir / safe_filename
     
     def bulk_file_check(self, file_requests: List[Dict]) -> Dict[str, bool]:
-        """
-        Check existence of multiple files efficiently.
-        
-        Args:
-            file_requests: List of dicts with 'user_id', 'file_id', 'filename'
-            
-        Returns:
-            Dict mapping request keys to existence status
-        """
+
         results = {}
         
         for request in file_requests:
@@ -376,10 +284,7 @@ def get_file_manager() -> SecureFileManager:
 
 # Backward compatibility wrapper that adds security to your existing function
 def secure_save_file_wrapper(file, dest_folder, user_id=None):
-    """
-    Wrapper around your existing save_file with added security.
-    Drop-in replacement that adds validation.
-    """
+
     try:
         file_manager = get_file_manager()
         return file_manager.secure_save_file(file, dest_folder, user_id)
@@ -388,7 +293,5 @@ def secure_save_file_wrapper(file, dest_folder, user_id=None):
         raise
     except Exception as e:
         logger.error(f"Error in save_file: {e}")
-        # Fallback to your original function if security validation fails
-        # (You can remove this fallback if you want strict security)
         save_file(file, dest_folder)
         return True

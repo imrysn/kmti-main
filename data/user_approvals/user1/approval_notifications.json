@@ -1,6 +1,16 @@
 [
   {
     "type": "status_update",
+    "filename": "dialog.py",
+    "old_status": "pending",
+    "new_status": "rejected",
+    "admin_id": "kusakabe",
+    "comment": "Not detailed",
+    "timestamp": "2025-08-12T14:53:34.313136",
+    "read": false
+  },
+  {
+    "type": "status_update",
     "filename": "data_management.py",
     "old_status": "pending",
     "new_status": "approved",

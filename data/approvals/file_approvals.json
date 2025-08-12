@@ -510,26 +510,6 @@
     "approved_date": "2025-08-08T10:07:16.022461",
     "last_updated": "2025-08-08T10:07:16.022468"
   },
-  "e6957597-3339-42e9-87ad-fc8029eaa40b": {
-    "file_id": "e6957597-3339-42e9-87ad-fc8029eaa40b",
-    "original_filename": "dialog.py",
-    "user_id": "user1",
-    "user_team": "KUSAKABE",
-    "file_size": 1507,
-    "submission_date": "2025-08-12T10:40:08.757032",
-    "status": "pending",
-    "description": "",
-    "tags": [],
-    "admin_comments": [],
-    "status_history": [
-      {
-        "status": "pending",
-        "timestamp": "2025-08-12T10:40:08.757041",
-        "comment": "File submitted for approval"
-      }
-    ],
-    "file_path": "data/uploads/user1\\dialog.py"
-  },
   "b4745ab1-0244-41a1-b746-05f42b2f39c5": {
     "file_id": "b4745ab1-0244-41a1-b746-05f42b2f39c5",
     "original_filename": "003.JPG",
