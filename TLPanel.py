@@ -7,41 +7,45 @@ def TLPanel(page: ft.Page, username: str):
     page.title = "KMTI Data Management System Team Leader"
     page.bgcolor = ft.Colors.WHITE
     page.scroll = ft.ScrollMode.AUTO
-    page.padding = 0  # remove page padding/margin
+    page.padding = 0
 
-    # Main content container
     content = ft.Column(expand=True, spacing=0)
-
-    # Navbar (full width at top, no margin)
-    navbar = ft.Container(
-        bgcolor=ft.Colors.GREY_800,
-        padding=10,
-        margin=0,  # ensure no extra margin
-        content=ft.Row(
-            [
-                ft.Container(expand=True),
-                ft.TextButton(
-                    content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
-                    on_click=lambda e: on_logout(),
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.END,
-        ),
-    )
-
-    # Add navbar + content to page first
-    page.add(navbar, content)
 
     # --- Logout function ---
     def on_logout():
-        from login_window import clear_session  # avoid circular import
+        from login_window import clear_session
         log_logout(username, "TEAM LEADER")
         clear_session(username)
         page.clean()
         from login_window import login_view
         login_view(page)
 
-    # --- Show File Approval Panel ---
+    # Navbar (only right section)
+    navbar = ft.Container(
+        bgcolor=ft.Colors.GREY_800,
+        padding=10,
+        margin=0,
+        content=ft.Row(
+            controls=[
+                ft.Container(expand=True),  # pushes right section to edge
+                ft.Row(
+                    controls=[
+                        ft.Text(f"Hi, {username}", size=16, color=ft.Colors.WHITE),
+                        ft.TextButton(
+                            content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
+                            on_click=lambda e: on_logout(),
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                    spacing=20,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+    )
+
+    # Show File Approval Panel
     def show_file_approval():
         content.controls.clear()
         try:
@@ -58,4 +62,5 @@ def TLPanel(page: ft.Page, username: str):
             )
         content.update()
 
+    page.add(navbar, content)
     show_file_approval()
