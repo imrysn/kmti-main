@@ -1,0 +1,23 @@
+{
+  "username": "kusakabe",
+  "email": "kusakabe@gmail.com",
+  "full_name": "Kusakabe",
+  "bio": "",
+  "location": "",
+  "phone": "",
+  "website": "",
+  "avatar_path": "",
+  "created_date": "2025-08-12T10:18:00.070435",
+  "last_modified": "2025-08-12T10:18:00.070449",
+  "preferences": {
+    "theme": "light",
+    "language": "en",
+    "notifications": true,
+    "file_upload_limit": 10
+  },
+  "stats": {
+    "files_uploaded": 0,
+    "total_storage_used": 0,
+    "last_login": "2025-08-12T10:18:00.070445"
+  }
+}

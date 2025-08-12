@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 from utils.config_loader import get_base_dir
 from utils.dialog import show_confirm_dialog
-from admin.details_pane import DetailsPane
+from admin.components.details_pane import DetailsPane
 
 BASE_DIR = get_base_dir()
 global_file_index = []
