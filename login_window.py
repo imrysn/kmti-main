@@ -150,9 +150,8 @@ def check_existing_session(page: ft.Page):
     _, session_data = best
     username = session_data.get("username")
     role = session_data.get("role", "")
-    panel = session_data.get("panel")  # 'admin' or 'user' if present
+    panel = session_data.get("panel")  
 
-    # prefer explicit panel saved in session; otherwise fallback to role
     try:
         if panel:
             panel = panel.lower()
@@ -163,7 +162,6 @@ def check_existing_session(page: ft.Page):
             print(f"[DEBUG] Auto-restored session for {username} -> panel={panel}")
             return True
         else:
-            # fallback by role
             if isinstance(role, str) and role.upper() == "ADMIN":
                 admin_panel(page, username)
             else:

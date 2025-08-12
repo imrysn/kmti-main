@@ -6,8 +6,8 @@ from utils.dialog import show_center_sheet
 from fpdf import FPDF
 import pathlib
 
-USERS_FILE = "data/users.json"
-ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
+ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 BACKGROUND = ft.Colors.GREY_100
 PANEL_COLOR = "#FFFFFF"
 PANEL_RADIUS = 14
@@ -168,7 +168,7 @@ def activity_logs(content: ft.Column, username: str):
         refresh_table()
 
     # Ensure default export directory
-    default_export_dir = pathlib.Path("data/export")
+    default_export_dir = pathlib.Path(r"\\KMTI-NAS\Shared\data\export")
     default_export_dir.mkdir(parents=True, exist_ok=True)
 
     # File picker (still appended in case needed later)

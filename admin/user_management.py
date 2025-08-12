@@ -289,11 +289,11 @@ def user_management(content: ft.Column, username: Optional[str]):
         refresh_table()
 
     def go_to_add_user(e):
-        from admin.add_user import add_user_page
+        from admin.components.add_user import add_user_page
         add_user_page(content, content.page, username)
 
     def go_to_reset_password(e):
-        from admin.reset_password import reset_password_page
+        from admin.components.reset_password import reset_password_page
         reset_password_page(content, content.page, username)
 
     buttons_row = ft.Row(
