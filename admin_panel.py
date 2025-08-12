@@ -3,24 +3,19 @@ import json
 import os
 from datetime import datetime
 from typing import Optional
-
 from utils.session_logger import log_logout, log_activity
 from admin.components.navbar import create_navbar
 from admin.data_management import data_management
 from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
-from utils.session_manager import save_session, clear_session  # centralized session funcs
+from user.user_panel import save_session, clear_session  # reuse session funcs
 from admin.components.file_approval_panel import FileApprovalPanel
 
 USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 ACTIVITY_METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
-
-# Patch here:
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SESSION_ROOT = os.path.join(BASE_DIR, "session")
-os.makedirs(SESSION_ROOT, exist_ok=True)
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"  
 
 def load_json(path, default):
     if not os.path.exists(path):

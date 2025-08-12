@@ -5,10 +5,10 @@ import hashlib
 from utils.auth import validate_login
 from admin_panel import admin_panel
 from user.user_panel import user_panel
+from TLPanel import TLPanel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from utils.session_logger import log_login
 from datetime import datetime
-
 
 # -------------------------
 # Utility Functions
@@ -19,7 +19,6 @@ def hash_password(password: str | None) -> str:
         return ""
     return hashlib.sha256(password.encode()).hexdigest()
 
-
 def load_saved_credentials():
     if os.path.exists("data/remember_me.json"):
         try:
@@ -28,7 +27,6 @@ def load_saved_credentials():
         except Exception:
             return {}
     return {}
-
 
 def reset_runtime_start(username: str):
     """Reset runtime_start to now for the given username."""
@@ -53,11 +51,9 @@ def reset_runtime_start(username: str):
     except Exception:
         pass
 
-
 def safe_username_for_file(username: str) -> str:
     """Return a filename-safe username."""
     return "".join(c for c in (username or "") if c.isalnum() or c in ("-", "_")).strip() or "user"
-
 
 # -------------------------
 # Session functions
@@ -65,12 +61,7 @@ def safe_username_for_file(username: str) -> str:
 
 SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"
 
-
 def save_session(username: str, role: str, panel: str):
-    """
-    Save session per user including which panel was opened and login_time.
-    panel should be 'admin' or 'user'.
-    """
     safe_name = safe_username_for_file(username)
     user_session_dir = os.path.join(SESSION_ROOT, safe_name)
     os.makedirs(user_session_dir, exist_ok=True)
@@ -88,9 +79,7 @@ def save_session(username: str, role: str, panel: str):
     except Exception as ex:
         print(f"[DEBUG] save_session error: {ex}")
 
-
 def clear_session(username: str):
-    """Clear session per user (on explicit logout)."""
     safe_name = safe_username_for_file(username)
     session_file = os.path.join(SESSION_ROOT, safe_name, "session.json")
     try:
@@ -100,9 +89,7 @@ def clear_session(username: str):
     except Exception as ex:
         print(f"[DEBUG] clear_session error: {ex}")
 
-
 def _read_session_file(path: str) -> dict | None:
-    """Safely read a session file and return dict or None."""
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -110,16 +97,11 @@ def _read_session_file(path: str) -> dict | None:
         print(f"[DEBUG] Failed to read session file {path}: {e}")
         return None
 
-
 def check_existing_session(page: ft.Page):
-    """
-    Find the most-recent session file under session/*/session.json and open its recorded panel.
-    Returns True if it opened a panel, False otherwise.
-    """
     if not os.path.exists(SESSION_ROOT):
         return False
 
-    best = None  # tuple (timestamp, data)
+    best = None
     for user_folder in os.listdir(SESSION_ROOT):
         session_file = os.path.join(SESSION_ROOT, user_folder, "session.json")
         if not os.path.exists(session_file):
@@ -128,7 +110,6 @@ def check_existing_session(page: ft.Page):
         if not isinstance(data, dict):
             continue
 
-        # prefer explicit login_time in session, else file mtime
         login_time = None
         if "login_time" in data:
             try:
@@ -149,29 +130,24 @@ def check_existing_session(page: ft.Page):
 
     _, session_data = best
     username = session_data.get("username")
-    role = session_data.get("role", "")
-    panel = session_data.get("panel")  
+    role = (session_data.get("role") or "").upper()
+    panel = session_data.get("panel", "").lower()
 
     try:
-        if panel:
-            panel = panel.lower()
-            if panel == "admin":
+        if panel == "admin":
+            if role == "ADMIN":
                 admin_panel(page, username)
+            elif role == "TEAM LEADER":
+                TLPanel(page, username) 
             else:
-                user_panel(page, username)
-            print(f"[DEBUG] Auto-restored session for {username} -> panel={panel}")
-            return True
+                return False
         else:
-            if isinstance(role, str) and role.upper() == "ADMIN":
-                admin_panel(page, username)
-            else:
-                user_panel(page, username)
-            print(f"[DEBUG] Auto-restored session for {username} by role={role}")
-            return True
+            user_panel(page, username)
+        print(f"[DEBUG] Auto-restored session for {username} (role={role}, panel={panel})")
+        return True
     except Exception as e:
         print(f"[DEBUG] Failed to restore session panel for {username}: {e}")
         return False
-
 
 # -------------------------
 # Login View
@@ -183,7 +159,6 @@ def login_view(page: ft.Page):
     page.horizontal_alignment = CrossAxisAlignment.CENTER
     page.bgcolor = "#D9D9D9"
 
-    # If there's an active session, auto-restore the most recent one
     if check_existing_session(page):
         return
 
@@ -207,27 +182,6 @@ def login_view(page: ft.Page):
     login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500)
     success_snackbar = ft.SnackBar(content=ft.Text("Password remembered successfully!"))
 
-    def auto_login(username_val: str, role: str):
-        """Handle automatic login for shortcut credentials"""
-        # Log login action
-        log_login(username_val, role)
-        reset_runtime_start(username_val)
-        
-        # Clear the page and navigate
-        page.clean()
-        if role == "ADMIN":
-            admin_panel(page, username_val)
-        else:
-            user_panel(page, username_val)
-
-    def check_auto_login(username_val: str):
-        """Check if username matches auto-login shortcuts"""
-        if username_val.lower() == 'user acc':
-            return True, "USER", "user_account"
-        elif username_val.lower() == 'admin':
-            return True, "ADMIN", "admin_account"
-        return False, None, None
-
     def login_action(e):
         nonlocal saved_credentials
         saved_credentials = load_saved_credentials()
@@ -240,17 +194,10 @@ def login_view(page: ft.Page):
         role = validate_login(uname, pwd, is_admin_login)
         error_text.value = ""
 
-        if role in ["ADMIN", "USER"]:
-            if is_admin_login and role != "ADMIN":
-                error_text.value = f"Access denied: This account is for '{role}' only!"
-                page.update()
-                return
-
-            # Log & runtime reset
+        if role in ["ADMIN", "TEAM LEADER", "USER"]:
             log_login(uname, role)
             reset_runtime_start(uname)
 
-            # Remember-me handling
             if remember_me.value:
                 try:
                     os.makedirs("data", exist_ok=True)
@@ -266,19 +213,21 @@ def login_view(page: ft.Page):
                 except Exception as ex:
                     print(f"[DEBUG] remember_me write error: {ex}")
 
-            # Determine which panel we're actually opening right now
-            panel_to_open = "admin" if is_admin_login else "user"
-
-            # Save session including panel and timestamp
             try:
-                save_session(uname, role, panel_to_open)
+                save_session(uname, role, "admin" if is_admin_login else "user")
             except Exception as ex:
                 print(f"[DEBUG] save_session error: {ex}")
 
-            # Navigate to chosen panel
             page.clean()
-            if panel_to_open == "admin":
-                admin_panel(page, uname)
+            if is_admin_login:
+                if role == "ADMIN":
+                    admin_panel(page, uname)
+                elif role == "TEAM LEADER":
+                    TLPanel(page, uname)  # <-- NEW
+                else:
+                    error_text.value = "Access denied: User cannot log in as admin!"
+                    page.update()
+                    return
             else:
                 user_panel(page, uname)
 
@@ -286,23 +235,8 @@ def login_view(page: ft.Page):
             error_text.value = "Invalid credentials!"
             page.update()
 
-    def on_username_submit(e):
-        """Handle Enter key press in username field"""
-        # Check for auto-login shortcuts
-        is_auto, auto_role, auto_username = check_auto_login(username.value)
-        if is_auto:
-            auto_login(auto_username, auto_role)
-        else:
-            # If not auto-login, focus on password field
-            password.focus()
-
-    def on_password_submit(e):
-        """Handle Enter key press in password field"""
-        login_action(e)
-
-    # Add submit handlers to text fields
-    username.on_submit = on_username_submit
-    password.on_submit = on_password_submit
+    username.on_submit = lambda e: password.focus()
+    password.on_submit = login_action
 
     def toggle_login_type(e):
         nonlocal is_admin_login
@@ -312,10 +246,6 @@ def login_view(page: ft.Page):
             "Login as User" if is_admin_login else "Login as Administrator"
         )
         page.update()
-
-    reset_password = ft.Text(
-        "Reset password", color="#000000", weight=FontWeight.W_500, size=12
-    )
 
     login_type_switch = ft.TextButton(
         content=ft.Text("Login as Administrator", color="#000000", size=12),
@@ -351,7 +281,6 @@ def login_view(page: ft.Page):
                                    ft.ControlState.HOVERED: ft.Colors.BLACK}
                         )
                     ),
-                    reset_password,
                     error_text,
                 ],
                 horizontal_alignment=CrossAxisAlignment.CENTER,
@@ -360,18 +289,16 @@ def login_view(page: ft.Page):
         )
     )
 
-    main_column = ft.Column(
-        [
-            ft.Image(src="assets/kmti_logo.png", width=150),
-            ft.Divider(height=30, color="transparent"),
-            login_card,
-            ft.Divider(height=20, color="transparent"),
-            login_type_switch
-        ],
-        horizontal_alignment=CrossAxisAlignment.CENTER,
-        spacing=0
+    page.add(
+        ft.Column(
+            [
+                ft.Image(src="assets/kmti_logo.png", width=150),
+                ft.Divider(height=30, color="transparent"),
+                login_card,
+                ft.Divider(height=20, color="transparent"),
+                login_type_switch
+            ],
+            horizontal_alignment=CrossAxisAlignment.CENTER
+        )
     )
-
-    page.controls.clear()
-    page.add(main_column)
     page.update()

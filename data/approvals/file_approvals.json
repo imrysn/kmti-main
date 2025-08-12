@@ -481,48 +481,6 @@
     "approved_date": "2025-08-08T10:08:13.782248",
     "last_updated": "2025-08-08T10:08:13.782254"
   },
-  "066dba29-cf65-40c8-afa2-121425372747": {
-    "file_id": "066dba29-cf65-40c8-afa2-121425372747",
-    "original_filename": "Parents-Consent-Arino - Copy (2) (1).pdf",
-    "user_id": "risan",
-    "user_team": "IT",
-    "file_size": 310709,
-    "submission_date": "2025-08-07T13:31:37.640782",
-    "status": "pending",
-    "description": "wahhh\n",
-    "tags": [
-      "urgent"
-    ],
-    "admin_comments": [],
-    "status_history": [
-      {
-        "status": "pending",
-        "timestamp": "2025-08-07T13:31:37.640798",
-        "comment": "File submitted for approval"
-      }
-    ],
-    "file_path": "data/uploads/risan\\Parents-Consent-Arino - Copy (2) (1).pdf"
-  },
-  "90b4ef6a-ec70-4584-93d8-f05abaa94f8a": {
-    "file_id": "90b4ef6a-ec70-4584-93d8-f05abaa94f8a",
-    "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
-    "user_id": "bryan",
-    "user_team": "IT",
-    "file_size": 49453,
-    "submission_date": "2025-08-07T17:01:04.261016",
-    "status": "pending",
-    "description": "/\n",
-    "tags": [],
-    "admin_comments": [],
-    "status_history": [
-      {
-        "status": "pending",
-        "timestamp": "2025-08-07T17:01:04.261028",
-        "comment": "File submitted for approval"
-      }
-    ],
-    "file_path": "data/uploads/bryan\\1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx"
-  },
   "f6a2a1ba-1e45-4787-acb1-a52619127c34": {
     "file_id": "f6a2a1ba-1e45-4787-acb1-a52619127c34",
     "original_filename": "1-Student-Internship-MOA-CvSU-Bacoor-CS-Group-and-Individual.docx",
@@ -551,5 +509,47 @@
     "approved_by": "admin",
     "approved_date": "2025-08-08T10:07:16.022461",
     "last_updated": "2025-08-08T10:07:16.022468"
+  },
+  "dee30403-75ca-4a4a-836b-49143f22d561": {
+    "file_id": "dee30403-75ca-4a4a-836b-49143f22d561",
+    "original_filename": "kmti_logo.png",
+    "user_id": "bryan",
+    "user_team": "IT",
+    "file_size": 154477,
+    "submission_date": "2025-08-12T07:32:00.289990",
+    "status": "pending",
+    "description": "Finished the 2D detailing.",
+    "tags": [
+      "2D"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T07:32:00.290013",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/bryan\\kmti_logo.png"
+  },
+  "e6957597-3339-42e9-87ad-fc8029eaa40b": {
+    "file_id": "e6957597-3339-42e9-87ad-fc8029eaa40b",
+    "original_filename": "dialog.py",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 1507,
+    "submission_date": "2025-08-12T10:40:08.757032",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T10:40:08.757041",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\dialog.py"
   }
 }

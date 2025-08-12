@@ -577,5 +577,23 @@
       }
     ],
     "last_updated": "2025-08-11T14:34:34.711307"
+  },
+  "kmti_logo.png": {
+    "file_id": "dee30403-75ca-4a4a-836b-49143f22d561",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T07:31:58.832560",
+    "description": "Finished the 2D detailing.",
+    "tags": [
+      "2D"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T07:31:58.832566",
+        "comment": "File submitted for approval"
+      }
+    ]
   }
 }

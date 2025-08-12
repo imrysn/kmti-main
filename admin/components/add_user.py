@@ -43,9 +43,10 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
     role = ft.Dropdown(
         label="Role",
         width=400,
-        options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
+        options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("TEAM LEADER"), ft.dropdown.Option("USER")],
         value="USER",
     )
+
 
     team_dropdown = ft.Dropdown(
         label="Team",
