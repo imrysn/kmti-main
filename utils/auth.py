@@ -13,7 +13,7 @@ from typing import Optional, Dict, List
 from collections import defaultdict
 
 # Your existing constants - kept unchanged
-USERS_FILE = "data/users.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 # New security constants
 MAX_LOGIN_ATTEMPTS = 5

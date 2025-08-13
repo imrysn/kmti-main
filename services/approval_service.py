@@ -82,7 +82,7 @@ class ApprovalFileService:
     def _get_user_team_cached(self) -> str:
         """Get user's team from users.json with caching"""
         try:
-            users_file = "data/users.json"
+            users_file = r"\\KMTI-NAS\Shared\data\users.json"
             if os.path.exists(users_file):
                 with open(users_file, 'r') as f:
                     users = json.load(f)

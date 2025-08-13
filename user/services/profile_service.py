@@ -10,7 +10,7 @@ class ProfileService:
         self.user_folder = user_folder
         self.username = username
         self.profile_file = os.path.join(user_folder, "profile.json")
-        self.users_file = "data/users.json"  # Main users file
+        self.users_file = r"\\KMTI-NAS\Shared\data\users.json"  # Main users file
         
         # Create user folder if it doesn't exist
         os.makedirs(user_folder, exist_ok=True)

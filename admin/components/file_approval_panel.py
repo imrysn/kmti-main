@@ -216,7 +216,7 @@ class FileApprovalPanel:
 
         try:
             # Use your original file path approach
-            teams_file = "data/teams.json"  # Back to original path
+            teams_file = r"\\KMTI-NAS\Shared\data\teams.json"  # Back to original path
             
             if os.path.exists(teams_file):
                 with open(teams_file, 'r', encoding='utf-8') as f:
@@ -230,7 +230,7 @@ class FileApprovalPanel:
                                 safe_teams.append(self.enhanced_auth.sanitize_username(team))
                             except:
                                 # If sanitization fails, use original team name
-                                safe_teams.append(str(team)[:50])  # Just limit length
+                                safe_teams.append(str.upper(team)[:50])  # Just limit length
                         return safe_teams
                         
                     elif isinstance(teams_data, dict):
@@ -241,7 +241,7 @@ class FileApprovalPanel:
                                 safe_teams.append(self.enhanced_auth.sanitize_username(team_name))
                             except:
                                 # If sanitization fails, use original team name
-                                safe_teams.append(str(team_name)[:50])  # Just limit length
+                                safe_teams.append(str.upper(team_name)[:50])  # Just limit length
                         return safe_teams
             
             # Fallback to permission service teams (your original approach)
@@ -1318,7 +1318,7 @@ class FileApprovalPanel:
             ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
                    text_align=ft.TextAlign.CENTER),
             ft.Container(height=20),
-            ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
+            ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
                    size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)

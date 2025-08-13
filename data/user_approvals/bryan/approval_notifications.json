@@ -1,13 +1,73 @@
 [
   {
     "type": "status_update",
+    "filename": "OJT- Placement.docx",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:55.141016",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:47.369540",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "527683797_800618739150557_1600212760188524706_n.jpg",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:42.680387",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "kmti_logo.png",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:39.020274",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "kmti.ico",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:35.882040",
+    "read": false
+  },
+  {
+    "type": "status_update",
+    "filename": "527683797_800618739150557_1600212760188524706_n (1).jpg",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-12T16:45:34.161406",
+    "read": true
+  },
+  {
+    "type": "status_update",
     "filename": "kmti_logo.png",
     "old_status": "pending",
     "new_status": "approved",
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-12T11:54:48.150324",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",

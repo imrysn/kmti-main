@@ -509,5 +509,27 @@
     "approved_by": "admin",
     "approved_date": "2025-08-08T10:07:16.022461",
     "last_updated": "2025-08-08T10:07:16.022468"
+  },
+  "faccaf1d-a4a6-4328-b013-727559c52127": {
+    "file_id": "faccaf1d-a4a6-4328-b013-727559c52127",
+    "original_filename": "CP97013U01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 504480,
+    "submission_date": "2025-08-13T10:43:00.666939",
+    "status": "pending",
+    "description": "Finished drawing",
+    "tags": [
+      "report"
+    ],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T10:43:00.666946",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP97013U01_PCMU.icd"
   }
 }

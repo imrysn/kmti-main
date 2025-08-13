@@ -1,7 +1,7 @@
 import os
 import json
 
-TEAMS_FILE = "data/teams.json"
+TEAMS_FILE = r"\\KMTI-NAS\Shared\data\teams.json"
 
 DEFAULT_TEAMS = [
     "AGCC", "DAIICHI", "KMTI PJ", "KUSAKABE",

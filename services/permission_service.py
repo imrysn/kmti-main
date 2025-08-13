@@ -6,8 +6,8 @@ class PermissionService:
     """Service to handle permissions and team access for file approvals"""
     
     def __init__(self):
-        self.users_file = "data/users.json"
-        self.permissions_file = "data/permissions.json"
+        self.users_file = r"\\KMTI-NAS\Shared\data\users.json"
+        self.permissions_file = r"\\KMTI-NAS\Shared\data\permissions.json"
     
     def load_users(self) -> Dict:
         """Load users data"""

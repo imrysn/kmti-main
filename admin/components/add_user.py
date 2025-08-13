@@ -6,7 +6,7 @@ import hashlib
 from admin.utils.team_utils import get_team_options
 from utils.session_logger import log_activity
 
-USERS_FILE = "data/users.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 
 def hash_password(password: str) -> str:

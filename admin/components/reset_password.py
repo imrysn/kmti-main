@@ -4,7 +4,7 @@ import os
 import hashlib
 from utils.session_logger import log_activity
 
-USERS_FILE = "data/users.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 
 def reset_password_page(content, page, admin_username):

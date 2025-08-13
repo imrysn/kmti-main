@@ -16,7 +16,7 @@ from admin.components.file_approval_panel import FileApprovalPanel
 USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 ACTIVITY_METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
-SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"  
+SESSION_ROOT = "data/session"  
 
 def load_json(path, default):
     if not os.path.exists(path):

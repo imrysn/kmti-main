@@ -577,5 +577,143 @@
       }
     ],
     "last_updated": "2025-08-11T14:34:34.711307"
+  },
+  "527683797_800618739150557_1600212760188524706_n (1).jpg": {
+    "file_id": "4894ece6-29bc-45bc-8ee5-324d64739980",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-12T16:44:47.048664",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-12T16:44:47.048672",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-12T16:45:34.093714",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-12T16:45:34.093705"
+  },
+  "OJT- Placement.docx": {
+    "file_id": "6bbea25d-9ecf-4dc8-9bcb-ab6101c24e0c",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-13T09:03:51.352642",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T09:03:51.352651",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-13T10:29:55.070949",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-13T10:29:55.070940"
+  },
+  "2 -OJT2025-Trainee-Industry-Agreement-Liability-Waiver.docx": {
+    "file_id": "13993ec4-3c54-4a0f-8a78-a90288ceb9a1",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-13T09:03:54.673996",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T09:03:54.674006",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-13T10:29:47.295395",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-13T10:29:47.295386"
+  },
+  "527683797_800618739150557_1600212760188524706_n.jpg": {
+    "file_id": "efecc041-ae27-4120-8290-13e6502c3ea4",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-13T09:04:00.734332",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T09:04:00.734338",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-13T10:29:42.625672",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-13T10:29:42.625649"
+  },
+  "kmti_logo.png": {
+    "file_id": "bf3d2129-dc7b-4d49-b1aa-fec0151eabc7",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-13T09:04:24.496891",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T09:04:24.496901",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-13T10:29:38.943467",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-13T10:29:38.943458"
+  },
+  "kmti.ico": {
+    "file_id": "f084025b-672d-47a4-85d5-3469c51871b2",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-13T09:04:27.337883",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-13T09:04:27.337890",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-13T10:29:35.865671",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-13T10:29:35.865661"
   }
 }

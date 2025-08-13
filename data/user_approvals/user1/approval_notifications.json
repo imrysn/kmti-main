@@ -1,13 +1,63 @@
 [
   {
     "type": "status_update",
+    "filename": "CP91024U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "kusakabe",
+    "comment": "",
+    "timestamp": "2025-08-13T10:48:05.970102",
+    "read": true
+  },
+  {
+    "type": "status_update",
+    "filename": "CP92010U01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "kusakabe",
+    "comment": "",
+    "timestamp": "2025-08-13T10:48:01.029873",
+    "read": true
+  },
+  {
+    "type": "status_update",
+    "filename": "dialog.py",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:30:03.350105",
+    "read": true
+  },
+  {
+    "type": "status_update",
+    "filename": "HB3P010U01_TRAIP.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:30:00.069212",
+    "read": true
+  },
+  {
+    "type": "status_update",
+    "filename": "2784TRAIP.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-13T10:29:50.494705",
+    "read": true
+  },
+  {
+    "type": "status_update",
     "filename": "dialog.py",
     "old_status": "pending",
     "new_status": "rejected",
     "admin_id": "kusakabe",
     "comment": "Not detailed",
     "timestamp": "2025-08-12T14:53:34.313136",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -17,7 +67,7 @@
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-12T07:43:51.254664",
-    "read": false
+    "read": true
   },
   {
     "type": "approval_status",

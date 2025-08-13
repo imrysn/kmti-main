@@ -5,8 +5,8 @@ import json
 import os
 from utils.session_logger import log_activity
 
-TEAMS_FILE = "data/teams.json"
-CONFIG_FILE = "data/config.json"
+TEAMS_FILE = r"\\KMTI-NAS\Shared\data\teams.json"
+CONFIG_FILE = r"\\KMTI-NAS\Shared\data\config.json"
 
 # ========== Helpers for JSON ==========
 def load_json(path, default):

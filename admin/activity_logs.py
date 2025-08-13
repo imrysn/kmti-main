@@ -76,7 +76,12 @@ def activity_logs(content: ft.Column, username: str):
             if search_text in combined:
                 # Create role badge
                 role = info["role"].upper()
-                role_color = ft.Colors.BLUE if role == "ADMIN" else ft.Colors.GREEN
+                role_color = {
+                                "ADMIN": ft.Colors.RED,
+                                "TEAM LEADER": ft.Colors.BLUE,
+                                "USER": ft.Colors.GREEN
+                            }.get(role, ft.Colors.GREY)
+
                 role_badge = ft.Container(
                     content=ft.Text(role, color=ft.Colors.WHITE, size=10, weight=FontWeight.BOLD),
                     bgcolor=role_color,

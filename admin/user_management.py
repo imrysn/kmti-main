@@ -15,7 +15,7 @@ from utils.dialog import show_center_sheet
 def user_management(content: ft.Column, username: Optional[str]):
     content.controls.clear()
 
-    users_file = "data/users.json"
+    users_file = r"\\KMTI-NAS\Shared\data\users.json"
     edit_mode = {"value": False}
     filter_mode = {"value": "All"}
     runtime_labels = {}
