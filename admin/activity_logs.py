@@ -264,7 +264,7 @@ def activity_logs(content: ft.Column, username: str):
         icon=ft.Icons.UPLOAD_OUTLINED,
         on_click=lambda e: export_logs_action(e),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                      ft.ControlState.HOVERED: ft.Colors.BLUE},
             color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
                    ft.ControlState.HOVERED: ft.Colors.WHITE},
@@ -284,7 +284,7 @@ def activity_logs(content: ft.Column, username: str):
             on_confirm=lambda: clear_logs_action(e),
         ),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                      ft.ControlState.HOVERED: ft.Colors.RED},
             color={ft.ControlState.DEFAULT: ft.Colors.RED,
                    ft.ControlState.HOVERED: ft.Colors.WHITE},

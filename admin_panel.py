@@ -16,7 +16,7 @@ from admin.components.file_approval_panel import FileApprovalPanel
 USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 ACTIVITY_METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
-SESSION_ROOT = "data/session"  
+SESSION_ROOT = "data/sessions"  
 
 def load_json(path, default):
     if not os.path.exists(path):
@@ -152,7 +152,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             icon=ft.Icons.REFRESH,
             on_click=lambda e: show_dashboard(),
             style=ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                          ft.ControlState.HOVERED: ft.Colors.BLUE},
                 color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
                        ft.ControlState.HOVERED: ft.Colors.WHITE},
