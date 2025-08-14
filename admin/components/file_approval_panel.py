@@ -46,7 +46,6 @@ class FileApprovalPanel:
         
         # Get admin details with proper error handling
         self.admin_teams = self._get_admin_teams_safely()
-        self.is_super_admin = self.permission_service.is_super_admin(self.admin_user)
         
         # Initialize UI state
         self.selected_file = None
@@ -546,7 +545,7 @@ class FileApprovalPanel:
                     try:
                         # Get pending files
                         team_pending = self.approval_service.get_pending_files_by_team(
-                            team, self.is_super_admin
+                            team
                         )
                         for file_data in team_pending:
                             pending_files.add(file_data['file_id'])
@@ -602,11 +601,11 @@ class FileApprovalPanel:
     def _get_approved_files_by_team_safe(self, team: str) -> List[Dict]:
         """Safely get approved files with fallback methods"""
         try:
-            return self.approval_service.get_approved_files_by_team(team, self.is_super_admin)
+            return self.approval_service.get_approved_files_by_team(team)
         except AttributeError:
             # Fallback to general method
             try:
-                all_files = self.approval_service.get_all_files_by_team(team, self.is_super_admin)
+                all_files = self.approval_service.get_all_files_by_team(team)
                 return [f for f in all_files if f.get('status') == 'APPROVED']
             except Exception:
                 return []
@@ -614,11 +613,11 @@ class FileApprovalPanel:
     def _get_rejected_files_by_team_safe(self, team: str) -> List[Dict]:
         """Safely get rejected files with fallback methods"""
         try:
-            return self.approval_service.get_rejected_files_by_team(team, self.is_super_admin)
+            return self.approval_service.get_rejected_files_by_team(team)
         except AttributeError:
             # Fallback to general method
             try:
-                all_files = self.approval_service.get_all_files_by_team(team, self.is_super_admin)
+                all_files = self.approval_service.get_all_files_by_team(team)
                 return [f for f in all_files if f.get('status') == 'REJECTED']
             except Exception:
                 return []
@@ -696,7 +695,7 @@ class FileApprovalPanel:
             all_pending = []
             for team in reviewable_teams:
                 try:
-                    team_files = self.approval_service.get_pending_files_by_team(team, self.is_super_admin)
+                    team_files = self.approval_service.get_pending_files_by_team(team)
                     all_pending.extend(team_files)
                 except Exception as team_error:
                     self.enhanced_logger.general_logger.warning(f"Error getting files for team {team}: {team_error}")

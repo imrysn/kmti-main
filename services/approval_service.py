@@ -718,27 +718,22 @@ class FileApprovalService:
             print(f"Error saving comments: {e}")
             return False
     
-    def get_pending_files_by_team(self, team: str, is_super_admin: bool = False) -> List[Dict]:
+    def get_pending_files_by_team(self, team: str) -> List[Dict]:
         """Get pending files for a specific team"""
         queue = self.load_global_queue()
-        pending_files = []
-        
-        for file_id, file_data in queue.items():
-            if file_data.get('status') == 'pending':
-                if is_super_admin or file_data.get('user_team') == team:
-                    pending_files.append(file_data)
-        
+        pending_files = [
+            file_data for file_data in queue.values()
+            if file_data.get('status') == 'pending' and file_data.get('user_team') == team
+        ]
         return pending_files
     
-    def get_all_files_by_team(self, team: str, is_super_admin: bool = False) -> List[Dict]:
+    def get_all_files_by_team(self, team: str) -> List[Dict]:
         """Get all files for a specific team"""
         queue = self.load_global_queue()
-        team_files = []
-        
-        for file_id, file_data in queue.items():
-            if is_super_admin or file_data.get('user_team') == team:
-                team_files.append(file_data)
-        
+        team_files = [
+            file_data for file_data in queue.values()
+            if file_data.get('user_team') == team
+        ]
         return team_files
     
     def approve_file(self, file_id: str, admin_user: str) -> bool:
