@@ -213,55 +213,13 @@ class FileApprovalPanel:
             ])
     
     def _load_teams_safely(self) -> List[str]:
-
+        """Load teams with simplified approach"""
         try:
-            # Use your original file path approach
-            teams_file = r"\\KMTI-NAS\Shared\data\teams.json"  # Back to original path
-            
-            if os.path.exists(teams_file):
-                with open(teams_file, 'r', encoding='utf-8') as f:
-                    teams_data = json.load(f)
-                    
-                    if isinstance(teams_data, list):
-                        # Try to sanitize, but fall back to original if sanitization fails
-                        safe_teams = []
-                        for team in teams_data:
-                            try:
-                                safe_teams.append(self.enhanced_auth.sanitize_username(team))
-                            except:
-                                # If sanitization fails, use original team name
-                                safe_teams.append(str.upper(team)[:50])  # Just limit length
-                        return safe_teams
-                        
-                    elif isinstance(teams_data, dict):
-                        safe_teams = []
-                        for team_key, team_data in teams_data.items():
-                            team_name = team_data.get('name', team_key) if isinstance(team_data, dict) else team_key
-                            try:
-                                safe_teams.append(self.enhanced_auth.sanitize_username(team_name))
-                            except:
-                                # If sanitization fails, use original team name
-                                safe_teams.append(str.upper(team_name)[:50])  # Just limit length
-                        return safe_teams
-            
-            # Fallback to permission service teams (your original approach)
-            reviewable_teams = self.permission_service.get_reviewable_teams(
-                self.admin_user, self.admin_teams)
-            
-            # Try to sanitize reviewable teams, fall back if needed
-            safe_reviewable = []
-            for team in reviewable_teams:
-                try:
-                    safe_reviewable.append(self.enhanced_auth.sanitize_username(team))
-                except:
-                    safe_reviewable.append(str(team)[:50])  # Just limit length
-            
-            return safe_reviewable
-            
+            # Use permission service directly
+            return self.permission_service.get_reviewable_teams(self.admin_user)
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error loading teams: {e}")
-            # Ultimate fallback - return admin teams
-            return [str(team)[:50] for team in self.admin_teams]
+            return ["DEFAULT"]
 
     def _create_filter_bar(self, teams: List[str]) -> ft.Row:
 
@@ -521,19 +479,11 @@ class FileApprovalPanel:
         padding = self.config.get_ui_constant('preview_panel_padding', 15)
         
         # FIXED: Empty state with centered alignment (this is fine for empty state)
-        self.preview_panel_widget = ft.Column([
-            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
-                   text_align=ft.TextAlign.CENTER),
-            ft.Container(height=20),
-            ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
-            ft.Container(height=20),
-            ft.Text("Click on any file in the table to view details and approval options", 
-                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
-        ], 
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Center empty state
-        alignment=ft.MainAxisAlignment.CENTER,  # Center vertically when empty
-        scroll=ft.ScrollMode.AUTO,
-        expand=True
+        self.preview_panel_widget = ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.START,
+            alignment=ft.MainAxisAlignment.START,
+            scroll=ft.ScrollMode.AUTO,
+            expand=True
         )
         
         return ft.Container(
@@ -962,8 +912,8 @@ class FileApprovalPanel:
             self.preview_panel_widget.controls.extend(preview_content)
             
             # FIXED: Change alignment when content is loaded (left-align content)
-            self.preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.START  # Left-align content
-            self.preview_panel_widget.alignment = ft.MainAxisAlignment.START  # Top-align content
+            self.preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.START
+            self.preview_panel_widget.alignment = ft.MainAxisAlignment.START
             
             self.page.update()
             

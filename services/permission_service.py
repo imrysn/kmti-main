@@ -28,9 +28,8 @@ class PermissionService:
         except Exception as e:
             print(f"Error loading permissions: {e}")
         
-        # Return default permissions structure
+        # Return default structure without super_admins
         return {
-            "super_admins": [],
             "team_admins": {},
             "approval_teams": ["KUSAKABE", "MARKETING", "SALES", "DEFAULT"],
             "settings": {
@@ -51,23 +50,14 @@ class PermissionService:
             return False
     
     def is_super_admin(self, username: str) -> bool:
-        """Check if user is a super admin"""
+        """Check if user is an admin (renamed from super_admin)"""
         try:
             users = self.load_users()
-            permissions = self.load_permissions()
-            
-            # Check if explicitly marked as super admin
-            if username in permissions.get("super_admins", []):
-                return True
-            
-            # Check if user has ADMIN role (fallback)
             for email, user_data in users.items():
                 if user_data.get('username') == username:
                     return user_data.get('role', '').upper() == 'ADMIN'
-            
         except Exception as e:
-            print(f"Error checking super admin status: {e}")
-        
+            print(f"Error checking admin status: {e}")
         return False
     
     def is_team_admin(self, username: str, team: str) -> bool:
@@ -98,50 +88,43 @@ class PermissionService:
         
         return ["DEFAULT"]
     
-    def get_reviewable_teams(self, username: str, user_teams: List[str]) -> List[str]:
-        """Get teams that a user can review files for"""
+    def get_reviewable_teams(self, username: str, page=None) -> List[str]:
+        """Get teams that a user can review files for."""
         try:
-            # Super admins can review all teams
+            # Super admin can review all teams
             if self.is_super_admin(username):
                 permissions = self.load_permissions()
-                return permissions.get("approval_teams", ["KUSAKABE", "MARKETING", "SALES", "DEFAULT"])
-            
+                return permissions.get(
+                    "approval_teams",
+                    ["KUSAKABE", "KMTI PJ", "DAIICHI", "WINDSMILE"]
+                )
+
             # Team admins can review their own teams
             reviewable_teams = []
             permissions = self.load_permissions()
             team_admins = permissions.get("team_admins", {})
-            
+
             for team, admins in team_admins.items():
                 if username in admins:
                     reviewable_teams.append(team)
-            
-            # If no specific team admin role, can review own teams
-            if not reviewable_teams:
-                reviewable_teams = user_teams
-            
-            return reviewable_teams
-            
+
+            return reviewable_teams if reviewable_teams else ["DEFAULT"]
+
         except Exception as e:
             print(f"Error getting reviewable teams: {e}")
-        
-        return user_teams or ["DEFAULT"]
+            return ["DEFAULT"]
     
     def can_approve_file(self, username: str, file_team: str) -> bool:
         """Check if user can approve files from a specific team"""
         try:
-            # Super admins can approve all files
             if self.is_super_admin(username):
                 return True
             
             # Get user's reviewable teams
-            user_teams = self.get_user_teams(username)
-            reviewable_teams = self.get_reviewable_teams(username, user_teams)
-            
+            reviewable_teams = self.get_reviewable_teams(username)
             return file_team in reviewable_teams
-            
         except Exception as e:
             print(f"Error checking file approval permission: {e}")
-        
         return False
     
     def add_super_admin(self, username: str) -> bool:
