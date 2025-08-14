@@ -478,11 +478,19 @@ class FileApprovalPanel:
         padding = self.config.get_ui_constant('preview_panel_padding', 15)
         
         # FIXED: Empty state with centered alignment (this is fine for empty state)
-        self.preview_panel_widget = ft.Column(
-            horizontal_alignment=ft.CrossAxisAlignment.START,
-            alignment=ft.MainAxisAlignment.START,
-            scroll=ft.ScrollMode.AUTO,
-            expand=True
+        self.preview_panel_widget = ft.Column([
+            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
+                   text_align=ft.TextAlign.CENTER),
+            ft.Container(height=20),
+            ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
+            ft.Container(height=20),
+            ft.Text("Click on any file in the table to view details and approval options", 
+                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+        ], 
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Center empty state
+        alignment=ft.MainAxisAlignment.CENTER,  # Center vertically when empty
+        scroll=ft.ScrollMode.AUTO,
+        expand=True
         )
         
         return ft.Container(
