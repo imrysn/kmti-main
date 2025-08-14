@@ -1,22 +1,12 @@
-"""
-Complete corrected File Approval Panel with all fixes applied.
-- Fixed missing imports
-- Fixed table responsiveness to consume full parent container
-- Fixed preview section left alignment for file details and Add Comment button
-- Maintains all security and performance enhancements
-"""
-
 import flet as ft
 import json
-import os  # FIXED: Added missing import
+import os 
 import shutil
 import subprocess
 import platform
 from datetime import datetime
 from typing import List, Dict, Optional
 from pathlib import Path
-
-# Import your enhanced utilities
 from utils.config_loader import get_config
 from utils.file_manager import get_file_manager, SecurityError
 from utils.logger import get_enhanced_logger, log_security_event, log_file_operation, log_approval_action, PerformanceTimer
@@ -36,6 +26,13 @@ class FileApprovalPanel:
         self.file_manager = get_file_manager()
         self.enhanced_logger = get_enhanced_logger()
         self.enhanced_auth = get_enhanced_authenticator()
+        self.current_view = "pending"
+
+        # Initialize UI state
+        self.selected_file = None
+        self.files_table = None
+        self.preview_panel_widget = None
+
         
         try:
             # Sanitize admin user input for security
@@ -135,25 +132,22 @@ class FileApprovalPanel:
                 ft.Column([
                     ft.Text("File Approval", size=24, weight=ft.FontWeight.BOLD),
                     ft.Text(f"Managing approvals for: {', '.join(self.admin_teams)}", 
-                           size=16, color=ft.Colors.GREY_600)
+                            size=16, color=ft.Colors.GREY_600)
                 ]),
                 ft.Container(expand=True),
                 ft.Row([
-                    self._create_stat_card("Pending", str(file_counts['pending']), ft.Colors.ORANGE),
+                    self._create_stat_card("Pending", str(file_counts['pending']), ft.Colors.ORANGE, "pending"),
                     ft.Container(width=15),
-                    self._create_stat_card("Approved", str(file_counts['approved']), ft.Colors.GREEN),
+                    self._create_stat_card("Approved", str(file_counts['approved']), ft.Colors.GREEN, "approved"),
                     ft.Container(width=15),
-                    self._create_stat_card("Rejected", str(file_counts['rejected']), ft.Colors.RED)
+                    self._create_stat_card("Rejected", str(file_counts['rejected']), ft.Colors.RED, "rejected")
                 ])
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.only(bottom=10)
         )
-    
-    def _create_stat_card(self, label: str, value: str, color: str) -> ft.Container:
 
-        card_width = self.config.get_ui_constant('stat_card_width', 110)
-        card_height = self.config.get_ui_constant('stat_card_height', 80)
-        
+    
+    def _create_stat_card(self, label: str, value: str, color: str, view_type: str) -> ft.Container:
         return ft.Container(
             content=ft.Column([
                 ft.Text(value, size=24, weight=ft.FontWeight.BOLD, color=color),
@@ -162,10 +156,16 @@ class FileApprovalPanel:
             bgcolor=ft.Colors.WHITE,
             border_radius=10,
             padding=15,
-            width=card_width,
-            height=card_height,
-            alignment=ft.alignment.center
+            width=self.config.get_ui_constant('stat_card_width', 110),
+            height=self.config.get_ui_constant('stat_card_height', 80),
+            alignment=ft.alignment.center,
+            on_click=lambda e: self._switch_table_view(view_type)
         )
+    
+    def _switch_table_view(self, view_type: str):
+        self.current_view = view_type
+        self.refresh_files_table()
+
     
     def _create_filters_section(self) -> ft.Row:
 
@@ -472,6 +472,29 @@ class FileApprovalPanel:
             padding=0
         )
 
+    def _get_filtered_approved_files(self) -> List[Dict]:
+        reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
+        all_approved = []
+        for team in reviewable_teams:
+            try:
+                team_files = self._get_approved_files_by_team_safe(team)
+                all_approved.extend(team_files)
+            except Exception as e:
+                self.enhanced_logger.general_logger.warning(f"Error getting approved files for team {team}: {e}")
+        unique_files = {f['file_id']: f for f in all_approved}
+        return self._apply_current_filters(list(unique_files.values()))
+
+    def _get_filtered_rejected_files(self) -> List[Dict]:
+        reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
+        all_rejected = []
+        for team in reviewable_teams:
+            try:
+                team_files = self._get_rejected_files_by_team_safe(team)
+                all_rejected.extend(team_files)
+            except Exception as e:
+                self.enhanced_logger.general_logger.warning(f"Error getting rejected files for team {team}: {e}")
+        unique_files = {f['file_id']: f for f in all_rejected}
+        return self._apply_current_filters(list(unique_files.values()))
     
     def _get_table_columns(self) -> List[ft.DataColumn]:
         size_category = self._get_container_size_category()
@@ -557,54 +580,74 @@ class FileApprovalPanel:
         )
     
     def _get_file_counts_safely(self) -> Dict[str, int]:
-        """Get file counts with comprehensive error handling"""
+        """Get file counts with comprehensive error handling and update stat cards if present"""
         try:
             with PerformanceTimer("FileApprovalPanel", "get_file_counts"):
                 # Get reviewable teams for this admin
                 reviewable_teams = self.permission_service.get_reviewable_teams(
-                    self.admin_user, self.admin_teams)
-                
+                    self.admin_user, self.admin_teams
+                )
+
                 pending_files = set()
                 approved_files = set()
                 rejected_files = set()
-                
+
                 for team in reviewable_teams:
                     try:
                         # Get pending files
                         team_pending = self.approval_service.get_pending_files_by_team(
-                            team, self.is_super_admin)
+                            team, self.is_super_admin
+                        )
                         for file_data in team_pending:
                             pending_files.add(file_data['file_id'])
-                        
-                        # Get approved files with fallback methods
+
+                        # Get approved files
                         team_approved = self._get_approved_files_by_team_safe(team)
                         for file_data in team_approved:
                             approved_files.add(file_data['file_id'])
-                        
-                        # Get rejected files with fallback methods
+
+                        # Get rejected files
                         team_rejected = self._get_rejected_files_by_team_safe(team)
                         for file_data in team_rejected:
                             rejected_files.add(file_data['file_id'])
-                            
+
                     except Exception as team_error:
-                        self.enhanced_logger.general_logger.warning(f"Error getting files for team {team}: {team_error}")
+                        self.enhanced_logger.general_logger.warning(
+                            f"Error getting files for team {team}: {team_error}"
+                        )
                         continue
-                
+
                 counts = {
                     'pending': len(pending_files),
-                    'approved': len(approved_files), 
+                    'approved': len(approved_files),
                     'rejected': len(rejected_files)
                 }
-                
+
+                # ✅ Update stat card labels if they exist
+                try:
+                    if hasattr(self, "pending_count_label"):
+                        self.pending_count_label.value = str(counts['pending'])
+                    if hasattr(self, "approved_count_label"):
+                        self.approved_count_label.value = str(counts['approved'])
+                    if hasattr(self, "rejected_count_label"):
+                        self.rejected_count_label.value = str(counts['rejected'])
+                    if hasattr(self, "page"):
+                        self.page.update()
+                except Exception as update_error:
+                    self.enhanced_logger.general_logger.error(
+                        f"Error updating stat card labels: {update_error}"
+                    )
+
                 # Log performance metric
                 from utils.logger import log_performance_metric
                 log_performance_metric("FileApprovalPanel", "file_counts", 50.0, counts)
-                
+
                 return counts
-                
+
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error getting file counts: {e}")
             return {'pending': 0, 'approved': 0, 'rejected': 0}
+
     
     def _get_approved_files_by_team_safe(self, team: str) -> List[Dict]:
         """Safely get approved files with fallback methods"""
@@ -646,36 +689,51 @@ class FileApprovalPanel:
             return "lg"  # Safe default
     
     def refresh_files_table(self):
-        """Refresh the files table with current filters and sorting"""
         try:
-            with PerformanceTimer("FileApprovalPanel", "refresh_files_table"):
-                # Get all pending files efficiently
-                pending_files = self._get_filtered_pending_files()
-                
-                # Apply sorting
-                pending_files = self._sort_files(pending_files)
-                
-                # Clear existing rows
-                self.files_table.rows.clear()
-                
-                if not pending_files:
-                    self._add_empty_table_row()
-                else:
-                    # Add file rows
-                    for file_data in pending_files:
-                        try:
-                            row = self._create_table_row(file_data)
-                            self.files_table.rows.append(row)
-                        except Exception as row_error:
-                            self.enhanced_logger.general_logger.error(f"Error creating table row: {row_error}")
-                            continue
-                
-                self.page.update()
-                self.enhanced_logger.general_logger.debug(f"Files table refreshed with {len(pending_files)} files")
-            
+            # Ensure files_table exists before working with it
+            if not hasattr(self, "files_table") or self.files_table is None:
+                self.enhanced_logger.general_logger.warning(
+                    f"Files table not initialized yet for view '{getattr(self, 'current_view', 'unknown')}'."
+                )
+                return
+
+            # Fallback to "pending" if current_view is not yet set
+            view = getattr(self, "current_view", "pending")
+
+            if view == "approved":
+                files = self._get_filtered_approved_files()
+            elif view == "rejected":
+                files = self._get_filtered_rejected_files()
+            else:  # default pending
+                files = self._get_filtered_pending_files()
+
+            files = self._sort_files(files)
+
+            # Clear and repopulate the table
+            self.files_table.rows.clear()
+            if not files:
+                self._add_empty_table_row()
+            else:
+                for file_data in files:
+                    try:
+                        self.files_table.rows.append(self._create_table_row(file_data))
+                    except Exception as row_error:
+                        self.enhanced_logger.general_logger.error(
+                            f"Error creating table row: {row_error}"
+                        )
+                        continue
+
+            # ✅ Update stat card counts after refreshing table
+            self._get_file_counts_safely()
+
+            self.page.update()
+
         except Exception as e:
-            self.enhanced_logger.general_logger.error(f"Error refreshing files table: {e}")
+            self.enhanced_logger.general_logger.error(
+                f"Error refreshing {getattr(self, 'current_view', 'pending')} files table: {e}"
+            )
             self._show_table_error(str(e))
+
     
     def _get_filtered_pending_files(self) -> List[Dict]:
         """Get pending files with current filters applied"""

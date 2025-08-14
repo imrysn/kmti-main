@@ -1,0 +1,161 @@
+[
+  {
+    "timestamp": "2025-08-14T10:13:14.513825",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_create_files_table_section'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:17:39.508553",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_get_default_columns'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:30:33.601701",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_get_default_columns'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:30:36.930134",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_get_default_columns'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:38:10.399347",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_on_sort_changed'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:38:22.472769",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_get_default_columns'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:38:34.286013",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_get_default_columns'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:38:47.672842",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "'FileApprovalPanel' object has no attribute '_create_files_table_section'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:47:43.286083",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "FileApprovalPanel._create_stat_card() missing 1 required positional argument: 'view_type'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:48:49.771775",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "FileApprovalPanel._create_stat_card() missing 1 required positional argument: 'view_type'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:50:23.933461",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "FileApprovalPanel._create_stat_card() missing 1 required positional argument: 'view_type'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-14T10:51:40.588605",
+    "username": "admin",
+    "fullname": "admin",
+    "email": "admin",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "fd1d8523-afa9-4cf3-ae97-e7a889226bbc",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "CP91143N01_PCMU.icd": {
+    "file_id": "60c1b84c-0ffa-4207-868b-19d4b3c3a820",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-14T09:59:40.489014",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-14T09:59:40.489020",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "CP91142N01_PCMU.icd": {
+    "file_id": "8d2e75fb-4512-4a54-b614-20334cabc637",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-14T09:59:42.978628",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-14T09:59:42.978635",
+        "comment": "File submitted for approval"
+      }
+    ]
+  },
+  "CP91141A01_PCMU.icd": {
+    "file_id": "fd1d8523-afa9-4cf3-ae97-e7a889226bbc",
+    "status": "approved",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-14T09:59:44.993288",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-14T09:59:44.993295",
+        "comment": "File submitted for approval"
+      },
+      {
+        "status": "approved",
+        "timestamp": "2025-08-14T10:51:40.567098",
+        "admin_id": "admin",
+        "comment": ""
+      }
+    ],
+    "last_updated": "2025-08-14T10:51:40.567088"
+  }
+}
