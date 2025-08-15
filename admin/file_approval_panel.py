@@ -173,8 +173,8 @@ class EnhancedFileApprovalPanel:
         return ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text("Admin - File Approval", size=24, weight=ft.FontWeight.BOLD),
-                    ft.Text(f"Managing approvals for: {', '.join(self.admin_teams)}", 
+                    ft.Text("File Approval - Admin ", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Managing approvals for: {', '.join(self.admin_teams)} FILES", 
                            size=16, color=ft.Colors.GREY_600),
                     ft.Text(f"Role: {self.admin_role or 'Unknown'} | Access: {self.access_level or 'Unknown'}", 
                            size=14, color=ft.Colors.GREY_500)

@@ -280,38 +280,5 @@
     "file_path": "data/uploads/user\\CP91145N01_PCMU.icd",
     "tl_approved_by": "tl",
     "tl_approved_date": "2025-08-15T14:01:28.951443"
-  },
-  "4c749022-8bc9-40e8-a55e-45115e4c4dbe": {
-    "file_id": "4c749022-8bc9-40e8-a55e-45115e4c4dbe",
-    "original_filename": "CP91144N01_PCMU.icd",
-    "user_id": "user",
-    "user_team": "KUSAKABE",
-    "file_size": 229220,
-    "submission_date": "2025-08-15T13:23:54.356061",
-    "status": "pending_admin",
-    "description": "",
-    "tags": [],
-    "admin_comments": [],
-    "status_history": [
-      {
-        "status": "pending",
-        "timestamp": "2025-08-15T13:23:54.356066",
-        "comment": "File submitted for approval"
-      },
-      {
-        "status": "pending_team_leader",
-        "timestamp": "2025-08-15T14:00:51.635489",
-        "comment": "Migrated from old workflow - ready for team leader review"
-      },
-      {
-        "status": "pending_admin",
-        "timestamp": "2025-08-15T14:01:26.507859",
-        "reviewer": "tl",
-        "comment": "Approved by team leader tl"
-      }
-    ],
-    "file_path": "data/uploads/user\\CP91144N01_PCMU.icd",
-    "tl_approved_by": "tl",
-    "tl_approved_date": "2025-08-15T14:01:26.507851"
   }
 }

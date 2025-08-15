@@ -82,23 +82,22 @@ class TeamLeaderPanel:
         self.stat_pending_card = self._create_stat_card("Pending Review", 
                                      str(file_counts['pending_team_leader']), 
                                      ft.Colors.ORANGE)
-        self.stat_approved_card = self._create_stat_card("Approved by Me", 
+        self.stat_approved_card = self._create_stat_card("Approved", 
                                       str(file_counts['approved_by_tl']), 
                                       ft.Colors.GREEN)
-        self.stat_rejected_card = self._create_stat_card("Rejected by Me", 
+        self.stat_rejected_card = self._create_stat_card("Rejected", 
                                       str(file_counts['rejected_by_tl']), 
                                       ft.Colors.RED)
         
         return ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text("Team Leader - File Review", size=24, weight=ft.FontWeight.BOLD),
-                    ft.Text(f"Team: {self.user_team} | Reviewer: {self.username}", 
+                    ft.Text("File Approval", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Team: {self.user_team}", 
                            size=16, color=ft.Colors.GREY_600),
                     ft.Row([
                         ft.Text("Role: ", size=14, color=ft.Colors.GREY_500),
-                        create_role_badge("TEAM_LEADER", size=12),
-                        ft.Text(" | Access: team_limited", size=14, color=ft.Colors.GREY_500)
+                        create_role_badge("TEAM_LEADER", size=12)
                     ])
                 ]),
                 ft.Container(expand=True),
@@ -990,7 +989,6 @@ def TLPanel(page: ft.Page, username: str):
         login_view(page)
         return
     
-    page.title = "KMTI Data Management System - Team Leader"
     page.bgcolor = ft.Colors.GREY_100
     page.padding = 0
 
