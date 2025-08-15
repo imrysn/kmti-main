@@ -6,7 +6,7 @@
     "user_team": "KUSAKABE",
     "file_size": 214824,
     "submission_date": "2025-08-15T08:52:40.854540",
-    "status": "pending",
+    "status": "pending_team_leader",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -15,6 +15,11 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:40.854547",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.631315",
+        "comment": "Migrated from old workflow - ready for team leader review"
       }
     ],
     "file_path": "data/uploads/user1\\CP91146N01_PCMU.icd"
@@ -26,7 +31,7 @@
     "user_team": "KUSAKABE",
     "file_size": 214824,
     "submission_date": "2025-08-15T08:52:42.920728",
-    "status": "pending",
+    "status": "pending_team_leader",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -35,6 +40,11 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:42.920734",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.631937",
+        "comment": "Migrated from old workflow - ready for team leader review"
       }
     ],
     "file_path": "data/uploads/user1\\CP91146N01_PCMU.icd"
@@ -46,7 +56,7 @@
     "user_team": "KUSAKABE",
     "file_size": 209440,
     "submission_date": "2025-08-15T08:52:44.408512",
-    "status": "pending",
+    "status": "pending_team_leader",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -55,6 +65,11 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:44.408517",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.632496",
+        "comment": "Migrated from old workflow - ready for team leader review"
       }
     ],
     "file_path": "data/uploads/user1\\CP91145N01_PCMU.icd"
@@ -66,7 +81,7 @@
     "user_team": "KUSAKABE",
     "file_size": 209440,
     "submission_date": "2025-08-15T08:52:45.818666",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -75,9 +90,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:45.818671",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.632948",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:02:05.217926",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user1\\CP91145N01_PCMU.icd"
+    "file_path": "data/uploads/user1\\CP91145N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:02:05.217917"
   },
   "6488f890-5c4b-464e-9197-94d91500f117": {
     "file_id": "6488f890-5c4b-464e-9197-94d91500f117",
@@ -86,7 +114,7 @@
     "user_team": "KUSAKABE",
     "file_size": 229220,
     "submission_date": "2025-08-15T08:52:46.885271",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -95,9 +123,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:46.885277",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.633395",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:36.890797",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd"
+    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:36.890787"
   },
   "55e1fdc0-8d2b-44ea-acfc-71c84dd07d95": {
     "file_id": "55e1fdc0-8d2b-44ea-acfc-71c84dd07d95",
@@ -106,7 +147,7 @@
     "user_team": "KUSAKABE",
     "file_size": 229220,
     "submission_date": "2025-08-15T08:52:48.059455",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -115,9 +156,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T08:52:48.059462",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.633739",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:34.503541",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd"
+    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:34.503534"
   },
   "711efcaa-522a-4cb7-8fb3-38327ee18628": {
     "file_id": "711efcaa-522a-4cb7-8fb3-38327ee18628",
@@ -126,7 +180,7 @@
     "user_team": "KUSAKABE",
     "file_size": 396584,
     "submission_date": "2025-08-15T10:29:39.060806",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -135,9 +189,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T10:29:39.060813",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.634169",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:32.751903",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user1\\CP91143N01_PCMU.icd"
+    "file_path": "data/uploads/user1\\CP91143N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:32.751894"
   },
   "4e817e43-fe3d-4d38-a9a7-87c4286c93b7": {
     "file_id": "4e817e43-fe3d-4d38-a9a7-87c4286c93b7",
@@ -146,7 +213,7 @@
     "user_team": "KUSAKABE",
     "file_size": 396584,
     "submission_date": "2025-08-15T10:29:41.494845",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -155,9 +222,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T10:29:41.494853",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.634546",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:30.959534",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user1\\CP91143N01_PCMU.icd"
+    "file_path": "data/uploads/user1\\CP91143N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:30.959528"
   },
   "a9c490b9-1d51-4cb4-a5df-227dbcb5f543": {
     "file_id": "a9c490b9-1d51-4cb4-a5df-227dbcb5f543",
@@ -166,7 +246,7 @@
     "user_team": "KUSAKABE",
     "file_size": 209440,
     "submission_date": "2025-08-15T13:23:50.033703",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -175,9 +255,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T13:23:50.033710",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.634902",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:28.951452",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user\\CP91145N01_PCMU.icd"
+    "file_path": "data/uploads/user\\CP91145N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:28.951443"
   },
   "4c749022-8bc9-40e8-a55e-45115e4c4dbe": {
     "file_id": "4c749022-8bc9-40e8-a55e-45115e4c4dbe",
@@ -186,7 +279,7 @@
     "user_team": "KUSAKABE",
     "file_size": 229220,
     "submission_date": "2025-08-15T13:23:54.356061",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -195,9 +288,22 @@
         "status": "pending",
         "timestamp": "2025-08-15T13:23:54.356066",
         "comment": "File submitted for approval"
+      },
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.635489",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:26.507859",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user\\CP91144N01_PCMU.icd"
+    "file_path": "data/uploads/user\\CP91144N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:26.507851"
   },
   "94784fdf-3fa0-49d6-a1cb-e42c48947fc0": {
     "file_id": "94784fdf-3fa0-49d6-a1cb-e42c48947fc0",
@@ -206,7 +312,7 @@
     "user_team": "KUSAKABE",
     "file_size": 396584,
     "submission_date": "2025-08-15T13:23:57.376836",
-    "status": "pending",
+    "status": "pending_admin",
     "description": "",
     "tags": [],
     "admin_comments": [],
@@ -215,48 +321,21 @@
         "status": "pending",
         "timestamp": "2025-08-15T13:23:57.376841",
         "comment": "File submitted for approval"
-      }
-    ],
-    "file_path": "data/uploads/user\\CP91143N01_PCMU.icd"
-  },
-  "e89babe2-9c19-4f93-a961-02e4c1155fea": {
-    "file_id": "e89babe2-9c19-4f93-a961-02e4c1155fea",
-    "original_filename": "CP91142N01_PCMU.icd",
-    "user_id": "user",
-    "user_team": "KUSAKABE",
-    "file_size": 322648,
-    "submission_date": "2025-08-15T13:53:19.493061",
-    "status": "pending",
-    "description": "",
-    "tags": [],
-    "admin_comments": [],
-    "status_history": [
+      },
       {
-        "status": "pending",
-        "timestamp": "2025-08-15T13:53:19.493069",
-        "comment": "File submitted for approval"
-      }
-    ],
-    "file_path": "data/uploads/user\\CP91142N01_PCMU.icd"
-  },
-  "0ac2d238-c00d-461a-b9f3-5330e160037b": {
-    "file_id": "0ac2d238-c00d-461a-b9f3-5330e160037b",
-    "original_filename": "CP91141A01_PCMU.icd",
-    "user_id": "user",
-    "user_team": "KUSAKABE",
-    "file_size": 4636704,
-    "submission_date": "2025-08-15T13:53:23.873120",
-    "status": "pending",
-    "description": "",
-    "tags": [],
-    "admin_comments": [],
-    "status_history": [
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-15T14:00:51.635897",
+        "comment": "Migrated from old workflow - ready for team leader review"
+      },
       {
-        "status": "pending",
-        "timestamp": "2025-08-15T13:53:23.873128",
-        "comment": "File submitted for approval"
+        "status": "pending_admin",
+        "timestamp": "2025-08-15T14:01:22.687467",
+        "reviewer": "tl",
+        "comment": "Approved by team leader tl"
       }
     ],
-    "file_path": "data/uploads/user\\CP91141A01_PCMU.icd"
+    "file_path": "data/uploads/user\\CP91143N01_PCMU.icd",
+    "tl_approved_by": "tl",
+    "tl_approved_date": "2025-08-15T14:01:22.687459"
   }
 }
