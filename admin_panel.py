@@ -10,7 +10,7 @@ from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
 from utils.session_logger import log_logout, log_activity
-from admin.components.file_approval_panel import FileApprovalPanel
+from admin.file_approval_panel import FileApprovalPanel
 
 
 USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"

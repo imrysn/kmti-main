@@ -15,10 +15,7 @@ def hash_password(password: str) -> str:
 
 
 def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
-    """
-    Renders the Add User form into the existing `content` column,
-    leaving the navbar intact.
-    """
+
     content.controls.clear()
 
     # Ensure users.json exists

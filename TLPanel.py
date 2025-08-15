@@ -1,5 +1,5 @@
 import flet as ft
-from admin.components.file_approval_panel import FileApprovalPanel
+from admin.file_approval_panel import FileApprovalPanel
 from utils.session_logger import log_logout
 
 
@@ -10,7 +10,6 @@ def TLPanel(page: ft.Page, username: str):
 
     content = ft.Column(expand=True, spacing=0)
 
-    # --- Logout function ---
     def on_logout():
         from login_window import clear_session
         log_logout(username, "TEAM LEADER")
@@ -19,14 +18,13 @@ def TLPanel(page: ft.Page, username: str):
         from login_window import login_view
         login_view(page)
 
-    # Navbar (only right section)
     navbar = ft.Container(
         bgcolor=ft.Colors.GREY_800,
         padding=10,
         margin=0,
         content=ft.Row(
             controls=[
-                ft.Container(expand=True),  # pushes right section to edge
+                ft.Container(expand=True),  
                 ft.Row(
                     controls=[
                         ft.Text(f"Hi, {username}", size=16, color=ft.Colors.WHITE),

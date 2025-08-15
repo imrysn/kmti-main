@@ -1,0 +1,122 @@
+{
+  "53284e29-f86f-41ed-b199-c63fda97ec90": {
+    "file_id": "53284e29-f86f-41ed-b199-c63fda97ec90",
+    "original_filename": "CP91146N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 214824,
+    "submission_date": "2025-08-15T08:52:40.854540",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:40.854547",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91146N01_PCMU.icd"
+  },
+  "69f79bd9-3c46-4e9b-b4f3-5b3cbb87d196": {
+    "file_id": "69f79bd9-3c46-4e9b-b4f3-5b3cbb87d196",
+    "original_filename": "CP91146N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 214824,
+    "submission_date": "2025-08-15T08:52:42.920728",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:42.920734",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91146N01_PCMU.icd"
+  },
+  "feec6cc6-2f36-4ef3-b6cc-2a222ef659b4": {
+    "file_id": "feec6cc6-2f36-4ef3-b6cc-2a222ef659b4",
+    "original_filename": "CP91145N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 209440,
+    "submission_date": "2025-08-15T08:52:44.408512",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:44.408517",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91145N01_PCMU.icd"
+  },
+  "aa76ef0a-525e-45f6-a1df-86a422c52b42": {
+    "file_id": "aa76ef0a-525e-45f6-a1df-86a422c52b42",
+    "original_filename": "CP91145N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 209440,
+    "submission_date": "2025-08-15T08:52:45.818666",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:45.818671",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91145N01_PCMU.icd"
+  },
+  "6488f890-5c4b-464e-9197-94d91500f117": {
+    "file_id": "6488f890-5c4b-464e-9197-94d91500f117",
+    "original_filename": "CP91144N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 229220,
+    "submission_date": "2025-08-15T08:52:46.885271",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:46.885277",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd"
+  },
+  "55e1fdc0-8d2b-44ea-acfc-71c84dd07d95": {
+    "file_id": "55e1fdc0-8d2b-44ea-acfc-71c84dd07d95",
+    "original_filename": "CP91144N01_PCMU.icd",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 229220,
+    "submission_date": "2025-08-15T08:52:48.059455",
+    "status": "pending",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T08:52:48.059462",
+        "comment": "File submitted for approval"
+      }
+    ],
+    "file_path": "data/uploads/user1\\CP91144N01_PCMU.icd"
+  }
+}
