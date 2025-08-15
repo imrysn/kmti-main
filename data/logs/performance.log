@@ -1,6 +1,6 @@
 [
   {
-    "timestamp": "2025-08-13T11:26:31.352118",
+    "timestamp": "2025-08-14T16:14:56.985908",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -11,28 +11,14 @@
     }
   },
   {
-    "timestamp": "2025-08-13T11:26:31.367089",
+    "timestamp": "2025-08-14T16:14:57.012895",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 28.295,
+    "duration_ms": 205.861,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:26:31.422762",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 17.122999999999998,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:26:31.455059",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 116.275,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:27:16.895402",
+    "timestamp": "2025-08-14T16:14:57.213466",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -43,28 +29,21 @@
     }
   },
   {
-    "timestamp": "2025-08-13T11:27:16.929322",
+    "timestamp": "2025-08-14T16:14:57.246587",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 47.409,
+    "duration_ms": 110.776,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:27:17.931454",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 12.746,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:27:17.967020",
+    "timestamp": "2025-08-14T16:14:57.255356",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 1085.113,
+    "duration_ms": 448.32899999999995,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:28:15.250517",
+    "timestamp": "2025-08-14T16:55:09.287580",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -75,28 +54,14 @@
     }
   },
   {
-    "timestamp": "2025-08-13T11:28:15.284440",
+    "timestamp": "2025-08-14T16:55:09.288890",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 46.447,
+    "duration_ms": 49.457,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:28:15.362733",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 18.229,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:28:15.394538",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 156.545,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:29:18.664096",
+    "timestamp": "2025-08-14T16:55:09.422018",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -107,28 +72,21 @@
     }
   },
   {
-    "timestamp": "2025-08-13T11:29:18.697639",
+    "timestamp": "2025-08-14T16:55:09.431650",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 47.079,
+    "duration_ms": 39.574999999999996,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:29:18.787652",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 19.149,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:29:18.818563",
+    "timestamp": "2025-08-14T16:55:09.442561",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 168.00699999999998,
+    "duration_ms": 203.13600000000002,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:32:27.132376",
+    "timestamp": "2025-08-14T16:55:11.651279",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -139,28 +97,14 @@
     }
   },
   {
-    "timestamp": "2025-08-13T11:32:27.174495",
+    "timestamp": "2025-08-14T16:55:11.680273",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 55.659,
+    "duration_ms": 56.074,
     "details": {}
   },
   {
-    "timestamp": "2025-08-13T11:32:27.242220",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 22.270000000000003,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-13T11:32:27.276071",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 157.24099999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T09:59:08.183527",
+    "timestamp": "2025-08-14T17:20:01.334756",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -171,28 +115,14 @@
     }
   },
   {
-    "timestamp": "2025-08-14T09:59:08.186275",
+    "timestamp": "2025-08-14T17:20:01.378514",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 12.308,
+    "duration_ms": 215.235,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T09:59:08.225843",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 11.162999999999998,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T09:59:08.238260",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 64.346,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T09:59:13.929377",
+    "timestamp": "2025-08-14T17:20:01.592656",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
@@ -203,1923 +133,416 @@
     }
   },
   {
-    "timestamp": "2025-08-14T09:59:13.939676",
+    "timestamp": "2025-08-14T17:20:01.602121",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 18.4,
+    "duration_ms": 112.873,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T09:59:13.966748",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 10.383999999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T09:59:13.976827",
+    "timestamp": "2025-08-14T17:20:01.611524",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 55.556000000000004,
+    "duration_ms": 448.25399999999996,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T09:59:53.905419",
+    "timestamp": "2025-08-14T17:31:41.447301",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T09:59:53.915451",
+    "timestamp": "2025-08-14T17:31:41.448960",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 112.118,
+    "duration_ms": 82.25200000000001,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T09:59:54.109555",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 76.855,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T09:59:54.119950",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 316.62,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:00:02.825302",
+    "timestamp": "2025-08-14T17:31:41.508550",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:00:02.836066",
+    "timestamp": "2025-08-14T17:31:41.518553",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 36.713,
+    "duration_ms": 35.26,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:00:02.880720",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 11.151,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:00:02.891864",
+    "timestamp": "2025-08-14T17:31:41.617808",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 92.503,
+    "duration_ms": 251.11899999999997,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:07:54.119211",
+    "timestamp": "2025-08-14T17:31:43.862636",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:07:54.130216",
+    "timestamp": "2025-08-14T17:31:43.872259",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 21.575,
+    "duration_ms": 41.34,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:07:54.172245",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 14.432,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:07:54.184378",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 75.74300000000001,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:13:14.445169",
+    "timestamp": "2025-08-14T17:31:44.218468",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:13:14.455990",
+    "timestamp": "2025-08-14T17:31:44.229280",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 21.875,
+    "duration_ms": 73.31400000000001,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:13:14.499643",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 65.542,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:13:15.791177",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 10.577,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:13:15.802267",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 21.662,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:17:39.449806",
+    "timestamp": "2025-08-14T17:31:44.823533",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:17:39.460452",
+    "timestamp": "2025-08-14T17:31:44.833120",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 22.22,
+    "duration_ms": 66.698,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:17:39.492960",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 54.731,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:22.728797",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 179.90200000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:22.995294",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 446.409,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:33.526138",
+    "timestamp": "2025-08-14T17:31:45.280917",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:30:33.539144",
+    "timestamp": "2025-08-14T17:31:45.290679",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 24.709,
+    "duration_ms": 173.12,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:30:33.585391",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 70.958,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:36.872939",
+    "timestamp": "2025-08-14T17:31:46.382108",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:30:36.887175",
+    "timestamp": "2025-08-14T17:31:46.393263",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 28.445999999999998,
+    "duration_ms": 78.32300000000001,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:30:36.912753",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 54.025,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:37.951626",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 10.846,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:30:37.963609",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 22.741,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:36:31.134527",
+    "timestamp": "2025-08-14T17:31:47.007132",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:36:31.146153",
+    "timestamp": "2025-08-14T17:31:47.016979",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 24.226999999999997,
+    "duration_ms": 193.515,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:36:31.263322",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 12.84,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:36:31.302438",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 180.518,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:36:38.085738",
+    "timestamp": "2025-08-14T17:31:47.427393",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:36:38.096157",
+    "timestamp": "2025-08-14T17:31:47.437338",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 32.52,
+    "duration_ms": 203.571,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:36:38.139481",
+    "timestamp": "2025-08-14T17:31:47.913325",
     "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 23.272000000000002,
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T17:31:47.923364",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 129.637,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:36:38.179761",
+    "timestamp": "2025-08-14T17:31:49.102814",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T17:31:49.113565",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 221.14000000000001,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-14T17:31:49.382792",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T17:31:49.395340",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 206.74699999999999,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-14T18:01:18.258026",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T18:01:18.260574",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 29.459,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-14T18:01:18.298705",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T18:01:18.309343",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 24.400000000000002,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-14T18:01:18.320320",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 116.123,
+    "duration_ms": 89.21,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:36:42.121836",
+    "timestamp": "2025-08-14T18:01:19.808641",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:36:42.135302",
+    "timestamp": "2025-08-14T18:01:19.819038",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 26.418,
+    "duration_ms": 22.919999999999998,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:36:42.176317",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 20.049999999999997,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:36:42.224664",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 115.783,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:37:02.121381",
+    "timestamp": "2025-08-14T18:01:20.313125",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:37:02.135639",
+    "timestamp": "2025-08-14T18:01:20.324061",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 62.336999999999996,
+    "duration_ms": 23.999,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:37:02.183232",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 23.393,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:37:02.269920",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 196.618,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:37:07.765602",
+    "timestamp": "2025-08-14T18:40:14.802604",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:37:07.777963",
+    "timestamp": "2025-08-14T18:40:14.814918",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 24.384,
+    "duration_ms": 305.436,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:37:07.810520",
+    "timestamp": "2025-08-14T18:40:15.045820",
     "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 12.959,
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 0,
+      "approved": 0,
+      "rejected": 0
+    }
+  },
+  {
+    "timestamp": "2025-08-14T18:40:15.066454",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 154.296,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:37:07.847518",
+    "timestamp": "2025-08-14T18:40:15.077672",
     "component": "FileApprovalPanel",
     "operation": "create_interface",
-    "duration_ms": 93.941,
+    "duration_ms": 568.2080000000001,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:37:09.852489",
+    "timestamp": "2025-08-14T18:40:17.543511",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 3,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T10:37:09.865862",
+    "timestamp": "2025-08-14T18:40:17.571344",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 24.473000000000003,
+    "duration_ms": 230.80999999999997,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T10:37:09.899371",
+    "timestamp": "2025-08-14T18:40:17.918505",
     "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 13.242,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:37:09.934761",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 93.374,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:10.345884",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:38:10.358961",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 23.796999999999997,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:10.383968",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 48.808,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:22.422544",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:38:22.437015",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 25.817,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:22.457464",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 46.269,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:34.232079",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:38:34.245445",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 24.723,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:34.267380",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 46.661,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:47.622192",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:38:47.635186",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 28.125,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:38:47.657437",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 50.378,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:39:00.650086",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:39:00.663692",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 24.616,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:39:00.730201",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 21.187,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:39:00.743015",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 103.956,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:29.271392",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:47:29.285872",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.511,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:29.338938",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 14.553999999999998,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:29.354074",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 94.747,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:43.244473",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:47:43.255329",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 30.637,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:43.268410",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 43.713,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:47:44.622001",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 0.011,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:48:49.724779",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:48:49.737434",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 23.798,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:48:49.753862",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 40.243,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:48:50.920337",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 10.383,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:48:51.649012",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 10.989,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:50:23.886419",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:50:23.899898",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.820999999999998,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:50:23.912204",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 40.132,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:50:25.551144",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 1.585,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:51:29.973410",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 3,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:51:29.985652",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.071,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:51:30.059511",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 99.94699999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:51:40.790842",
-    "component": "FileApprovalPanel",
-    "operation": "refresh_interface",
-    "duration_ms": 17.805,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:54:31.527882",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:54:31.542106",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.752000000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:54:31.581503",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 66.15400000000001,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:10.406636",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:10.421271",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 36.464000000000006,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:10.494477",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:10.507624",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.216,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:10.523315",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 138.497,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:11.930593",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:11.942338",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 38.079,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:12.671631",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:12.683492",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.766000000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:16.514105",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:16.580053",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 80.498,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T10:57:17.063548",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T10:57:17.074807",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 25.752,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:17.377150",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:17.391040",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.966,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:17.448013",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:17.459558",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 25.063,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:17.476196",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 113.128,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:23.489103",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:23.501804",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 28.216,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.144774",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.156587",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.244999999999997,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.497432",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.509547",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.804,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.803505",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:24.816819",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 35.767,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:29.811150",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:29.824887",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 23.985,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:29.871305",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:28:29.885101",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.494,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:28:29.899522",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 98.62400000000001,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:16.535831",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:16.551399",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 62.194,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:16.875879",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:16.888050",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 118.68299999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:16.903371",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 414.175,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:41.861919",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:41.875441",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 107.866,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:42.300831",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:42.314132",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 110.22,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:42.744926",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:42.758757",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 94.106,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:29:43.250130",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:29:43.263259",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 54.337999999999994,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:12.797013",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:12.811099",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 44.112,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:14.535157",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:14.548566",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 61.021,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:15.436151",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:15.451417",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 58.314,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:16.159255",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:16.173274",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 148.105,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:16.821156",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:16.835701",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 80.208,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:18.121158",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:18.135034",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 43.013999999999996,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:18.691012",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:18.733073",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 81.05199999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:32:19.179835",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:32:19.193794",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 69.46,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:11.783151",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:11.797625",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 70.388,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:11.921363",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:11.934792",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 48.657,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:11.950400",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 223.167,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:21.314935",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:21.337899",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 103.118,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:21.976052",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:21.991421",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 59.248000000000005,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:23.326447",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:23.341314",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 103.125,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:33:24.613311",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:33:24.627440",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 84.775,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:45:58.994300",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.009000000000000001,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:45:59.040721",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.017,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:45:59.058000",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 63.715999999999994,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:46:07.328070",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.006,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:51:32.959995",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.008,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:51:33.010242",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.008,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:51:33.027606",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 67.63199999999999,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:09.904586",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:09.923761",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 34.859,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:09.980222",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:09.994904",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 32.417,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:10.010777",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 121.894,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:11.091658",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:11.106435",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.746,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:12.123185",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:12.138127",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.752000000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.036254",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.051015",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.928,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.355413",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.370100",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.876,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.908825",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:13.923828",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.292,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:14.443899",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:14.458448",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.492,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:14.756060",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:14.771425",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.895,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:15.003066",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:15.018539",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.144000000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T11:53:15.267935",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T11:53:15.282485",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.159000000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:34.974480",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:34.990642",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 56.205999999999996,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:35.033339",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:35.050272",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 26.242,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:35.068674",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 134.243,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.006472",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.021527",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.657999999999998,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.470120",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.485719",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.363,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.926276",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:39.941683",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.448,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:00:40.292144",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:00:40.318442",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 43.744,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:46.016988",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:01:46.032914",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 41.994,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:46.075689",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:01:46.093000",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 27.558,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:46.111485",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 120.566,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:51.251498",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:01:51.269791",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 36.792,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:51.314729",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 2,
-      "approved": 0,
-      "rejected": 0
-    }
-  },
-  {
-    "timestamp": "2025-08-14T13:01:51.334366",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 30.099,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:01:51.354367",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 121.37100000000001,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:04:46.163939",
-    "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 2,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T13:04:46.180946",
+    "timestamp": "2025-08-14T18:40:17.929642",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 32.088,
+    "duration_ms": 74.71300000000001,
     "details": {}
   },
   {
-    "timestamp": "2025-08-14T13:04:46.225189",
+    "timestamp": "2025-08-14T18:40:18.318385",
     "component": "FileApprovalPanel",
     "operation": "file_counts",
     "duration_ms": 50.0,
     "details": {
-      "pending": 2,
+      "pending": 0,
       "approved": 0,
       "rejected": 0
     }
   },
   {
-    "timestamp": "2025-08-14T13:04:46.241331",
+    "timestamp": "2025-08-14T18:40:18.330026",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
-    "duration_ms": 26.735,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-14T13:04:46.260073",
-    "component": "FileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 111.232,
+    "duration_ms": 118.295,
     "details": {}
   }
 ]

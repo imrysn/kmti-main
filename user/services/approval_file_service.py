@@ -1,22 +1,28 @@
+"""
+User-side approval service that integrates with the main approval system
+Uses the central new_approval_service.py for backend operations
+"""
+
 import os
 import json
 import uuid
 import time
 import threading
 from datetime import datetime
-from typing import List, Dict, Optional, Callable
+from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
+from services.file_approval_constant import FileApprovalStatus
 from utils.logger import log_action
 from utils.session_logger import log_activity
 
 class ApprovalFileService:
-    """Fixed service - system files stored in data folder, not user upload folder"""
+    """Clean user-side approval service - works with new_approval_service.py backend"""
     
     def __init__(self, user_folder: str, username: str):
-        self.user_folder = user_folder  # This is for user uploads only
+        self.user_folder = user_folder  # For user uploads only
         self.username = username
         
-        # FIXED: Store system files in data folder, not user upload folder
+        # Store system files in data folder, not user upload folder
         self.system_data_folder = os.path.join("data", "user_approvals", username)
         self.approval_status_file = os.path.join(self.system_data_folder, "file_approval_status.json")
         self.notifications_file = os.path.join(self.system_data_folder, "approval_notifications.json")
@@ -25,10 +31,7 @@ class ApprovalFileService:
         os.makedirs(user_folder, exist_ok=True)
         os.makedirs(self.system_data_folder, exist_ok=True)
         
-        # Migrate existing files if they exist in wrong location
-        self._migrate_system_files()
-        
-        # Cache for approval data to reduce file I/O
+        # Cache for approval data
         self._approval_cache = {}
         self._cache_timestamp = 0
         self._cache_lock = threading.Lock()
@@ -38,44 +41,17 @@ class ApprovalFileService:
         
         # Get user team (cached)
         self.user_team = self._get_user_team_cached()
-    
-    def _migrate_system_files(self):
-        """Migrate system files from user folder to data folder if they exist"""
-        try:
-            # Check for old files in user folder
-            old_approval_file = os.path.join(self.user_folder, "file_approval_status.json")
-            old_notifications_file = os.path.join(self.user_folder, "approval_notifications.json")
-            
-            # Move approval status file if it exists
-            if os.path.exists(old_approval_file) and not os.path.exists(self.approval_status_file):
-                import shutil
-                shutil.move(old_approval_file, self.approval_status_file)
-                print(f"[MIGRATION] Moved approval status file for {self.username} to data folder")
-            
-            # Move notifications file if it exists
-            if os.path.exists(old_notifications_file) and not os.path.exists(self.notifications_file):
-                import shutil
-                shutil.move(old_notifications_file, self.notifications_file)
-                print(f"[MIGRATION] Moved notifications file for {self.username} to data folder")
-            
-            # Clean up any remaining old files
-            if os.path.exists(old_approval_file):
-                os.remove(old_approval_file)
-                print(f"[CLEANUP] Removed old approval status file from user folder")
-            
-            if os.path.exists(old_notifications_file):
-                os.remove(old_notifications_file) 
-                print(f"[CLEANUP] Removed old notifications file from user folder")
-                
-        except Exception as e:
-            print(f"Migration error for {self.username}: {e}")
+        
+        # Import the main approval service
+        from services.new_approval_service import NewFileApprovalService
+        self.main_approval_service = NewFileApprovalService()
     
     def _get_user_team_cached(self) -> str:
         """Get user's team from users.json with caching"""
         try:
             users_file = r"\\KMTI-NAS\Shared\data\users.json"
             if os.path.exists(users_file):
-                with open(users_file, 'r') as f:
+                with open(users_file, 'r', encoding='utf-8') as f:
                     users = json.load(f)
                 
                 for email, data in users.items():
@@ -87,7 +63,7 @@ class ApprovalFileService:
         return "DEFAULT"
     
     def get_user_team(self) -> str:
-        """Get user's team from users.json (backward compatibility)"""
+        """Get user's team (backward compatibility)"""
         return self.user_team
     
     def _update_approval_cache(self, force_refresh: bool = False):
@@ -95,13 +71,12 @@ class ApprovalFileService:
         with self._cache_lock:
             current_time = time.time()
             
-            # Only refresh cache if forced or older than 2 seconds
             if not force_refresh and (current_time - self._cache_timestamp < 2.0):
                 return
             
             try:
                 if os.path.exists(self.approval_status_file):
-                    with open(self.approval_status_file, 'r') as f:
+                    with open(self.approval_status_file, 'r', encoding='utf-8') as f:
                         self._approval_cache = json.load(f)
                 else:
                     self._approval_cache = {}
@@ -121,7 +96,8 @@ class ApprovalFileService:
     def save_approval_status(self, status_data: Dict) -> bool:
         """Save approval status with cache update"""
         try:
-            with open(self.approval_status_file, 'w') as f:
+            os.makedirs(os.path.dirname(self.approval_status_file), exist_ok=True)
+            with open(self.approval_status_file, 'w', encoding='utf-8') as f:
                 json.dump(status_data, f, indent=2)
             
             # Update cache immediately
@@ -138,7 +114,7 @@ class ApprovalFileService:
         """Load user's approval notifications"""
         try:
             if os.path.exists(self.notifications_file):
-                with open(self.notifications_file, 'r') as f:
+                with open(self.notifications_file, 'r', encoding='utf-8') as f:
                     notifications = json.load(f)
                     return notifications if isinstance(notifications, list) else []
         except Exception as e:
@@ -148,7 +124,8 @@ class ApprovalFileService:
     def save_notifications(self, notifications: List[Dict]) -> bool:
         """Save user's approval notifications"""
         try:
-            with open(self.notifications_file, 'w') as f:
+            os.makedirs(os.path.dirname(self.notifications_file), exist_ok=True)
+            with open(self.notifications_file, 'w', encoding='utf-8') as f:
                 json.dump(notifications, f, indent=2)
             return True
         except Exception as e:
@@ -156,13 +133,13 @@ class ApprovalFileService:
             return False
     
     def get_uploaded_files(self) -> List[Dict]:
-        """Get all uploaded files with cached approval status - EXCLUDES system files"""
+        """Get all uploaded files with approval status - EXCLUDES system files"""
         files = []
         approval_data = self.load_approval_status()  # Uses cache
         
         try:
             if os.path.exists(self.user_folder):
-                # FIXED: Comprehensive system file exclusion
+                # Exclude system files
                 excluded_files = {
                     "files_metadata.json", 
                     "profile.json", 
@@ -170,14 +147,13 @@ class ApprovalFileService:
                     "approval_notifications.json"
                 }
                 
-                # Also exclude profile images folder
                 for filename in os.listdir(self.user_folder):
                     if filename in excluded_files or filename.startswith("."):
                         continue
                     
                     file_path = os.path.join(self.user_folder, filename)
                     
-                    # Skip directories (including profile_images folder)
+                    # Skip directories
                     if not os.path.isfile(file_path):
                         continue
                     
@@ -185,9 +161,9 @@ class ApprovalFileService:
                     stat = os.stat(file_path)
                     modified_time = datetime.fromtimestamp(stat.st_mtime)
                     
-                    # Get cached approval status
+                    # Get approval status
                     file_approval = approval_data.get(filename, {
-                        "status": "not_submitted",
+                        "status": FileApprovalStatus.MY_FILES,
                         "submitted_for_approval": False,
                         "submission_date": None,
                         "admin_comments": [],
@@ -213,57 +189,49 @@ class ApprovalFileService:
             
         return files
     
-    def get_file_approval_status(self, filename: str) -> Dict:
-        """Get approval status for a specific file (cached)"""
-        approval_data = self.load_approval_status()  # Uses cache
-        return approval_data.get(filename, {
-            "status": "not_submitted",
-            "submitted_for_approval": False,
-            "submission_date": None,
-            "admin_comments": [],
-            "status_history": [],
-            "description": "",
-            "tags": []
-        })
-    
     def submit_file_for_approval(self, filename: str, description: str = "", tags: List[str] = None) -> bool:
-        """Submit an uploaded file for approval with optimized processing"""
+        """Submit an uploaded file for approval using the main approval service"""
         try:
             file_path = os.path.join(self.user_folder, filename)
             if not os.path.exists(file_path):
+                print(f"File not found: {file_path}")
                 return False
             
             if tags is None:
                 tags = []
             
-            # Generate unique file ID for tracking
-            file_id = str(uuid.uuid4())
+            # Submit through main approval service
+            file_id = self.main_approval_service.submit_file_for_approval(
+                user_id=self.username,
+                filename=filename, 
+                file_path=file_path,
+                user_team=self.user_team,
+                description=description,
+                tags=tags
+            )
             
-            # Update local approval status
-            approval_data = self.load_approval_status()
-            approval_data[filename] = {
-                "file_id": file_id,
-                "status": "pending",
-                "submitted_for_approval": True,
-                "submission_date": datetime.now().isoformat(),
-                "description": description,
-                "tags": tags,
-                "admin_comments": [],
-                "status_history": [{
-                    "status": "pending",
-                    "timestamp": datetime.now().isoformat(),
-                    "comment": "File submitted for approval"
-                }]
-            }
-            
-            if self.save_approval_status(approval_data):
-                # Add to global queue in background
-                self.executor.submit(self.add_to_global_queue, filename, file_id, description, tags)
+            if file_id:
+                # Update local approval status
+                approval_data = self.load_approval_status()
+                approval_data[filename] = {
+                    "file_id": file_id,
+                    "status": FileApprovalStatus.PENDING_TEAM_LEADER,
+                    "submitted_for_approval": True,
+                    "submission_date": datetime.now().isoformat(),
+                    "description": description,
+                    "tags": tags,
+                    "admin_comments": [],
+                    "status_history": [{
+                        "status": FileApprovalStatus.PENDING_TEAM_LEADER,
+                        "timestamp": datetime.now().isoformat(),
+                        "comment": "File submitted for team leader review"
+                    }]
+                }
                 
-                # Log in background
-                self.executor.submit(self._log_submission_async, filename)
-                
-                return True
+                if self.save_approval_status(approval_data):
+                    # Log in background
+                    self.executor.submit(self._log_submission_async, filename)
+                    return True
                 
         except Exception as e:
             print(f"Error submitting file for approval: {e}")
@@ -278,123 +246,48 @@ class ApprovalFileService:
         except Exception as e:
             print(f"Async logging error: {e}")
     
-    def add_to_global_queue(self, filename: str, file_id: str, description: str, tags: List[str]):
-        """Add file to global approval queue with file locking"""
-        try:
-            # Ensure global approvals directory exists
-            global_approvals_dir = "data/approvals"
-            os.makedirs(global_approvals_dir, exist_ok=True)
-            
-            global_queue_file = os.path.join(global_approvals_dir, "file_approvals.json")
-            
-            # Simple file locking mechanism
-            lock_file = f"{global_queue_file}.lock"
-            max_attempts = 10
-            
-            for attempt in range(max_attempts):
-                try:
-                    if not os.path.exists(lock_file):
-                        # Create lock
-                        with open(lock_file, 'w') as f:
-                            f.write(str(time.time()))
-                        
-                        # Load existing queue
-                        queue = {}
-                        if os.path.exists(global_queue_file):
-                            with open(global_queue_file, 'r') as f:
-                                queue = json.load(f)
-                        
-                        # Get file info
-                        file_path = os.path.join(self.user_folder, filename)
-                        file_size = os.path.getsize(file_path) if os.path.exists(file_path) else 0
-                        
-                        # Add new submission
-                        submission_data = {
-                            "file_id": file_id,
-                            "original_filename": filename,
-                            "user_id": self.username,
-                            "user_team": self.user_team,
-                            "file_size": file_size,
-                            "submission_date": datetime.now().isoformat(),
-                            "status": "pending",
-                            "description": description,
-                            "tags": tags,
-                            "admin_comments": [],
-                            "status_history": [{
-                                "status": "pending",
-                                "timestamp": datetime.now().isoformat(),
-                                "comment": "File submitted for approval"
-                            }],
-                            "file_path": file_path  # Store path for admin access
-                        }
-                        
-                        queue[file_id] = submission_data
-                        
-                        # Save updated queue
-                        with open(global_queue_file, 'w') as f:
-                            json.dump(queue, f, indent=2)
-                        
-                        # Remove lock
-                        os.remove(lock_file)
-                        break
-                        
-                except Exception:
-                    # Wait before retry
-                    time.sleep(0.05)
-                    continue
-                finally:
-                    # Clean up lock if it exists
-                    try:
-                        if os.path.exists(lock_file):
-                            os.remove(lock_file)
-                    except:
-                        pass
-                        
-        except Exception as e:
-            print(f"Error adding to global queue: {e}")
-    
     def withdraw_submission(self, filename: str) -> bool:
-        """Fast withdrawal with immediate UI feedback and background processing"""
+        """Withdraw submission using the main approval service"""
         try:
-            # Quick validation and optimistic update
+            # Get file_id from local status
             approval_data = self.load_approval_status()
             
             if filename not in approval_data:
                 return False
             
             file_data = approval_data[filename]
-            current_status = file_data.get("status", "not_submitted")
+            current_status = file_data.get("status", FileApprovalStatus.MY_FILES)
             
-            if current_status not in ["pending", "under_review"]:
+            if current_status not in [FileApprovalStatus.PENDING_TEAM_LEADER, FileApprovalStatus.PENDING_ADMIN]:
                 return False
             
-            # Get file_id for global queue removal
             file_id = file_data.get("file_id")
+            if not file_id:
+                return False
             
-            # Immediate local update (optimistic)
-            approval_data[filename] = {
-                "status": "not_submitted",
-                "submitted_for_approval": False,
-                "submission_date": None,
-                "admin_comments": [],
-                "status_history": file_data.get("status_history", []) + [{
-                    "status": "withdrawn",
-                    "timestamp": datetime.now().isoformat(),
-                    "comment": "Submission withdrawn by user"
-                }],
-                "description": "",
-                "tags": [],
-                "withdrawn_date": datetime.now().isoformat()
-            }
+            # Withdraw through main service
+            success = self.main_approval_service.withdraw_submission(file_id)
             
-            # Save immediately for instant UI feedback
-            if self.save_approval_status(approval_data):
-                # Background cleanup (global queue removal and logging)
-                if file_id:
-                    self.executor.submit(self.remove_from_global_queue, file_id)
-                self.executor.submit(self._log_withdrawal_async, filename)
+            if success:
+                # Update local status
+                approval_data[filename] = {
+                    "status": FileApprovalStatus.MY_FILES,
+                    "submitted_for_approval": False,
+                    "submission_date": None,
+                    "admin_comments": [],
+                    "status_history": file_data.get("status_history", []) + [{
+                        "status": FileApprovalStatus.WITHDRAWN,
+                        "timestamp": datetime.now().isoformat(),
+                        "comment": "Submission withdrawn by user"
+                    }],
+                    "description": "",
+                    "tags": [],
+                    "withdrawn_date": datetime.now().isoformat()
+                }
                 
-                return True
+                if self.save_approval_status(approval_data):
+                    self.executor.submit(self._log_withdrawal_async, filename)
+                    return True
             
         except Exception as e:
             print(f"Error withdrawing submission: {e}")
@@ -409,90 +302,41 @@ class ApprovalFileService:
         except Exception as e:
             print(f"Logging error: {e}")
     
-    def remove_from_global_queue(self, file_id: str):
-        """Remove submission from global approval queue with file locking"""
-        try:
-            global_queue_file = "data/approvals/file_approvals.json"
-            if not os.path.exists(global_queue_file):
-                return
-            
-            # File locking for thread safety
-            lock_file = f"{global_queue_file}.lock"
-            max_attempts = 10
-            
-            for attempt in range(max_attempts):
-                try:
-                    if not os.path.exists(lock_file):
-                        # Create lock
-                        with open(lock_file, 'w') as f:
-                            f.write(str(time.time()))
-                        
-                        # Read, modify, write
-                        with open(global_queue_file, 'r') as f:
-                            queue = json.load(f)
-                        
-                        if file_id in queue:
-                            del queue[file_id]
-                            
-                            with open(global_queue_file, 'w') as f:
-                                json.dump(queue, f, indent=2)
-                        
-                        # Remove lock
-                        os.remove(lock_file)
-                        break
-                        
-                except Exception:
-                    # Wait before retry
-                    time.sleep(0.05)
-                    continue
-                finally:
-                    # Clean up lock if it exists
-                    try:
-                        if os.path.exists(lock_file):
-                            os.remove(lock_file)
-                    except:
-                        pass
-                        
-        except Exception as e:
-            print(f"Error removing from global queue: {e}")
-    
     def get_user_submissions(self) -> List[Dict]:
-        """Get all files with their approval status (optimized)"""
+        """Get all files with their approval status for submissions view"""
         files = self.get_uploaded_files()
         
-        # Use list comprehension for better performance
-        submissions = [
-            {
-                "original_filename": file_info["filename"],
-                "file_size": file_info["file_size"],
-                "upload_date": file_info["upload_date"],
-                "submission_date": file_info["submission_date"],
-                "status": file_info["status"],
-                "description": file_info["description"],
-                "tags": file_info["tags"],
-                "admin_comments": file_info["admin_comments"],
-                "status_history": file_info["status_history"]
-            }
-            for file_info in files
-            if (file_info["submitted_for_approval"] or file_info["status"] != "not_submitted")
-        ]
+        submissions = []
+        for file_info in files:
+            if file_info["submitted_for_approval"] or file_info["status"] != FileApprovalStatus.MY_FILES:
+                submission = {
+                    "original_filename": file_info["filename"],
+                    "file_size": file_info["file_size"],
+                    "upload_date": file_info["upload_date"],
+                    "submission_date": file_info["submission_date"],
+                    "status": file_info["status"],
+                    "description": file_info["description"],
+                    "tags": file_info["tags"],
+                    "admin_comments": file_info["admin_comments"],
+                    "status_history": file_info["status_history"]
+                }
+                submissions.append(submission)
         
         return submissions
     
     def get_available_files_for_submission(self) -> List[Dict]:
-        """Get files available for submission (optimized)"""
+        """Get files available for submission"""
         files = self.get_uploaded_files()
         
-        # Use list comprehension for better performance
-        available_files = [
-            {
-                "filename": file_info["filename"],
-                "file_size": file_info["file_size"],
-                "upload_date": file_info["upload_date"]
-            }
-            for file_info in files
-            if not file_info["submitted_for_approval"] and file_info["status"] == "not_submitted"
-        ]
+        available_files = []
+        for file_info in files:
+            if not file_info["submitted_for_approval"] and file_info["status"] == FileApprovalStatus.MY_FILES:
+                available = {
+                    "filename": file_info["filename"],
+                    "file_size": file_info["file_size"],
+                    "upload_date": file_info["upload_date"]
+                }
+                available_files.append(available)
         
         return available_files
     
@@ -547,12 +391,12 @@ class ApprovalFileService:
         return False
     
     def add_notification(self, notification: Dict):
-        """Add notification with better performance"""
+        """Add notification"""
         try:
             notifications = self.load_notifications()
             notifications.insert(0, notification)
             
-            # Keep only last 50 notifications for better performance
+            # Keep only last 50 notifications
             notifications = notifications[:50]
             
             self.save_notifications(notifications)
@@ -572,7 +416,7 @@ class ApprovalFileService:
         return False
     
     def get_unread_notification_count(self) -> int:
-        """Get unread notification count (optimized)"""
+        """Get unread notification count"""
         try:
             notifications = self.load_notifications()
             return sum(1 for n in notifications if not n.get("read", False))
@@ -586,45 +430,51 @@ class ApprovalFileService:
             
             if filename in approval_data:
                 file_data = approval_data[filename]
+                current_status = file_data.get("status")
                 
                 # Only allow resubmission of rejected or changes_requested files
-                if file_data.get("status") not in ["rejected", "changes_requested"]:
+                if current_status not in [FileApprovalStatus.REJECTED_TEAM_LEADER, FileApprovalStatus.REJECTED_ADMIN, FileApprovalStatus.CHANGES_REQUESTED]:
                     return False
                 
-                # Generate new file_id for resubmission
-                new_file_id = str(uuid.uuid4())
+                # Submit as new file
+                file_path = os.path.join(self.user_folder, filename)
+                if not os.path.exists(file_path):
+                    return False
                 
-                # Update approval status
-                approval_data[filename].update({
-                    "file_id": new_file_id,
-                    "status": "pending",
-                    "description": description or file_data.get("description", ""),
-                    "tags": tags or file_data.get("tags", []),
-                    "resubmission_date": datetime.now().isoformat(),
-                    "last_updated": datetime.now().isoformat()
-                })
+                # Use main approval service to resubmit
+                file_id = self.main_approval_service.submit_file_for_approval(
+                    user_id=self.username,
+                    filename=filename,
+                    file_path=file_path,
+                    user_team=self.user_team,
+                    description=description or file_data.get("description", ""),
+                    tags=tags or file_data.get("tags", [])
+                )
                 
-                # Add to status history
-                approval_data[filename]["status_history"].append({
-                    "status": "pending",
-                    "timestamp": datetime.now().isoformat(),
-                    "comment": "File resubmitted after changes"
-                })
-                
-                # Clear admin comments for fresh review
-                approval_data[filename]["admin_comments"] = []
-                
-                self.save_approval_status(approval_data)
-                
-                # Add back to global queue in background
-                self.executor.submit(self.add_to_global_queue, filename, new_file_id, 
-                                   description or file_data.get("description", ""), 
-                                   tags or file_data.get("tags", []))
-                
-                # Log in background
-                self.executor.submit(self._log_resubmission_async, filename)
-                
-                return True
+                if file_id:
+                    # Update local status
+                    approval_data[filename].update({
+                        "file_id": file_id,
+                        "status": FileApprovalStatus.PENDING_TEAM_LEADER,
+                        "description": description or file_data.get("description", ""),
+                        "tags": tags or file_data.get("tags", []),
+                        "resubmission_date": datetime.now().isoformat(),
+                        "last_updated": datetime.now().isoformat()
+                    })
+                    
+                    approval_data[filename]["status_history"].append({
+                        "status": FileApprovalStatus.PENDING_TEAM_LEADER,
+                        "timestamp": datetime.now().isoformat(),
+                        "comment": "File resubmitted after changes"
+                    })
+                    
+                    # Clear admin comments for fresh review
+                    approval_data[filename]["admin_comments"] = []
+                    
+                    self.save_approval_status(approval_data)
+                    self.executor.submit(self._log_resubmission_async, filename)
+                    
+                    return True
         except Exception as e:
             print(f"Error resubmitting file: {e}")
         return False
@@ -652,138 +502,6 @@ class ApprovalFileService:
                 })
                 return submission_data
         return None
-    
-    def batch_withdraw_submissions(self, filenames: List[str]) -> Dict:
-        """Withdraw multiple submissions efficiently"""
-        results = {"successful": [], "failed": []}
-        
-        try:
-            # Load approval data once
-            approval_data = self.load_approval_status()
-            files_to_update = {}
-            global_queue_removals = []
-            
-            # Process all files in memory first
-            for filename in filenames:
-                try:
-                    if filename not in approval_data:
-                        results["failed"].append({"filename": filename, "reason": "No submission found"})
-                        continue
-                    
-                    file_data = approval_data[filename]
-                    current_status = file_data.get("status", "not_submitted")
-                    
-                    if current_status not in ["pending", "under_review"]:
-                        results["failed"].append({
-                            "filename": filename, 
-                            "reason": f"Cannot withdraw status: {current_status}"
-                        })
-                        continue
-                    
-                    # Prepare update data
-                    file_id = file_data.get("file_id")
-                    if file_id:
-                        global_queue_removals.append(file_id)
-                    
-                    files_to_update[filename] = {
-                        "status": "not_submitted",
-                        "submitted_for_approval": False,
-                        "submission_date": None,
-                        "admin_comments": [],
-                        "status_history": file_data.get("status_history", []) + [{
-                            "status": "withdrawn",
-                            "timestamp": datetime.now().isoformat(),
-                            "comment": "Batch withdrawal by user"
-                        }],
-                        "description": "",
-                        "tags": [],
-                        "withdrawn_date": datetime.now().isoformat()
-                    }
-                    
-                    results["successful"].append(filename)
-                    
-                except Exception as e:
-                    results["failed"].append({"filename": filename, "reason": str(e)})
-            
-            # Update approval data in single write operation
-            if files_to_update:
-                for filename, update_data in files_to_update.items():
-                    approval_data[filename] = update_data
-                
-                self.save_approval_status(approval_data)
-            
-            # Remove from global queue in background
-            if global_queue_removals:
-                self.executor.submit(self._batch_remove_from_global_queue, global_queue_removals)
-            
-            # Log batch action in background
-            if results["successful"]:
-                self.executor.submit(self._log_batch_withdrawal, results["successful"])
-            
-        except Exception as e:
-            print(f"Batch withdrawal error: {e}")
-            
-        return results
-    
-    def _batch_remove_from_global_queue(self, file_ids: List[str]):
-        """Remove multiple files from global queue efficiently"""
-        try:
-            global_queue_file = "data/approvals/file_approvals.json"
-            if not os.path.exists(global_queue_file):
-                return
-            
-            lock_file = f"{global_queue_file}.lock"
-            max_attempts = 10
-            
-            for attempt in range(max_attempts):
-                try:
-                    if not os.path.exists(lock_file):
-                        # Create lock
-                        with open(lock_file, 'w') as f:
-                            f.write(str(time.time()))
-                        
-                        # Read and modify
-                        with open(global_queue_file, 'r') as f:
-                            queue = json.load(f)
-                        
-                        # Remove all file_ids in batch
-                        removed_count = 0
-                        for file_id in file_ids:
-                            if file_id in queue:
-                                del queue[file_id]
-                                removed_count += 1
-                        
-                        # Write back if changes were made
-                        if removed_count > 0:
-                            with open(global_queue_file, 'w') as f:
-                                json.dump(queue, f, indent=2)
-                        
-                        # Remove lock
-                        os.remove(lock_file)
-                        break
-                        
-                except Exception:
-                    time.sleep(0.05)
-                    continue
-                finally:
-                    try:
-                        if os.path.exists(lock_file):
-                            os.remove(lock_file)
-                    except:
-                        pass
-                        
-        except Exception as e:
-            print(f"Batch global queue removal error: {e}")
-    
-    def _log_batch_withdrawal(self, successful_files: List[str]):
-        """Log batch withdrawal asynchronously"""
-        try:
-            if successful_files:
-                log_message = f"Batch withdrew {len(successful_files)} submissions: {', '.join(successful_files)}"
-                log_action(self.username, log_message)
-                log_activity(self.username, log_message)
-        except Exception as e:
-            print(f"Batch logging error: {e}")
     
     def cleanup_resources(self):
         """Cleanup resources when done"""

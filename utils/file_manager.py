@@ -36,18 +36,7 @@ class SecureFileManager:
         logger.debug("SecureFileManager initialized")
     
     def sanitize_filename(self, filename: str) -> str:
-        """
-        Sanitize filename to prevent security issues.
-        
-        Args:
-            filename: Original filename from user input
-            
-        Returns:
-            Sanitized filename safe for file operations
-            
-        Raises:
-            SecurityError: If filename contains unsafe characters
-        """
+
         if not filename or not isinstance(filename, str):
             raise SecurityError("Invalid filename provided")
         

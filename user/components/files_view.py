@@ -211,6 +211,43 @@ class FilesView:
         
         return uploaded_files, failed_files
     
+    def submit_file_for_approval(self, filename: str):
+        """Submit file for team leader approval"""
+        def handle_submit(values):
+            description = values.get("description", "")
+            tags_str = values.get("tags", "")
+            tags = [tag.strip() for tag in tags_str.split(",") if tag.strip()]
+            
+            # Use the corrected method name
+            if self.file_service.submit_for_team_leader(filename, description, tags):
+                self.dialogs.show_success_notification(f"Submitted '{filename}' for approval!")
+                self.refresh_files_list()
+            else:
+                self.dialogs.show_error_notification("Failed to submit file for approval")
+        
+        # Show submission dialog
+        fields = [
+            {
+                "key": "description",
+                "type": "multiline", 
+                "label": "Description (optional)",
+                "hint": "Describe the purpose or contents of this file"
+            },
+            {
+                "key": "tags",
+                "type": "text",
+                "label": "Tags (optional)",
+                "hint": "Enter comma-separated tags, e.g., report, draft, urgent"
+            }
+        ]
+        
+        self.dialogs.show_input_dialog(
+            title=f"Submit for Approval: {filename}",
+            fields=fields,
+            on_submit=handle_submit,
+            submit_text="Submit for Review"
+        )
+    
     def show_submit_dialog(self, filename: str):
         """Show submit dialog for file approval"""
         def handle_submit(values):

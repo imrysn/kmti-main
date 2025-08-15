@@ -24,10 +24,6 @@ def save_session(username: str, session_data: dict):
 
 
 def load_session(username: str):
-    """
-    Load session for a given username.
-    Returns dict if session exists, else None.
-    """
     session_file = os.path.join(SESSION_ROOT, username, "session.json")
     if not os.path.exists(session_file):
         return None
@@ -39,9 +35,6 @@ def load_session(username: str):
 
 
 def clear_session(username: str):
-    """
-    Remove a user's session.json file.
-    """
     session_file = os.path.join(SESSION_ROOT, username, "session.json")
     if os.path.exists(session_file):
         try:
@@ -55,10 +48,6 @@ def clear_session(username: str):
 # --------------------------
 
 def get_fullname(username: str) -> str:
-    """
-    Get fullname from users.json using username.
-    If not found, return username.
-    """
     if not os.path.exists(USERS_FILE):
         return username
     try:
@@ -91,10 +80,6 @@ def _save_logs(logs):
 
 
 def log_login(username: str, role: str):
-    """
-    Record a login entry for a user with login_time and fullname.
-    If the user already has an open session (no logout_time), close it before adding new login.
-    """
     logs = _load_logs()
 
     # Close any unfinished session for this user/role
@@ -127,9 +112,6 @@ def log_login(username: str, role: str):
 
 
 def log_logout(username: str, role: str):
-    """
-    Updates the last login record of the user with logout_time and runtime.
-    """
     logs = _load_logs()
 
     # Find the latest login for this username and role that has no logout_time
@@ -151,18 +133,6 @@ def log_logout(username: str, role: str):
 
 
 def get_active_sessions():
-    """
-    Returns a dictionary of currently logged-in users (no logout_time).
-    Structure:
-    {
-        "username:role": {
-            "username": "...",
-            "role": "...",
-            "login_time": "...",
-            "fullname": "..."
-        }
-    }
-    """
     logs = _load_logs()
     active = {}
 
@@ -182,9 +152,6 @@ def get_active_sessions():
 
 
 def get_last_runtime(username: str) -> str:
-    """
-    Get the last recorded runtime from activity_metadata.json for a logged-out user.
-    """
     logs = _load_logs()
     for record in reversed(logs):
         if record["username"] == username and record.get("logout_time"):
@@ -197,12 +164,6 @@ def get_last_runtime(username: str) -> str:
 # --------------------------------------------------------------------
 
 def log_activity(username: str, description: str):
-    """
-    Record an admin/user action (not tied to login sessions).
-    Format is unified with logger.py:
-    - activity
-    - date
-    """
     log_file = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 
     os.makedirs(os.path.dirname(log_file), exist_ok=True)

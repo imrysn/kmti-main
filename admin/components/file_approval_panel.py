@@ -1,5 +1,5 @@
+# file_approval_panel.py
 import flet as ft
-import json
 import os 
 import shutil
 import subprocess
@@ -12,7 +12,8 @@ from utils.file_manager import get_file_manager, SecurityError
 from utils.logger import get_enhanced_logger, log_security_event, log_file_operation, log_approval_action, PerformanceTimer
 from utils.auth import get_enhanced_authenticator
 from utils.dialog import show_confirm_dialog
-from services.approval_service import FileApprovalService, ApprovalStatus
+from services.new_approval_service import NewFileApprovalService
+from services.file_approval_constant import FileApprovalStatus
 from services.notification_service import NotificationService
 from services.permission_service import PermissionService
 
@@ -32,7 +33,6 @@ class FileApprovalPanel:
         self.selected_file = None
         self.files_table = None
         self.preview_panel_widget = None
-
         
         try:
             # Sanitize admin user input for security
@@ -64,12 +64,16 @@ class FileApprovalPanel:
     
     def _initialize_services(self):
         try:
-            self.approval_service = FileApprovalService()
+            self.approval_service = NewFileApprovalService()
             self.permission_service = PermissionService()
             self.notification_service = NotificationService()
             
             # Initialize default permissions if needed
-            self.permission_service.initialize_default_permissions()
+            try:
+                self.permission_service.initialize_default_permissions()
+            except Exception:
+                # ignore if not present or already initialized
+                pass
             
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Failed to initialize services: {e}")
@@ -144,7 +148,6 @@ class FileApprovalPanel:
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.only(bottom=10)
         )
-
     
     def _create_stat_card(self, label: str, value: str, color: str, view_type: str) -> ft.Container:
         return ft.Container(
@@ -158,13 +161,15 @@ class FileApprovalPanel:
             width=self.config.get_ui_constant('stat_card_width', 110),
             height=self.config.get_ui_constant('stat_card_height', 80),
             alignment=ft.alignment.center,
-            on_click=lambda e: self._switch_table_view(view_type)
+            on_click=lambda e: self._switch_table_view(view_type, label) 
         )
-    
-    def _switch_table_view(self, view_type: str):
-        self.current_view = view_type
-        self.refresh_files_table()
 
+    def _switch_table_view(self, view_type: str, label: str):
+        self.current_view = view_type
+        self.update_files_table_title(label) 
+        # Reset team filter to ALL when switching views to avoid accidental hiding
+        self.current_team_filter = "ALL"
+        self.refresh_files_table()
     
     def _create_filters_section(self) -> ft.Row:
 
@@ -174,7 +179,6 @@ class FileApprovalPanel:
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error creating filters section: {e}")
             
-            # Provide a working fallback filter bar with just basic options
             return ft.Row([
                 ft.TextField(
                     hint_text="Search files...",
@@ -214,7 +218,7 @@ class FileApprovalPanel:
     def _load_teams_safely(self) -> List[str]:
         """Load teams with simplified approach"""
         try:
-            # Use permission service directly
+            # Use permission service directly - get_reviewable_teams should return list of teams
             return self.permission_service.get_reviewable_teams(self.admin_user)
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error loading teams: {e}")
@@ -241,7 +245,6 @@ class FileApprovalPanel:
             # Minimal fallback
             team_options = [ft.dropdown.Option("ALL", "All Teams")]
         
-        # Get UI constants with fallbacks
         try:
             search_width = self.config.get_ui_constant('search_field_width', 200)
             dropdown_width = self.config.get_ui_constant('dropdown_width', 150)
@@ -319,7 +322,7 @@ class FileApprovalPanel:
                       ft.ControlState.HOVERED: ft.BorderSide(1, ft.Colors.RED)},
                 shape=ft.RoundedRectangleBorder(radius=border_radius)
             )
-        else:  # secondary
+        else: 
             return ft.ButtonStyle(
                 bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                          ft.ControlState.HOVERED: ft.Colors.BLUE},
@@ -332,7 +335,6 @@ class FileApprovalPanel:
     def _create_main_content_area(self) -> ft.ResponsiveRow:
 
         return ft.ResponsiveRow([
-            # Left: Files table
             ft.Container(
                 content=self._create_files_table_section(),
                 col={"sm": 12, "md": 7, "lg": 8},
@@ -341,8 +343,6 @@ class FileApprovalPanel:
                 border=ft.border.all(1, ft.Colors.GREY_300),
                 padding=20
             ),
-            
-            # Right: Preview and actions  
             ft.Container(
                 content=self._create_preview_section(),
                 col={"sm": 12, "md": 5, "lg": 4},
@@ -354,8 +354,7 @@ class FileApprovalPanel:
         ])
     
     def _create_files_table_section(self) -> ft.Container:
-     
-        # Define columns that will be shown based on container size
+        self.files_table_title = ft.Text("Pending Files", size=20, weight=ft.FontWeight.BOLD)
         def get_columns_for_size(col_config):
             columns = []
             if col_config.get("file", True):
@@ -372,23 +371,20 @@ class FileApprovalPanel:
                 columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
             return columns
         
-        # Store column configurations for different sizes (from config)
         column_configs = {
             "xs": {"file": True, "user": False, "team": False, "size": False, "submitted": False, "status": True},
             "sm": {"file": True, "user": True, "team": False, "size": False, "submitted": False, "status": True},
             "md": {"file": True, "user": True, "team": True, "size": False, "submitted": True, "status": True},
             "lg": {"file": True, "user": True, "team": True, "size": True, "submitted": True, "status": True}
         }
-        
-        # Get constants from config with fallbacks
+
         try:
             min_height = self.config.get_ui_constant('table_row_min_height', 40)
             max_height = self.config.get_ui_constant('table_row_max_height', 50)
         except:
             min_height = 40
             max_height = 50
-        
-        # Create responsive data table - YOUR PREFERRED APPROACH
+
         self.files_table = ft.DataTable(
             columns=get_columns_for_size(column_configs["lg"]),  # Start with all columns
             rows=[],
@@ -398,60 +394,110 @@ class FileApprovalPanel:
             data_row_min_height=min_height,
             expand=True,
         )
-        
-        # Create responsive container for the table - YOUR PREFERRED APPROACH
+
         table_content = ft.ResponsiveRow([
             ft.Container(
                 content=self.files_table,
-                col={"xs": 12, "sm": 12, "md": 12, "lg": 12},  
+                col={"xs": 12, "sm": 12, "md": 12, "lg": 12},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
                 padding=5,
                 expand=True
             )
         ])
-        
-        # Initial table population
+
         self.refresh_files_table()
-        
-        # Store column configs for use in refresh method
         self.column_configs = column_configs
         self.get_columns_for_size = get_columns_for_size
-        
+
         return ft.Container(
             content=ft.Column([
-                ft.Text("Pending Files", size=20, weight=ft.FontWeight.BOLD),
+                self.files_table_title, 
                 ft.Divider(),
                 ft.Container(height=10),
-                table_content  # Use your preferred responsive approach
+                table_content
             ], expand=True, spacing=0),
             expand=True,
             padding=0
         )
 
+    def update_files_table_title(self, status_label: str):
+        """Update the files table title dynamically."""
+        # status_label expected like "Pending", "Approved", "Rejected"
+        try:
+            self.files_table_title.value = f"{status_label} Files"
+            self.files_table_title.update()
+        except Exception:
+            # In case title not initialized yet
+            pass
+
+    def _is_admin_user(self) -> bool:
+        """Helper to check if current admin_user is an Admin role"""
+        try:
+            if hasattr(self.permission_service, "is_admin"):
+                return bool(self.permission_service.is_admin(self.admin_user))
+            # Fallback: check user's teams length or roles via users.json
+            return False
+        except Exception:
+            return False
+
+    def _is_team_leader(self) -> bool:
+        """Helper to check if the current user is a team leader (team admin)"""
+        try:
+            # PermissionService may expose is_team_admin(team) for a team - check any team
+            if hasattr(self.permission_service, "is_team_admin"):
+                # if they are team admin for any of their teams, consider team leader
+                for t in self.admin_teams:
+                    try:
+                        if self.permission_service.is_team_admin(self.admin_user, t):
+                            return True
+                    except Exception:
+                        continue
+            return False
+        except Exception:
+            return False
+
     def _get_filtered_approved_files(self) -> List[Dict]:
-        reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
-        all_approved = []
-        for team in reviewable_teams:
-            try:
-                team_files = self._get_approved_files_by_team_safe(team)
-                all_approved.extend(team_files)
-            except Exception as e:
-                self.enhanced_logger.general_logger.warning(f"Error getting approved files for team {team}: {e}")
-        unique_files = {f['file_id']: f for f in all_approved}
-        return self._apply_current_filters(list(unique_files.values()))
+        """Get approved files with current filters applied"""
+        try:
+            reviewable_teams = self.permission_service.get_reviewable_teams(
+                self.admin_user, self.admin_teams
+            )
+            all_approved = []
+            for team in reviewable_teams:
+                try:
+                    team_files = self.approval_service.get_approved_files_by_team(team)
+                    all_approved.extend(team_files)
+                except Exception as team_error:
+                    self.enhanced_logger.general_logger.warning(
+                        f"Error getting approved files for team {team}: {team_error}"
+                    )
+            unique_files = {f['file_id']: f for f in all_approved}
+            return self._apply_current_filters(list(unique_files.values()))
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error getting approved files: {e}")
+            return []
 
     def _get_filtered_rejected_files(self) -> List[Dict]:
-        reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user, self.admin_teams)
-        all_rejected = []
-        for team in reviewable_teams:
-            try:
-                team_files = self._get_rejected_files_by_team_safe(team)
-                all_rejected.extend(team_files)
-            except Exception as e:
-                self.enhanced_logger.general_logger.warning(f"Error getting rejected files for team {team}: {e}")
-        unique_files = {f['file_id']: f for f in all_rejected}
-        return self._apply_current_filters(list(unique_files.values()))
+        """Get rejected files with current filters applied"""
+        try:
+            reviewable_teams = self.permission_service.get_reviewable_teams(
+                self.admin_user, self.admin_teams
+            )
+            all_rejected = []
+            for team in reviewable_teams:
+                try:
+                    team_files = self.approval_service.get_rejected_files_by_team(team)
+                    all_rejected.extend(team_files)
+                except Exception as team_error:
+                    self.enhanced_logger.general_logger.warning(
+                        f"Error getting rejected files for team {team}: {team_error}"
+                    )
+            unique_files = {f['file_id']: f for f in all_rejected}
+            return self._apply_current_filters(list(unique_files.values()))
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error getting rejected files: {e}")
+            return []
     
     def _get_table_columns(self) -> List[ft.DataColumn]:
         size_category = self._get_container_size_category()
@@ -470,14 +516,11 @@ class FileApprovalPanel:
             columns.append(ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)))
         if config.get("status", True):
             columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
-        
         return columns
-    
+
     def _create_preview_section(self) -> ft.Container:
 
         padding = self.config.get_ui_constant('preview_panel_padding', 15)
-        
-        # FIXED: Empty state with centered alignment (this is fine for empty state)
         self.preview_panel_widget = ft.Column([
             ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
                    text_align=ft.TextAlign.CENTER),
@@ -487,12 +530,12 @@ class FileApprovalPanel:
             ft.Text("Click on any file in the table to view details and approval options", 
                    size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ], 
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Center empty state
-        alignment=ft.MainAxisAlignment.CENTER,  # Center vertically when empty
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,  
+        alignment=ft.MainAxisAlignment.CENTER,  
         scroll=ft.ScrollMode.AUTO,
         expand=True
         )
-        
+
         return ft.Container(
             content=ft.Container(
                 content=self.preview_panel_widget,
@@ -540,6 +583,10 @@ class FileApprovalPanel:
         """Get file counts with comprehensive error handling and update stat cards if present"""
         try:
             with PerformanceTimer("FileApprovalPanel", "get_file_counts"):
+                # Determine role
+                is_admin = self._is_admin_user()
+                is_tl = self._is_team_leader()
+
                 # Get reviewable teams for this admin
                 reviewable_teams = self.permission_service.get_reviewable_teams(
                     self.admin_user, self.admin_teams
@@ -549,30 +596,46 @@ class FileApprovalPanel:
                 approved_files = set()
                 rejected_files = set()
 
+                # Admin sees pending_admin across all teams
+                if is_admin:
+                    try:
+                        admin_pending = self.approval_service.get_pending_admin_files()
+                        for file_data in admin_pending:
+                            pending_files.add(file_data['file_id'])
+                    except Exception as err:
+                        self.enhanced_logger.general_logger.warning(f"Error getting admin pending files: {err}")
+
+                # Team leaders see pending_team_leader for their teams
+                if is_tl:
+                    for team in reviewable_teams:
+                        try:
+                            team_pending = self.approval_service.get_pending_team_leader_files(team)
+                            for file_data in team_pending:
+                                pending_files.add(file_data['file_id'])
+                        except Exception as team_error:
+                            self.enhanced_logger.general_logger.warning(
+                                f"Error getting TL pending files for team {team}: {team_error}"
+                            )
+
+                # Counts for approved/rejected aggregated per team for reviewable teams
                 for team in reviewable_teams:
                     try:
-                        # Get pending files
-                        team_pending = self.approval_service.get_pending_files_by_team(
-                            team
-                        )
-                        for file_data in team_pending:
-                            pending_files.add(file_data['file_id'])
-
-                        # Get approved files
-                        team_approved = self._get_approved_files_by_team_safe(team)
-                        for file_data in team_approved:
-                            approved_files.add(file_data['file_id'])
-
-                        # Get rejected files
-                        team_rejected = self._get_rejected_files_by_team_safe(team)
-                        for file_data in team_rejected:
-                            rejected_files.add(file_data['file_id'])
-
+                        team_approved = self.approval_service.get_approved_files_by_team(team)
+                        for fd in team_approved:
+                            approved_files.add(fd['file_id'])
                     except Exception as team_error:
                         self.enhanced_logger.general_logger.warning(
-                            f"Error getting files for team {team}: {team_error}"
+                            f"Error getting approved files for team {team}: {team_error}"
                         )
-                        continue
+
+                    try:
+                        team_rejected = self.approval_service.get_rejected_files_by_team(team)
+                        for fd in team_rejected:
+                            rejected_files.add(fd['file_id'])
+                    except Exception as team_error:
+                        self.enhanced_logger.general_logger.warning(
+                            f"Error getting rejected files for team {team}: {team_error}"
+                        )
 
                 counts = {
                     'pending': len(pending_files),
@@ -597,7 +660,10 @@ class FileApprovalPanel:
 
                 # Log performance metric
                 from utils.logger import log_performance_metric
-                log_performance_metric("FileApprovalPanel", "file_counts", 50.0, counts)
+                try:
+                    log_performance_metric("FileApprovalPanel", "file_counts", 50.0, counts)
+                except Exception:
+                    pass
 
                 return counts
 
@@ -614,7 +680,7 @@ class FileApprovalPanel:
             # Fallback to general method
             try:
                 all_files = self.approval_service.get_all_files_by_team(team)
-                return [f for f in all_files if f.get('status') == 'APPROVED']
+                return [f for f in all_files if f.get('status') == ApprovalStatus.APPROVED]
             except Exception:
                 return []
     
@@ -626,7 +692,7 @@ class FileApprovalPanel:
             # Fallback to general method
             try:
                 all_files = self.approval_service.get_all_files_by_team(team)
-                return [f for f in all_files if f.get('status') == 'REJECTED']
+                return [f for f in all_files if f.get('status') == ApprovalStatus.REJECTED]
             except Exception:
                 return []
     
@@ -693,31 +759,45 @@ class FileApprovalPanel:
 
     
     def _get_filtered_pending_files(self) -> List[Dict]:
-        """Get pending files with current filters applied"""
+        """Get pending files from NEW data location"""
         try:
-            # Get reviewable teams for this admin
-            reviewable_teams = self.permission_service.get_reviewable_teams(
-                self.admin_user, self.admin_teams)
+            is_admin = self._is_admin_user()
+            is_tl = self._is_team_leader()
             
-            # Get pending files from all reviewable teams
-            all_pending = []
-            for team in reviewable_teams:
-                try:
-                    team_files = self.approval_service.get_pending_files_by_team(team)
-                    all_pending.extend(team_files)
-                except Exception as team_error:
-                    self.enhanced_logger.general_logger.warning(f"Error getting files for team {team}: {team_error}")
-                    continue
+            print(f"[DEBUG] Getting files for {self.admin_user} (admin: {is_admin}, tl: {is_tl})")
             
-            # Remove duplicates based on file_id (more efficient than previous approach)
-            unique_files = {file_data['file_id']: file_data for file_data in all_pending}
-            pending_files = list(unique_files.values())
+            files_to_process = []
             
-            # Apply filters
-            return self._apply_current_filters(pending_files)
+            # Team Leader: get pending_team_leader files
+            if is_tl:
+                reviewable_teams = self.permission_service.get_reviewable_teams(self.admin_user)
+                print(f"[DEBUG] TL teams: {reviewable_teams}")
+                
+                for team in reviewable_teams:
+                    team_files = self.approval_service.get_pending_team_leader_files(team)
+                    print(f"[DEBUG] Team {team}: {len(team_files)} pending files")
+                    files_to_process.extend(team_files)
+            
+            # Admin: get pending_admin files  
+            if is_admin:
+                admin_files = self.approval_service.get_pending_admin_files()
+                print(f"[DEBUG] Admin: {len(admin_files)} pending files")
+                files_to_process.extend(admin_files)
+            
+            # Remove duplicates
+            unique = {f['file_id']: f for f in files_to_process}
+            result = list(unique.values())
+            
+            print(f"[DEBUG] Final result: {len(result)} files")
+            for f in result:
+                print(f"[DEBUG]   - {f.get('original_filename')}: {f.get('status')}")
+                
+            return self._apply_current_filters(result)
             
         except Exception as e:
-            self.enhanced_logger.general_logger.error(f"Error getting filtered pending files: {e}")
+            print(f"[ERROR] Error getting pending files: {e}")
+            import traceback
+            traceback.print_exc()
             return []
     
     def _apply_current_filters(self, files: List[Dict]) -> List[Dict]:
@@ -808,14 +888,48 @@ class FileApprovalPanel:
         if config.get("submitted", True):
             cells.append(ft.DataCell(ft.Text(date_str, size=14)))
         
+        # Status display: map internal statuses to UI labels/colors
+        status_val = (file_data.get('status') or "").lower()
+        status_text = "Unknown"
+        status_color = ft.Colors.GREY_600
+        status_bg = ft.Colors.GREY_200
+
+        try:
+            if status_val == FileApprovalStatus.PENDING_TEAM_LEADER:
+                status_text = "Pending (TL)"
+                status_color = ft.Colors.WHITE
+                status_bg = ft.Colors.ORANGE
+            elif status_val == FileApprovalStatus.PENDING_ADMIN:
+                status_text = "Pending (Admin)"
+                status_color = ft.Colors.WHITE
+                status_bg = ft.Colors.ORANGE
+            elif status_val == FileApprovalStatus.APPROVED:
+                status_text = "Approved"
+                status_color = ft.Colors.WHITE
+                status_bg = ft.Colors.GREEN
+            elif status_val in [FileApprovalStatus.REJECTED_TEAM_LEADER, FileApprovalStatus.REJECTED_ADMIN, FileApprovalStatus.CHANGES_REQUESTED]:
+                status_text = "Rejected" if status_val in [FileApprovalStatus.REJECTED_TEAM_LEADER, FileApprovalStatus.REJECTED_ADMIN] else "Changes Requested"
+                status_color = ft.Colors.WHITE
+                status_bg = ft.Colors.RED
+            elif status_val == FileApprovalStatus.WITHDRAWN:
+                status_text = "Withdrawn"
+                status_color = ft.Colors.BLACK
+                status_bg = ft.Colors.GREY_100
+            else:
+                status_text = status_val.upper() if status_val else "UNKNOWN"
+                status_color = ft.Colors.BLACK
+                status_bg = ft.Colors.GREY_100
+        except Exception:
+            status_text = file_data.get('status', 'Unknown')
+
         if config.get("status", True):
             cells.append(ft.DataCell(ft.Container(
-                content=ft.Text("PENDING", color=ft.Colors.WHITE, size=10),
-                bgcolor=ft.Colors.ORANGE,
+                content=ft.Text(status_text, color=status_color, size=10),
+                bgcolor=status_bg,
                 padding=ft.padding.symmetric(horizontal=6, vertical=3),
                 border_radius=4
             )))
-        
+
         return ft.DataRow(
             cells=cells,
             on_select_changed=lambda e, data=file_data: self.select_file(data)
@@ -856,7 +970,7 @@ class FileApprovalPanel:
         empty_cells = []
         # First cell shows the message
         empty_cells.append(ft.DataCell(
-            ft.Text("No pending files found", style=ft.TextStyle(italic=True))
+            ft.Text("No files found for this view", style=ft.TextStyle(italic=True))
         ))
         
         # Add empty cells for remaining columns
@@ -909,7 +1023,10 @@ class FileApprovalPanel:
             file_data = self.selected_file
             
             # Load comments for this file
-            comments = self.approval_service.load_comments().get(file_data['file_id'], [])
+            try:
+                comments = self.approval_service.load_comments().get(file_data['file_id'], [])
+            except Exception:
+                comments = []
             
             # Create file preview content
             preview_content = self._create_file_preview(file_data, comments)
@@ -984,12 +1101,6 @@ class FileApprovalPanel:
             # Download and Open buttons - keep centered for better UX
             ft.Container(height=15),
             ft.Row([
-                ft.ElevatedButton(
-                    "Download",
-                    icon=ft.Icons.DOWNLOAD,
-                    on_click=lambda e: self._handle_download_file(file_data),
-                    style=self._get_button_style("primary")
-                ),
                 ft.Container(width=10),
                 ft.ElevatedButton(
                     "Open",
@@ -999,7 +1110,7 @@ class FileApprovalPanel:
                 )
             ], alignment=ft.MainAxisAlignment.CENTER)
         ]
-        
+
         # Comments section with left alignment
         comment_controls = []
         if comments:
@@ -1022,12 +1133,11 @@ class FileApprovalPanel:
             )
         ]
         
-        # FIXED: Actions section with left-aligned Add Comment button
+        # Actions section with left-aligned Add Comment button
         actions_section = [
             ft.Text("Actions", size=16, weight=ft.FontWeight.BOLD),
             comment_field,
             ft.Container(height=5),
-            # FIXED: Left-aligned Add Comment button instead of centered
             ft.Row([
                 ft.ElevatedButton(
                     "Add Comment",
@@ -1035,7 +1145,7 @@ class FileApprovalPanel:
                     on_click=lambda e: self._handle_add_comment(file_data, comment_field),
                     style=self._get_button_style("primary")
                 )
-            ], alignment=ft.MainAxisAlignment.START),  # Left-aligned instead of CENTER
+            ], alignment=ft.MainAxisAlignment.CENTER),
             
             ft.Container(height=10),
             ft.Divider(),
@@ -1043,7 +1153,7 @@ class FileApprovalPanel:
             reason_field,
             ft.Container(height=10),
             
-            # Approve/Reject buttons can stay centered for better UX
+            # Approve/Reject buttons
             ft.Row([
                 ft.ElevatedButton(
                     "Approve",
@@ -1058,7 +1168,7 @@ class FileApprovalPanel:
                     on_click=lambda e: self._handle_reject_file(file_data, reason_field),
                     style=self._get_button_style("danger")
                 )
-            ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)  # Keep these centered
+            ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
         ]
         
         return file_info + [ft.Divider()] + comments_section + [ft.Divider()] + actions_section
@@ -1198,12 +1308,15 @@ class FileApprovalPanel:
             
             if success:
                 # Send notification to user
-                self.notification_service.notify_comment_added(
-                    file_data['user_id'],
-                    file_data['original_filename'],
-                    self.admin_user,
-                    comment_text
-                )
+                try:
+                    self.notification_service.notify_comment_added(
+                        file_data['user_id'],
+                        file_data['original_filename'],
+                        self.admin_user,
+                        comment_text
+                    )
+                except Exception:
+                    pass
                 
                 comment_field.value = ""
                 self._show_snackbar("Comment added and user notified!", ft.Colors.GREEN)
@@ -1221,46 +1334,70 @@ class FileApprovalPanel:
             self._show_snackbar("Error adding comment", ft.Colors.RED)
     
     def _handle_approve_file(self, file_data: Dict):
-        """Handle file approval"""
+        """Handle file approval - role-aware (Team Leader vs Admin)"""
         try:
             if not file_data:
                 return
             
-            success = self.approval_service.approve_file(
-                file_data['file_id'],
-                self.admin_user
-            )
+            file_id = file_data.get('file_id')
+            status = file_data.get('status', '').lower()
+            success = False
+            
+            # Determine action based on current status and user role
+            if status == FileApprovalStatus.PENDING_TEAM_LEADER:
+                # Team Leader approval: Stage 1 → Stage 2
+                try:
+                    success = self.approval_service.team_leader_approve(file_id, self.admin_user)
+                    action_message = "forwarded to Admin"
+                except Exception as e:
+                    print(f"Error in team leader approve: {e}")
+                    success = False
+                    
+            elif status == FileApprovalStatus.PENDING_ADMIN:
+                # Admin approval: Stage 2 → Stage 3 (final)
+                try:
+                    success = self.approval_service.approve_by_admin(file_id, self.admin_user)
+                    action_message = "given final approval"
+                except Exception as e:
+                    print(f"Error in admin approve: {e}")
+                    success = False
+            else:
+                self._show_snackbar(f"Cannot approve file with status: {status}", ft.Colors.RED)
+                return
             
             if success:
-                # Send notification to user
-                self.notification_service.notify_approval_status(
-                    file_data['user_id'],
-                    file_data['original_filename'],
-                    ApprovalStatus.APPROVED.value,
-                    self.admin_user
-                )
-                
                 filename = file_data.get('original_filename', 'Unknown')
-                self._show_snackbar(f"File '{filename}' approved!", ft.Colors.GREEN)
+                self._show_snackbar(f"File '{filename}' {action_message}!", ft.Colors.GREEN)
                 
-                # Log approval action
+                # Send notification to user
+                try:
+                    self.notification_service.notify_approval_status(
+                        file_data['user_id'],
+                        filename,
+                        FileApprovalStatus.PENDING_ADMIN if status == FileApprovalStatus.PENDING_TEAM_LEADER else FileApprovalStatus.APPROVED,
+                        self.admin_user
+                    )
+                except Exception as e:
+                    print(f"Error sending notification: {e}")
+                
+                # Log the action
+                from utils.logger import log_approval_action
                 log_approval_action(self.admin_user, file_data['user_id'], 
-                                  file_data['file_id'], "APPROVE")
+                                file_id, "APPROVE", action_message)
                 
                 # Clear selection and refresh
                 self._clear_selection()
                 self.refresh_files_table()
-                self.refresh_interface()
                 
             else:
                 self._show_snackbar("Failed to approve file", ft.Colors.RED)
                 
         except Exception as e:
-            self.enhanced_logger.general_logger.error(f"Error approving file: {e}")
+            print(f"Error approving file: {e}")
             self._show_snackbar("Error approving file", ft.Colors.RED)
     
     def _handle_reject_file(self, file_data: Dict, reason_field: ft.TextField):
-        """Handle file rejection with confirmation dialog"""
+        """Handle file rejection with confirmation dialog (role-aware)"""
         try:
             if not file_data:
                 return
@@ -1285,24 +1422,45 @@ class FileApprovalPanel:
             self._show_snackbar("Error processing file rejection", ft.Colors.RED)
     
     def _execute_file_rejection(self, file_data: Dict, rejection_reason: str):
-        """Execute the actual file rejection after confirmation"""
+        """Execute the actual file rejection after confirmation (role-aware)"""
         try:
-            success = self.approval_service.reject_file(
-                file_data['file_id'],
-                self.admin_user,
-                rejection_reason,
-                False  # Always reject, no changes requested
-            )
-            
+            status = (file_data.get('status') or "").lower()
+            success = False
+
+            # For pending TL files, TL rejects via team_leader_reject
+            if status == FileApprovalStatus.PENDING_TEAM_LEADER:
+                try:
+                    success = self.approval_service.team_leader_reject(file_data['file_id'], self.admin_user, rejection_reason, False)
+                except Exception as e:
+                    print(f"Error in team leader reject: {e}")
+                    success = False
+
+            # For pending admin files, admin rejects via reject_by_admin
+            elif status == FileApprovalStatus.PENDING_ADMIN:
+                try:
+                    success = self.approval_service.reject_by_admin(file_data['file_id'], self.admin_user, rejection_reason, False)
+                except Exception as e:
+                    print(f"Error in admin reject: {e}")
+                    success = False
+            else:
+                # fallback to generic reject
+                try:
+                    success = self.approval_service.reject_by_admin(file_data['file_id'], self.admin_user, rejection_reason, False)
+                except Exception:
+                    success = False
+
             if success:
                 # Send notification to user
-                self.notification_service.notify_approval_status(
-                    file_data['user_id'],
-                    file_data['original_filename'],
-                    ApprovalStatus.REJECTED.value,
-                    self.admin_user,
-                    rejection_reason
-                )
+                try:
+                    self.notification_service.notify_approval_status(
+                        file_data['user_id'],
+                        file_data['original_filename'],
+                        FileApprovalStatus.REJECTED_ADMIN if status == FileApprovalStatus.PENDING_ADMIN else FileApprovalStatus.REJECTED_TEAM_LEADER,
+                        self.admin_user,
+                        rejection_reason
+                    )
+                except Exception:
+                    pass
                 
                 filename = file_data.get('original_filename', 'Unknown')
                 self._show_snackbar(f"File '{filename}' rejected!", ft.Colors.RED)
@@ -1343,6 +1501,14 @@ class FileApprovalPanel:
         self.preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.CENTER
         self.preview_panel_widget.alignment = ft.MainAxisAlignment.CENTER
         self.preview_panel_widget.scroll = ft.ScrollMode.AUTO
+
+    def _handle_tl_approve(self, file_data):
+        file_id = file_data['file_id']
+        ok = self.approval_service.team_leader_approve(file_id, self.admin_user)
+        if ok:
+            # notify user, refresh table, etc.
+            self._show_snackbar("Forwarded to admin", ft.Colors.GREEN)
+            self.refresh_files_table()
     
     def refresh_interface(self):
         """Refresh the entire interface"""
@@ -1353,7 +1519,10 @@ class FileApprovalPanel:
                 self._update_preview_panel()
                 
                 # Invalidate file manager cache to ensure fresh data
-                self.file_manager.invalidate_cache()
+                try:
+                    self.file_manager.invalidate_cache()
+                except Exception:
+                    pass
                 
                 # Update page
                 self.page.update()
@@ -1410,12 +1579,21 @@ class FileApprovalPanel:
         """Cleanup resources when panel is destroyed"""
         try:
             if hasattr(self, 'file_manager'):
-                self.file_manager.invalidate_cache()
+                try:
+                    self.file_manager.invalidate_cache()
+                except Exception:
+                    pass
             
             # Use your existing logger for cleanup activity
             from utils.logger import log_action
-            log_action(self.admin_user, "File approval panel session ended")
+            try:
+                log_action(self.admin_user, "File approval panel session ended")
+            except Exception:
+                pass
             
             self.enhanced_logger.general_logger.info("File approval panel cleanup completed")
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error during cleanup: {e}")
+
+    
+           

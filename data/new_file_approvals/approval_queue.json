@@ -1,0 +1,52 @@
+{
+  "test-file-001": {
+    "file_id": "test-file-001",
+    "original_filename": "sample_document.pdf",
+    "file_path": "data/uploads/user1/sample_document.pdf",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 1024000,
+    "status": "pending_team_leader",
+    "submission_date": "2025-01-14T10:00:00",
+    "description": "Test document for approval workflow",
+    "tags": ["test", "document"],
+    "workflow_history": [
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-01-14T10:00:00",
+        "action": "submitted",
+        "actor": "user1",
+        "comment": "File submitted for Team Leader review"
+      }
+    ]
+  },
+  "test-file-002": {
+    "file_id": "test-file-002",
+    "original_filename": "report.docx",
+    "file_path": "data/uploads/user1/report.docx",
+    "user_id": "user1",
+    "user_team": "KUSAKABE",
+    "file_size": 512000,
+    "status": "pending_admin",
+    "submission_date": "2025-01-13T14:30:00",
+    "description": "Monthly report for admin review",
+    "tags": ["report", "monthly"],
+    "team_leader_approved_by": "team_leader1",
+    "team_leader_approved_date": "2025-01-14T09:00:00",
+    "workflow_history": [
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-01-13T14:30:00",
+        "action": "submitted",
+        "actor": "user1",
+        "comment": "File submitted for Team Leader review"
+      },
+      {
+        "status": "pending_admin",
+        "timestamp": "2025-01-14T09:00:00",
+        "admin_id": "team_leader1",
+        "comment": "Approved by Team Leader - forwarded to Admin"
+      }
+    ]
+  }
+}
