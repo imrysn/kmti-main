@@ -27,11 +27,11 @@ class UIComponentHelper:
                 ]),
                 ft.Container(expand=True),
                 ft.Row([
-                    self._create_stat_card("Pending", str(file_counts['pending']), ft.Colors.ORANGE),
+                    self._create_stat_card("Pending", str(file_counts.get('pending', 0)), ft.Colors.ORANGE),
                     ft.Container(width=15),
-                    self._create_stat_card("Approved", str(file_counts['approved']), ft.Colors.GREEN),
+                    self._create_stat_card("Approved", str(file_counts.get('approved', 0)), ft.Colors.GREEN),
                     ft.Container(width=15),
-                    self._create_stat_card("Rejected", str(file_counts['rejected']), ft.Colors.RED)
+                    self._create_stat_card("Rejected", str(file_counts.get('rejected', 0)), ft.Colors.RED)
                 ])
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.only(bottom=10)
@@ -52,7 +52,8 @@ class UIComponentHelper:
             padding=15,
             width=card_width,
             height=card_height,
-            alignment=ft.alignment.center
+            alignment=ft.alignment.center,
+            border=ft.border.all(2, ft.Colors.GREY_200)
         )
     
     def create_filters_section(self, teams: List[str], search_query: str,
@@ -64,11 +65,11 @@ class UIComponentHelper:
             team_options = self._create_team_options(teams)
             
             search_width = self.config.get_ui_constant('search_field_width', 200)
-            dropdown_width = self.config.get_ui_constant('dropdown_width', 150)
+            dropdown_width = self.config.get_ui_constant('dropdown_width', 160)
         except:
             team_options = [ft.dropdown.Option("ALL", "All Teams")]
             search_width = 200
-            dropdown_width = 150
+            dropdown_width = 160
         
         return ft.Row([
             ft.TextField(
@@ -107,7 +108,7 @@ class UIComponentHelper:
         ])
     
     def _create_team_options(self, teams: List[str]) -> List[ft.dropdown.Option]:
-
+        """Create team dropdown options with proper validation."""
         try:
             team_options = [ft.dropdown.Option("ALL", "All Teams")]
             
@@ -118,6 +119,7 @@ class UIComponentHelper:
                     if safe_team:
                         team_options.append(ft.dropdown.Option(safe_team, safe_team))
             
+            self.enhanced_logger.general_logger.debug(f"Created {len(team_options)} team options")
             return team_options
         
         except Exception as e:
@@ -215,7 +217,7 @@ class UIComponentHelper:
 
 
 class TeamLoader:
-    """Helper class for loading team information safely."""
+    """Enhanced helper class for loading team information safely with proper fallbacks."""
     
     def __init__(self, enhanced_auth, enhanced_logger, permission_service):
 
@@ -224,7 +226,54 @@ class TeamLoader:
         self.permission_service = permission_service
     
     def load_teams_safely(self, admin_user: str, admin_teams: List[str]) -> List[str]:
-
+        """Load teams with multiple fallback strategies for better reliability."""
+        try:
+            # Strategy 1: Try loading from team_utils (preferred)
+            teams = self._load_from_team_utils()
+            if teams:
+                self.enhanced_logger.general_logger.debug(f"Loaded {len(teams)} teams from team_utils")
+                return self._sanitize_team_list(teams)
+            
+            # Strategy 2: Try loading from teams.json directly
+            teams = self._load_from_teams_file()
+            if teams:
+                self.enhanced_logger.general_logger.debug(f"Loaded {len(teams)} teams from teams.json")
+                return self._sanitize_team_list(teams)
+            
+            # Strategy 3: Extract teams from current file approvals
+            teams = self._extract_teams_from_approvals()
+            if teams:
+                self.enhanced_logger.general_logger.debug(f"Extracted {len(teams)} teams from approvals")
+                return self._sanitize_team_list(teams)
+            
+            # Strategy 4: Use permission service (fallback)
+            reviewable_teams = self.permission_service.get_reviewable_teams(
+                admin_user, admin_teams)
+            if reviewable_teams:
+                self.enhanced_logger.general_logger.debug(f"Got {len(reviewable_teams)} teams from permission service")
+                return self._sanitize_team_list(reviewable_teams)
+            
+            # Strategy 5: Default fallback teams
+            default_teams = self._get_default_teams()
+            self.enhanced_logger.general_logger.warning("Using default team list as fallback")
+            return self._sanitize_team_list(default_teams)
+            
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error in load_teams_safely: {e}")
+            return self._get_default_teams()
+    
+    def _load_from_team_utils(self) -> Optional[List[str]]:
+        """Load teams using the team_utils module."""
+        try:
+            from admin.utils.team_utils import get_team_options
+            teams = get_team_options()
+            return teams if isinstance(teams, list) and teams else None
+        except Exception as e:
+            self.enhanced_logger.general_logger.debug(f"Could not load from team_utils: {e}")
+            return None
+    
+    def _load_from_teams_file(self) -> Optional[List[str]]:
+        """Load teams directly from the teams.json file."""
         try:
             teams_file = r"\\KMTI-NAS\Shared\data\teams.json"  
             if os.path.exists(teams_file):
@@ -232,39 +281,65 @@ class TeamLoader:
                     teams_data = json.load(f)
                     
                     if isinstance(teams_data, list):
-                        return self._sanitize_team_list(teams_data)
+                        return teams_data
                     elif isinstance(teams_data, dict):
-                        return self._sanitize_team_dict(teams_data)
-            
-            # Fallback to permission service
-            reviewable_teams = self.permission_service.get_reviewable_teams(
-                admin_user, admin_teams)
-            return self._sanitize_team_list(reviewable_teams)
-            
+                        # Extract team names from dict structure
+                        return list(teams_data.keys())
+            return None
         except Exception as e:
-            self.enhanced_logger.general_logger.error(f"Error loading teams: {e}")
-            return [str(team)[:50] for team in admin_teams]
+            self.enhanced_logger.general_logger.debug(f"Could not load from teams file: {e}")
+            return None
+    
+    def _extract_teams_from_approvals(self) -> Optional[List[str]]:
+        """Extract unique teams from current file approvals."""
+        try:
+            approvals_file = "data/approvals/file_approvals.json"
+            if os.path.exists(approvals_file):
+                with open(approvals_file, 'r', encoding='utf-8') as f:
+                    approvals_data = json.load(f)
+                
+                teams = set()
+                for file_id, file_data in approvals_data.items():
+                    team = file_data.get('user_team')
+                    if team and isinstance(team, str) and team.strip():
+                        teams.add(team.strip())
+                
+                teams_list = sorted(list(teams))
+                return teams_list if teams_list else None
+            return None
+        except Exception as e:
+            self.enhanced_logger.general_logger.debug(f"Could not extract teams from approvals: {e}")
+            return None
+    
+    def _get_default_teams(self) -> List[str]:
+        """Get default team list as final fallback."""
+        return ["AGCC", "DAIICHI", "KMTI PJ", "KUSAKABE", "MINATOGUMI", "WINDSMILE"]
     
     def _sanitize_team_list(self, teams: List) -> List[str]:
-
+        """Sanitize team list for UI safety."""
         safe_teams = []
         for team in teams:
-            try:
-                safe_teams.append(self.enhanced_auth.sanitize_username(team))
-            except:
-                safe_teams.append(str.upper(team)[:50])
-        return safe_teams
-    
-    def _sanitize_team_dict(self, teams_data: Dict) -> List[str]:
-
-        safe_teams = []
-        for team_key, team_data in teams_data.items():
-            team_name = team_data.get('name', team_key) if isinstance(team_data, dict) else team_key
-            try:
-                safe_teams.append(self.enhanced_auth.sanitize_username(team_name))
-            except:
-                safe_teams.append(str.upper(team_name)[:50])
-        return safe_teams
+            if team and isinstance(team, str):
+                try:
+                    # Basic sanitization for team names
+                    safe_team = str(team).strip()[:50]
+                    # Allow alphanumeric characters, spaces, and common punctuation
+                    safe_team = ''.join(c for c in safe_team if c.isalnum() or c in ' _-.')
+                    if safe_team:
+                        safe_teams.append(safe_team)
+                except Exception as e:
+                    self.enhanced_logger.general_logger.debug(f"Could not sanitize team '{team}': {e}")
+                    continue
+        
+        # Remove duplicates while preserving order
+        unique_teams = []
+        seen = set()
+        for team in safe_teams:
+            if team not in seen:
+                unique_teams.append(team)
+                seen.add(team)
+        
+        return unique_teams
 
 
 def create_snackbar_helper(page: ft.Page, enhanced_logger):

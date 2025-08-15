@@ -1,12 +1,12 @@
 """
-Team Leader Panel - Independent Implementation
+Enhanced Team Leader Panel - Dynamic Filtering & Statistics Synchronization
 
-This panel implements the correct workflow for team leader file approval:
-1. Shows only files with status 'pending_team_leader' from the TL's team
-2. Allows approve → changes status to 'pending_admin' 
-3. Allows reject → changes status to 'rejected_team_leader'
-4. Provides file download/open functionality
-5. Maintains proper status transitions without depending on FileApprovalPanel
+This panel implements the correct workflow for team leader file approval with:
+1. Dynamic statistics that reflect filtered/visible files
+2. Enhanced status and team filtering options  
+3. Proper team isolation and security
+4. Real-time statistics synchronization
+5. Color-coded status displays
 """
 
 import flet as ft
@@ -25,7 +25,7 @@ from admin.components.role_colors import create_role_badge, get_role_color
 
 
 class TeamLeaderPanel:
-    """Team Leader Panel for reviewing files from their team."""
+    """Enhanced Team Leader Panel with dynamic filtering and statistics."""
     
     def __init__(self, page: ft.Page, username: str):
         self.page = page
@@ -36,9 +36,19 @@ class TeamLeaderPanel:
         self.preview_panel = None
         self.user_team = self.tl_service.get_user_team(username)
         
-        # UI State
+        # Statistics cards references for dynamic updates
+        self.stat_pending_card = None
+        self.stat_approved_card = None
+        self.stat_rejected_card = None
+        
+        # UI State with enhanced filtering
         self.search_query = ""
         self.current_sort = "submission_date"
+        self.current_status_filter = "ALL"
+        self.current_view_mode = "pending_only"  # pending_only, my_approved, my_rejected, all_team
+        
+        # Current filtered files for statistics
+        self.current_filtered_files = []
     
     def create_interface(self) -> ft.Container:
         """Create the main team leader interface."""
@@ -64,8 +74,20 @@ class TeamLeaderPanel:
             return self._create_error_interface(str(e))
     
     def _create_header_section(self) -> ft.Container:
-        """Create header with statistics."""
+        """Create header with dynamic statistics."""
+        # Initialize with default counts
         file_counts = self.tl_service.get_file_counts_for_team_leader(self.username)
+        
+        # Create stat cards and store references
+        self.stat_pending_card = self._create_stat_card("Pending Review", 
+                                     str(file_counts['pending_team_leader']), 
+                                     ft.Colors.ORANGE)
+        self.stat_approved_card = self._create_stat_card("Approved by Me", 
+                                      str(file_counts['approved_by_tl']), 
+                                      ft.Colors.GREEN)
+        self.stat_rejected_card = self._create_stat_card("Rejected by Me", 
+                                      str(file_counts['rejected_by_tl']), 
+                                      ft.Colors.RED)
         
         return ft.Container(
             content=ft.Row([
@@ -73,22 +95,19 @@ class TeamLeaderPanel:
                     ft.Text("Team Leader - File Review", size=24, weight=ft.FontWeight.BOLD),
                     ft.Text(f"Team: {self.user_team} | Reviewer: {self.username}", 
                            size=16, color=ft.Colors.GREY_600),
-                    ft.Text("Role: TEAM_LEADER | Access: team_limited", 
-                           size=14, color=ft.Colors.GREY_500)
+                    ft.Row([
+                        ft.Text("Role: ", size=14, color=ft.Colors.GREY_500),
+                        create_role_badge("TEAM_LEADER", size=12),
+                        ft.Text(" | Access: team_limited", size=14, color=ft.Colors.GREY_500)
+                    ])
                 ]),
                 ft.Container(expand=True),
                 ft.Row([
-                    self._create_stat_card("Pending Review", 
-                                         str(file_counts['pending_team_leader']), 
-                                         ft.Colors.ORANGE),
+                    self.stat_pending_card,
                     ft.Container(width=15),
-                    self._create_stat_card("Approved by Me", 
-                                         str(file_counts['approved_by_tl']), 
-                                         ft.Colors.GREEN),
+                    self.stat_approved_card,
                     ft.Container(width=15),
-                    self._create_stat_card("Rejected by Me", 
-                                         str(file_counts['rejected_by_tl']), 
-                                         ft.Colors.RED)
+                    self.stat_rejected_card
                 ])
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.only(bottom=10)
@@ -106,12 +125,14 @@ class TeamLeaderPanel:
             padding=15,
             width=140,
             height=80,
-            alignment=ft.alignment.center
+            alignment=ft.alignment.center,
+            border=ft.border.all(2, ft.Colors.GREY_200)
         )
     
     def _create_filters_section(self) -> ft.Row:
-        """Create filters section."""
+        """Create enhanced filters section."""
         return ft.Row([
+            # Search field
             ft.TextField(
                 hint_text="Search files...",
                 width=200,
@@ -119,6 +140,22 @@ class TeamLeaderPanel:
                 on_change=self._on_search_changed,
                 prefix_icon=ft.Icons.SEARCH
             ),
+            
+            # View mode selector
+            ft.Dropdown(
+                label="View",
+                width=160,
+                value=self.current_view_mode,
+                options=[
+                    ft.dropdown.Option("pending_only", "Pending Review"),
+                    ft.dropdown.Option("my_approved", "My Approved"),
+                    ft.dropdown.Option("my_rejected", "My Rejected"),
+                    ft.dropdown.Option("all_team", "All Team Files")
+                ],
+                on_change=self._on_view_mode_changed
+            ),
+            
+            # Sort selector
             ft.Dropdown(
                 label="Sort by",
                 width=150,
@@ -131,7 +168,19 @@ class TeamLeaderPanel:
                 ],
                 on_change=self._on_sort_changed
             ),
+            
             ft.Container(expand=True),
+            
+            # Status indicator
+            ft.Container(
+                content=ft.Text(f"Showing: {self._get_view_description()}", 
+                               size=14, color=ft.Colors.GREY_600),
+                padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                bgcolor=ft.Colors.GREY_100,
+                border_radius=5
+            ),
+            
+            # Refresh button
             ft.ElevatedButton(
                 "Refresh",
                 icon=ft.Icons.REFRESH,
@@ -139,6 +188,16 @@ class TeamLeaderPanel:
                 style=self._get_button_style("secondary")
             )
         ])
+    
+    def _get_view_description(self) -> str:
+        """Get description of current view mode."""
+        descriptions = {
+            "pending_only": "Files awaiting your review",
+            "my_approved": "Files you've approved", 
+            "my_rejected": "Files you've rejected",
+            "all_team": "All files from your team"
+        }
+        return descriptions.get(self.current_view_mode, "Unknown view")
     
     def _create_main_content(self) -> ft.ResponsiveRow:
         """Create main content area."""
@@ -186,7 +245,11 @@ class TeamLeaderPanel:
         
         return ft.Container(
             content=ft.Column([
-                ft.Text("Pending Files for Review", size=20, weight=ft.FontWeight.BOLD),
+                ft.Row([
+                    ft.Text(f"{self._get_view_description()}", size=20, weight=ft.FontWeight.BOLD),
+                    ft.Container(expand=True),
+                    ft.Text(f"Team: {self.user_team}", size=16, color=ft.Colors.GREY_600)
+                ]),
                 ft.Divider(),
                 ft.Container(height=10),
                 ft.Container(
@@ -229,30 +292,49 @@ class TeamLeaderPanel:
         )
     
     def refresh_files_table(self):
-        """Refresh the files table."""
+        """Refresh the files table with enhanced filtering."""
         try:
-            pending_files = self.tl_service.get_pending_files_for_team_leader(self.username)
+            # Get files based on current view mode
+            if self.current_view_mode == "pending_only":
+                all_files = self.tl_service.get_pending_files_for_team_leader(self.username)
+            elif self.current_view_mode == "my_approved":
+                files_by_status = self.tl_service.get_team_files_by_status(self.username)
+                all_files = files_by_status.get('pending_admin', []) + files_by_status.get('approved', [])
+            elif self.current_view_mode == "my_rejected":
+                files_by_status = self.tl_service.get_team_files_by_status(self.username)
+                all_files = files_by_status.get('rejected_by_tl', [])
+            else:  # all_team
+                files_by_status = self.tl_service.get_team_files_by_status(self.username)
+                all_files = []
+                for status_files in files_by_status.values():
+                    all_files.extend(status_files)
             
             # Apply search filter
             if self.search_query:
                 search_lower = self.search_query.lower()
-                pending_files = [
-                    f for f in pending_files
+                all_files = [
+                    f for f in all_files
                     if (search_lower in f.get('original_filename', '').lower() or
                         search_lower in f.get('user_id', '').lower() or
                         search_lower in f.get('description', '').lower())
                 ]
             
             # Apply sorting
-            pending_files = self._sort_files(pending_files)
+            all_files = self._sort_files(all_files)
+            
+            # Store current filtered files for statistics
+            self.current_filtered_files = all_files
+            
+            # Update statistics cards dynamically
+            self._update_statistics_cards()
             
             # Clear and populate table
             self.files_table.rows.clear()
             
-            if not pending_files:
+            if not all_files:
                 self._add_empty_table_row()
             else:
-                for file_data in pending_files:
+                for file_data in all_files:
                     try:
                         row = self._create_table_row(file_data)
                         self.files_table.rows.append(row)
@@ -265,6 +347,47 @@ class TeamLeaderPanel:
         except Exception as e:
             print(f"Error refreshing files table: {e}")
             self._show_table_error(str(e))
+    
+    def _update_statistics_cards(self):
+        """Update statistics cards with current filtered files."""
+        try:
+            # Get counts for current filtered files
+            dynamic_counts = self.tl_service.get_file_counts_for_team_leader(
+                self.username, self.current_filtered_files)
+            
+            # Also get overall team statistics for reference
+            overall_counts = self.tl_service.get_file_counts_for_team_leader(self.username)
+            
+            # Update card values based on view mode
+            if self.current_view_mode == "pending_only":
+                # Show actual filtered counts
+                pending_text = str(len(self.current_filtered_files))
+                approved_text = str(overall_counts['approved_by_tl'])
+                rejected_text = str(overall_counts['rejected_by_tl'])
+            elif self.current_view_mode == "my_approved":
+                pending_text = str(overall_counts['pending_team_leader'])
+                approved_text = str(len(self.current_filtered_files))
+                rejected_text = str(overall_counts['rejected_by_tl'])
+            elif self.current_view_mode == "my_rejected":
+                pending_text = str(overall_counts['pending_team_leader'])
+                approved_text = str(overall_counts['approved_by_tl'])
+                rejected_text = str(len(self.current_filtered_files))
+            else:  # all_team
+                # Show dynamic counts from filtered files
+                pending_text = str(dynamic_counts['pending_team_leader'])
+                approved_text = str(dynamic_counts['approved_by_tl'])
+                rejected_text = str(dynamic_counts['rejected_by_tl'])
+            
+            # Update stat card values
+            if self.stat_pending_card:
+                self.stat_pending_card.content.controls[0].value = pending_text
+            if self.stat_approved_card:
+                self.stat_approved_card.content.controls[0].value = approved_text  
+            if self.stat_rejected_card:
+                self.stat_rejected_card.content.controls[0].value = rejected_text
+                
+        except Exception as e:
+            print(f"Error updating statistics cards: {e}")
     
     def _sort_files(self, files: List[Dict]) -> List[Dict]:
         """Sort files based on current sort option."""
@@ -282,7 +405,7 @@ class TeamLeaderPanel:
             return files
     
     def _create_table_row(self, file_data: Dict) -> ft.DataRow:
-        """Create table row for file data."""
+        """Create table row with enhanced status display."""
         file_size = file_data.get('file_size', 0)
         size_str = self._format_file_size(file_size)
 
@@ -295,6 +418,10 @@ class TeamLeaderPanel:
         original_filename = file_data.get('original_filename', 'Unknown')
         display_filename = self._limit_filename_display(original_filename, 25)
         
+        # Enhanced status display with color coding
+        status = file_data.get('status', 'unknown')
+        status_badge = self._create_status_badge(status, file_data)
+        
         return ft.DataRow(
             cells=[
                 ft.DataCell(ft.Text(
@@ -306,14 +433,37 @@ class TeamLeaderPanel:
                 ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)),
                 ft.DataCell(ft.Text(size_str, size=14)),
                 ft.DataCell(ft.Text(date_str, size=14)),
-                ft.DataCell(ft.Container(
-                    content=ft.Text("PENDING TL", color=ft.Colors.WHITE, size=10),
-                    bgcolor=ft.Colors.ORANGE,
-                    padding=ft.padding.symmetric(horizontal=6, vertical=3),
-                    border_radius=4
-                ))
+                ft.DataCell(status_badge)
             ],
             on_select_changed=lambda e, data=file_data: self.select_file(data)
+        )
+    
+    def _create_status_badge(self, status: str, file_data: Dict) -> ft.Container:
+        """Create color-coded status badge."""
+        status_configs = {
+            'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.BLUE},
+            'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
+            'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
+            'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}
+        }
+        
+        config = status_configs.get(status, {'text': status.upper(), 'color': ft.Colors.GREY})
+        
+        # Add reviewer info for approved/rejected files
+        tooltip_text = f"Status: {status}"
+        if status == 'pending_admin' and file_data.get('tl_approved_by'):
+            tooltip_text += f"\\nApproved by: {file_data['tl_approved_by']}"
+        elif status == 'rejected_team_leader' and file_data.get('tl_rejected_by'):
+            tooltip_text += f"\\nRejected by: {file_data['tl_rejected_by']}"
+        
+        return ft.Container(
+            content=ft.Text(config['text'], color=ft.Colors.WHITE, size=10, weight=ft.FontWeight.BOLD),
+            bgcolor=config['color'],
+            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+            border_radius=6,
+            tooltip=tooltip_text
         )
     
     def select_file(self, file_data: Dict):
@@ -351,7 +501,7 @@ class TeamLeaderPanel:
             self._show_snackbar("Error loading file preview", ft.Colors.RED)
     
     def _create_file_preview(self, file_data: Dict) -> List:
-        """Create file preview content."""
+        """Create enhanced file preview content."""
         submit_date = "Unknown"
         try:
             submit_date = datetime.fromisoformat(file_data['submission_date']).strftime('%Y-%m-%d %H:%M')
@@ -359,28 +509,10 @@ class TeamLeaderPanel:
             pass
         
         file_size = self._format_file_size(file_data.get('file_size', 0))
+        status = file_data.get('status', 'unknown')
         
-        # Comment field
-        comment_field = ft.TextField(
-            label="Add comment (optional)",
-            multiline=True,
-            min_lines=2,
-            max_lines=4,
-            text_size=14,
-            expand=True
-        )
-        
-        # Rejection reason field
-        reason_field = ft.TextField(
-            label="Reason for rejection",
-            multiline=True,
-            min_lines=2,
-            max_lines=3,
-            text_size=14,
-            expand=True
-        )
-        
-        return [
+        # File details section
+        details_section = [
             ft.Text("File Details", size=18, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             ft.Column([
@@ -390,13 +522,20 @@ class TeamLeaderPanel:
                 ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=14),
                 ft.Text(f"Size: {file_size}", size=14),
                 ft.Text(f"Submitted: {submit_date}", size=14),
+                ft.Row([
+                    ft.Text("Status: ", size=14),
+                    self._create_status_badge(status, file_data)
+                ])
             ], spacing=5, alignment=ft.MainAxisAlignment.START),
             
             ft.Container(height=10),
             ft.Text("Description:", size=14, weight=ft.FontWeight.BOLD),
             ft.Text(file_data.get('description', 'No description provided'), 
                    size=12, color=ft.Colors.GREY_600),
-            
+        ]
+        
+        # File operations section
+        operations_section = [
             ft.Container(height=15),
             ft.Row([
                 ft.ElevatedButton(
@@ -413,8 +552,31 @@ class TeamLeaderPanel:
                     style=self._get_button_style("secondary")
                 )
             ], alignment=ft.MainAxisAlignment.CENTER),
-            
-            ft.Divider(),
+            ft.Divider()
+        ]
+        
+        # Action sections based on file status and view mode
+        action_sections = self._create_action_sections(file_data)
+        
+        return details_section + operations_section + action_sections
+    
+    def _create_action_sections(self, file_data: Dict) -> List:
+        """Create action sections based on file status."""
+        status = file_data.get('status', 'unknown')
+        actions = []
+        
+        # Comment field (always available)
+        comment_field = ft.TextField(
+            label="Add comment (optional)",
+            multiline=True,
+            min_lines=2,
+            max_lines=4,
+            text_size=14,
+            expand=True
+        )
+        
+        # Comments section
+        actions.extend([
             ft.Text("Team Leader Actions", size=16, weight=ft.FontWeight.BOLD),
             comment_field,
             ft.Container(height=5),
@@ -426,28 +588,73 @@ class TeamLeaderPanel:
                     style=self._get_button_style("primary")
                 )
             ], alignment=ft.MainAxisAlignment.START),
+        ])
+        
+        # Approval/Rejection actions (only for pending files)
+        if status in ['pending_team_leader', 'pending']:
+            reason_field = ft.TextField(
+                label="Reason for rejection",
+                multiline=True,
+                min_lines=2,
+                max_lines=3,
+                text_size=14,
+                expand=True
+            )
             
-            ft.Container(height=10),
-            ft.Divider(),
-            ft.Container(height=10),
-            reason_field,
-            ft.Container(height=10),
-            ft.Row([
-                ft.ElevatedButton(
-                    "Approve",
-                    icon=ft.Icons.CHECK_CIRCLE,
-                    on_click=lambda e: self._handle_approve_file(file_data),
-                    style=self._get_button_style("success")
-                ),
-                ft.Container(width=10),
-                ft.ElevatedButton(
-                    "Reject",
-                    icon=ft.Icons.CANCEL,
-                    on_click=lambda e: self._handle_reject_file(file_data, reason_field),
-                    style=self._get_button_style("danger")
+            actions.extend([
+                ft.Container(height=10),
+                ft.Divider(),
+                ft.Text("Approval Decision", size=16, weight=ft.FontWeight.BOLD),
+                ft.Container(height=10),
+                reason_field,
+                ft.Container(height=10),
+                ft.Row([
+                    ft.ElevatedButton(
+                        "✓ Approve",
+                        icon=ft.Icons.CHECK_CIRCLE,
+                        on_click=lambda e: self._handle_approve_file(file_data),
+                        style=self._get_button_style("success")
+                    ),
+                    ft.Container(width=10),
+                    ft.ElevatedButton(
+                        "✗ Reject", 
+                        icon=ft.Icons.CANCEL,
+                        on_click=lambda e: self._handle_reject_file(file_data, reason_field),
+                        style=self._get_button_style("danger")
+                    )
+                ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
+            ])
+        elif status == 'pending_admin':
+            actions.extend([
+                ft.Container(height=10),
+                ft.Container(
+                    content=ft.Text("✓ File approved by you - waiting for admin review", 
+                                   color=ft.Colors.GREEN, size=14, weight=ft.FontWeight.W_500),
+                    bgcolor=ft.Colors.GREEN_50,
+                    padding=10,
+                    border_radius=5,
+                    border=ft.border.all(1, ft.Colors.GREEN_200)
                 )
-            ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
-        ]
+            ])
+        elif status == 'rejected_team_leader':
+            rejection_reason = file_data.get('tl_rejection_reason', 'No reason provided')
+            actions.extend([
+                ft.Container(height=10),
+                ft.Container(
+                    content=ft.Column([
+                        ft.Text("✗ File rejected by you", 
+                               color=ft.Colors.RED, size=14, weight=ft.FontWeight.W_500),
+                        ft.Text(f"Reason: {rejection_reason}", 
+                               color=ft.Colors.RED_700, size=12)
+                    ]),
+                    bgcolor=ft.Colors.RED_50,
+                    padding=10,
+                    border_radius=5,
+                    border=ft.border.all(1, ft.Colors.RED_200)
+                )
+            ])
+        
+        return actions
     
     def _handle_download_file(self, file_data: Dict):
         """Handle file download."""
@@ -610,8 +817,15 @@ class TeamLeaderPanel:
     
     def _add_empty_table_row(self):
         """Add empty table row when no files are found."""
+        empty_message = {
+            "pending_only": "No files pending your review",
+            "my_approved": "No files approved by you",
+            "my_rejected": "No files rejected by you", 
+            "all_team": "No files found for your team"
+        }.get(self.current_view_mode, "No files found")
+        
         self.files_table.rows.append(ft.DataRow(cells=[
-            ft.DataCell(ft.Text("No pending files for review", style=ft.TextStyle(italic=True))),
+            ft.DataCell(ft.Text(empty_message, style=ft.TextStyle(italic=True), color=ft.Colors.GREY_600)),
             ft.DataCell(ft.Text("")),
             ft.DataCell(ft.Text("")),
             ft.DataCell(ft.Text("")),
@@ -735,6 +949,15 @@ class TeamLeaderPanel:
         except Exception as error:
             print(f"Error handling search change: {error}")
     
+    def _on_view_mode_changed(self, e):
+        """Handle view mode change."""
+        try:
+            self.current_view_mode = e.control.value
+            self._clear_selection()  # Clear selection when switching views
+            self.refresh_files_table()
+        except Exception as error:
+            print(f"Error handling view mode change: {error}")
+    
     def _on_sort_changed(self, e):
         """Handle sort option change."""
         try:
@@ -745,7 +968,7 @@ class TeamLeaderPanel:
 
 
 def TLPanel(page: ft.Page, username: str):
-    """Team Leader Panel - Main Entry Point - Accessible only by TEAM_LEADER role."""
+    """Enhanced Team Leader Panel - Main Entry Point - Accessible only by TEAM_LEADER role."""
     # Verify user has team leader role
     from utils.auth import load_users
     users = load_users()
@@ -781,7 +1004,7 @@ def TLPanel(page: ft.Page, username: str):
         from login_window import login_view
         login_view(page)
 
-    # Navigation bar with Team Leader badge
+    # Enhanced navigation bar with Team Leader badge
     tl_badge = create_role_badge("TEAM_LEADER", size=12)
     navbar = ft.Container(
         bgcolor=ft.Colors.GREY_800,
@@ -789,6 +1012,10 @@ def TLPanel(page: ft.Page, username: str):
         margin=0,
         content=ft.Row(
             controls=[
+                ft.Row([
+                    ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.WHITE, size=20),
+                    ft.Text("KMTI Data Management", color=ft.Colors.WHITE, size=16, weight=ft.FontWeight.BOLD)
+                ]),
                 ft.Container(expand=True),  
                 ft.Row(
                     controls=[
@@ -809,7 +1036,7 @@ def TLPanel(page: ft.Page, username: str):
     )
 
     def show_team_leader_panel():
-        """Show the independent team leader panel."""
+        """Show the enhanced team leader panel."""
         content.controls.clear()
         try:
             tl_panel = TeamLeaderPanel(page, username)
@@ -818,9 +1045,16 @@ def TLPanel(page: ft.Page, username: str):
             print(f"[ERROR] Failed to load Team Leader Panel: {ex}")
             content.controls.append(
                 ft.Container(
-                    content=ft.Text(
-                        f"Error loading panel: {ex}", color=ft.Colors.RED
-                    )
+                    content=ft.Column([
+                        ft.Icon(ft.Icons.ERROR_OUTLINE, size=64, color=ft.Colors.RED),
+                        ft.Text(f"Error loading panel: {ex}", color=ft.Colors.RED, size=16),
+                        ft.ElevatedButton(
+                            "Retry",
+                            icon=ft.Icons.REFRESH,
+                            on_click=lambda e: show_team_leader_panel()
+                        )
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    padding=50
                 )
             )
         content.update()

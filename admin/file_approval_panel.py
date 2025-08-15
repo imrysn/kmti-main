@@ -15,7 +15,8 @@ from admin.components.data_managers import FileDataManager, StatisticsManager, S
 from admin.components.role_permissions import RoleValidator, is_admin_or_team_leader, get_file_access_level
 
 
-class FileApprovalPanel:
+class EnhancedFileApprovalPanel:
+    """Enhanced File Approval Panel with dynamic filtering and statistics synchronization."""
     
     def __init__(self, page: ft.Page, admin_user: str):
         self.page = page
@@ -39,11 +40,19 @@ class FileApprovalPanel:
         # Initialize component helpers
         self._initialize_component_helpers()
         
-        # Initialize UI state
+        # Initialize UI state with enhanced filtering
         self._initialize_ui_state()
         
+        # Store current filtered files for dynamic statistics
+        self.current_filtered_files = []
+        
+        # Statistics card references for dynamic updates
+        self.stat_pending_card = None
+        self.stat_approved_card = None
+        self.stat_rejected_card = None
+        
         self.enhanced_logger.general_logger.info(
-            f"File approval panel initialized for admin: {self.admin_user}")
+            f"Enhanced file approval panel initialized for admin: {self.admin_user}")
     
     def _initialize_core_services(self):
         """Initialize core services and utilities."""
@@ -113,18 +122,20 @@ class FileApprovalPanel:
             self.approval_service, self.permission_service, self.enhanced_logger)
     
     def _initialize_ui_state(self):
-        """Initialize UI state variables."""
+        """Initialize UI state variables with enhanced filtering options."""
         self.selected_file = None
         self.files_table = None
         self.preview_panel_widget = None
         self.current_team_filter = "ALL"
         self.current_sort = "submission_date"
         self.search_query = ""
+        self.current_status_filter = "ALL"
+        self.current_view_mode = "pending_admin"  # For admins, default to files pending admin review
     
     def create_approval_interface(self) -> ft.Container:
-
+        """Create the enhanced approval interface."""
         try:
-            with PerformanceTimer("FileApprovalPanel", "create_interface"):
+            with PerformanceTimer("EnhancedFileApprovalPanel", "create_interface"):
                 header = self._create_header_section()
                 filters = self._create_filters_section()
                 main_content = self._create_main_content_area()
@@ -146,22 +157,147 @@ class FileApprovalPanel:
             return self._create_error_interface(str(e))
     
     def _create_header_section(self) -> ft.Container:
-        """Create header section with statistics."""
+        """Create header section with dynamic statistics."""
+        # Initialize with default counts
         file_counts = self.data_manager.get_file_counts_safely(
             self.admin_user, self.admin_teams, self.admin_role)
         
-        return self.ui_helper.create_header_section(self.admin_teams, file_counts, 
-                                                   self.admin_role, self.access_level)
+        # Create stat cards and store references for dynamic updates
+        self.stat_pending_card = self._create_stat_card("Pending", 
+                                   str(file_counts['pending']), ft.Colors.ORANGE)
+        self.stat_approved_card = self._create_stat_card("Approved", 
+                                   str(file_counts['approved']), ft.Colors.GREEN)
+        self.stat_rejected_card = self._create_stat_card("Rejected", 
+                                   str(file_counts['rejected']), ft.Colors.RED)
+        
+        return ft.Container(
+            content=ft.Row([
+                ft.Column([
+                    ft.Text("Admin - File Approval", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Managing approvals for: {', '.join(self.admin_teams)}", 
+                           size=16, color=ft.Colors.GREY_600),
+                    ft.Text(f"Role: {self.admin_role or 'Unknown'} | Access: {self.access_level or 'Unknown'}", 
+                           size=14, color=ft.Colors.GREY_500)
+                ]),
+                ft.Container(expand=True),
+                ft.Row([
+                    self.stat_pending_card,
+                    ft.Container(width=15),
+                    self.stat_approved_card,
+                    ft.Container(width=15),
+                    self.stat_rejected_card
+                ])
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+            padding=ft.padding.only(bottom=10)
+        )
+    
+    def _create_stat_card(self, label: str, value: str, color: str) -> ft.Container:
+        """Create statistics card."""
+        return ft.Container(
+            content=ft.Column([
+                ft.Text(value, size=24, weight=ft.FontWeight.BOLD, color=color),
+                ft.Text(label, size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER)
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
+            bgcolor=ft.Colors.WHITE,
+            border_radius=10,
+            padding=15,
+            width=120,
+            height=80,
+            alignment=ft.alignment.center,
+            border=ft.border.all(2, ft.Colors.GREY_200)
+        )
     
     def _create_filters_section(self) -> ft.Row:
-        """Create filters section."""
+        """Create enhanced filters section."""
         teams = self.team_loader.load_teams_safely(self.admin_user, self.admin_teams)
         
-        return self.ui_helper.create_filters_section(
-            teams, self.search_query, self.current_team_filter, self.current_sort,
-            self._on_search_changed, self._on_team_filter_changed,
-            self._on_sort_changed, lambda e: self.refresh_files_table()
-        )
+        return ft.Row([
+            # Search field
+            ft.TextField(
+                hint_text="Search files...",
+                width=200,
+                value=self.search_query,
+                on_change=self._on_search_changed,
+                prefix_icon=ft.Icons.SEARCH
+            ),
+            
+            # Team filter with real teams
+            ft.Dropdown(
+                label="Filter by Team",
+                width=160,
+                options=self._create_team_filter_options(teams),
+                value=self.current_team_filter,
+                on_change=self._on_team_filter_changed
+            ),
+            
+            # Status filter
+            ft.Dropdown(
+                label="Status",
+                width=160,
+                value=self.current_status_filter,
+                options=[
+                    ft.dropdown.Option("ALL", "All Statuses"),
+                    ft.dropdown.Option("pending_admin", "Pending Admin"),
+                    ft.dropdown.Option("approved", "Approved"),
+                    ft.dropdown.Option("rejected_admin", "Rejected by Admin")
+                ],
+                on_change=self._on_status_filter_changed
+            ),
+            
+            # Sort selector
+            ft.Dropdown(
+                label="Sort by",
+                width=150,
+                value=self.current_sort,
+                options=[
+                    ft.dropdown.Option("submission_date", "Date Submitted"),
+                    ft.dropdown.Option("original_filename", "File Name"),
+                    ft.dropdown.Option("user_id", "User"),
+                    ft.dropdown.Option("file_size", "File Size")
+                ],
+                on_change=self._on_sort_changed
+            ),
+            
+            ft.Container(expand=True),
+            
+            # Status indicator
+            ft.Container(
+                content=ft.Text(f"Showing: {self._get_view_description()}", 
+                               size=14, color=ft.Colors.GREY_600),
+                padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                bgcolor=ft.Colors.GREY_100,
+                border_radius=5
+            ),
+            
+            # Refresh button
+            ft.ElevatedButton(
+                "Refresh",
+                icon=ft.Icons.REFRESH,
+                on_click=lambda e: self.refresh_files_table(),
+                style=self._get_button_style("secondary")
+            )
+        ])
+    
+    def _create_team_filter_options(self, teams: List[str]) -> List[ft.dropdown.Option]:
+        """Create team filter dropdown options."""
+        options = [ft.dropdown.Option("ALL", "All Teams")]
+        for team in teams:
+            options.append(ft.dropdown.Option(team, team))
+        return options
+    
+    def _get_view_description(self) -> str:
+        """Get description of current view."""
+        if self.current_team_filter != "ALL":
+            team_desc = f"Team {self.current_team_filter}"
+        else:
+            team_desc = "All teams"
+        
+        if self.current_status_filter != "ALL":
+            status_desc = f", {self.current_status_filter} status"
+        else:
+            status_desc = ""
+        
+        return f"{team_desc}{status_desc}"
     
     def _create_main_content_area(self) -> ft.ResponsiveRow:
         """Create main content area with table and preview."""
@@ -194,7 +330,11 @@ class FileApprovalPanel:
         
         return ft.Container(
             content=ft.Column([
-                ft.Text("Pending Files", size=20, weight=ft.FontWeight.BOLD),
+                ft.Row([
+                    ft.Text("File Management", size=20, weight=ft.FontWeight.BOLD),
+                    ft.Container(expand=True),
+                    ft.Text(f"Access Level: {self.access_level}", size=14, color=ft.Colors.GREY_600)
+                ]),
                 ft.Divider(),
                 ft.Container(height=10),
                 ft.Container(
@@ -218,16 +358,46 @@ class FileApprovalPanel:
         )
     
     def refresh_files_table(self):
-        """Refresh the files table with current filters and sorting."""
+        """Refresh the files table with enhanced filtering and dynamic statistics."""
         try:
-            with PerformanceTimer("FileApprovalPanel", "refresh_files_table"):
-                # Get pending files
-                pending_files = self.data_manager.get_filtered_pending_files(
-                    self.admin_user, self.admin_teams, self.admin_role)
+            with PerformanceTimer("EnhancedFileApprovalPanel", "refresh_files_table"):
+                # Get files based on role and filters
+                if self.admin_role.upper() == 'ADMIN':
+                    # Admin sees files pending admin approval by default
+                    if self.current_status_filter == "ALL" or self.current_status_filter == "pending_admin":
+                        all_files = self.data_manager._get_admin_pending_files(
+                            self.admin_user, self.admin_teams)
+                    else:
+                        all_files = self.data_manager.get_all_files_for_admin(
+                            self.admin_user, self.admin_teams, self.current_status_filter)
+                else:
+                    # Team leaders and others
+                    all_files = self.data_manager.get_filtered_pending_files(
+                        self.admin_user, self.admin_teams, self.admin_role)
                 
-                # Apply filters and sorting
-                filtered_files = self.file_filter.apply_filters(
-                    pending_files, self.search_query, self.current_team_filter, self.current_sort)
+                # Apply team filter
+                if self.current_team_filter != "ALL":
+                    all_files = [f for f in all_files 
+                                if f.get('user_team', '') == self.current_team_filter]
+                
+                # Apply search filter
+                if self.search_query:
+                    search_lower = self.search_query.lower()
+                    all_files = [
+                        f for f in all_files
+                        if (search_lower in f.get('original_filename', '').lower() or
+                            search_lower in f.get('user_id', '').lower() or
+                            search_lower in f.get('description', '').lower())
+                    ]
+                
+                # Apply sorting
+                filtered_files = self._sort_files(all_files)
+                
+                # Store current filtered files for statistics
+                self.current_filtered_files = filtered_files
+                
+                # Update statistics cards dynamically
+                self._update_statistics_cards()
                 
                 # Clear and populate table
                 self.files_table.rows.clear()
@@ -255,6 +425,39 @@ class FileApprovalPanel:
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error refreshing files table: {e}")
             self.table_helper.show_table_error(self.files_table, str(e))
+    
+    def _update_statistics_cards(self):
+        """Update statistics cards with current filtered files."""
+        try:
+            # Calculate dynamic counts from current filtered files
+            dynamic_counts = self.data_manager.get_file_counts_safely(
+                self.admin_user, self.admin_teams, self.admin_role, self.current_filtered_files)
+            
+            # Update stat card values
+            if self.stat_pending_card:
+                self.stat_pending_card.content.controls[0].value = str(dynamic_counts['pending'])
+            if self.stat_approved_card:
+                self.stat_approved_card.content.controls[0].value = str(dynamic_counts['approved'])
+            if self.stat_rejected_card:
+                self.stat_rejected_card.content.controls[0].value = str(dynamic_counts['rejected'])
+                
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error updating statistics cards: {e}")
+    
+    def _sort_files(self, files: List[Dict]) -> List[Dict]:
+        """Sort files based on current sort option."""
+        try:
+            if self.current_sort == "original_filename":
+                return sorted(files, key=lambda x: x.get('original_filename', '').lower())
+            elif self.current_sort == "user_id":
+                return sorted(files, key=lambda x: x.get('user_id', '').lower())
+            elif self.current_sort == "file_size":
+                return sorted(files, key=lambda x: x.get('file_size', 0), reverse=True)
+            else:  # submission_date
+                return sorted(files, key=lambda x: x.get('submission_date', ''), reverse=True)
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error sorting files: {e}")
+            return files
     
     def select_file(self, file_data: Dict):
         """Select a file for review with validation."""
@@ -288,7 +491,7 @@ class FileApprovalPanel:
             self.preview_manager.update_preview_panel(
                 self.preview_panel_widget, self.selected_file,
                 self.approval_handler, self.file_handler, self.show_snackbar,
-                self.ui_helper.get_button_style, self._get_refresh_callback()
+                self._get_button_style, self._get_refresh_callback()
             )
             self.page.update()
             
@@ -312,7 +515,7 @@ class FileApprovalPanel:
     def refresh_interface(self):
         """Refresh the entire interface."""
         try:
-            with PerformanceTimer("FileApprovalPanel", "refresh_interface"):
+            with PerformanceTimer("EnhancedFileApprovalPanel", "refresh_interface"):
                 self.refresh_files_table()
                 self._update_preview_panel()
                 self.file_manager.invalidate_cache()
@@ -323,6 +526,10 @@ class FileApprovalPanel:
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error refreshing interface: {e}")
             self.show_snackbar("Error refreshing interface", "red")
+    
+    def _get_button_style(self, button_type: str):
+        """Get button style."""
+        return self.ui_helper.get_button_style(button_type)
     
     # Event handlers
     def _on_search_changed(self, e):
@@ -337,9 +544,19 @@ class FileApprovalPanel:
         """Handle team filter change."""
         try:
             self.current_team_filter = e.control.value
+            self._clear_selection()  # Clear selection when changing filters
             self.refresh_files_table()
         except Exception as error:
             self.enhanced_logger.general_logger.error(f"Error handling team filter change: {error}")
+    
+    def _on_status_filter_changed(self, e):
+        """Handle status filter change."""
+        try:
+            self.current_status_filter = e.control.value
+            self._clear_selection()  # Clear selection when changing filters
+            self.refresh_files_table()
+        except Exception as error:
+            self.enhanced_logger.general_logger.error(f"Error handling status filter change: {error}")
     
     def _on_sort_changed(self, e):
         """Handle sort option change."""
@@ -358,6 +575,14 @@ class FileApprovalPanel:
         """Get security statistics for monitoring."""
         return self.stats_manager.get_security_stats()
     
+    def get_dynamic_stats(self) -> Dict:
+        """Get dynamic statistics for current filtered files."""
+        return self.stats_manager.get_dynamic_file_stats(self.current_filtered_files)
+    
     def cleanup(self):
         """Cleanup resources when panel is destroyed."""
         cleanup_resources(self.admin_user, self.file_manager, self.enhanced_logger)
+
+
+# Alias for backward compatibility
+FileApprovalPanel = EnhancedFileApprovalPanel

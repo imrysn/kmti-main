@@ -1,8 +1,8 @@
 """
-Team Leader Approval Functions
+Enhanced Team Leader Approval Functions
 
 This module provides functions specifically for team leader approval workflow,
-following the correct sequence: my_files → pending_team_leader → pending_admin → approved
+with improved team filtering, statistics synchronization, and role-based access control.
 """
 
 import os
@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 class TeamLeaderApprovalService:
-    """Service for team leader specific approval operations."""
+    """Enhanced service for team leader specific approval operations."""
     
     def __init__(self):
         self.global_queue_file = "data/approvals/file_approvals.json"
@@ -55,8 +55,23 @@ class TeamLeaderApprovalService:
             print(f"Error getting user team: {e}")
         return "DEFAULT"
     
-    def get_pending_files_for_team_leader(self, team_leader_username: str) -> List[Dict]:
-        """Get files pending team leader approval for the specific team."""
+    def get_all_teams(self) -> List[str]:
+        """Get all available teams from team_utils."""
+        try:
+            from admin.utils.team_utils import get_team_options
+            return get_team_options()
+        except Exception as e:
+            print(f"Error getting all teams: {e}")
+            return ["AGCC", "DAIICHI", "KMTI PJ", "KUSAKABE", "MINATOGUMI", "WINDSMILE"]
+    
+    def get_pending_files_for_team_leader(self, team_leader_username: str, include_filters: Dict = None) -> List[Dict]:
+        """
+        Get files pending team leader approval for the specific team with enhanced filtering.
+        
+        Args:
+            team_leader_username: Username of the team leader
+            include_filters: Optional filters {'team': str, 'status': str, 'search': str}
+        """
         try:
             queue = self.load_global_queue()
             team_leader_team = self.get_user_team(team_leader_username)
@@ -70,13 +85,21 @@ class TeamLeaderApprovalService:
                 
                 print(f"[DEBUG] File {file_data.get('original_filename', 'Unknown')}: status='{file_status}', team='{file_team}'")
                 
-                # Accept both new workflow status AND legacy 'pending' status
-                if ((file_status == 'pending_team_leader' or file_status == 'pending') and 
-                    file_team == team_leader_team):
+                # Team Leader should only see files from their assigned team
+                if file_team != team_leader_team:
+                    print(f"[DEBUG] ❌ Skipping file (team mismatch: {file_team} != {team_leader_team})")
+                    continue
+                
+                # Only show files that are pending team leader review
+                if file_status == 'pending_team_leader' or file_status == 'pending':
                     print(f"[DEBUG] ✅ Adding file to pending list")
                     pending_files.append(file_data)
                 else:
-                    print(f"[DEBUG] ❌ Skipping file (status or team mismatch)")
+                    print(f"[DEBUG] ❌ Skipping file (status not pending TL: {file_status})")
+            
+            # Apply additional filters if provided
+            if include_filters:
+                pending_files = self._apply_filters(pending_files, include_filters)
             
             print(f"[DEBUG] Found {len(pending_files)} pending files for team leader")
             
@@ -87,6 +110,74 @@ class TeamLeaderApprovalService:
         except Exception as e:
             print(f"Error getting pending files for team leader: {e}")
             return []
+    
+    def _apply_filters(self, files: List[Dict], filters: Dict) -> List[Dict]:
+        """Apply additional filters to file list."""
+        filtered_files = files
+        
+        # Search filter
+        search_query = filters.get('search', '').lower()
+        if search_query:
+            filtered_files = [
+                f for f in filtered_files
+                if (search_query in f.get('original_filename', '').lower() or
+                    search_query in f.get('user_id', '').lower() or
+                    search_query in f.get('description', '').lower())
+            ]
+        
+        # Status filter (for team leaders showing their approved/rejected files)
+        status_filter = filters.get('status', '')
+        if status_filter and status_filter != 'ALL':
+            filtered_files = [f for f in filtered_files if f.get('status', '') == status_filter]
+        
+        return filtered_files
+    
+    def get_team_files_by_status(self, team_leader_username: str, status_filter: str = None) -> Dict[str, List[Dict]]:
+        """
+        Get all files from team leader's team organized by status.
+        Used for comprehensive statistics and filtering.
+        """
+        try:
+            queue = self.load_global_queue()
+            team_leader_team = self.get_user_team(team_leader_username)
+            
+            files_by_status = {
+                'pending_team_leader': [],
+                'pending_admin': [],
+                'approved': [],
+                'rejected_by_tl': [],
+                'rejected_by_admin': []
+            }
+            
+            for file_id, file_data in queue.items():
+                file_status = file_data.get('status', '')
+                file_team = file_data.get('user_team', '')
+                
+                # Only files from the team leader's team
+                if file_team != team_leader_team:
+                    continue
+                
+                # Categorize files by status
+                if file_status in ['pending_team_leader', 'pending']:
+                    files_by_status['pending_team_leader'].append(file_data)
+                elif file_status == 'pending_admin' and file_data.get('tl_approved_by') == team_leader_username:
+                    files_by_status['pending_admin'].append(file_data)
+                elif file_status == 'approved' and file_data.get('tl_approved_by') == team_leader_username:
+                    files_by_status['approved'].append(file_data)
+                elif file_status == 'rejected_team_leader' and file_data.get('tl_rejected_by') == team_leader_username:
+                    files_by_status['rejected_by_tl'].append(file_data)
+                elif file_status == 'rejected_admin':
+                    files_by_status['rejected_by_admin'].append(file_data)
+            
+            # If status filter is specified, return only that status
+            if status_filter and status_filter in files_by_status:
+                return {status_filter: files_by_status[status_filter]}
+            
+            return files_by_status
+            
+        except Exception as e:
+            print(f"Error getting team files by status: {e}")
+            return {status: [] for status in ['pending_team_leader', 'pending_admin', 'approved', 'rejected_by_tl', 'rejected_by_admin']}
     
     def submit_for_team_leader(self, file_id: str) -> Tuple[bool, str]:
         """
@@ -248,34 +339,49 @@ class TeamLeaderApprovalService:
             print(f"Error rejecting file as team leader: {e}")
             return False, f"Error: {str(e)}"
     
-    def get_file_counts_for_team_leader(self, team_leader_username: str) -> Dict[str, int]:
-        """Get file counts for team leader dashboard."""
+    def get_file_counts_for_team_leader(self, team_leader_username: str, filtered_files: List[Dict] = None) -> Dict[str, int]:
+        """
+        Get file counts for team leader dashboard.
+        Enhanced to support filtered counts or full team statistics.
+        
+        Args:
+            team_leader_username: Username of team leader
+            filtered_files: If provided, count only these files instead of all team files
+        """
         try:
-            team = self.get_user_team(team_leader_username)
-            queue = self.load_global_queue()
-            
-            counts = {
-                'pending_team_leader': 0,
-                'approved_by_tl': 0,  # Files approved by this TL (now pending_admin)
-                'rejected_by_tl': 0   # Files rejected by this TL
-            }
-            
-            for file_id, file_data in queue.items():
-                if file_data.get('user_team') == team:
+            if filtered_files is not None:
+                # Count from filtered files (for dynamic stats)
+                counts = {
+                    'pending_team_leader': 0,
+                    'approved_by_tl': 0,
+                    'rejected_by_tl': 0,
+                    'total_visible': len(filtered_files)
+                }
+                
+                for file_data in filtered_files:
                     status = file_data.get('status', '')
-                    
-                    if status in ['pending_team_leader', 'pending']:  # Include both new and old status
+                    if status in ['pending_team_leader', 'pending']:
                         counts['pending_team_leader'] += 1
                     elif status == 'pending_admin' and file_data.get('tl_approved_by') == team_leader_username:
                         counts['approved_by_tl'] += 1
                     elif status == 'rejected_team_leader' and file_data.get('tl_rejected_by') == team_leader_username:
                         counts['rejected_by_tl'] += 1
-            
-            return counts
+                
+                return counts
+            else:
+                # Count from all team files (for full statistics)
+                files_by_status = self.get_team_files_by_status(team_leader_username)
+                
+                return {
+                    'pending_team_leader': len(files_by_status['pending_team_leader']),
+                    'approved_by_tl': len(files_by_status['pending_admin']) + len(files_by_status['approved']),
+                    'rejected_by_tl': len(files_by_status['rejected_by_tl']),
+                    'total_team_files': sum(len(files) for files in files_by_status.values())
+                }
             
         except Exception as e:
             print(f"Error getting file counts for team leader: {e}")
-            return {'pending_team_leader': 0, 'approved_by_tl': 0, 'rejected_by_tl': 0}
+            return {'pending_team_leader': 0, 'approved_by_tl': 0, 'rejected_by_tl': 0, 'total_visible': 0}
     
     def add_comment_to_file(self, file_id: str, reviewer: str, comment: str) -> Tuple[bool, str]:
         """Add a comment to a file without changing its status."""

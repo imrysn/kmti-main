@@ -1800,5 +1800,80 @@
     "operation": "refresh_files_table",
     "duration_ms": 18.273999999999997,
     "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:21.054569",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 8,
+      "approved": 0,
+      "rejected": 0,
+      "total": 8
+    }
+  },
+  {
+    "timestamp": "2025-08-15T14:24:21.070445",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 58.856,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:21.104466",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.009000000000000001,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:21.124538",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 20.548000000000002,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:21.141867",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "create_interface",
+    "duration_ms": 130.28500000000003,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.628003",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.009000000000000001,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.658495",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 39.375,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.675618",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.006,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.700598",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 25.419,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.722188",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_interface",
+    "duration_ms": 47.012,
+    "details": {}
   }
 ]

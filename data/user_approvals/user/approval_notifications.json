@@ -1,13 +1,23 @@
 [
   {
     "type": "status_update",
+    "filename": "CP91143N01_PCMU.icd",
+    "old_status": "pending",
+    "new_status": "approved",
+    "admin_id": "admin",
+    "comment": "",
+    "timestamp": "2025-08-15T14:24:24.485530",
+    "read": true
+  },
+  {
+    "type": "status_update",
     "filename": "CP91142N01_PCMU.icd",
     "old_status": "pending",
     "new_status": "approved",
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-15T14:08:24.172565",
-    "read": false
+    "read": true
   },
   {
     "type": "status_update",
@@ -17,6 +27,6 @@
     "admin_id": "admin",
     "comment": "",
     "timestamp": "2025-08-15T14:02:48.069401",
-    "read": false
+    "read": true
   }
 ]
