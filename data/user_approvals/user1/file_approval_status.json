@@ -46,5 +46,21 @@
         "comment": "File submitted for approval"
       }
     ]
+  },
+  "CP91143N01_PCMU.icd": {
+    "file_id": "4e817e43-fe3d-4d38-a9a7-87c4286c93b7",
+    "status": "pending",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-15T10:29:41.460068",
+    "description": "",
+    "tags": [],
+    "admin_comments": [],
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2025-08-15T10:29:41.460075",
+        "comment": "File submitted for approval"
+      }
+    ]
   }
 }

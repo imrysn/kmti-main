@@ -1,0 +1,309 @@
+"""
+Team Leader Approval Functions
+
+This module provides functions specifically for team leader approval workflow,
+following the correct sequence: my_files → pending_team_leader → pending_admin → approved
+"""
+
+import os
+import json
+from datetime import datetime
+from typing import List, Dict, Optional, Tuple
+from pathlib import Path
+
+
+class TeamLeaderApprovalService:
+    """Service for team leader specific approval operations."""
+    
+    def __init__(self):
+        self.global_queue_file = "data/approvals/file_approvals.json"
+        self.users_file = r"\\KMTI-NAS\Shared\data\users.json"
+        os.makedirs("data/approvals", exist_ok=True)
+    
+    def load_global_queue(self) -> Dict:
+        """Load global approval queue."""
+        try:
+            if os.path.exists(self.global_queue_file):
+                with open(self.global_queue_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"Error loading global queue: {e}")
+        return {}
+    
+    def save_global_queue(self, queue: Dict) -> bool:
+        """Save global approval queue."""
+        try:
+            with open(self.global_queue_file, 'w', encoding='utf-8') as f:
+                json.dump(queue, f, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving global queue: {e}")
+            return False
+    
+    def get_user_team(self, username: str) -> str:
+        """Get user's team from users.json."""
+        try:
+            if os.path.exists(self.users_file):
+                with open(self.users_file, 'r', encoding='utf-8') as f:
+                    users = json.load(f)
+                
+                for email, user_data in users.items():
+                    if user_data.get('username') == username:
+                        teams = user_data.get('team_tags', [])
+                        return teams[0] if teams else "DEFAULT"
+        except Exception as e:
+            print(f"Error getting user team: {e}")
+        return "DEFAULT"
+    
+    def get_pending_files_for_team_leader(self, team_leader_username: str) -> List[Dict]:
+        """Get files pending team leader approval for the specific team."""
+        try:
+            queue = self.load_global_queue()
+            team_leader_team = self.get_user_team(team_leader_username)
+            pending_files = []
+            
+            for file_id, file_data in queue.items():
+                # Only get files with pending_team_leader status from the same team
+                if (file_data.get('status') == 'pending_team_leader' and 
+                    file_data.get('user_team') == team_leader_team):
+                    pending_files.append(file_data)
+            
+            # Sort by submission date (newest first)
+            pending_files.sort(key=lambda x: x.get('submission_date', ''), reverse=True)
+            return pending_files
+            
+        except Exception as e:
+            print(f"Error getting pending files for team leader: {e}")
+            return []
+    
+    def submit_for_team_leader(self, file_id: str) -> Tuple[bool, str]:
+        """
+        Submit file for team leader review.
+        Changes status from 'my_files' to 'pending_team_leader'.
+        
+        Args:
+            file_id: File ID to submit
+            
+        Returns:
+            Tuple[bool, str]: (success, message)
+        """
+        try:
+            queue = self.load_global_queue()
+            
+            if file_id not in queue:
+                return False, "File not found in queue"
+            
+            file_data = queue[file_id]
+            current_status = file_data.get('status', '')
+            
+            if current_status != 'my_files':
+                return False, f"File cannot be submitted from status: {current_status}"
+            
+            # Update status and add history
+            file_data['status'] = 'pending_team_leader'
+            file_data['submitted_for_tl_date'] = datetime.now().isoformat()
+            
+            if 'status_history' not in file_data:
+                file_data['status_history'] = []
+            
+            file_data['status_history'].append({
+                'status': 'pending_team_leader',
+                'timestamp': datetime.now().isoformat(),
+                'comment': 'File submitted for team leader review'
+            })
+            
+            if self.save_global_queue(queue):
+                return True, "File submitted for team leader review"
+            else:
+                return False, "Failed to save submission"
+                
+        except Exception as e:
+            print(f"Error submitting file for team leader: {e}")
+            return False, f"Error: {str(e)}"
+    
+    def approve_as_team_leader(self, file_id: str, reviewer: str) -> Tuple[bool, str]:
+        """
+        Approve file as team leader.
+        Changes status from 'pending_team_leader' to 'pending_admin'.
+        
+        Args:
+            file_id: File ID to approve
+            reviewer: Team leader username
+            
+        Returns:
+            Tuple[bool, str]: (success, message)
+        """
+        try:
+            queue = self.load_global_queue()
+            
+            if file_id not in queue:
+                return False, "File not found in queue"
+            
+            file_data = queue[file_id]
+            current_status = file_data.get('status', '')
+            
+            if current_status != 'pending_team_leader':
+                return False, f"File cannot be approved from status: {current_status}"
+            
+            # Verify team leader is from the same team as the file
+            reviewer_team = self.get_user_team(reviewer)
+            file_team = file_data.get('user_team', '')
+            
+            if reviewer_team != file_team:
+                return False, "Team leader can only approve files from their own team"
+            
+            # Update status and add approval info
+            file_data['status'] = 'pending_admin'
+            file_data['tl_approved_by'] = reviewer
+            file_data['tl_approved_date'] = datetime.now().isoformat()
+            
+            if 'status_history' not in file_data:
+                file_data['status_history'] = []
+            
+            file_data['status_history'].append({
+                'status': 'pending_admin',
+                'timestamp': datetime.now().isoformat(),
+                'reviewer': reviewer,
+                'comment': f'Approved by team leader {reviewer}'
+            })
+            
+            if self.save_global_queue(queue):
+                return True, f"File approved by team leader and sent to admin review"
+            else:
+                return False, "Failed to save approval"
+                
+        except Exception as e:
+            print(f"Error approving file as team leader: {e}")
+            return False, f"Error: {str(e)}"
+    
+    def reject_as_team_leader(self, file_id: str, reviewer: str, reason: str) -> Tuple[bool, str]:
+        """
+        Reject file as team leader.
+        Changes status from 'pending_team_leader' to 'rejected_team_leader'.
+        
+        Args:
+            file_id: File ID to reject
+            reviewer: Team leader username
+            reason: Rejection reason
+            
+        Returns:
+            Tuple[bool, str]: (success, message)
+        """
+        try:
+            if not reason or not reason.strip():
+                return False, "Rejection reason is required"
+            
+            queue = self.load_global_queue()
+            
+            if file_id not in queue:
+                return False, "File not found in queue"
+            
+            file_data = queue[file_id]
+            current_status = file_data.get('status', '')
+            
+            if current_status != 'pending_team_leader':
+                return False, f"File cannot be rejected from status: {current_status}"
+            
+            # Verify team leader is from the same team as the file
+            reviewer_team = self.get_user_team(reviewer)
+            file_team = file_data.get('user_team', '')
+            
+            if reviewer_team != file_team:
+                return False, "Team leader can only reject files from their own team"
+            
+            # Update status and add rejection info
+            file_data['status'] = 'rejected_team_leader'
+            file_data['tl_rejected_by'] = reviewer
+            file_data['tl_rejected_date'] = datetime.now().isoformat()
+            file_data['tl_rejection_reason'] = reason.strip()
+            
+            if 'status_history' not in file_data:
+                file_data['status_history'] = []
+            
+            file_data['status_history'].append({
+                'status': 'rejected_team_leader',
+                'timestamp': datetime.now().isoformat(),
+                'reviewer': reviewer,
+                'comment': f'Rejected by team leader {reviewer}: {reason.strip()}'
+            })
+            
+            if self.save_global_queue(queue):
+                return True, f"File rejected by team leader"
+            else:
+                return False, "Failed to save rejection"
+                
+        except Exception as e:
+            print(f"Error rejecting file as team leader: {e}")
+            return False, f"Error: {str(e)}"
+    
+    def get_file_counts_for_team_leader(self, team_leader_username: str) -> Dict[str, int]:
+        """Get file counts for team leader dashboard."""
+        try:
+            team = self.get_user_team(team_leader_username)
+            queue = self.load_global_queue()
+            
+            counts = {
+                'pending_team_leader': 0,
+                'approved_by_tl': 0,  # Files approved by this TL (now pending_admin)
+                'rejected_by_tl': 0   # Files rejected by this TL
+            }
+            
+            for file_id, file_data in queue.items():
+                if file_data.get('user_team') == team:
+                    status = file_data.get('status', '')
+                    
+                    if status == 'pending_team_leader':
+                        counts['pending_team_leader'] += 1
+                    elif status == 'pending_admin' and file_data.get('tl_approved_by') == team_leader_username:
+                        counts['approved_by_tl'] += 1
+                    elif status == 'rejected_team_leader' and file_data.get('tl_rejected_by') == team_leader_username:
+                        counts['rejected_by_tl'] += 1
+            
+            return counts
+            
+        except Exception as e:
+            print(f"Error getting file counts for team leader: {e}")
+            return {'pending_team_leader': 0, 'approved_by_tl': 0, 'rejected_by_tl': 0}
+    
+    def add_comment_to_file(self, file_id: str, reviewer: str, comment: str) -> Tuple[bool, str]:
+        """Add a comment to a file without changing its status."""
+        try:
+            if not comment or not comment.strip():
+                return False, "Comment cannot be empty"
+            
+            queue = self.load_global_queue()
+            
+            if file_id not in queue:
+                return False, "File not found in queue"
+            
+            file_data = queue[file_id]
+            
+            # Verify team leader is from the same team as the file
+            reviewer_team = self.get_user_team(reviewer)
+            file_team = file_data.get('user_team', '')
+            
+            if reviewer_team != file_team:
+                return False, "Team leader can only comment on files from their own team"
+            
+            if 'tl_comments' not in file_data:
+                file_data['tl_comments'] = []
+            
+            file_data['tl_comments'].append({
+                'reviewer': reviewer,
+                'comment': comment.strip(),
+                'timestamp': datetime.now().isoformat()
+            })
+            
+            if self.save_global_queue(queue):
+                return True, "Comment added successfully"
+            else:
+                return False, "Failed to save comment"
+                
+        except Exception as e:
+            print(f"Error adding comment: {e}")
+            return False, f"Error: {str(e)}"
+
+
+def get_team_leader_service() -> TeamLeaderApprovalService:
+    """Get team leader approval service instance."""
+    return TeamLeaderApprovalService()

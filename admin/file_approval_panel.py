@@ -12,6 +12,7 @@ from admin.components.file_utils import FileOperationHandler
 from admin.components.ui_helpers import UIComponentHelper, TeamLoader, create_snackbar_helper
 from admin.components.preview_panel import PreviewPanelManager, create_preview_section_container
 from admin.components.data_managers import FileDataManager, StatisticsManager, ServiceInitializer, cleanup_resources
+from admin.components.role_permissions import RoleValidator, is_admin_or_team_leader, get_file_access_level
 
 
 class FileApprovalPanel:
@@ -28,6 +29,9 @@ class FileApprovalPanel:
         except SecurityError as e:
             self.enhanced_logger.security_logger.error(f"Invalid admin user ID: {e}")
             raise ValueError(f"Invalid admin user: {admin_user}")
+        
+        # Initialize role validator
+        self.role_validator = RoleValidator()
         
         # Initialize services and data
         self._initialize_services_and_data()
@@ -64,7 +68,16 @@ class FileApprovalPanel:
         
         self.admin_teams = data_manager.get_admin_teams_safely(
             self.admin_user, self.permission_service)
-        self.is_super_admin = self.permission_service.is_super_admin(self.admin_user)
+        self.admin_role = self.permission_service.get_user_role(self.admin_user)
+        
+        # Validate role access to file approval panel
+        access_validation = self.role_validator.validate_file_approval_access(
+            self.admin_role, self.admin_teams)
+        
+        if not access_validation['has_access']:
+            raise ValueError(f"Access denied: {access_validation['reason']}")
+        
+        self.access_level = access_validation['access_level']
         
         # Initialize statistics manager
         self.stats_manager = StatisticsManager(self.file_manager, self.enhanced_auth)
@@ -135,9 +148,10 @@ class FileApprovalPanel:
     def _create_header_section(self) -> ft.Container:
         """Create header section with statistics."""
         file_counts = self.data_manager.get_file_counts_safely(
-            self.admin_user, self.admin_teams, self.is_super_admin)
+            self.admin_user, self.admin_teams, self.admin_role)
         
-        return self.ui_helper.create_header_section(self.admin_teams, file_counts)
+        return self.ui_helper.create_header_section(self.admin_teams, file_counts, 
+                                                   self.admin_role, self.access_level)
     
     def _create_filters_section(self) -> ft.Row:
         """Create filters section."""
@@ -209,7 +223,7 @@ class FileApprovalPanel:
             with PerformanceTimer("FileApprovalPanel", "refresh_files_table"):
                 # Get pending files
                 pending_files = self.data_manager.get_filtered_pending_files(
-                    self.admin_user, self.admin_teams, self.is_super_admin)
+                    self.admin_user, self.admin_teams, self.admin_role)
                 
                 # Apply filters and sorting
                 filtered_files = self.file_filter.apply_filters(

@@ -13,7 +13,7 @@ class FileDataManager:
         self.enhanced_logger = enhanced_logger
     
     def get_file_counts_safely(self, admin_user: str, admin_teams: List[str],
-                              is_super_admin: bool) -> Dict[str, int]:
+                              admin_role: str) -> Dict[str, int]:
         try:
             with PerformanceTimer("FileApprovalPanel", "get_file_counts"):
                 reviewable_teams = self.permission_service.get_reviewable_teams(
@@ -26,15 +26,15 @@ class FileDataManager:
                 for team in reviewable_teams:
                     try:
                         team_pending = self.approval_service.get_pending_files_by_team(
-                            team, is_super_admin)
+                            team, admin_role)
                         for file_data in team_pending:
                             pending_files.add(file_data['file_id'])
                         
-                        team_approved = self._get_approved_files_by_team_safe(team, is_super_admin)
+                        team_approved = self._get_approved_files_by_team_safe(team, admin_role)
                         for file_data in team_approved:
                             approved_files.add(file_data['file_id'])
                         
-                        team_rejected = self._get_rejected_files_by_team_safe(team, is_super_admin)
+                        team_rejected = self._get_rejected_files_by_team_safe(team, admin_role)
                         for file_data in team_rejected:
                             rejected_files.add(file_data['file_id'])
                             
@@ -57,32 +57,32 @@ class FileDataManager:
             self.enhanced_logger.general_logger.error(f"Error getting file counts: {e}")
             return {'pending': 0, 'approved': 0, 'rejected': 0}
     
-    def _get_approved_files_by_team_safe(self, team: str, is_super_admin: bool) -> List[Dict]:
+    def _get_approved_files_by_team_safe(self, team: str, admin_role: str) -> List[Dict]:
 
         try:
-            return self.approval_service.get_approved_files_by_team(team, is_super_admin)
+            return self.approval_service.get_approved_files_by_team(team, admin_role)
         except AttributeError:
             # Fallback to general method
             try:
-                all_files = self.approval_service.get_all_files_by_team(team, is_super_admin)
+                all_files = self.approval_service.get_all_files_by_team(team, admin_role)
                 return [f for f in all_files if f.get('status') == 'APPROVED']
             except Exception:
                 return []
     
-    def _get_rejected_files_by_team_safe(self, team: str, is_super_admin: bool) -> List[Dict]:
+    def _get_rejected_files_by_team_safe(self, team: str, admin_role: str) -> List[Dict]:
 
         try:
-            return self.approval_service.get_rejected_files_by_team(team, is_super_admin)
+            return self.approval_service.get_rejected_files_by_team(team, admin_role)
         except AttributeError:
             # Fallback to general method
             try:
-                all_files = self.approval_service.get_all_files_by_team(team, is_super_admin)
+                all_files = self.approval_service.get_all_files_by_team(team, admin_role)
                 return [f for f in all_files if f.get('status') == 'REJECTED']
             except Exception:
                 return []
     
     def get_filtered_pending_files(self, admin_user: str, admin_teams: List[str],
-                                  is_super_admin: bool) -> List[Dict]:
+                                  admin_role: str) -> List[Dict]:
 
         try:
             reviewable_teams = self.permission_service.get_reviewable_teams(
@@ -92,7 +92,7 @@ class FileDataManager:
             for team in reviewable_teams:
                 try:
                     team_files = self.approval_service.get_pending_files_by_team(
-                        team, is_super_admin)
+                        team, admin_role)
                     all_pending.extend(team_files)
                 except Exception as team_error:
                     self.enhanced_logger.general_logger.warning(

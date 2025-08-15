@@ -718,28 +718,42 @@ class FileApprovalService:
             print(f"Error saving comments: {e}")
             return False
     
-    def get_pending_files_by_team(self, team: str, is_super_admin: bool = False) -> List[Dict]:
-        """Get pending files for a specific team"""
+    def get_pending_files_by_team(self, team: str, user_role: str = 'USER') -> List[Dict]:
+        """Get pending files for a specific team based on user role"""
         queue = self.load_global_queue()
         pending_files = []
         
         for file_id, file_data in queue.items():
             if file_data.get('status') == 'pending':
-                if is_super_admin or file_data.get('user_team') == team:
+                # ADMIN can see all files, TEAM_LEADER only their team files
+                if user_role == 'ADMIN' or file_data.get('user_team') == team:
                     pending_files.append(file_data)
         
         return pending_files
     
-    def get_all_files_by_team(self, team: str, is_super_admin: bool = False) -> List[Dict]:
-        """Get all files for a specific team"""
+    def get_all_files_by_team(self, team: str, user_role: str = 'USER') -> List[Dict]:
+        """Get all files for a specific team based on user role"""
         queue = self.load_global_queue()
         team_files = []
         
         for file_id, file_data in queue.items():
-            if is_super_admin or file_data.get('user_team') == team:
+            # ADMIN can see all files, TEAM_LEADER only their team files
+            if user_role == 'ADMIN' or file_data.get('user_team') == team:
                 team_files.append(file_data)
         
         return team_files
+    
+    def get_approved_files_by_team(self, team: str, user_role: str = 'USER') -> List[Dict]:
+        """Get approved files for a specific team - Note: approved files are moved out of queue"""
+        # Since approved files are removed from queue, this would need to access a separate archive
+        # For now, return empty list as approved files are processed and removed
+        return []
+    
+    def get_rejected_files_by_team(self, team: str, user_role: str = 'USER') -> List[Dict]:
+        """Get rejected files for a specific team - Note: rejected files are moved out of queue"""
+        # Since rejected files are removed from queue, this would need to access a separate archive
+        # For now, return empty list as rejected files are processed and removed
+        return []
     
     def approve_file(self, file_id: str, admin_user: str) -> bool:
         """Approve a file"""

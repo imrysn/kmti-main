@@ -14,13 +14,16 @@ class UIComponentHelper:
         self.enhanced_logger = enhanced_logger
     
     def create_header_section(self, admin_teams: List[str], 
-                             file_counts: Dict[str, int]) -> ft.Container:
+                             file_counts: Dict[str, int], 
+                             admin_role: str = None, access_level: str = None) -> ft.Container:
         return ft.Container(
             content=ft.Row([
                 ft.Column([
                     ft.Text("File Approval", size=24, weight=ft.FontWeight.BOLD),
                     ft.Text(f"Managing approvals for: {', '.join(admin_teams)}", 
-                           size=16, color=ft.Colors.GREY_600)
+                           size=16, color=ft.Colors.GREY_600),
+                    ft.Text(f"Role: {admin_role or 'Unknown'} | Access: {access_level or 'Unknown'}", 
+                           size=14, color=ft.Colors.GREY_500) if admin_role else ft.Container(height=0)
                 ]),
                 ft.Container(expand=True),
                 ft.Row([
