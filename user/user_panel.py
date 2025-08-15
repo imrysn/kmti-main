@@ -15,6 +15,7 @@ from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action  
 from utils.session_logger import log_activity
+from admin.components.role_colors import create_role_badge, get_role_color
 
 # Use consistent session management with login_window.py
 SESSION_ROOT = "data/sessions"
@@ -58,6 +59,28 @@ def clear_session(username: str):
         print(f"[DEBUG] clear_session error: {ex}")
 
 def user_panel(page: ft.Page, username: Optional[str]):
+    """User panel - accessible only by USER role users."""
+    # Verify user has user role
+    from utils.auth import load_users
+    users = load_users()
+    user_role = None
+    for email, data in users.items():
+        if data.get("username") == username:
+            user_role = data.get("role", "").upper()
+            # Normalize role string
+            if user_role == "TEAM LEADER":
+                user_role = "TEAM_LEADER"
+            break
+    
+    print(f"[DEBUG] User panel access check: username={username}, role={user_role}")
+    
+    if user_role != "USER":
+        print(f"[WARNING] Non-user role {user_role} attempted to access user panel")
+        page.clean()
+        from login_window import login_view
+        login_view(page)
+        return
+    
     save_session(username, "USER", "user")
 
     user_folder = f"data/uploads/{username}"
@@ -168,8 +191,9 @@ def user_panel(page: ft.Page, username: Optional[str]):
             return "", ft.Icons.NOTIFICATIONS_NONE
 
     def update_appbar():
-        """Update app bar"""
+        """Update app bar with role badge"""
         notification_badge, notification_icon = get_notification_status()
+        user_badge = create_role_badge("USER", size=12)
         
         page.appbar = ft.AppBar(
             title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
@@ -208,6 +232,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),
                     on_click=lambda e: show_profile_view()
                 ),
+                user_badge,
                 ft.TextButton(
                     "Logout", 
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),

@@ -196,10 +196,11 @@ class ApprovalFileService:
                     
                     # Get cached approval status
                     file_approval = approval_data.get(filename, {
-                        "status": "not_submitted",
+                        "status": "my_files",  # Initial status for uploaded files
                         "submitted_for_approval": False,
                         "submission_date": None,
                         "admin_comments": [],
+                        "team_leader_comments": [],
                         "status_history": [],
                         "description": "",
                         "tags": []
@@ -226,10 +227,11 @@ class ApprovalFileService:
         """Get approval status for a specific file (cached)"""
         approval_data = self.load_approval_status()  # Uses cache
         return approval_data.get(filename, {
-            "status": "not_submitted",
+            "status": "my_files",
             "submitted_for_approval": False,
             "submission_date": None,
             "admin_comments": [],
+            "team_leader_comments": [],
             "status_history": [],
             "description": "",
             "tags": []
@@ -252,16 +254,17 @@ class ApprovalFileService:
             approval_data = self.load_approval_status()
             approval_data[filename] = {
                 "file_id": file_id,
-                "status": "pending",
+                "status": "pending_team_leader",
                 "submitted_for_approval": True,
                 "submission_date": datetime.now().isoformat(),
                 "description": description,
                 "tags": tags,
                 "admin_comments": [],
+                "team_leader_comments": [],
                 "status_history": [{
-                    "status": "pending",
+                    "status": "pending_team_leader",
                     "timestamp": datetime.now().isoformat(),
-                    "comment": "File submitted for approval"
+                    "comment": "File submitted for team leader review"
                 }]
             }
             
@@ -317,7 +320,7 @@ class ApprovalFileService:
                         file_path = os.path.join(self.user_folder, filename)
                         file_size = os.path.getsize(file_path) if os.path.exists(file_path) else 0
                         
-                        # Add new submission
+                        # Add new submission with correct initial status
                         submission_data = {
                             "file_id": file_id,
                             "original_filename": filename,
@@ -325,14 +328,15 @@ class ApprovalFileService:
                             "user_team": self.user_team,
                             "file_size": file_size,
                             "submission_date": datetime.now().isoformat(),
-                            "status": "pending",
+                            "status": "pending_team_leader",  # Start with team leader review
                             "description": description,
                             "tags": tags,
                             "admin_comments": [],
+                            "team_leader_comments": [],
                             "status_history": [{
-                                "status": "pending",
+                                "status": "pending_team_leader",
                                 "timestamp": datetime.now().isoformat(),
-                                "comment": "File submitted for approval"
+                                "comment": "File submitted for team leader review"
                             }],
                             "file_path": file_path  # Store path for admin access
                         }
@@ -372,9 +376,9 @@ class ApprovalFileService:
                 return False
             
             file_data = approval_data[filename]
-            current_status = file_data.get("status", "not_submitted")
+            current_status = file_data.get("status", "my_files")
             
-            if current_status not in ["pending", "under_review"]:
+            if current_status not in ["pending_team_leader", "pending_admin", "under_review"]:
                 return False
             
             # Get file_id for global queue removal
@@ -382,10 +386,11 @@ class ApprovalFileService:
             
             # IMMEDIATE local update (optimistic) - KEY FOR INSTANT UI
             approval_data[filename] = {
-                "status": "not_submitted",
+                "status": "my_files",
                 "submitted_for_approval": False,
                 "submission_date": None,
                 "admin_comments": [],
+                "team_leader_comments": [],
                 "status_history": file_data.get("status_history", []) + [{
                     "status": "withdrawn",
                     "timestamp": datetime.now().isoformat(),
@@ -500,7 +505,7 @@ class ApprovalFileService:
                 "upload_date": file_info["upload_date"]
             }
             for file_info in files
-            if not file_info["submitted_for_approval"] and file_info["status"] == "not_submitted"
+            if not file_info["submitted_for_approval"] and file_info["status"] == "my_files"
         ]
         
         return available_files
@@ -724,9 +729,15 @@ class FileApprovalService:
         pending_files = []
         
         for file_id, file_data in queue.items():
-            if file_data.get('status') == 'pending':
-                # ADMIN can see all files, TEAM_LEADER only their team files
-                if user_role == 'ADMIN' or file_data.get('user_team') == team:
+            file_status = file_data.get('status')
+            # Filter files based on role and status
+            if user_role == 'ADMIN':
+                # Admin sees files pending admin approval
+                if file_status == 'pending_admin':
+                    pending_files.append(file_data)
+            elif user_role == 'TEAM_LEADER':
+                # Team leader sees files pending team leader approval from their team
+                if file_status == 'pending_team_leader' and file_data.get('user_team') == team:
                     pending_files.append(file_data)
         
         return pending_files

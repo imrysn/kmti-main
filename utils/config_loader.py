@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, List
 
 # Your existing CONFIG_FILE
-CONFIG_FILE = "data/config.json"
+CONFIG_FILE = r"\\KMTI-NAS\Shared\data\config.json"
 
 def get_base_dir():
     """Your existing function - kept unchanged for backward compatibility"""
@@ -18,7 +18,7 @@ def get_base_dir():
         except:
             pass
     # fallback: default path
-    return Path(r"X:\PROJECTS")
+    return Path("data/config.json")
 
 class EnhancedConfig:
     """Enhanced configuration class that extends your existing config"""

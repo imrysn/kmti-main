@@ -26,7 +26,7 @@ class TableHelper:
             max_height = 50
         
         return ft.DataTable(
-            columns=self._get_columns_for_size("lg"),  # Default to large size
+            columns=self._get_columns_for_size("lg"),  
             rows=[],
             column_spacing=10,
             horizontal_margin=5,

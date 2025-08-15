@@ -21,6 +21,7 @@ from pathlib import Path
 from admin.components.team_leader_service import get_team_leader_service
 from utils.session_logger import log_logout, log_activity
 from utils.logger import log_file_operation
+from admin.components.role_colors import create_role_badge, get_role_color
 
 
 class TeamLeaderPanel:
@@ -744,7 +745,28 @@ class TeamLeaderPanel:
 
 
 def TLPanel(page: ft.Page, username: str):
-    """Team Leader Panel - Main Entry Point."""
+    """Team Leader Panel - Main Entry Point - Accessible only by TEAM_LEADER role."""
+    # Verify user has team leader role
+    from utils.auth import load_users
+    users = load_users()
+    user_role = None
+    for email, data in users.items():
+        if data.get("username") == username:
+            user_role = data.get("role", "").upper()
+            # Normalize role string
+            if user_role == "TEAM LEADER":
+                user_role = "TEAM_LEADER"
+            break
+    
+    print(f"[DEBUG] TL Panel access check: username={username}, role={user_role}")
+    
+    if user_role != "TEAM_LEADER":
+        print(f"[WARNING] Non-team-leader user {username} (role: {user_role}) attempted to access TL panel")
+        page.clean()
+        from login_window import login_view
+        login_view(page)
+        return
+    
     page.title = "KMTI Data Management System - Team Leader"
     page.bgcolor = ft.Colors.GREY_100
     page.padding = 0
@@ -759,7 +781,8 @@ def TLPanel(page: ft.Page, username: str):
         from login_window import login_view
         login_view(page)
 
-    # Navigation bar
+    # Navigation bar with Team Leader badge
+    tl_badge = create_role_badge("TEAM_LEADER", size=12)
     navbar = ft.Container(
         bgcolor=ft.Colors.GREY_800,
         padding=10,
@@ -770,13 +793,14 @@ def TLPanel(page: ft.Page, username: str):
                 ft.Row(
                     controls=[
                         ft.Text(f"Hi, {username}", size=16, color=ft.Colors.WHITE),
+                        tl_badge,
                         ft.TextButton(
                             content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
                             on_click=lambda e: on_logout(),
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.END,
-                    spacing=20,
+                    spacing=15,
                 ),
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

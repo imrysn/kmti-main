@@ -62,11 +62,23 @@ class TeamLeaderApprovalService:
             team_leader_team = self.get_user_team(team_leader_username)
             pending_files = []
             
+            print(f"[DEBUG] TL Service: Looking for files for team '{team_leader_team}' (TL: {team_leader_username})")
+            
             for file_id, file_data in queue.items():
-                # Only get files with pending_team_leader status from the same team
-                if (file_data.get('status') == 'pending_team_leader' and 
-                    file_data.get('user_team') == team_leader_team):
+                file_status = file_data.get('status', '')
+                file_team = file_data.get('user_team', '')
+                
+                print(f"[DEBUG] File {file_data.get('original_filename', 'Unknown')}: status='{file_status}', team='{file_team}'")
+                
+                # Accept both new workflow status AND legacy 'pending' status
+                if ((file_status == 'pending_team_leader' or file_status == 'pending') and 
+                    file_team == team_leader_team):
+                    print(f"[DEBUG] ✅ Adding file to pending list")
                     pending_files.append(file_data)
+                else:
+                    print(f"[DEBUG] ❌ Skipping file (status or team mismatch)")
+            
+            print(f"[DEBUG] Found {len(pending_files)} pending files for team leader")
             
             # Sort by submission date (newest first)
             pending_files.sort(key=lambda x: x.get('submission_date', ''), reverse=True)
@@ -142,7 +154,7 @@ class TeamLeaderApprovalService:
             file_data = queue[file_id]
             current_status = file_data.get('status', '')
             
-            if current_status != 'pending_team_leader':
+            if current_status not in ['pending_team_leader', 'pending']:
                 return False, f"File cannot be approved from status: {current_status}"
             
             # Verify team leader is from the same team as the file
@@ -201,7 +213,7 @@ class TeamLeaderApprovalService:
             file_data = queue[file_id]
             current_status = file_data.get('status', '')
             
-            if current_status != 'pending_team_leader':
+            if current_status not in ['pending_team_leader', 'pending']:
                 return False, f"File cannot be rejected from status: {current_status}"
             
             # Verify team leader is from the same team as the file
@@ -252,7 +264,7 @@ class TeamLeaderApprovalService:
                 if file_data.get('user_team') == team:
                     status = file_data.get('status', '')
                     
-                    if status == 'pending_team_leader':
+                    if status in ['pending_team_leader', 'pending']:  # Include both new and old status
                         counts['pending_team_leader'] += 1
                     elif status == 'pending_admin' and file_data.get('tl_approved_by') == team_leader_username:
                         counts['approved_by_tl'] += 1

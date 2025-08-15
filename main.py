@@ -150,15 +150,23 @@ def restore_session(page: ft.Page) -> bool:
             session = json.load(f)
 
         username = session.get("username")
-        role = session.get("role", "user")
+        role = session.get("role", "USER").upper()
         if not username:
             return False
 
-        # Route to appropriate panel
-        if role.upper() == "ADMIN":
+        # Route to appropriate panel based on role
+        if role == "ADMIN":
             admin_panel(page, username)
             return True
+        elif role == "TEAM_LEADER":
+            from TLPanel import TLPanel
+            TLPanel(page, username)
+            return True
+        elif role == "USER":
+            user_panel(page, username)
+            return True
         else:
+            print(f"[WARNING] Unknown role: {role}, defaulting to user panel")
             user_panel(page, username)
             return True
     except Exception as e:
