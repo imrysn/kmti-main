@@ -32,10 +32,9 @@ class TableHelper:
             horizontal_margin=5,
             data_row_max_height=max_height,
             data_row_min_height=min_height,
-            expand=True,  # Allow table to expand within parent
-            width=None,  # Allow table to consume parent width
-            heading_row_color="#FAFAFA",  # Add header styling
-            divider_thickness=1,  # Subtle dividers
+            expand=True,  
+            width=None,   
+            divider_thickness=1,  
         )
     
     def _get_columns_for_size(self, size_category: str) -> List[ft.DataColumn]:
@@ -143,7 +142,7 @@ class TableHelper:
     def _create_status_badge(self, status: str) -> ft.Container:
         """Create color-coded status badge."""
         status_configs = {
-            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.BLUE},
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
             'pending': {'text': 'PENDING', 'color': ft.Colors.ORANGE},
             'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},

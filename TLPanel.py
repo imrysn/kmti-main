@@ -1,14 +1,3 @@
-"""
-Enhanced Team Leader Panel - Dynamic Filtering & Statistics Synchronization
-
-This panel implements the correct workflow for team leader file approval with:
-1. Dynamic statistics that reflect filtered/visible files
-2. Enhanced status and team filtering options  
-3. Proper team isolation and security
-4. Real-time statistics synchronization
-5. Color-coded status displays
-"""
-
 import flet as ft
 import os
 import shutil
@@ -493,7 +482,7 @@ class TeamLeaderPanel:
         status_configs = {
             'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
             'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
-            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.BLUE},
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
             'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
             'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}

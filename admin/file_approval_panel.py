@@ -236,7 +236,7 @@ class EnhancedFileApprovalPanel:
                 width=160,
                 value=self.current_status_filter,
                 options=[
-                    ft.dropdown.Option("ALL", "All Statuses"),
+                    ft.dropdown.Option("ALL", "All Status"),
                     ft.dropdown.Option("pending_admin", "Pending Admin"),
                     ft.dropdown.Option("approved", "Approved"),
                     ft.dropdown.Option("rejected_admin", "Rejected by Admin")
