@@ -58,6 +58,22 @@ def clear_session(username: str):
         print(f"[DEBUG] clear_session error: {ex}")
 
 def user_panel(page: ft.Page, username: Optional[str]):
+    # Clear any existing page state first
+    page.controls.clear()
+    page.appbar = None
+    page.overlay.clear()
+    
+    # Set page properties for user panel
+    page.title = "KMTI Data Management Users"
+    page.bgcolor = ft.Colors.GREY_200
+    page.vertical_alignment = ft.MainAxisAlignment.START
+    page.horizontal_alignment = ft.CrossAxisAlignment.START
+    page.padding = 0
+    page.margin = 0
+    
+    # Force page update to clear login screen
+    page.update()
+    
     save_session(username, "USER", "user")
 
     user_folder = f"data/uploads/{username}"
@@ -79,6 +95,8 @@ def user_panel(page: ft.Page, username: Optional[str]):
     notifications_popup = NotificationsWindow(page, username, approval_service)
 
     current_view = "browser"
+    # ADD: Track highlighted file for navigation from notifications
+    highlighted_file = None
 
     log_action(username, "Login")
     log_activity(username, "Login")
@@ -97,37 +115,43 @@ def user_panel(page: ft.Page, username: Optional[str]):
         login_view(page)
     
     def show_profile_view():
-        nonlocal current_view
+        nonlocal current_view, highlighted_file
         print("[DEBUG] Switching to Profile view")
         current_view = "profile"
+        highlighted_file = None  # Clear highlight when switching views
         notifications_popup.hide()
         update_content()
     
     def show_files_view():
-        nonlocal current_view
+        nonlocal current_view, highlighted_file
         print("[DEBUG] Switching to Files view")
         current_view = "files"
+        highlighted_file = None  # Clear highlight when switching views
         notifications_popup.hide()
         update_content()
     
-    def show_approval_files_view():
-        nonlocal current_view
-        print("[DEBUG] Switching to Approval Files view")
+    # MODIFIED: Support highlighting specific files
+    def show_approval_files_view(highlight_filename=None):
+        nonlocal current_view, highlighted_file
+        print(f"[DEBUG] Switching to Approval Files view, highlighting: {highlight_filename}")
         current_view = "approval_files"
+        highlighted_file = highlight_filename  # Set the file to highlight
         notifications_popup.hide()
         update_content()
     
     def show_notifications_view():
-        nonlocal current_view
+        nonlocal current_view, highlighted_file
         print("[DEBUG] Switching to Notifications view")
         current_view = "notifications"
+        highlighted_file = None  # Clear highlight when switching views
         notifications_popup.hide()
         update_content()
     
     def show_browser_view():
-        nonlocal current_view
+        nonlocal current_view, highlighted_file
         print("[DEBUG] Switching to Browser view")
         current_view = "browser"
+        highlighted_file = None  # Clear highlight when switching views
         notifications_popup.hide()
         update_content()
 
@@ -140,12 +164,19 @@ def user_panel(page: ft.Page, username: Optional[str]):
         """Update app bar when notifications change"""
         update_appbar()
 
+    # ADD: Handler for file clicks from notifications
+    def on_notification_file_click(filename: str):
+        """Handle file click from notifications - navigate to file approvals with highlight"""
+        print(f"[DEBUG] File clicked from notification: {filename}")
+        show_approval_files_view(highlight_filename=filename)
+
     navigation = {
         'show_profile': show_profile_view,
         'show_files': show_files_view,
         'show_approval_files': show_approval_files_view,
         'show_notifications': show_notifications_view,
-        'show_browser': show_browser_view
+        'show_browser': show_browser_view,
+        'on_notification_file_click': on_notification_file_click  # ADD: File click handler
     }
     
     # Set navigation for all views
@@ -157,6 +188,8 @@ def user_panel(page: ft.Page, username: Optional[str]):
 
     # Set callback for notifications popup
     notifications_popup.set_close_callback(on_notifications_updated)
+    # ADD: Set navigation for notifications popup
+    notifications_popup.set_navigation(navigation)
 
     def get_notification_status():
         """Get notification count and text for app bar"""
@@ -221,9 +254,16 @@ def user_panel(page: ft.Page, username: Optional[str]):
         page.update()
 
     def update_content():
-        """Update content immediately - simple and reliable"""
-        print(f"[DEBUG] Updating content to: {current_view}")
+        """Update content with robust error handling and forced UI refresh"""
+        print(f"[DEBUG] Updating content to: {current_view}, highlighted_file: {highlighted_file}")
         try:
+            # Clear current content completely
+            page.controls.clear()
+            page.appbar = None
+            
+            # Force page update to clear any existing content
+            page.update()
+            
             # Get the appropriate content based on current view
             if current_view == "profile":
                 content = profile_view.create_content()
@@ -232,8 +272,9 @@ def user_panel(page: ft.Page, username: Optional[str]):
                 content = files_view.create_content()
                 print("[DEBUG] Created files content")
             elif current_view == "approval_files":
-                content = approval_files_view.create_content()
-                print("[DEBUG] Created approval files content")
+                # MODIFIED: Pass highlighted file to approval files view
+                content = approval_files_view.create_content(highlighted_filename=highlighted_file)
+                print(f"[DEBUG] Created approval files content with highlighted file: {highlighted_file}")
             elif current_view == "notifications":
                 content = notifications_view.create_content()
                 print("[DEBUG] Created notifications content")
@@ -241,10 +282,17 @@ def user_panel(page: ft.Page, username: Optional[str]):
                 content = browser_view.create_content()
                 print("[DEBUG] Created browser content")
 
-            # Clear current content and add new content
-            page.controls.clear()
+            # Update app bar first
             update_appbar()
-            page.add(content)
+            
+            # Add new content
+            if content:
+                page.add(content)
+            else:
+                print("[ERROR] Content is None - creating fallback")
+                page.add(ft.Text("Loading...", size=20))
+            
+            # Force final page update
             page.update()
             
             print(f"[DEBUG] Successfully updated to {current_view}")
@@ -254,9 +302,18 @@ def user_panel(page: ft.Page, username: Optional[str]):
             import traceback
             traceback.print_exc()
             
-            # Show error message
+            # Show error message with retry option
             page.controls.clear()
-            page.add(ft.Text(f"An error occurred: {e}", color=ft.Colors.RED))
+            page.add(ft.Column([
+                ft.Text(f"UI Error: {e}", color=ft.Colors.RED, size=16),
+                ft.Text("Trying to recover...", color=ft.Colors.ORANGE),
+                ft.ElevatedButton(
+                    "Retry",
+                    on_click=lambda e: update_content(),
+                    bgcolor=ft.Colors.BLUE,
+                    color=ft.Colors.WHITE
+                )
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER))
             page.update()
 
     # Initialize page
