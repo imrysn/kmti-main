@@ -15,9 +15,11 @@ from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action  
 from utils.session_logger import log_activity
+from admin.components.role_colors import create_role_badge, get_role_color
+from utils.path_config import DATA_PATHS
 
 # Use consistent session management with login_window.py
-SESSION_ROOT = "data/sessions"
+SESSION_ROOT = DATA_PATHS.local_sessions_dir
 
 def safe_username_for_file(username: str) -> str:
     """Return a filename-safe username."""
@@ -58,28 +60,37 @@ def clear_session(username: str):
         print(f"[DEBUG] clear_session error: {ex}")
 
 def user_panel(page: ft.Page, username: Optional[str]):
-    # Clear any existing page state first
-    page.controls.clear()
-    page.appbar = None
-    page.overlay.clear()
+
+    """User panel - accessible only by USER role users."""
+    # Verify user has user role
+    from utils.auth import load_users
+    users = load_users()
+    user_role = None
+    for email, data in users.items():
+        if data.get("username") == username:
+            user_role = data.get("role", "").upper()
+            # Normalize role string
+            if user_role == "TEAM LEADER":
+                user_role = "TEAM_LEADER"
+            break
     
-    # Set page properties for user panel
-    page.title = "KMTI Data Management Users"
-    page.bgcolor = ft.Colors.GREY_200
-    page.vertical_alignment = ft.MainAxisAlignment.START
-    page.horizontal_alignment = ft.CrossAxisAlignment.START
-    page.padding = 0
-    page.margin = 0
+    print(f"[DEBUG] User panel access check: username={username}, role={user_role}")
     
-    # Force page update to clear login screen
-    page.update()
+    if user_role != "USER":
+        print(f"[WARNING] Non-user role {user_role} attempted to access user panel")
+        page.clean()
+        from login_window import login_view
+        login_view(page)
+        return
+
     
     save_session(username, "USER", "user")
 
-    user_folder = f"data/uploads/{username}"
-    os.makedirs(user_folder, exist_ok=True)
+    # Use network path for user folder
+    user_folder = DATA_PATHS.get_user_upload_dir(username)
+    DATA_PATHS.ensure_user_dirs(username)
     
-    # Initialize services
+    # Initialize services with network paths
     profile_service = ProfileService(user_folder, username)
     file_service = FileService(user_folder, username)
     approval_service = ApprovalFileService(user_folder, username)
@@ -201,8 +212,9 @@ def user_panel(page: ft.Page, username: Optional[str]):
             return "", ft.Icons.NOTIFICATIONS_NONE
 
     def update_appbar():
-        """Update app bar"""
+        """Update app bar with role badge"""
         notification_badge, notification_icon = get_notification_status()
+        user_badge = create_role_badge("USER", size=12)
         
         page.appbar = ft.AppBar(
             title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
@@ -241,6 +253,7 @@ def user_panel(page: ft.Page, username: Optional[str]):
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),
                     on_click=lambda e: show_profile_view()
                 ),
+                user_badge,
                 ft.TextButton(
                     "Logout", 
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),

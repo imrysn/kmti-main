@@ -1,5 +1,6 @@
 import flet as ft
 from flet import FontWeight
+from admin.components.role_colors import create_role_badge
 
 
 def create_navbar(username: str, on_nav, on_logout):
@@ -57,18 +58,19 @@ def create_navbar(username: str, on_nav, on_logout):
         expand=True,
     )
 
-    # Right section: user info + logout
+    # Right section: user info + role badge + logout
+    admin_badge = create_role_badge("ADMIN", size=12)
     right_section = ft.Row(
         controls=[
-            ft.Text(f"Hi, {username}", size=16,
-                    color=ft.Colors.WHITE),
+            ft.Text(f"Hi, {username}", size=16, color=ft.Colors.WHITE),
+            admin_badge,
             ft.TextButton(
                 content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
                 on_click=lambda e: on_logout(),
             ),
         ],
         alignment=ft.MainAxisAlignment.END,
-        spacing=20,
+        spacing=15,
     )
 
     # Combine into a horizontal navbar

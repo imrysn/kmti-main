@@ -6,7 +6,7 @@ import hashlib
 from admin.utils.team_utils import get_team_options
 from utils.session_logger import log_activity
 
-USERS_FILE = "data/users.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 
 def hash_password(password: str) -> str:
@@ -15,10 +15,7 @@ def hash_password(password: str) -> str:
 
 
 def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
-    """
-    Renders the Add User form into the existing `content` column,
-    leaving the navbar intact.
-    """
+
     content.controls.clear()
 
     # Ensure users.json exists
@@ -43,7 +40,7 @@ def add_user_page(content: ft.Column, page: ft.Page, username: Optional[str]):
     role = ft.Dropdown(
         label="Role",
         width=400,
-        options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("TEAM LEADER"), ft.dropdown.Option("USER")],
+        options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("TEAM_LEADER"), ft.dropdown.Option("USER")],
         value="USER",
     )
 

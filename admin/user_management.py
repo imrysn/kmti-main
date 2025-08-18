@@ -15,7 +15,7 @@ from utils.dialog import show_center_sheet
 def user_management(content: ft.Column, username: Optional[str]):
     content.controls.clear()
 
-    users_file = "data/users.json"
+    users_file = r"\\KMTI-NAS\Shared\data\users.json"
     edit_mode = {"value": False}
     filter_mode = {"value": "All"}
     runtime_labels = {}
@@ -307,9 +307,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                               icon=ft.Icons.EDIT,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
+                                           ft.ControlState.HOVERED: ft.Colors.BLACK},
                                   color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
                                   side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
@@ -318,10 +318,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               on_click=go_to_add_user,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
+                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
             ft.ElevatedButton("Reset Password",
@@ -329,10 +329,10 @@ def user_management(content: ft.Column, username: Optional[str]):
                               on_click=go_to_reset_password,
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
+                                           ft.ControlState.HOVERED: ft.Colors.RED},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               )
         ],

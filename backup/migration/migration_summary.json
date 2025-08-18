@@ -1,0 +1,17 @@
+{
+  "migration_date": "2025-08-18T07:47:40.110092",
+  "network_base": "\\\\KMTI-NAS\\Shared\\data",
+  "local_base": "data",
+  "migrated_directories": [
+    "data/approvals -> network/approvals",
+    "data/uploads -> network/uploads",
+    "data/user_approvals -> network/user_approvals",
+    "data/cache -> network/cache"
+  ],
+  "preserved_local": [
+    "data/sessions (kept local)",
+    "data/logs (kept local)",
+    "data/config.json (local config)"
+  ],
+  "backup_location": "backup/migration/"
+}

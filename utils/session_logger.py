@@ -2,9 +2,9 @@ import json
 import os
 from datetime import datetime
 
-LOG_FILE = "data/logs/activity_metadata.json"
-USERS_FILE = "data/users.json"
-SESSION_ROOT = "/data"  # New: root directory for per-user sessions
+LOG_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
+SESSION_ROOT = "/data/sessions"  
 
 
 # --------------------------
@@ -203,7 +203,7 @@ def log_activity(username: str, description: str):
     - activity
     - date
     """
-    log_file = "data/logs/activity_logs.json"
+    log_file = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
