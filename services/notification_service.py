@@ -7,14 +7,15 @@ class NotificationService:
     """Service to handle notifications between admin and users"""
     
     def __init__(self):
-        self.notifications_dir = "data/notifications"
+        self.notifications_dir = r"\\KMTI-NAS\Shared\data\notifications"
         os.makedirs(self.notifications_dir, exist_ok=True)
     
     def notify_approval_status(self, username: str, filename: str, status: str, admin_id: str, reason: str = ""):
         """Send approval status notification to user"""
         try:
-            user_folder = f"data/uploads/{username}"
-            notifications_file = os.path.join(user_folder, "approval_notifications.json")
+            # Use centralized data folder for notifications
+            user_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
+            notifications_file = os.path.join(user_data_folder, "approval_notifications.json")
             
             # Load existing notifications
             notifications = []
@@ -41,7 +42,7 @@ class NotificationService:
             notifications = notifications[:100]
             
             # Save notifications
-            os.makedirs(user_folder, exist_ok=True)
+            os.makedirs(user_data_folder, exist_ok=True)
             with open(notifications_file, 'w') as f:
                 json.dump(notifications, f, indent=2)
             
@@ -55,8 +56,9 @@ class NotificationService:
     def notify_comment_added(self, username: str, filename: str, admin_id: str, comment: str):
         """Send comment notification to user"""
         try:
-            user_folder = f"data/uploads/{username}"
-            notifications_file = os.path.join(user_folder, "approval_notifications.json")
+            # Use centralized data folder for notifications
+            user_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
+            notifications_file = os.path.join(user_data_folder, "approval_notifications.json")
             
             # Load existing notifications
             notifications = []
@@ -82,7 +84,7 @@ class NotificationService:
             notifications = notifications[:100]
             
             # Save notifications
-            os.makedirs(user_folder, exist_ok=True)
+            os.makedirs(user_data_folder, exist_ok=True)
             with open(notifications_file, 'w') as f:
                 json.dump(notifications, f, indent=2)
             
@@ -96,8 +98,9 @@ class NotificationService:
     def get_user_notifications(self, username: str) -> List[Dict]:
         """Get all notifications for a user"""
         try:
-            user_folder = f"data/uploads/{username}"
-            notifications_file = os.path.join(user_folder, "approval_notifications.json")
+            # Use centralized data folder for notifications
+            user_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
+            notifications_file = os.path.join(user_data_folder, "approval_notifications.json")
             
             if os.path.exists(notifications_file):
                 with open(notifications_file, 'r') as f:

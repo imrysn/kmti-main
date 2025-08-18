@@ -239,7 +239,7 @@ class EnhancedFileApprovalPanel:
                     ft.dropdown.Option("ALL", "All Status"),
                     ft.dropdown.Option("pending_admin", "Pending Admin"),
                     ft.dropdown.Option("approved", "Approved"),
-                    ft.dropdown.Option("rejected_admin", "Rejected by Admin")
+                    ft.dropdown.Option("rejected_admin", "Rejected")
                 ],
                 on_change=self._on_status_filter_changed
             ),
@@ -410,9 +410,18 @@ class EnhancedFileApprovalPanel:
             with PerformanceTimer("EnhancedFileApprovalPanel", "refresh_files_table"):
                 # Get files based on role and filters
                 if self.admin_role.upper() == 'ADMIN':
-                    # Admin sees files pending admin approval by default
-                    if self.current_status_filter == "ALL" or self.current_status_filter == "pending_admin":
+                    # Admin sees files based on status filter
+                    if self.current_status_filter == "ALL":
+                        all_files = self.data_manager.get_all_files_for_admin(
+                            self.admin_user, self.admin_teams, None)  # Get all files
+                    elif self.current_status_filter == "pending_admin":
                         all_files = self.data_manager._get_admin_pending_files(
+                            self.admin_user, self.admin_teams)
+                    elif self.current_status_filter == "approved":
+                        all_files = self.data_manager._get_admin_approved_files(
+                            self.admin_user, self.admin_teams)
+                    elif self.current_status_filter == "rejected_admin":
+                        all_files = self.data_manager._get_admin_rejected_files(
                             self.admin_user, self.admin_teams)
                     else:
                         all_files = self.data_manager.get_all_files_for_admin(

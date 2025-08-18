@@ -273,6 +273,11 @@ class TeamLeaderApprovalService:
             })
             
             if self.save_global_queue(queue):
+                # Send notification to user about team leader approval
+                print(f"[INFO] Sending TL approval notification for file {file_data.get('original_filename')}")
+                self._notify_user_status_update(file_data, 'pending_admin', reviewer, 
+                    f"Approved by team leader {reviewer} - now pending admin review")
+                
                 return True, f"File approved by team leader and sent to admin review"
             else:
                 return False, "Failed to save approval"
@@ -333,6 +338,14 @@ class TeamLeaderApprovalService:
             })
             
             if self.save_global_queue(queue):
+                # Send notification to user about team leader rejection
+                print(f"[INFO] Sending TL rejection notification for file {file_data.get('original_filename')}")
+                self._notify_user_status_update(file_data, 'rejected_team_leader', reviewer, 
+                    f"Rejected by team leader {reviewer}: {reason.strip()}")
+                
+                # Archive the rejected file
+                self._archive_file(file_data, 'rejected_team_leader')
+                
                 return True, f"File rejected by team leader"
             else:
                 return False, "Failed to save rejection"
@@ -422,6 +435,101 @@ class TeamLeaderApprovalService:
         except Exception as e:
             print(f"Error adding comment: {e}")
             return False, f"Error: {str(e)}"
+
+
+    def _notify_user_status_update(self, file_data: Dict, status: str, reviewer: str, comment: str = ""):
+        """Send notification to user about status updates from team leader actions."""
+        try:
+            user_id = file_data.get('user_id')
+            original_filename = file_data.get('original_filename')
+            
+            if not user_id or not original_filename:
+                print(f"[WARNING] Missing user_id ({user_id}) or filename ({original_filename}) for TL notification")
+                return
+            
+            # Import here to avoid circular dependencies
+            from services.notification_service import NotificationService
+            notification_service = NotificationService()
+            
+            # Update user's approval status file directly
+            user_upload_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
+            if os.path.exists(user_upload_folder):
+                # Get the user approval service to update their local status
+                from user.services.approval_file_service import ApprovalFileService
+                user_approval_service = ApprovalFileService(user_upload_folder, user_id)
+                
+                # Update local approval status
+                success = user_approval_service.update_file_status(original_filename, status, comment, reviewer)
+                
+                if success:
+                    print(f"[SUCCESS] Updated user {user_id} file status: {original_filename} -> {status}")
+                else:
+                    print(f"[WARNING] Failed to update user {user_id} file status: {original_filename}")
+            
+            # Send notification based on status
+            if status == "pending_admin":
+                notification_service.notify_approval_status(
+                    user_id, original_filename, "approved_by_team_leader", reviewer,
+                    f"Your file has been approved by the team leader and is now pending admin review.")
+            elif status == "rejected_team_leader":
+                notification_service.notify_approval_status(
+                    user_id, original_filename, "rejected_by_team_leader", reviewer,
+                    f"Your file has been rejected by the team leader. Reason: {comment}")
+            
+            print(f"[SUCCESS] Notification sent to user {user_id} for TL action on {original_filename}")
+            
+        except Exception as e:
+            print(f"[ERROR] Error sending TL notification to user: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _archive_file(self, file_data: Dict, status: str):
+        """Archive rejected files from team leader actions."""
+        try:
+            import uuid
+            
+            archive_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "archived")
+            os.makedirs(archive_dir, exist_ok=True)
+            
+            # Team leader rejections go to a separate archive
+            if status == 'rejected_team_leader':
+                archive_file = os.path.join(archive_dir, 'tl_rejected_files.json')
+            else:
+                return  # Don't archive other statuses from TL
+            
+            # Load existing archived files
+            archived_files = {}
+            if os.path.exists(archive_file):
+                try:
+                    with open(archive_file, 'r', encoding='utf-8') as f:
+                        archived_files = json.load(f)
+                except Exception as e:
+                    print(f"[WARNING] Error loading TL archive file {archive_file}: {e}")
+                    archived_files = {}
+            
+            # Add current file to archive
+            file_id = file_data.get('file_id', str(uuid.uuid4()))
+            file_data['archived_date'] = datetime.now().isoformat()
+            archived_files[file_id] = file_data
+            
+            # Keep only last 1000 archived files
+            if len(archived_files) > 1000:
+                # Sort by archived_date and keep newest 1000
+                sorted_files = sorted(archived_files.items(), 
+                                     key=lambda x: x[1].get('archived_date', ''), 
+                                     reverse=True)
+                archived_files = dict(sorted_files[:1000])
+            
+            # Save updated archive
+            with open(archive_file, 'w', encoding='utf-8') as f:
+                json.dump(archived_files, f, indent=2)
+            
+            print(f"[INFO] TL Archived file {file_data.get('original_filename')} with status {status}")
+            
+        except Exception as e:
+            print(f"[ERROR] Error archiving TL file: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 def get_team_leader_service() -> TeamLeaderApprovalService:

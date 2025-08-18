@@ -183,32 +183,130 @@ class FileDataManager:
         """Get all files accessible to admin with optional status filtering."""
         try:
             approvals_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
-            if not os.path.exists(approvals_file):
-                return []
             
-            with open(approvals_file, 'r', encoding='utf-8') as f:
-                queue = json.load(f)
+            all_files = []
             
-            accessible_files = []
-            for file_id, file_data in queue.items():
-                # Check team access if admin has team restrictions
-                if admin_teams and admin_teams != ['ALL']:
-                    file_team = file_data.get('user_team', '')
-                    if file_team not in admin_teams:
-                        continue
+            # Get files from active queue
+            if os.path.exists(approvals_file):
+                with open(approvals_file, 'r', encoding='utf-8') as f:
+                    queue = json.load(f)
                 
-                # Apply status filter if provided
-                if status_filter:
-                    file_status = file_data.get('status', '')
-                    if file_status != status_filter:
-                        continue
-                
-                accessible_files.append(file_data)
+                for file_id, file_data in queue.items():
+                    # Check team access if admin has team restrictions
+                    if admin_teams and admin_teams != ['ALL']:
+                        file_team = file_data.get('user_team', '')
+                        if file_team not in admin_teams:
+                            continue
+                    
+                    # Apply status filter if provided
+                    if status_filter:
+                        file_status = file_data.get('status', '')
+                        if file_status != status_filter:
+                            continue
+                    
+                    all_files.append(file_data)
             
-            return accessible_files
+            # Also check archived approved/rejected files if needed
+            if not status_filter or status_filter in ['approved', 'rejected_admin']:
+                archived_files = self._get_archived_files(admin_teams, status_filter)
+                all_files.extend(archived_files)
+            
+            return all_files
             
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error getting all files for admin: {e}")
+            return []
+    
+    def _get_admin_approved_files(self, admin_user: str, admin_teams: List[str]) -> List[Dict]:
+        """Get files approved by admin (may be archived)."""
+        try:
+            # First check active queue for recently approved files
+            active_files = self.get_all_files_for_admin(admin_user, admin_teams, 'approved')
+            
+            # Add archived approved files
+            archived_files = self._get_archived_files(admin_teams, 'approved')
+            
+            all_approved = active_files + archived_files
+            
+            # Remove duplicates based on file_id
+            unique_approved = {f.get('file_id', f.get('original_filename', '')): f for f in all_approved}
+            return list(unique_approved.values())
+            
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error getting admin approved files: {e}")
+            return []
+    
+    def _get_admin_rejected_files(self, admin_user: str, admin_teams: List[str]) -> List[Dict]:
+        """Get files rejected by admin (may be archived)."""
+        try:
+            # First check active queue for recently rejected files
+            active_files = self.get_all_files_for_admin(admin_user, admin_teams, 'rejected_admin')
+            
+            # Add archived rejected files
+            archived_files = self._get_archived_files(admin_teams, 'rejected_admin')
+            
+            all_rejected = active_files + archived_files
+            
+            # Remove duplicates based on file_id
+            unique_rejected = {f.get('file_id', f.get('original_filename', '')): f for f in all_rejected}
+            return list(unique_rejected.values())
+            
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error getting admin rejected files: {e}")
+            return []
+    
+    def _get_archived_files(self, admin_teams: List[str], status_filter: Optional[str] = None) -> List[Dict]:
+        """Get archived approved/rejected files from archive directory."""
+        try:
+            archived_files = []
+            archive_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "archived")
+            
+            if not os.path.exists(archive_dir):
+                return []
+            
+            # Check for status-specific archive files
+            archive_files = {
+                'approved': os.path.join(archive_dir, 'approved_files.json'),
+                'rejected_admin': os.path.join(archive_dir, 'rejected_files.json'),
+                'all': os.path.join(archive_dir, 'all_processed_files.json')
+            }
+            
+            files_to_check = []
+            if status_filter and status_filter in archive_files:
+                files_to_check = [archive_files[status_filter]]
+            elif not status_filter:
+                files_to_check = [archive_files['all']] if os.path.exists(archive_files['all']) else list(archive_files.values())
+            
+            for archive_file in files_to_check:
+                if os.path.exists(archive_file):
+                    try:
+                        with open(archive_file, 'r', encoding='utf-8') as f:
+                            archive_data = json.load(f)
+                        
+                        # Handle both dict (file_id -> file_data) and list formats
+                        if isinstance(archive_data, dict):
+                            file_list = list(archive_data.values())
+                        else:
+                            file_list = archive_data
+                        
+                        # Filter by team access
+                        for file_data in file_list:
+                            if admin_teams and admin_teams != ['ALL']:
+                                file_team = file_data.get('user_team', '')
+                                if file_team not in admin_teams:
+                                    continue
+                            
+                            archived_files.append(file_data)
+                            
+                    except Exception as file_error:
+                        self.enhanced_logger.general_logger.warning(
+                            f"Error reading archive file {archive_file}: {file_error}")
+                        continue
+            
+            return archived_files
+            
+        except Exception as e:
+            self.enhanced_logger.general_logger.error(f"Error getting archived files: {e}")
             return []
     
     def get_admin_teams_safely(self, admin_user: str, permission_service) -> List[str]:

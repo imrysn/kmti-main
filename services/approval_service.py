@@ -805,6 +805,9 @@ class FileApprovalService:
                     self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user, 
                                            f"File approved and moved to project directory: {move_message}")
                     
+                    # Archive the approved file before removing from queue
+                    self._archive_file(file_data, 'approved')
+                    
                     # Remove from global queue (approved files are processed)
                     del queue[file_id]
                     
@@ -857,6 +860,9 @@ class FileApprovalService:
                 # Update user's approval status
                 self._update_user_status(file_data, status, admin_user, reason)
                 
+                # Archive the rejected file before removing from queue
+                self._archive_file(file_data, 'rejected_admin')
+                
                 # Remove from global queue
                 del queue[file_id]
                 
@@ -889,19 +895,104 @@ class FileApprovalService:
         return False
     
     def _update_user_status(self, file_data: Dict, status: str, admin_user: str, comment: str = ""):
-        """Update user's local approval status"""
+        """Update user's local approval status and send notifications"""
         try:
             user_id = file_data.get('user_id')
             original_filename = file_data.get('original_filename')
             
             if not user_id or not original_filename:
+                print(f"[ERROR] Missing user_id ({user_id}) or filename ({original_filename}) for status update")
                 return
             
             # Create a user approval service instance to update their data
-            user_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
-            if os.path.exists(user_folder):
-                user_approval_service = ApprovalFileService(user_folder, user_id)
-                user_approval_service.update_file_status(original_filename, status, comment, admin_user)
+            user_upload_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
+            if os.path.exists(user_upload_folder):
+                print(f"[INFO] Updating user status for {user_id}: {original_filename} -> {status}")
+                user_approval_service = ApprovalFileService(user_upload_folder, user_id)
+                
+                # Update the file status
+                success = user_approval_service.update_file_status(original_filename, status, comment, admin_user)
+                
+                if success:
+                    print(f"[SUCCESS] Status updated for user {user_id}: {original_filename}")
+                    
+                    # Send notification using the notification service
+                    from services.notification_service import NotificationService
+                    notification_service = NotificationService()
+                    
+                    # Create appropriate notification message
+                    if status == "approved":
+                        notification_service.notify_approval_status(
+                            user_id, original_filename, "approved", admin_user, 
+                            f"Your file has been approved and moved to the project directory. {comment}")
+                    elif status == "rejected_admin":
+                        notification_service.notify_approval_status(
+                            user_id, original_filename, "rejected", admin_user, 
+                            f"Your file has been rejected. Reason: {comment}")
+                    elif status == "pending_admin":
+                        notification_service.notify_approval_status(
+                            user_id, original_filename, "approved_by_team_leader", admin_user,
+                            f"Your file has been approved by the team leader and is now pending admin review.")
+                    elif status == "rejected_team_leader":
+                        notification_service.notify_approval_status(
+                            user_id, original_filename, "rejected_by_team_leader", admin_user,
+                            f"Your file has been rejected by the team leader. Reason: {comment}")
+                    
+                    print(f"[SUCCESS] Notification sent to user {user_id} for file {original_filename}")
+                else:
+                    print(f"[WARNING] Failed to update status for user {user_id}: {original_filename}")
+            else:
+                print(f"[WARNING] User upload folder not found: {user_upload_folder}")
                 
         except Exception as e:
-            print(f"Error updating user status: {e}")
+            print(f"[ERROR] Error updating user status: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _archive_file(self, file_data: Dict, status: str):
+        """Archive approved/rejected files for admin panel display"""
+        try:
+            archive_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "archived")
+            os.makedirs(archive_dir, exist_ok=True)
+            
+            # Determine archive file based on status
+            if status == 'approved':
+                archive_file = os.path.join(archive_dir, 'approved_files.json')
+            elif status == 'rejected_admin':
+                archive_file = os.path.join(archive_dir, 'rejected_files.json')
+            else:
+                return  # Don't archive other statuses
+            
+            # Load existing archived files
+            archived_files = {}
+            if os.path.exists(archive_file):
+                try:
+                    with open(archive_file, 'r', encoding='utf-8') as f:
+                        archived_files = json.load(f)
+                except Exception as e:
+                    print(f"[WARNING] Error loading archive file {archive_file}: {e}")
+                    archived_files = {}
+            
+            # Add current file to archive
+            file_id = file_data.get('file_id', str(uuid.uuid4()))
+            file_data['archived_date'] = datetime.now().isoformat()
+            archived_files[file_id] = file_data
+            
+            # Keep only last 1000 archived files per status
+            if len(archived_files) > 1000:
+                # Sort by archived_date and keep newest 1000
+                sorted_files = sorted(archived_files.items(), 
+                                     key=lambda x: x[1].get('archived_date', ''), 
+                                     reverse=True)
+                archived_files = dict(sorted_files[:1000])
+            
+            # Save updated archive
+            with open(archive_file, 'w', encoding='utf-8') as f:
+                json.dump(archived_files, f, indent=2)
+            
+            print(f"[INFO] Archived file {file_data.get('original_filename')} with status {status}")
+            
+        except Exception as e:
+            print(f"[ERROR] Error archiving file: {e}")
+            import traceback
+            traceback.print_exc()

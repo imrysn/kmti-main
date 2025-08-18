@@ -1,6 +1,6 @@
 """
-Network Access Manager for KMTI File Approval System
-Handles network access validation and fallback mechanisms
+Enhanced File Movement Service for KMTI File Approval System
+Handles network access validation, approved/rejected file movement, and fallback mechanisms
 """
 
 import os
@@ -92,49 +92,10 @@ class NetworkAccessManager:
         except Exception as e:
             print(f"[ACCESS_MANAGER] Fallback path failed: {e}")
             return False, f"No accessible path: {message}", "failed"
-    
-    def create_admin_access_request(self, file_data: Dict, admin_user: str, 
-                                  target_path: str, error_message: str) -> str:
-        """Create an access request for manual admin processing"""
-        try:
-            requests_dir = os.path.join(DATA_PATHS.NETWORK_BASE, "admin_access_requests")
-            os.makedirs(requests_dir, exist_ok=True)
-            
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            request_id = f"access_request_{timestamp}_{file_data.get('file_id', 'unknown')}"
-            request_file = os.path.join(requests_dir, f"{request_id}.json")
-            
-            request_data = {
-                "request_id": request_id,
-                "created_date": datetime.now().isoformat(),
-                "admin_user": admin_user,
-                "file_data": file_data,
-                "target_path": target_path,
-                "error_message": error_message,
-                "status": "pending_manual_move",
-                "instructions": {
-                    "step1": f"Copy file from: {file_data.get('file_path', 'source unknown')}",
-                    "step2": f"To directory: {target_path}",
-                    "step3": f"Update request status to 'completed' when done",
-                    "step4": "Run process_admin_requests.py to finalize"
-                }
-            }
-            
-            with open(request_file, 'w', encoding='utf-8') as f:
-                import json
-                json.dump(request_data, f, indent=2)
-            
-            log_action(admin_user, f"Created access request: {request_id}")
-            
-            return request_id
-            
-        except Exception as e:
-            print(f"[ACCESS_MANAGER] Error creating access request: {e}")
-            return f"Error creating request: {e}"
 
 
 class EnhancedFileMovementService:
-    """Enhanced file movement service with admin access management"""
+    """Enhanced file movement service with admin access management for both approved and rejected files"""
     
     def __init__(self):
         self.access_manager = NetworkAccessManager()
@@ -158,7 +119,7 @@ class EnhancedFileMovementService:
     
     def move_approved_file_with_access_management(self, file_data: Dict, approved_by: str) -> Tuple[bool, str, Optional[str]]:
         """
-        Move approved file with proper access management and fallback
+        Move approved file from user uploads to project directory with proper access management and fallback
         """
         try:
             # Get file information
@@ -176,29 +137,31 @@ class EnhancedFileMovementService:
             team_tag = self.get_user_team_tag(user_id)
             current_year = str(datetime.now().year)
             
-            print(f"[FILE_MOVEMENT] Moving file for team: {team_tag}, year: {current_year}")
+            print(f"[FILE_MOVEMENT] Moving approved file for team: {team_tag}, year: {current_year}")
             
             # Get accessible project path
             has_access, project_dir, access_type = self.access_manager.get_accessible_project_path(
                 team_tag, current_year, approved_by)
             
             if not has_access:
-                # Create admin access request for manual processing
-                request_id = self.access_manager.create_admin_access_request(
-                    file_data, approved_by, f"{self.access_manager.project_base}\\{team_tag}\\{current_year}", 
-                    project_dir)  # project_dir contains error message
-                
-                return False, f"Access denied - Manual processing required. Request ID: {request_id}", None
+                # Create fallback in network data directory if primary fails
+                fallback_dir = os.path.join(DATA_PATHS.NETWORK_BASE, "approved_files_fallback", team_tag, current_year)
+                try:
+                    os.makedirs(fallback_dir, exist_ok=True)
+                    project_dir = fallback_dir
+                    access_type = "fallback"
+                except Exception as fallback_error:
+                    return False, f"All access methods failed: {project_dir} | Fallback: {fallback_error}", None
             
             # Generate unique filename if conflict exists
             new_filename = self._generate_unique_filename(project_dir, original_filename)
             new_file_path = os.path.join(project_dir, new_filename)
             
-            # Move the file
+            # Move the file (this deletes from user uploads)
             shutil.move(current_file_path, new_file_path)
             
             # Create metadata file
-            self._create_file_metadata(new_file_path, file_data, approved_by, team_tag, current_year, access_type)
+            self._create_approved_file_metadata(new_file_path, file_data, approved_by, team_tag, current_year, access_type)
             
             # Log successful movement
             log_action(approved_by, f"Moved approved file {original_filename} to {access_type} path: {team_tag}/{current_year}")
@@ -212,16 +175,58 @@ class EnhancedFileMovementService:
             return True, success_message, new_file_path
             
         except Exception as e:
-            error_msg = f"Error moving file: {str(e)}"
+            error_msg = f"Error moving approved file: {str(e)}"
             print(f"[FILE_MOVEMENT] Error: {error_msg}")
+            return False, error_msg, None
+    
+    def move_rejected_file_to_archive(self, file_data: Dict, rejected_by: str, rejection_reason: str) -> Tuple[bool, str, Optional[str]]:
+        """
+        Move rejected file from user uploads to archive directory and clean up from user uploads
+        """
+        try:
+            # Get file information
+            original_filename = file_data.get('original_filename')
+            current_file_path = file_data.get('file_path')
+            user_id = file_data.get('user_id')
             
-            # Create access request on any error
-            try:
-                request_id = self.access_manager.create_admin_access_request(
-                    file_data, approved_by, "Unknown target", error_msg)
-                return False, f"Move failed - Manual processing required. Request ID: {request_id}", None
-            except:
-                return False, error_msg, None
+            if not all([original_filename, current_file_path, user_id]):
+                return False, "Missing file information", None
+            
+            if not os.path.exists(current_file_path):
+                return False, f"Source file not found: {current_file_path}", None
+            
+            # Get user's team tag and create rejected files directory
+            team_tag = self.get_user_team_tag(user_id)
+            current_year = str(datetime.now().year)
+            
+            # Create rejected files archive directory
+            rejected_dir = os.path.join(DATA_PATHS.NETWORK_BASE, "rejected_files_archive", team_tag, current_year)
+            os.makedirs(rejected_dir, exist_ok=True)
+            
+            print(f"[FILE_MOVEMENT] Moving rejected file for team: {team_tag}, year: {current_year}")
+            
+            # Generate unique filename if conflict exists
+            new_filename = self._generate_unique_filename(rejected_dir, original_filename)
+            new_file_path = os.path.join(rejected_dir, new_filename)
+            
+            # Move the file to rejected archive (this deletes from user uploads)
+            shutil.move(current_file_path, new_file_path)
+            
+            # Create metadata file for rejected file
+            self._create_rejected_file_metadata(new_file_path, file_data, rejected_by, rejection_reason, team_tag, current_year)
+            
+            # Log successful movement
+            log_action(rejected_by, f"Moved rejected file {original_filename} to archive: {team_tag}/{current_year}")
+            
+            success_message = f"Rejected file archived: {team_tag}/{current_year}/{new_filename}"
+            print(f"[FILE_MOVEMENT] Success: {success_message}")
+            
+            return True, success_message, new_file_path
+            
+        except Exception as e:
+            error_msg = f"Error archiving rejected file: {str(e)}"
+            print(f"[FILE_MOVEMENT] Error: {error_msg}")
+            return False, error_msg, None
     
     def _generate_unique_filename(self, directory: str, filename: str) -> str:
         """Generate unique filename if conflict exists"""
@@ -241,9 +246,9 @@ class EnhancedFileMovementService:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 return f"{name}_{timestamp}{ext}"
     
-    def _create_file_metadata(self, file_path: str, file_data: Dict, approved_by: str, 
-                             team_tag: str, year: str, access_type: str):
-        """Create metadata file for the moved file using metadata manager"""
+    def _create_approved_file_metadata(self, file_path: str, file_data: Dict, approved_by: str, 
+                                     team_tag: str, year: str, access_type: str):
+        """Create metadata file for approved file using metadata manager"""
         try:
             metadata = {
                 "original_submission": {
@@ -286,39 +291,59 @@ class EnhancedFileMovementService:
                 print(f"[METADATA] {message}")
             else:
                 print(f"[METADATA] Error: {message}")
-            
+                
         except Exception as e:
-            print(f"Error creating file metadata: {e}")
+            print(f"Error creating approved file metadata: {e}")
     
-    def get_pending_access_requests(self) -> List[Dict]:
-        """Get all pending access requests for admin review"""
+    def _create_rejected_file_metadata(self, file_path: str, file_data: Dict, rejected_by: str, 
+                                     rejection_reason: str, team_tag: str, year: str):
+        """Create metadata file for rejected file"""
         try:
-            requests_dir = os.path.join(DATA_PATHS.NETWORK_BASE, "admin_access_requests")
+            metadata = {
+                "original_submission": {
+                    "filename": file_data.get('original_filename'),
+                    "user_id": file_data.get('user_id'),
+                    "user_team": file_data.get('user_team'),
+                    "submission_date": file_data.get('submission_date'),
+                    "description": file_data.get('description', ''),
+                    "tags": file_data.get('tags', []),
+                    "file_size": file_data.get('file_size', 0)
+                },
+                "rejection_info": {
+                    "rejected_by": rejected_by,
+                    "rejected_date": datetime.now().isoformat(),
+                    "rejection_reason": rejection_reason,
+                    "team_leader_approved_by": file_data.get('tl_approved_by'),
+                    "team_leader_approved_date": file_data.get('tl_approved_date'),
+                    "status_history": file_data.get('status_history', [])
+                },
+                "archive_info": {
+                    "team_tag": team_tag,
+                    "archive_year": year,
+                    "archived_date": datetime.now().isoformat(),
+                    "archive_directory": os.path.dirname(file_path),
+                    "final_file_location": file_path
+                },
+                "comments": {
+                    "admin_comments": file_data.get('admin_comments', []),
+                    "team_leader_comments": file_data.get('tl_comments', [])
+                }
+            }
             
-            if not os.path.exists(requests_dir):
-                return []
+            # Use metadata manager to save the metadata (create a rejected-specific method if needed)
+            metadata_manager = get_metadata_manager()
+            filename = os.path.basename(file_path)
             
-            requests = []
-            for filename in os.listdir(requests_dir):
-                if filename.endswith('.json'):
-                    try:
-                        with open(os.path.join(requests_dir, filename), 'r', encoding='utf-8') as f:
-                            import json
-                            request_data = json.load(f)
-                            
-                        if request_data.get('status') == 'pending_manual_move':
-                            requests.append(request_data)
-                            
-                    except Exception as e:
-                        print(f"Error reading request file {filename}: {e}")
+            # Save rejected file metadata in a separate rejected folder structure
+            success, message = metadata_manager.save_rejected_file_metadata(filename, metadata, team_tag, year)
             
-            # Sort by creation date (newest first)
-            requests.sort(key=lambda x: x.get('created_date', ''), reverse=True)
-            return requests
-            
+            if success:
+                print(f"[METADATA] {message}")
+            else:
+                print(f"[METADATA] Error: {message}")
+                
         except Exception as e:
-            print(f"Error getting pending access requests: {e}")
-            return []
+            print(f"Error creating rejected file metadata: {e}")
 
 
 # Global instance

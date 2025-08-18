@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-08-18T14:53:29.154546",
+  "summary": {
+    "total": 6,
+    "passed": 5,
+    "failed": 1,
+    "success_rate": 83.33333333333334
+  },
+  "detailed_results": [
+    {
+      "test": "User File Submission",
+      "success": false,
+      "message": "File not found in global queue or wrong status. Found: None",
+      "timestamp": "2025-08-18T14:53:28.596423"
+    },
+    {
+      "test": "TL Can See File",
+      "success": true,
+      "message": "Team leader can see file with status: pending_team_leader",
+      "timestamp": "2025-08-18T14:53:28.892588"
+    },
+    {
+      "test": "TL Approval Action",
+      "success": true,
+      "message": "Team leader approval successful: File approved by team leader and sent to admin review",
+      "timestamp": "2025-08-18T14:53:29.105846"
+    },
+    {
+      "test": "Status Update to Pending Admin",
+      "success": true,
+      "message": "File status correctly updated to: pending_admin",
+      "timestamp": "2025-08-18T14:53:29.125930"
+    },
+    {
+      "test": "User Notification for TL Approval",
+      "success": true,
+      "message": "User received TL approval notification",
+      "timestamp": "2025-08-18T14:53:29.145191"
+    },
+    {
+      "test": "Admin Can See Pending File",
+      "success": true,
+      "message": "Admin can see file pending admin review. Status: pending_admin",
+      "timestamp": "2025-08-18T14:53:29.150631"
+    }
+  ]
+}
