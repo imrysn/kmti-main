@@ -10,7 +10,7 @@ from enum import Enum
 from utils.logger import log_action
 from utils.session_logger import log_activity
 from utils.path_config import DATA_PATHS
-from services.file_movement_service import get_file_movement_service
+from services.enhanced_file_movement_service import get_enhanced_file_movement_service
 
 class ApprovalStatus(Enum):
     """Approval status enumeration"""
@@ -790,9 +790,9 @@ class FileApprovalService:
                     'comment': 'File approved by admin'
                 })
                 
-                # Move file to project directory
-                file_movement_service = get_file_movement_service()
-                move_success, move_message, new_file_path = file_movement_service.move_approved_file(
+                # Move file to project directory with enhanced access management
+                file_movement_service = get_enhanced_file_movement_service()
+                move_success, move_message, new_file_path = file_movement_service.move_approved_file_with_access_management(
                     file_data, admin_user)
                 
                 if move_success:

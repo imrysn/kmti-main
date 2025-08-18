@@ -9,6 +9,7 @@ from TLPanel import TLPanel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from utils.session_logger import log_login
 from datetime import datetime
+from utils.windows_admin_access import check_admin_elevation_on_login
 
 # -------------------------
 # Utility Functions
@@ -197,6 +198,58 @@ def login_view(page: ft.Page):
         error_text.value = ""
 
         if role in ["ADMIN", "TEAM_LEADER", "USER"]:
+            # Check for Windows administrator elevation only for ADMIN role
+            if role == "ADMIN":
+                print(f"[LOGIN] Admin login detected: {uname} ({role}) - checking Windows elevation")
+                
+                # Show loading message
+                error_text.value = "Checking administrator access..."
+                error_text.color = ft.Colors.BLUE
+                page.update()
+                
+                try:
+                    elevation_success, elevation_message = check_admin_elevation_on_login(uname, role)
+                    
+                    if not elevation_success:
+                        error_text.value = f"Administrator access issue: {elevation_message}"
+                        error_text.color = ft.Colors.ORANGE
+                        page.update()
+                        
+                        # Still allow login but with warning
+                        import time
+                        time.sleep(2)  # Show message briefly
+                        error_text.value = "Proceeding without elevation - some features may require manual processing"
+                        error_text.color = ft.Colors.ORANGE
+                        page.update()
+                        time.sleep(2)
+                    else:
+                        error_text.value = elevation_message
+                        error_text.color = ft.Colors.GREEN
+                        page.update()
+                        import time
+                        time.sleep(1)  # Show success message briefly
+                        
+                except Exception as ex:
+                    print(f"[LOGIN] Elevation check error: {ex}")
+                    error_text.value = "Administrator access check failed - proceeding anyway"
+                    error_text.color = ft.Colors.ORANGE
+                    page.update()
+                    import time
+                    time.sleep(2)
+            
+            elif role == "TEAM_LEADER":
+                print(f"[LOGIN] Team Leader login detected: {uname} ({role}) - no Windows elevation required")
+                
+                # Show success message for Team Leader
+                error_text.value = "Team Leader access confirmed - no Windows admin privileges required"
+                error_text.color = ft.Colors.GREEN
+                page.update()
+                import time
+                time.sleep(1)  # Show success message briefly
+            
+            # Clear any elevation messages
+            error_text.value = ""
+            
             log_login(uname, role)
             reset_runtime_start(uname)
 
