@@ -182,7 +182,7 @@ def login_view(page: ft.Page):
 
     remember_me = ft.Checkbox(label="Remember Me", value=False)
     error_text = ft.Text("", color="red")
-    login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500, color=ft.Colors.GREEN)
+    login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500, color=ft.Colors.BLACK)
     success_snackbar = ft.SnackBar(content=ft.Text("Password remembered successfully!"))
 
     def login_action(e):
@@ -316,11 +316,11 @@ def login_view(page: ft.Page):
         is_admin_login = not is_admin_login
         if is_admin_login:
             login_type_text.value = "ADMINISTRATOR"
-            login_type_text.color = ft.Colors.RED
+            login_type_text.color = ft.Colors.BLACK
             login_type_switch.content.value = "Login as User"
         else:
             login_type_text.value = "USER"
-            login_type_text.color = ft.Colors.GREEN
+            login_type_text.color = ft.Colors.BLACK
             login_type_switch.content.value = "Login as Administrator"
         page.update()
 
