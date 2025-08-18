@@ -180,7 +180,7 @@ class FileDataManager:
     
     def get_all_files_for_admin(self, admin_user: str, admin_teams: List[str],
                                status_filter: Optional[str] = None) -> List[Dict]:
-        """Get all files accessible to admin with optional status filtering."""
+        """Get all files accessible to admin with optional status filtering - EXCLUDES pending_team_leader."""
         try:
             approvals_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             
@@ -192,6 +192,13 @@ class FileDataManager:
                     queue = json.load(f)
                 
                 for file_id, file_data in queue.items():
+                    file_status = file_data.get('status', '')
+                    
+                    # 🚨 CRITICAL FIX: Admin should NOT see files pending team leader review
+                    # These files are still in the TL workflow and should not appear in admin panel
+                    if file_status == 'pending_team_leader':
+                        continue  # Skip files pending team leader approval
+                    
                     # Check team access if admin has team restrictions
                     if admin_teams and admin_teams != ['ALL']:
                         file_team = file_data.get('user_team', '')
@@ -200,7 +207,6 @@ class FileDataManager:
                     
                     # Apply status filter if provided
                     if status_filter:
-                        file_status = file_data.get('status', '')
                         if file_status != status_filter:
                             continue
                     

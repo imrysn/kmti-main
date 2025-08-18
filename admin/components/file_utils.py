@@ -109,29 +109,21 @@ class FileOperationHandler:
 
 def create_file_action_buttons(file_data: Dict, file_handler: FileOperationHandler,
                               show_snackbar_callback, button_style_func) -> list:
-
+    """🚨 REMOVED: Download and Open buttons removed per security requirements"""
     import flet as ft
     
+    # Return empty list - no file action buttons for security reasons
     return [
-        ft.Row([
-            ft.ElevatedButton(
-                "Download",
-                icon=ft.Icons.DOWNLOAD,
-                on_click=lambda e: file_handler.download_file(
-                    file_data, show_snackbar_callback
-                ),
-                style=button_style_func("primary")
+        ft.Container(
+            content=ft.Text(
+                "File actions disabled for security",
+                size=12,
+                color=ft.Colors.GREY_500,
+                italic=True
             ),
-            ft.Container(width=10),
-            ft.ElevatedButton(
-                "Open",
-                icon=ft.Icons.OPEN_IN_NEW,
-                on_click=lambda e: file_handler.open_file(
-                    file_data, show_snackbar_callback
-                ),
-                style=button_style_func("success")
-            )
-        ], alignment=ft.MainAxisAlignment.CENTER)
+            padding=ft.padding.symmetric(vertical=10),
+            alignment=ft.alignment.center
+        )
     ]
 
 

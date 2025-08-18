@@ -89,14 +89,27 @@ class SecureFileManager:
         return user_id
     
     def validate_file_path(self, file_path: str | Path) -> Path:
+        """🚨 ENHANCED: Validate file path including network paths for KMTI system"""
         try:
-            path = Path(file_path).resolve()
+            path = Path(file_path)
             
-            # Check if path is within allowed directories
-            if self.config.is_path_allowed(path):
-                return path
-            
-            raise SecurityError(f"Path outside allowed directories: {file_path}")
+            # Handle network paths differently - don't resolve them as it may fail
+            path_str = str(path)
+            if path_str.startswith(('\\\\', '//')):  # Network path
+                # For network paths, do basic validation without resolve()
+                if self._is_network_path_safe(path):
+                    return path
+                else:
+                    raise SecurityError(f"Network path outside allowed directories: {file_path}")
+            else:
+                # For local paths, use normal resolution
+                path = path.resolve()
+                
+                # Check if path is within allowed directories
+                if self.config.is_path_allowed(path):
+                    return path
+                
+                raise SecurityError(f"Path outside allowed directories: {file_path}")
             
         except (OSError, ValueError) as e:
             raise SecurityError(f"Invalid file path: {file_path}") from e
@@ -143,6 +156,7 @@ class SecureFileManager:
     
     @lru_cache(maxsize=100)
     def resolve_file_path(self, user_id: str, file_id: str, filename: str) -> Optional[Path]:
+        """🚨 ENHANCED: Resolve file path with proper network path handling for KMTI system"""
         cache_key = f"{user_id}:{file_id}:{filename}"
         
         if cache_key in self._path_cache:
@@ -155,8 +169,19 @@ class SecureFileManager:
         
         self._cache_misses += 1
         
-        # Try common file locations
-        search_patterns = [
+        # 🚨 ENHANCED: Network-aware file path resolution for KMTI system
+        # Try network paths first (primary locations)
+        network_search_patterns = [
+            # Primary network upload location
+            f"\\\\KMTI-NAS\\Shared\\data\\uploads\\{user_id}\\{filename}",
+            # Project directories (for approved files)
+            f"\\\\KMTI-NAS\\Database\\PROJECTS\\*\\{filename}",  # Will need wildcard handling
+            # Fallback staging areas
+            f"\\\\KMTI-NAS\\Shared\\data\\approved_files_staging\\*\\{filename}",
+        ]
+        
+        # Local fallback patterns
+        local_search_patterns = [
             f"data/uploads/{user_id}/{filename}",
             f"data/uploads/{user_id}/{file_id}_{filename}",
             f"data/uploads/{user_id}/{file_id}",
@@ -165,19 +190,95 @@ class SecureFileManager:
             f"storage/{user_id}/{filename}",
         ]
         
-        for pattern in search_patterns:
+        # First, try direct network paths
+        for pattern in network_search_patterns:
             try:
-                validated_path = self.validate_file_path(pattern)
+                if '*' in pattern:
+                    # Handle wildcard patterns (e.g., for project directories)
+                    resolved_path = self._resolve_wildcard_path(pattern, filename)
+                    if resolved_path and resolved_path.exists() and resolved_path.is_file():
+                        self._path_cache[cache_key] = resolved_path
+                        logger.debug(f"File resolved (network wildcard): {resolved_path}")
+                        return resolved_path
+                else:
+                    # Direct network path
+                    network_path = Path(pattern)
+                    if network_path.exists() and network_path.is_file():
+                        # Validate path security (even for network paths)
+                        if self._is_network_path_safe(network_path):
+                            self._path_cache[cache_key] = network_path
+                            logger.debug(f"File resolved (network): {network_path}")
+                            return network_path
+                        else:
+                            logger.warning(f"Network path failed security check: {network_path}")
+            except (OSError, ValueError) as e:
+                logger.debug(f"Network path resolution failed for {pattern}: {e}")
+                continue
+        
+        # Then try local fallback patterns
+        for pattern in local_search_patterns:
+            try:
+                local_path = Path(pattern)
+                validated_path = self.validate_file_path(local_path)
                 if validated_path.exists() and validated_path.is_file():
                     self._path_cache[cache_key] = validated_path
-                    logger.debug(f"File resolved: {validated_path}")
+                    logger.debug(f"File resolved (local): {validated_path}")
                     return validated_path
             except SecurityError:
                 continue
+            except (OSError, ValueError):
+                continue
         
-        logger.warning(f"File not found: {user_id}/{file_id}/{filename}")
+        logger.warning(f"File not found in any location: {user_id}/{file_id}/{filename}")
         self._path_cache[cache_key] = None
         return None
+    
+    def _resolve_wildcard_path(self, pattern: str, filename: str) -> Optional[Path]:
+        """Resolve wildcard patterns in network paths"""
+        try:
+            # Split pattern at wildcard
+            before_wildcard, after_wildcard = pattern.split('*', 1)
+            base_path = Path(before_wildcard)
+            
+            if not base_path.exists():
+                return None
+            
+            # Search through subdirectories
+            for item in base_path.iterdir():
+                if item.is_dir():
+                    potential_path = item / after_wildcard.lstrip('\\\\')
+                    if potential_path.exists() and potential_path.is_file():
+                        if potential_path.name == filename:  # Ensure filename matches
+                            return potential_path
+            
+            return None
+            
+        except Exception as e:
+            logger.debug(f"Wildcard resolution failed for {pattern}: {e}")
+            return None
+    
+    def _is_network_path_safe(self, network_path: Path) -> bool:
+        """Check if network path is within allowed KMTI network locations"""
+        try:
+            path_str = str(network_path).lower()
+            
+            # Allowed KMTI network locations
+            allowed_network_bases = [
+                r'\\kmti-nas\shared\data',
+                r'\\kmti-nas\database\projects',
+                r'/kmti-nas/shared/data',  # Linux-style paths
+                r'/kmti-nas/database/projects'
+            ]
+            
+            # Check if path starts with any allowed base
+            for base in allowed_network_bases:
+                if path_str.startswith(base.lower()):
+                    return True
+            
+            return False
+            
+        except Exception:
+            return False
     
     def safe_file_exists(self, file_path: str | Path) -> bool:
         try:

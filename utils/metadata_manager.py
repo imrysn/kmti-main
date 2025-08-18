@@ -64,6 +64,46 @@ class MetadataManager:
             print(f"[METADATA] {error_msg}")
             return False, error_msg
     
+    def save_rejected_file_metadata(self, filename: str, metadata: Dict, team_tag: str, year: str) -> Tuple[bool, str]:
+        """
+        Save metadata file for rejected files to a separate rejected directory
+        Returns (success, message)
+        """
+        try:
+            # Create rejected files metadata directory
+            rejected_logs_base = os.path.join(self.logs_base.replace("file_metadata", "rejected_files_metadata"))
+            rejected_local_fallback = self.local_fallback.replace("file_metadata", "rejected_files_metadata")
+            
+            # Try network directory first
+            network_dir = os.path.join(rejected_logs_base, team_tag, year)
+            
+            try:
+                os.makedirs(network_dir, exist_ok=True)
+                metadata_dir = network_dir
+            except Exception as e:
+                print(f"[REJECTED_METADATA] Network directory unavailable: {e}")
+                # Fallback to local directory
+                local_dir = os.path.join(rejected_local_fallback, team_tag, year)
+                try:
+                    os.makedirs(local_dir, exist_ok=True)
+                    metadata_dir = local_dir
+                except Exception as e2:
+                    return False, f"Could not create rejected metadata directory: {e2}"
+            
+            metadata_filename = f"{os.path.splitext(filename)[0]}.rejected.metadata.json"
+            metadata_path = os.path.join(metadata_dir, metadata_filename)
+            
+            with open(metadata_path, 'w', encoding='utf-8') as f:
+                json.dump(metadata, f, indent=2)
+            
+            print(f"[REJECTED_METADATA] Saved rejected file metadata: {metadata_path}")
+            return True, f"Rejected file metadata saved: {metadata_path}"
+            
+        except Exception as e:
+            error_msg = f"Error saving rejected file metadata for {filename}: {e}"
+            print(f"[REJECTED_METADATA] {error_msg}")
+            return False, error_msg
+    
     def load_metadata(self, filename: str, team_tag: str, year: str) -> Dict:
         """
         Load metadata file from logs directory

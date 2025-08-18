@@ -4,7 +4,7 @@ import uuid
 import time
 import threading
 from datetime import datetime
-from typing import List, Dict, Optional, Callable
+from typing import List, Dict, Optional, Callable, Tuple
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from utils.logger import log_action
@@ -167,11 +167,13 @@ class ApprovalFileService:
             return False
     
     def get_uploaded_files(self) -> List[Dict]:
-        """Get all uploaded files with cached approval status - EXCLUDES system files"""
+        """🚨 ENHANCED: Get all files including processed ones that have been moved/deleted from uploads"""
         files = []
         approval_data = self.load_approval_status()  # Uses cache
         
         try:
+            # First, get files that still physically exist in the uploads folder
+            physical_files = set()
             if os.path.exists(self.user_folder):
                 # Comprehensive system file exclusion
                 excluded_files = {
@@ -181,7 +183,6 @@ class ApprovalFileService:
                     "approval_notifications.json"
                 }
                 
-                # Also exclude profile images folder
                 for filename in os.listdir(self.user_folder):
                     if filename in excluded_files or filename.startswith("."):
                         continue
@@ -191,6 +192,8 @@ class ApprovalFileService:
                     # Skip directories (including profile_images folder)
                     if not os.path.isfile(file_path):
                         continue
+                    
+                    physical_files.add(filename)
                     
                     # Get file stats
                     stat = os.stat(file_path)
@@ -205,7 +208,8 @@ class ApprovalFileService:
                         "team_leader_comments": [],
                         "status_history": [],
                         "description": "",
-                        "tags": []
+                        "tags": [],
+                        "file_still_in_uploads": True
                     })
                     
                     file_info = {
@@ -213,15 +217,56 @@ class ApprovalFileService:
                         "file_path": file_path,
                         "file_size": stat.st_size,
                         "upload_date": modified_time.isoformat(),
+                        "file_still_in_uploads": True,
                         **file_approval  # Merge approval data
                     }
                     files.append(file_info)
-                
-                # Sort files by upload time (newest first)
-                files.sort(key=lambda x: x["upload_date"], reverse=True)
+            
+            # 🚨 CRITICAL: Also include processed files that are no longer in uploads folder
+            # These are files that have been approved/rejected and physically moved/deleted
+            for filename, file_approval in approval_data.items():
+                if filename not in physical_files:
+                    # This file was processed and is no longer in uploads
+                    file_status = file_approval.get('status', 'unknown')
+                    
+                    # Only include files that were submitted for approval (not just local files)
+                    if file_approval.get('submitted_for_approval', False) or file_status not in ['my_files']:
+                        file_info = {
+                            "filename": filename,
+                            "file_path": None,  # No longer in uploads
+                            "file_size": file_approval.get('original_file_size', 0),
+                            "upload_date": file_approval.get('original_upload_date', datetime.now().isoformat()),
+                            "file_still_in_uploads": False,
+                            "file_processed": True,
+                            "processed_status": file_status,
+                            **file_approval  # Merge approval data
+                        }
+                        
+                        # Add helpful status messages for processed files
+                        if file_status == 'approved':
+                            file_info['status_message'] = '🟢 File approved and moved to project directory'
+                        elif file_status == 'rejected':
+                            file_info['status_message'] = '🔴 File rejected and removed from uploads'
+                        elif file_status == 'changes_requested':
+                            file_info['status_message'] = '🟡 Changes requested - file kept for resubmission'
+                        else:
+                            file_info['status_message'] = f'Status: {file_status}'
+                        
+                        files.append(file_info)
+            
+            # Sort files: processed files by last update, physical files by upload time
+            def sort_key(file_info):
+                if file_info.get('file_still_in_uploads', True):
+                    return file_info.get('upload_date', '')
+                else:
+                    return file_info.get('last_updated', file_info.get('submission_date', ''))
+            
+            files.sort(key=sort_key, reverse=True)
                         
         except Exception as e:
             print(f"Error getting uploaded files: {e}")
+            import traceback
+            traceback.print_exc()
             
         return files
     
@@ -513,11 +558,26 @@ class ApprovalFileService:
         return available_files
     
     def update_file_status(self, filename: str, new_status: str, admin_comment: str = "", admin_id: str = ""):
-        """Update file status (called by admin system)"""
+        """🚨 ENHANCED: Update file status and preserve original file info for processed files"""
         try:
             approval_data = self.load_approval_status()
             
             if filename in approval_data:
+                old_status = approval_data[filename].get("status", "unknown")
+                
+                # 🚨 CRITICAL: Preserve original file information if file is being processed
+                if new_status in ["approved", "rejected"] and old_status not in ["approved", "rejected"]:
+                    # File is being processed - preserve original file info
+                    file_path = os.path.join(self.user_folder, filename)
+                    if os.path.exists(file_path):
+                        try:
+                            stat = os.stat(file_path)
+                            approval_data[filename]["original_file_size"] = stat.st_size
+                            approval_data[filename]["original_upload_date"] = datetime.fromtimestamp(stat.st_mtime).isoformat()
+                            print(f"[INFO] Preserved original file info for {filename} before processing")
+                        except Exception as e:
+                            print(f"[WARNING] Could not preserve original file info for {filename}: {e}")
+                
                 approval_data[filename]["status"] = new_status
                 approval_data[filename]["last_updated"] = datetime.now().isoformat()
                 
@@ -549,7 +609,7 @@ class ApprovalFileService:
                 self.add_notification({
                     "type": "status_update",
                     "filename": filename,
-                    "old_status": "pending",
+                    "old_status": old_status,
                     "new_status": new_status,
                     "admin_id": admin_id,
                     "comment": admin_comment,
@@ -557,9 +617,12 @@ class ApprovalFileService:
                     "read": False
                 })
                 
+                print(f"[SUCCESS] Updated file status: {filename} -> {old_status} to {new_status}")
                 return True
         except Exception as e:
-            print(f"Error updating file status: {e}")
+            print(f"[ERROR] Error updating file status: {e}")
+            import traceback
+            traceback.print_exc()
         return False
     
     def add_notification(self, notification: Dict):
@@ -769,12 +832,15 @@ class FileApprovalService:
         return []
     
     def approve_file(self, file_id: str, admin_user: str) -> bool:
-        """Approve a file - moves it to project directory"""
+        """🚨 ENHANCED: Approve a file - moves it to project directory AND cleans up from user uploads"""
         try:
             queue = self.load_global_queue()
             
             if file_id in queue:
                 file_data = queue[file_id]
+                original_filename = file_data.get('original_filename')
+                user_id = file_data.get('user_id')
+                
                 file_data['status'] = ApprovalStatus.APPROVED.value
                 file_data['approved_by'] = admin_user
                 file_data['approved_date'] = datetime.now().isoformat()
@@ -787,10 +853,11 @@ class FileApprovalService:
                     'status': ApprovalStatus.APPROVED.value,
                     'timestamp': datetime.now().isoformat(),
                     'admin_id': admin_user,
-                    'comment': 'File approved by admin'
+                    'comment': 'File approved by admin - processing physical file movement'
                 })
                 
-                # Move file to project directory with enhanced access management
+                # 🚨 CRITICAL: Move approved file from user uploads to project directory
+                # This will DELETE the file from user uploads folder after successful move
                 file_movement_service = get_enhanced_file_movement_service()
                 move_success, move_message, new_file_path = file_movement_service.move_approved_file_with_access_management(
                     file_data, admin_user)
@@ -800,10 +867,11 @@ class FileApprovalService:
                     file_data['project_file_path'] = new_file_path
                     file_data['moved_to_project'] = True
                     file_data['move_message'] = move_message
+                    file_data['file_cleaned_from_uploads'] = True
                     
-                    # Update user's approval status
+                    # 🚨 CRITICAL: Update user's approval status with new file location info
                     self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user, 
-                                           f"File approved and moved to project directory: {move_message}")
+                                           f"File approved and moved to project directory: {move_message}. Original file removed from uploads.")
                     
                     # Archive the approved file before removing from queue
                     self._archive_file(file_data, 'approved')
@@ -811,34 +879,42 @@ class FileApprovalService:
                     # Remove from global queue (approved files are processed)
                     del queue[file_id]
                     
-                    log_action(admin_user, f"Approved and moved file: {file_data.get('original_filename')} - {move_message}")
+                    log_action(admin_user, f"APPROVED and MOVED file: {original_filename} from user {user_id} uploads to project directory - {move_message}")
+                    print(f"[APPROVAL_SUCCESS] File {original_filename} approved and moved to project, cleaned from user uploads")
+                    
                 else:
-                    # File approval succeeded but move failed - log warning but don't fail approval
+                    # File approval succeeded but move failed - keep file in user uploads for now
                     file_data['moved_to_project'] = False
                     file_data['move_error'] = move_message
+                    file_data['file_cleaned_from_uploads'] = False
                     
-                    # Update user's approval status (still approved)
+                    # Update user's approval status (still approved, but file move failed)
                     self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user, 
-                                           f"File approved but move failed: {move_message}")
+                                           f"File approved but move failed: {move_message}. File remains in your uploads folder until issue is resolved.")
                     
                     # Keep in queue with approved status for manual handling
-                    print(f"WARNING: File approved but move failed: {move_message}")
-                    log_action(admin_user, f"Approved file with move error: {file_data.get('original_filename')} - {move_message}")
+                    print(f"[WARNING] File {original_filename} approved but move failed: {move_message}")
+                    log_action(admin_user, f"Approved file with move error: {original_filename} - {move_message}")
                 
                 return self.save_global_queue(queue)
             
         except Exception as e:
-            print(f"Error approving file: {e}")
+            print(f"[ERROR] Error approving file {file_id}: {e}")
+            import traceback
+            traceback.print_exc()
         
         return False
     
     def reject_file(self, file_id: str, admin_user: str, reason: str, request_changes: bool = False) -> bool:
-        """Reject a file or request changes"""
+        """🚨 ENHANCED: Reject a file or request changes - deletes file from user uploads"""
         try:
             queue = self.load_global_queue()
             
             if file_id in queue:
                 file_data = queue[file_id]
+                original_filename = file_data.get('original_filename')
+                user_id = file_data.get('user_id')
+                
                 status = ApprovalStatus.CHANGES_REQUESTED.value if request_changes else ApprovalStatus.REJECTED.value
                 
                 file_data['status'] = status
@@ -854,11 +930,46 @@ class FileApprovalService:
                     'status': status,
                     'timestamp': datetime.now().isoformat(),
                     'admin_id': admin_user,
-                    'comment': reason
+                    'comment': reason + (' - processing physical file cleanup' if not request_changes else '')
                 })
                 
-                # Update user's approval status
-                self._update_user_status(file_data, status, admin_user, reason)
+                # 🚨 CRITICAL: Handle physical file cleanup based on rejection type
+                if request_changes:
+                    # For changes requested, keep file in user uploads for resubmission
+                    file_data['file_cleaned_from_uploads'] = False
+                    
+                    # Update user's approval status (file remains in uploads for changes)
+                    self._update_user_status(file_data, status, admin_user, 
+                                           f"Changes requested: {reason}. File remains in your uploads folder for resubmission after making changes.")
+                    
+                    print(f"[CHANGES_REQUESTED] File {original_filename} kept in user uploads for resubmission")
+                    log_action(admin_user, f"Requested changes for file: {original_filename} from user {user_id} - file kept in uploads")
+                    
+                else:
+                    # For rejected files, delete from user uploads
+                    file_cleanup_success, cleanup_message = self._delete_rejected_file_from_uploads(file_data, admin_user, reason)
+                    
+                    if file_cleanup_success:
+                        file_data['file_cleaned_from_uploads'] = True
+                        file_data['cleanup_message'] = cleanup_message
+                        
+                        # Update user's approval status with file deletion info
+                        self._update_user_status(file_data, status, admin_user, 
+                                               f"File rejected: {reason}. File has been removed from your uploads folder.")
+                        
+                        print(f"[REJECTION_SUCCESS] File {original_filename} rejected and deleted from user uploads")
+                        log_action(admin_user, f"REJECTED and DELETED file: {original_filename} from user {user_id} uploads - {reason}")
+                        
+                    else:
+                        file_data['file_cleaned_from_uploads'] = False
+                        file_data['cleanup_error'] = cleanup_message
+                        
+                        # Update user's approval status (rejected but file deletion failed)
+                        self._update_user_status(file_data, status, admin_user, 
+                                               f"File rejected: {reason}. Warning: File deletion from uploads failed: {cleanup_message}")
+                        
+                        print(f"[WARNING] File {original_filename} rejected but deletion from uploads failed: {cleanup_message}")
+                        log_action(admin_user, f"Rejected file with cleanup error: {original_filename} - {cleanup_message}")
                 
                 # Archive the rejected file before removing from queue
                 self._archive_file(file_data, 'rejected_admin')
@@ -869,9 +980,61 @@ class FileApprovalService:
                 return self.save_global_queue(queue)
             
         except Exception as e:
-            print(f"Error rejecting file: {e}")
+            print(f"[ERROR] Error rejecting file {file_id}: {e}")
+            import traceback
+            traceback.print_exc()
         
         return False
+    
+    def _delete_rejected_file_from_uploads(self, file_data: Dict, admin_user: str, reason: str) -> Tuple[bool, str]:
+        """
+        🚨 CRITICAL: Delete rejected file from user uploads folder
+        Returns (success, message)
+        """
+        try:
+            original_filename = file_data.get('original_filename')
+            user_id = file_data.get('user_id')
+            current_file_path = file_data.get('file_path')
+            
+            if not all([original_filename, user_id, current_file_path]):
+                return False, "Missing file information for deletion"
+            
+            # Validate file path is in user uploads folder (security check)
+            upload_base = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads")
+            if not current_file_path.startswith(upload_base):
+                return False, f"Security: File path not in uploads directory: {current_file_path}"
+            
+            # Check if file still exists in uploads
+            if not os.path.exists(current_file_path):
+                return True, f"File {original_filename} already removed from uploads directory"
+            
+            # Delete the file
+            os.remove(current_file_path)
+            
+            # Verify deletion
+            if os.path.exists(current_file_path):
+                return False, f"File deletion verification failed: {current_file_path}"
+            
+            success_message = f"Rejected file {original_filename} successfully deleted from user {user_id} uploads folder"
+            print(f"[FILE_DELETION] {success_message}")
+            
+            return True, success_message
+            
+        except PermissionError as pe:
+            error_msg = f"Permission denied deleting file {original_filename}: {pe}"
+            print(f"[PERMISSION_ERROR] {error_msg}")
+            return False, error_msg
+            
+        except FileNotFoundError:
+            # File already gone, consider this success
+            return True, f"File {original_filename} was already removed from uploads"
+            
+        except Exception as e:
+            error_msg = f"Error deleting rejected file {original_filename}: {str(e)}"
+            print(f"[DELETION_ERROR] {error_msg}")
+            import traceback
+            traceback.print_exc()
+            return False, error_msg
     
     def add_comment(self, file_id: str, admin_user: str, comment: str) -> bool:
         """Add comment to a file"""
