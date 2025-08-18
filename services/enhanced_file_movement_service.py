@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Dict, Tuple, Optional, List
 from datetime import datetime
 from utils.logger import log_action
+from utils.metadata_manager import get_metadata_manager
 from utils.path_config import DATA_PATHS
 
 class NetworkAccessManager:
@@ -242,7 +243,7 @@ class EnhancedFileMovementService:
     
     def _create_file_metadata(self, file_path: str, file_data: Dict, approved_by: str, 
                              team_tag: str, year: str, access_type: str):
-        """Create metadata file for the moved file"""
+        """Create metadata file for the moved file using metadata manager"""
         try:
             metadata = {
                 "original_submission": {
@@ -266,6 +267,7 @@ class EnhancedFileMovementService:
                     "project_year": year,
                     "moved_date": datetime.now().isoformat(),
                     "project_directory": os.path.dirname(file_path),
+                    "final_file_location": file_path,
                     "access_type": access_type,
                     "final_location_pending": access_type == "fallback"
                 },
@@ -275,14 +277,15 @@ class EnhancedFileMovementService:
                 }
             }
             
-            metadata_filename = f"{os.path.splitext(os.path.basename(file_path))[0]}.metadata.json"
-            metadata_path = os.path.join(os.path.dirname(file_path), metadata_filename)
+            # Use metadata manager to save the metadata
+            metadata_manager = get_metadata_manager()
+            filename = os.path.basename(file_path)
+            success, message = metadata_manager.save_metadata(filename, metadata, team_tag, year)
             
-            with open(metadata_path, 'w', encoding='utf-8') as f:
-                import json
-                json.dump(metadata, f, indent=2)
-            
-            print(f"[METADATA] Created metadata file: {metadata_path}")
+            if success:
+                print(f"[METADATA] {message}")
+            else:
+                print(f"[METADATA] Error: {message}")
             
         except Exception as e:
             print(f"Error creating file metadata: {e}")

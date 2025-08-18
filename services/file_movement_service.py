@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple, Optional
+from utils.metadata_manager import get_metadata_manager
 from utils.path_config import DATA_PATHS
 from utils.logger import log_action
 from typing import List
@@ -134,7 +135,7 @@ class FileMovementService:
                 return f"{name}_{timestamp}{ext}"
     
     def _create_file_metadata(self, file_path: str, file_data: Dict, approved_by: str, team_tag: str, year: str):
-        """Create metadata file for the moved file"""
+        """Create metadata file for the moved file using metadata manager"""
         try:
             metadata = {
                 "original_submission": {
@@ -157,7 +158,8 @@ class FileMovementService:
                     "team_tag": team_tag,
                     "project_year": year,
                     "moved_date": datetime.now().isoformat(),
-                    "project_directory": os.path.dirname(file_path)
+                    "project_directory": os.path.dirname(file_path),
+                    "final_file_location": file_path
                 },
                 "comments": {
                     "admin_comments": file_data.get('admin_comments', []),
@@ -165,19 +167,21 @@ class FileMovementService:
                 }
             }
             
-            metadata_filename = f"{os.path.splitext(os.path.basename(file_path))[0]}.metadata.json"
-            metadata_path = os.path.join(os.path.dirname(file_path), metadata_filename)
+            # Use metadata manager to save the metadata
+            metadata_manager = get_metadata_manager()
+            filename = os.path.basename(file_path)
+            success, message = metadata_manager.save_metadata(filename, metadata, team_tag, year)
             
-            with open(metadata_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, indent=2)
-            
-            print(f"[METADATA] Created metadata file: {metadata_path}")
+            if success:
+                print(f"[METADATA] {message}")
+            else:
+                print(f"[METADATA] Error: {message}")
             
         except Exception as e:
             print(f"Error creating file metadata: {e}")
     
     def get_project_files(self, team_tag: str, year: Optional[str] = None) -> List[Dict]:
-        """Get all files in a project directory"""
+        """Get all files in a project directory with metadata from logs directory"""
         try:
             project_dir = self.get_project_directory_path(team_tag, year)
             
@@ -187,19 +191,12 @@ class FileMovementService:
             files = []
             for filename in os.listdir(project_dir):
                 if filename.endswith('.metadata.json'):
-                    continue  # Skip metadata files
+                    continue  # Skip any old metadata files that might still be there
                 
                 file_path = os.path.join(project_dir, filename)
                 if os.path.isfile(file_path):
-                    # Try to load metadata
-                    metadata_path = os.path.join(project_dir, f"{os.path.splitext(filename)[0]}.metadata.json")
-                    metadata = {}
-                    if os.path.exists(metadata_path):
-                        try:
-                            with open(metadata_path, 'r', encoding='utf-8') as f:
-                                metadata = json.load(f)
-                        except:
-                            pass
+                    # Try to load metadata from logs directory
+                    metadata = self._load_file_metadata(filename, team_tag, year or str(datetime.now().year))
                     
                     file_stat = os.stat(file_path)
                     files.append({
@@ -215,6 +212,11 @@ class FileMovementService:
         except Exception as e:
             print(f"Error getting project files: {e}")
             return []
+    
+    def _load_file_metadata(self, filename: str, team_tag: str, year: str) -> Dict:
+        """Load metadata for a file using metadata manager"""
+        metadata_manager = get_metadata_manager()
+        return metadata_manager.load_metadata(filename, team_tag, year)
     
     def get_available_years(self, team_tag: str) -> List[str]:
         """Get available years for a team"""

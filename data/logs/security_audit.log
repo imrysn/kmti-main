@@ -302,5 +302,37 @@
       "reason": "None provided"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T09:39:48.002352",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "dee99c93-6e17-40fb-a9b8-1a9f7a44d798",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T09:46:28.177434",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "1afe451b-212e-49f4-a7cc-605031b14e9d",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
   }
 ]
