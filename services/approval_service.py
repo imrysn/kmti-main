@@ -9,6 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from utils.logger import log_action
 from utils.session_logger import log_activity
+from utils.path_config import DATA_PATHS
+from services.file_movement_service import get_file_movement_service
 
 class ApprovalStatus(Enum):
     """Approval status enumeration"""
@@ -25,8 +27,8 @@ class ApprovalFileService:
         self.user_folder = user_folder  # This is for user uploads only
         self.username = username
         
-        # Store system files in data folder, not user upload folder
-        self.system_data_folder = os.path.join("data", "user_approvals", username)
+        # Store system files in network data folder, not user upload folder
+        self.system_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
         self.approval_status_file = os.path.join(self.system_data_folder, "file_approval_status.json")
         self.notifications_file = os.path.join(self.system_data_folder, "approval_notifications.json")
         
@@ -82,7 +84,7 @@ class ApprovalFileService:
     def _get_user_team_cached(self) -> str:
         """Get user's team from users.json with caching"""
         try:
-            users_file = r"\\KMTI-NAS\Shared\data\users.json"
+            users_file = os.path.join(r"\\KMTI-NAS\Shared\data", "users.json")
             if os.path.exists(users_file):
                 with open(users_file, 'r') as f:
                     users = json.load(f)
@@ -293,8 +295,8 @@ class ApprovalFileService:
     def add_to_global_queue(self, filename: str, file_id: str, description: str, tags: List[str]):
         """Add file to global approval queue with file locking"""
         try:
-            # Ensure global approvals directory exists
-            global_approvals_dir = "data/approvals"
+            # Ensure global approvals directory exists on network
+            global_approvals_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals")
             os.makedirs(global_approvals_dir, exist_ok=True)
             
             global_queue_file = os.path.join(global_approvals_dir, "file_approvals.json")
@@ -426,7 +428,7 @@ class ApprovalFileService:
     def remove_from_global_queue(self, file_id: str):
         """Remove submission from global approval queue with file locking"""
         try:
-            global_queue_file = "data/approvals/file_approvals.json"
+            global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             if not os.path.exists(global_queue_file):
                 return
             
@@ -679,9 +681,9 @@ class FileApprovalService:
     """Admin-side file approval service"""
     
     def __init__(self):
-        self.global_queue_file = "data/approvals/file_approvals.json"
-        self.comments_file = "data/approvals/comments.json"
-        os.makedirs("data/approvals", exist_ok=True)
+        self.global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
+        self.comments_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "comments.json")
+        os.makedirs(os.path.join(r"\\KMTI-NAS\Shared\data", "approvals"), exist_ok=True)
     
     def load_global_queue(self) -> Dict:
         """Load global approval queue"""
@@ -767,7 +769,7 @@ class FileApprovalService:
         return []
     
     def approve_file(self, file_id: str, admin_user: str) -> bool:
-        """Approve a file"""
+        """Approve a file - moves it to project directory"""
         try:
             queue = self.load_global_queue()
             
@@ -785,14 +787,40 @@ class FileApprovalService:
                     'status': ApprovalStatus.APPROVED.value,
                     'timestamp': datetime.now().isoformat(),
                     'admin_id': admin_user,
-                    'comment': 'File approved'
+                    'comment': 'File approved by admin'
                 })
                 
-                # Update user's approval status
-                self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user)
+                # Move file to project directory
+                file_movement_service = get_file_movement_service()
+                move_success, move_message, new_file_path = file_movement_service.move_approved_file(
+                    file_data, admin_user)
                 
-                # Remove from global queue (approved files are processed)
-                del queue[file_id]
+                if move_success:
+                    # Update file path in data
+                    file_data['project_file_path'] = new_file_path
+                    file_data['moved_to_project'] = True
+                    file_data['move_message'] = move_message
+                    
+                    # Update user's approval status
+                    self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user, 
+                                           f"File approved and moved to project directory: {move_message}")
+                    
+                    # Remove from global queue (approved files are processed)
+                    del queue[file_id]
+                    
+                    log_action(admin_user, f"Approved and moved file: {file_data.get('original_filename')} - {move_message}")
+                else:
+                    # File approval succeeded but move failed - log warning but don't fail approval
+                    file_data['moved_to_project'] = False
+                    file_data['move_error'] = move_message
+                    
+                    # Update user's approval status (still approved)
+                    self._update_user_status(file_data, ApprovalStatus.APPROVED.value, admin_user, 
+                                           f"File approved but move failed: {move_message}")
+                    
+                    # Keep in queue with approved status for manual handling
+                    print(f"WARNING: File approved but move failed: {move_message}")
+                    log_action(admin_user, f"Approved file with move error: {file_data.get('original_filename')} - {move_message}")
                 
                 return self.save_global_queue(queue)
             
@@ -870,7 +898,7 @@ class FileApprovalService:
                 return
             
             # Create a user approval service instance to update their data
-            user_folder = f"data/uploads/{user_id}"
+            user_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
             if os.path.exists(user_folder):
                 user_approval_service = ApprovalFileService(user_folder, user_id)
                 user_approval_service.update_file_status(original_filename, status, comment, admin_user)

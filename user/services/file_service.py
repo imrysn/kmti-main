@@ -6,6 +6,7 @@ from typing import List, Dict, Optional
 from utils.file_manager import save_file
 from utils.logger import log_action
 from utils.session_logger import log_activity
+from utils.path_config import DATA_PATHS
 
 class FileService:
     """Fixed service - comprehensive system file filtering to prevent system files from showing in user file view"""

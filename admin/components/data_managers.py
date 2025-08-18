@@ -151,7 +151,7 @@ class FileDataManager:
     def _get_admin_pending_files(self, admin_user: str, admin_teams: List[str]) -> List[Dict]:
         """Get files pending admin review (status = 'pending_admin')."""
         try:
-            approvals_file = "data/approvals/file_approvals.json"
+            approvals_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             if not os.path.exists(approvals_file):
                 return []
             
@@ -182,7 +182,7 @@ class FileDataManager:
                                status_filter: Optional[str] = None) -> List[Dict]:
         """Get all files accessible to admin with optional status filtering."""
         try:
-            approvals_file = "data/approvals/file_approvals.json"
+            approvals_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             if not os.path.exists(approvals_file):
                 return []
             

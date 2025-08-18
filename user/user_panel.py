@@ -16,9 +16,10 @@ from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action  
 from utils.session_logger import log_activity
 from admin.components.role_colors import create_role_badge, get_role_color
+from utils.path_config import DATA_PATHS
 
 # Use consistent session management with login_window.py
-SESSION_ROOT = "data/sessions"
+SESSION_ROOT = DATA_PATHS.local_sessions_dir
 
 def safe_username_for_file(username: str) -> str:
     """Return a filename-safe username."""
@@ -83,10 +84,11 @@ def user_panel(page: ft.Page, username: Optional[str]):
     
     save_session(username, "USER", "user")
 
-    user_folder = f"data/uploads/{username}"
-    os.makedirs(user_folder, exist_ok=True)
+    # Use network path for user folder
+    user_folder = DATA_PATHS.get_user_upload_dir(username)
+    DATA_PATHS.ensure_user_dirs(username)
     
-    # Initialize services
+    # Initialize services with network paths
     profile_service = ProfileService(user_folder, username)
     file_service = FileService(user_folder, username)
     approval_service = ApprovalFileService(user_folder, username)

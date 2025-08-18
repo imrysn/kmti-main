@@ -16,8 +16,8 @@ class ApprovalFileService:
         self.user_folder = user_folder  # This is for user uploads only
         self.username = username
         
-        # FIXED: Store system files in data folder, not user upload folder
-        self.system_data_folder = os.path.join("data", "user_approvals", username)
+        # FIXED: Store system files in network data folder, not user upload folder
+        self.system_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
         self.approval_status_file = os.path.join(self.system_data_folder, "file_approval_status.json")
         self.notifications_file = os.path.join(self.system_data_folder, "approval_notifications.json")
         
@@ -73,7 +73,7 @@ class ApprovalFileService:
     def _get_user_team_cached(self) -> str:
         """Get user's team from users.json with caching"""
         try:
-            users_file = r"\\KMTI-NAS\Shared\data\users.json"
+            users_file = os.path.join(r"\\KMTI-NAS\Shared\data", "users.json")
             if os.path.exists(users_file):
                 with open(users_file, 'r') as f:
                     users = json.load(f)
@@ -281,8 +281,8 @@ class ApprovalFileService:
     def add_to_global_queue(self, filename: str, file_id: str, description: str, tags: List[str]):
         """Add file to global approval queue with file locking"""
         try:
-            # Ensure global approvals directory exists
-            global_approvals_dir = "data/approvals"
+            # Ensure global approvals directory exists on network
+            global_approvals_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals")
             os.makedirs(global_approvals_dir, exist_ok=True)
             
             global_queue_file = os.path.join(global_approvals_dir, "file_approvals.json")
@@ -412,7 +412,7 @@ class ApprovalFileService:
     def remove_from_global_queue(self, file_id: str):
         """Remove submission from global approval queue with file locking"""
         try:
-            global_queue_file = "data/approvals/file_approvals.json"
+            global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             if not os.path.exists(global_queue_file):
                 return
             
@@ -728,7 +728,7 @@ class ApprovalFileService:
     def _batch_remove_from_global_queue(self, file_ids: List[str]):
         """Remove multiple files from global queue efficiently"""
         try:
-            global_queue_file = "data/approvals/file_approvals.json"
+            global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
             if not os.path.exists(global_queue_file):
                 return
             

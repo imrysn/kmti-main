@@ -6,12 +6,14 @@ from admin_panel import admin_panel
 from user.user_panel import user_panel
 from typing import Optional
 from datetime import datetime
+from utils.path_config import DATA_PATHS
 
-# Paths
-DATA_DIR = "data"
+# Paths - now using centralized path configuration
+DATA_DIR = DATA_PATHS.LOCAL_BASE  # Local data for sessions, logs, and local config
+NETWORK_DATA_DIR = DATA_PATHS.NETWORK_BASE  # Network data directory
 OLD_SESSION_FILE = os.path.join(DATA_DIR, "session.json")   # legacy single session
-SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
-REMEMBER_ME_FILE = os.path.join(DATA_DIR, "remember_me.json")
+SESSIONS_DIR = DATA_PATHS.local_sessions_dir  # Keep sessions local
+REMEMBER_ME_FILE = DATA_PATHS.remember_me_file
 
 # Also check for the old session folder format and migrate if needed
 OLD_SESSION_ROOT = os.path.join(DATA_DIR, "session")
@@ -180,9 +182,12 @@ def main(page: ft.Page):
     page.window_icon = "assets/kmti.ico"
     page.theme_mode = ft.ThemeMode.LIGHT
 
-    # Ensure data directories exist
-    os.makedirs(DATA_DIR, exist_ok=True)
-    os.makedirs(SESSIONS_DIR, exist_ok=True)
+    # Ensure data directories exist using centralized path management
+    DATA_PATHS.ensure_local_dirs()
+    if DATA_PATHS.is_network_available():
+        DATA_PATHS.ensure_network_dirs()
+    else:
+        print(f"Warning: Network directory {NETWORK_DATA_DIR} is not accessible")
 
     # Attempt session restore
     if not restore_session(page):

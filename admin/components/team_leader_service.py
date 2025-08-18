@@ -10,15 +10,17 @@ import json
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 from pathlib import Path
+from utils.path_config import DATA_PATHS
 
 
 class TeamLeaderApprovalService:
     """Enhanced service for team leader specific approval operations."""
     
     def __init__(self):
-        self.global_queue_file = "data/approvals/file_approvals.json"
-        self.users_file = r"\\KMTI-NAS\Shared\data\users.json"
-        os.makedirs("data/approvals", exist_ok=True)
+        self.global_queue_file = DATA_PATHS.file_approvals_file
+        self.users_file = DATA_PATHS.users_file
+        # Ensure network directories exist
+        DATA_PATHS.ensure_network_dirs()
     
     def load_global_queue(self) -> Dict:
         """Load global approval queue."""
