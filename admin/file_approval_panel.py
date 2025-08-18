@@ -300,33 +300,83 @@ class EnhancedFileApprovalPanel:
         return f"{team_desc}{status_desc}"
     
     def _create_main_content_area(self) -> ft.ResponsiveRow:
-        """Create main content area with table and preview."""
+        """Create main content area with responsive layout."""
         return ft.ResponsiveRow([
             # Left: Files table
             ft.Container(
                 content=self._create_files_table_section(),
-                col={"sm": 12, "md": 7, "lg": 8},
+                col={"xs": 12, "sm": 12, "md": 7, "lg": 8, "xl": 8},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
-                padding=20
+                padding=20,
+                expand=True
             ),
             
             # Right: Preview and actions  
             ft.Container(
                 content=self._create_preview_section(),
-                col={"sm": 12, "md": 5, "lg": 4},
+                col={"xs": 12, "sm": 12, "md": 5, "lg": 4, "xl": 4},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
-                padding=10
+                padding=10,
+                expand=True
             )
-        ])
+        ], expand=True)
     
     def _create_files_table_section(self) -> ft.Container:
-        """Create files table section."""
+        """Create files table section with dynamic responsive columns."""
+        
+        # Define columns that will be shown based on container size
+        def get_columns_for_size(col_config):
+            columns = []
+            if col_config.get("file", True):
+                columns.append(ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("user", True):
+                columns.append(ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("team", True):
+                columns.append(ft.DataColumn(ft.Text("Team", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("size", True):
+                columns.append(ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("submitted", True):
+                columns.append(ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("status", True):
+                columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
+            return columns
+        
+        # Store column configurations for different sizes
+        column_configs = {
+            "xs": {"file": True, "user": False, "team": False, "size": False, "submitted": False, "status": True},
+            "sm": {"file": True, "user": True, "team": False, "size": False, "submitted": False, "status": True},
+            "md": {"file": True, "user": True, "team": True, "size": False, "submitted": True, "status": True},
+            "lg": {"file": True, "user": True, "team": True, "size": True, "submitted": True, "status": True}
+        }
+        
+        # Create responsive data table
         self.files_table = self.table_helper.create_responsive_table(self.select_file)
+        
+        # Override columns with responsive configuration
+        self.files_table.columns = get_columns_for_size(column_configs["lg"])
+        
+        # Create responsive container for the table
+        table_content = ft.ResponsiveRow([
+            ft.Container(
+                content=self.files_table,
+                col={"xs": 12, "sm": 12, "md": 12, "lg": 12},
+                bgcolor=ft.Colors.WHITE,
+                border_radius=8,
+                padding=5,
+                expand=True
+            )
+        ])
+        
+        # Initial table population
         self.refresh_files_table()
+        
+        # Store column configs for use in refresh method
+        self.column_configs = column_configs
+        self.get_columns_for_size = get_columns_for_size
         
         return ft.Container(
             content=ft.Column([
@@ -337,10 +387,7 @@ class EnhancedFileApprovalPanel:
                 ]),
                 ft.Divider(),
                 ft.Container(height=10),
-                ft.Container(
-                    content=self.files_table,
-                    expand=True
-                )
+                table_content  # Use responsive approach
             ], expand=True, spacing=0),
             expand=True,
             padding=0

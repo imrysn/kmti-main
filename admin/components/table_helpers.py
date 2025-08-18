@@ -17,7 +17,7 @@ class TableHelper:
         }
     
     def create_responsive_table(self, on_file_select: Callable) -> ft.DataTable:
-
+        """Create responsive table that adapts to parent container."""
         try:
             min_height = self.config.get_ui_constant('table_row_min_height', 40)
             max_height = self.config.get_ui_constant('table_row_max_height', 50)
@@ -32,7 +32,10 @@ class TableHelper:
             horizontal_margin=5,
             data_row_max_height=max_height,
             data_row_min_height=min_height,
-            expand=True,
+            expand=True,  # Allow table to expand within parent
+            width=None,  # Allow table to consume parent width
+            heading_row_color="#FAFAFA",  # Add header styling
+            divider_thickness=1,  # Subtle dividers
         )
     
     def _get_columns_for_size(self, size_category: str) -> List[ft.DataColumn]:
@@ -57,8 +60,11 @@ class TableHelper:
     
     def create_table_row(self, file_data: Dict, size_category: str, 
                         on_file_select: Callable) -> ft.DataRow:
-
-        config = self.column_configs.get(size_category, self.column_configs["lg"])
+        """Create responsive table row with dynamic column visibility."""
+        # Use dynamic column configuration if available
+        config = getattr(self, 'current_column_config', None)
+        if not config:
+            config = self.column_configs.get(size_category, self.column_configs["lg"])
         
         file_size = file_data.get('file_size', 0)
         size_str = self.format_file_size(file_size)
@@ -74,37 +80,48 @@ class TableHelper:
         max_filename_length = max_lengths.get(size_category, 30)
         display_filename = self._limit_filename_display(original_filename, max_filename_length)
         
+        # Create status badge with proper styling
+        status = file_data.get('status', 'pending')
+        status_badge = self._create_status_badge(status)
+        
         cells = []
         
         if config.get("file", True):
             cells.append(ft.DataCell(
-                ft.Text(
-                    display_filename,
-                    tooltip=original_filename,
-                    size=14,
-                    overflow=ft.TextOverflow.ELLIPSIS
+                ft.Container(
+                    content=ft.Text(
+                        display_filename,
+                        tooltip=original_filename,
+                        size=14,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                        weight=ft.FontWeight.W_500
+                    ),
+                    padding=ft.padding.symmetric(vertical=2)
                 )
             ))
         
         if config.get("user", True):
-            cells.append(ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)))
+            cells.append(ft.DataCell(
+                ft.Text(file_data.get('user_id', 'Unknown'), size=14)
+            ))
         
         if config.get("team", True):
-            cells.append(ft.DataCell(ft.Text(file_data.get('user_team', 'Unknown'), size=14)))
+            cells.append(ft.DataCell(
+                ft.Text(file_data.get('user_team', 'Unknown'), size=14)
+            ))
         
         if config.get("size", True):
-            cells.append(ft.DataCell(ft.Text(size_str, size=14)))
+            cells.append(ft.DataCell(
+                ft.Text(size_str, size=14)
+            ))
         
         if config.get("submitted", True):
-            cells.append(ft.DataCell(ft.Text(date_str, size=14)))
+            cells.append(ft.DataCell(
+                ft.Text(date_str, size=14)
+            ))
         
         if config.get("status", True):
-            cells.append(ft.DataCell(ft.Container(
-                content=ft.Text("PENDING", color=ft.Colors.WHITE, size=10),
-                bgcolor=ft.Colors.ORANGE,
-                padding=ft.padding.symmetric(horizontal=6, vertical=3),
-                border_radius=4
-            )))
+            cells.append(ft.DataCell(status_badge))
         
         return ft.DataRow(
             cells=cells,
@@ -112,7 +129,7 @@ class TableHelper:
         )
     
     def _limit_filename_display(self, filename: str, max_length: int) -> str:
-
+        """Limit filename display length with smart truncation."""
         if len(filename) <= max_length:
             return filename
         
@@ -122,6 +139,32 @@ class TableHelper:
             return f"{filename[:start_len]}...{filename[-end_len:]}"
         else:
             return filename[:max_length-3] + "..."
+    
+    def _create_status_badge(self, status: str) -> ft.Container:
+        """Create color-coded status badge."""
+        status_configs = {
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.BLUE},
+            'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending': {'text': 'PENDING', 'color': ft.Colors.ORANGE},
+            'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
+            'rejected_admin': {'text': 'REJECTED', 'color': ft.Colors.RED},
+            'rejected_team_leader': {'text': 'REJECTED', 'color': ft.Colors.RED_700}
+        }
+        
+        config = status_configs.get(status, {'text': status.upper(), 'color': ft.Colors.GREY})
+        
+        return ft.Container(
+            content=ft.Text(
+                config['text'], 
+                color=ft.Colors.WHITE, 
+                size=10, 
+                weight=ft.FontWeight.BOLD
+            ),
+            bgcolor=config['color'],
+            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+            border_radius=6,
+            alignment=ft.alignment.center
+        )
     
     @staticmethod
     def format_file_size(size_bytes: int) -> str:

@@ -334,5 +334,18 @@
       "reason": "None provided"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T10:49:59.370179",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "DataTable.__init__() got an unexpected keyword argument 'show_checkboxes'"
+    },
+    "ip_address": "unknown"
   }
 ]

@@ -199,39 +199,60 @@ class TeamLeaderPanel:
         return descriptions.get(self.current_view_mode, "Unknown view")
     
     def _create_main_content(self) -> ft.ResponsiveRow:
-        """Create main content area."""
+        """Create main content area with responsive layout."""
         return ft.ResponsiveRow([
             # Left: Files table
             ft.Container(
                 content=self._create_files_table_section(),
-                col={"sm": 12, "md": 7, "lg": 8},
+                col={"xs": 12, "sm": 12, "md": 7, "lg": 8, "xl": 8},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
-                padding=20
+                padding=20,
+                expand=True
             ),
             
             # Right: Preview and actions
             ft.Container(
                 content=self._create_preview_section(),
-                col={"sm": 12, "md": 5, "lg": 4},
+                col={"xs": 12, "sm": 12, "md": 5, "lg": 4, "xl": 4},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
-                padding=10
+                padding=10,
+                expand=True
             )
-        ])
+        ], expand=True)
     
     def _create_files_table_section(self) -> ft.Container:
-        """Create files table section."""
+        """Create files table section with dynamic responsive columns."""
+        
+        # Define columns that will be shown based on container size
+        def get_columns_for_size(col_config):
+            columns = []
+            if col_config.get("file", True):
+                columns.append(ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("user", True):
+                columns.append(ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("size", True):
+                columns.append(ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("submitted", True):
+                columns.append(ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)))
+            if col_config.get("status", True):
+                columns.append(ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)))
+            return columns
+        
+        # Store column configurations for different sizes
+        column_configs = {
+            "xs": {"file": True, "user": False, "size": False, "submitted": False, "status": True},
+            "sm": {"file": True, "user": True, "size": False, "submitted": False, "status": True},
+            "md": {"file": True, "user": True, "size": False, "submitted": True, "status": True},
+            "lg": {"file": True, "user": True, "size": True, "submitted": True, "status": True}
+        }
+        
+        # Create responsive data table
         self.files_table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("File", weight=ft.FontWeight.BOLD, size=16)),
-                ft.DataColumn(ft.Text("User", weight=ft.FontWeight.BOLD, size=16)),
-                ft.DataColumn(ft.Text("Size", weight=ft.FontWeight.BOLD, size=16)),
-                ft.DataColumn(ft.Text("Submitted", weight=ft.FontWeight.BOLD, size=16)),
-                ft.DataColumn(ft.Text("Status", weight=ft.FontWeight.BOLD, size=16)),
-            ],
+            columns=get_columns_for_size(column_configs["lg"]),  # Start with all columns
             rows=[],
             column_spacing=10,
             horizontal_margin=5,
@@ -240,7 +261,24 @@ class TeamLeaderPanel:
             expand=True,
         )
         
+        # Create responsive container for the table
+        table_content = ft.ResponsiveRow([
+            ft.Container(
+                content=self.files_table,
+                col={"xs": 12, "sm": 12, "md": 12, "lg": 12},  
+                bgcolor=ft.Colors.WHITE,
+                border_radius=8,
+                padding=5,
+                expand=True
+            )
+        ])
+        
+        # Initial table population
         self.refresh_files_table()
+        
+        # Store column configs for use in refresh method
+        self.column_configs = column_configs
+        self.get_columns_for_size = get_columns_for_size
         
         return ft.Container(
             content=ft.Column([
@@ -251,10 +289,7 @@ class TeamLeaderPanel:
                 ]),
                 ft.Divider(),
                 ft.Container(height=10),
-                ft.Container(
-                    content=self.files_table,
-                    expand=True
-                )
+                table_content  # Use responsive approach
             ], expand=True, spacing=0),
             expand=True,
             padding=0
@@ -404,7 +439,7 @@ class TeamLeaderPanel:
             return files
     
     def _create_table_row(self, file_data: Dict) -> ft.DataRow:
-        """Create table row with enhanced status display."""
+        """Create table row with dynamic column visibility based on current configuration."""
         file_size = file_data.get('file_size', 0)
         size_str = self._format_file_size(file_size)
 
@@ -421,19 +456,35 @@ class TeamLeaderPanel:
         status = file_data.get('status', 'unknown')
         status_badge = self._create_status_badge(status, file_data)
         
+        # Get current column configuration (default to lg if not set)
+        col_config = getattr(self, 'column_configs', {}).get('lg', {
+            "file": True, "user": True, "size": True, "submitted": True, "status": True
+        })
+        
+        cells = []
+        
+        if col_config.get("file", True):
+            cells.append(ft.DataCell(ft.Text(
+                display_filename,
+                tooltip=original_filename,
+                size=14,
+                overflow=ft.TextOverflow.ELLIPSIS
+            )))
+        
+        if col_config.get("user", True):
+            cells.append(ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)))
+        
+        if col_config.get("size", True):
+            cells.append(ft.DataCell(ft.Text(size_str, size=14)))
+        
+        if col_config.get("submitted", True):
+            cells.append(ft.DataCell(ft.Text(date_str, size=14)))
+        
+        if col_config.get("status", True):
+            cells.append(ft.DataCell(status_badge))
+        
         return ft.DataRow(
-            cells=[
-                ft.DataCell(ft.Text(
-                    display_filename,
-                    tooltip=original_filename,
-                    size=14,
-                    overflow=ft.TextOverflow.ELLIPSIS
-                )),
-                ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)),
-                ft.DataCell(ft.Text(size_str, size=14)),
-                ft.DataCell(ft.Text(date_str, size=14)),
-                ft.DataCell(status_badge)
-            ],
+            cells=cells,
             on_select_changed=lambda e, data=file_data: self.select_file(data)
         )
     
