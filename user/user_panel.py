@@ -60,6 +60,7 @@ def clear_session(username: str):
         print(f"[DEBUG] clear_session error: {ex}")
 
 def user_panel(page: ft.Page, username: Optional[str]):
+
     """User panel - accessible only by USER role users."""
     # Verify user has user role
     from utils.auth import load_users
@@ -81,6 +82,23 @@ def user_panel(page: ft.Page, username: Optional[str]):
         from login_window import login_view
         login_view(page)
         return
+=========
+    # Clear any existing page state first
+    page.controls.clear()
+    page.appbar = None
+    page.overlay.clear()
+    
+    # Set page properties for user panel
+    page.title = "KMTI Data Management Users"
+    page.bgcolor = ft.Colors.GREY_200
+    page.vertical_alignment = ft.MainAxisAlignment.START
+    page.horizontal_alignment = ft.CrossAxisAlignment.START
+    page.padding = 0
+    page.margin = 0
+    
+    # Force page update to clear login screen
+    page.update()
+>>>>>>>>> Temporary merge branch 2
     
     save_session(username, "USER", "user")
 
