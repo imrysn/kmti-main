@@ -3,9 +3,8 @@ import json
 import os
 from datetime import datetime
 from typing import Optional
-
 from utils.session_logger import log_logout, log_activity
-from admin.navbar import create_navbar
+from admin.components.navbar import create_navbar
 from admin.data_management import data_management
 from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
@@ -13,12 +12,11 @@ from admin.user_management import user_management
 from utils.session_logger import log_logout, log_activity
 from admin.components.file_approval_panel import FileApprovalPanel
 
-USERS_FILE = "data/users.json"
-ACTIVITY_LOGS_FILE = "data/logs/activity_logs.json"
-ACTIVITY_METADATA_FILE = "data/logs/activity_metadata.json"
 
-# Use consistent session management
-SESSION_ROOT = "data/sessions"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
+ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
+ACTIVITY_METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
+SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"  
 
 def load_json(path, default):
     if not os.path.exists(path):

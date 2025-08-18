@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2025-08-12T14:53:34.441923",
+    "username": "kusakabe",
+    "fullname": "kusakabe",
+    "email": "kusakabe@example.com",
+    "role": "TEAM LEADER",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "e6957597-3339-42e9-87ad-fc8029eaa40b",
+      "action": "REJECT",
+      "reason": "Not detailed"
+    },
+    "ip_address": "unknown"
+  }
+]

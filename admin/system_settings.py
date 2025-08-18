@@ -228,7 +228,7 @@ def system_settings(content: ft.Column, username: Optional[str]):
             ft.Divider(),
             ft.Text("Version: 1.0.0"),
             ft.Text("Developed by: OJT Team"),
-            ft.Text("Description: Local File System Data Management Tool"),
+            ft.Text("Description: Local File System Data Management System"),
         ], spacing=20, expand=True)
 
     # ------------ Navigation ------------

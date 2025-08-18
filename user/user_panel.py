@@ -9,7 +9,7 @@ from .components.profile_view import ProfileView
 from .components.files_view import FilesView
 from .components.approval_files_view import ApprovalFilesView
 from .components.notifications_view import NotificationsView
-from .components.notifications_window import NotificationsWindow
+from .components.notifications_window import NotificationsWindow  
 from .services.profile_service import ProfileService
 from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
@@ -90,8 +90,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
     files_view = FilesView(page, username, file_service)
     approval_files_view = ApprovalFilesView(page, username, approval_service)
     notifications_view = NotificationsView(page, username, approval_service)
-
-    # Initialize the full-screen notifications popup window
     notifications_popup = NotificationsWindow(page, username, approval_service)
 
     current_view = "browser"

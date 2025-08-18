@@ -159,6 +159,8 @@ def user_management(content: ft.Column, username: Optional[str]):
             users_list.sort(key=lambda x: x[1].get("username", "").lower())
         elif selected_filter == "Filter by Role (ADMIN)":
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "ADMIN"]
+        elif selected_filter == "Filter by Role (TEAM LEADER)":
+            users_list = [u for u in users_list if u[1].get("role", "").upper() == "TEAM LEADER"]
         elif selected_filter == "Filter by Role (USER)":
             users_list = [u for u in users_list if u[1].get("role", "").upper() == "USER"]
         elif selected_filter == "Filter by Team":
@@ -200,7 +202,9 @@ def user_management(content: ft.Column, username: Optional[str]):
                 elif col_name == "Role":
                     if edit_mode["value"]:
                         role_dropdown = ft.Dropdown(
-                            options=[ft.dropdown.Option("ADMIN"), ft.dropdown.Option("USER")],
+                            options=[ft.dropdown.Option("ADMIN"), 
+                                     ft.dropdown.Option("USER"),
+                                     ft.dropdown.Option("TEAM LEADER")],
                             value=role,
                             on_change=lambda e, u=email: update_role(u, e.control.value)
                         )
@@ -289,11 +293,11 @@ def user_management(content: ft.Column, username: Optional[str]):
         refresh_table()
 
     def go_to_add_user(e):
-        from admin.add_user import add_user_page
+        from admin.components.add_user import add_user_page
         add_user_page(content, content.page, username)
 
     def go_to_reset_password(e):
-        from admin.reset_password import reset_password_page
+        from admin.components.reset_password import reset_password_page
         reset_password_page(content, content.page, username)
 
     buttons_row = ft.Row(
