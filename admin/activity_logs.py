@@ -76,7 +76,12 @@ def activity_logs(content: ft.Column, username: str):
             if search_text in combined:
                 # Create role badge
                 role = info["role"].upper()
-                role_color = ft.Colors.BLUE if role == "ADMIN" else ft.Colors.GREEN
+                role_color = {
+                                "ADMIN": ft.Colors.RED,
+                                "TEAM LEADER": ft.Colors.BLUE,
+                                "USER": ft.Colors.GREEN
+                            }.get(role, ft.Colors.GREY)
+
                 role_badge = ft.Container(
                     content=ft.Text(role, color=ft.Colors.WHITE, size=10, weight=FontWeight.BOLD),
                     bgcolor=role_color,
@@ -106,14 +111,14 @@ def activity_logs(content: ft.Column, username: str):
             ft.DataColumn(ft.Text("Full Name", weight=FontWeight.BOLD, size=14)),
             ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD, size=14)),
             ft.DataColumn(ft.Text("Username", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Role", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Role", weight=FontWeight.BOLD, size=14), ),
             ft.DataColumn(ft.Text("Team", weight=FontWeight.BOLD, size=14)),
             ft.DataColumn(ft.Text("Date & Time", weight=FontWeight.BOLD, size=14)),
             ft.DataColumn(ft.Text("Activity", weight=FontWeight.BOLD, size=14)),
         ],
         rows=build_rows(),
         expand=False,
-        heading_row_color="#FAFAFA",
+        heading_row_color="#E4E4E4",
         data_row_color={ft.ControlState.HOVERED: "#B9B9B9"},
         column_spacing=80,
         horizontal_margin=40,
@@ -259,7 +264,7 @@ def activity_logs(content: ft.Column, username: str):
         icon=ft.Icons.UPLOAD_OUTLINED,
         on_click=lambda e: export_logs_action(e),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                      ft.ControlState.HOVERED: ft.Colors.BLUE},
             color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
                    ft.ControlState.HOVERED: ft.Colors.WHITE},
@@ -279,7 +284,7 @@ def activity_logs(content: ft.Column, username: str):
             on_confirm=lambda: clear_logs_action(e),
         ),
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+            bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                      ft.ControlState.HOVERED: ft.Colors.RED},
             color={ft.ControlState.DEFAULT: ft.Colors.RED,
                    ft.ControlState.HOVERED: ft.Colors.WHITE},

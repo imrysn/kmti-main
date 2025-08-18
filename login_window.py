@@ -9,6 +9,7 @@ from TLPanel import TLPanel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from utils.session_logger import log_login
 from datetime import datetime
+from utils.windows_admin_access import check_admin_elevation_on_login
 
 # -------------------------
 # Utility Functions
@@ -130,13 +131,16 @@ def check_existing_session(page: ft.Page):
     _, session_data = best
     username = session_data.get("username")
     role = (session_data.get("role") or "").upper()
+    # Normalize role string
+    if role == "TEAM LEADER":
+        role = "TEAM_LEADER"
     panel = session_data.get("panel", "").lower()
 
     try:
         if panel == "admin":
             if role == "ADMIN":
                 admin_panel(page, username)
-            elif role == "TEAM LEADER":
+            elif role == "TEAM_LEADER":
                 TLPanel(page, username) 
             else:
                 return False
@@ -178,7 +182,7 @@ def login_view(page: ft.Page):
 
     remember_me = ft.Checkbox(label="Remember Me", value=False)
     error_text = ft.Text("", color="red")
-    login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500)
+    login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500, color=ft.Colors.GREEN)
     success_snackbar = ft.SnackBar(content=ft.Text("Password remembered successfully!"))
 
     def login_action(e):
@@ -193,7 +197,59 @@ def login_view(page: ft.Page):
         role = validate_login(uname, pwd, is_admin_login)
         error_text.value = ""
 
-        if role in ["ADMIN", "TEAM LEADER", "USER"]:
+        if role in ["ADMIN", "TEAM_LEADER", "USER"]:
+            # Check for Windows administrator elevation only for ADMIN role
+            if role == "ADMIN":
+                print(f"[LOGIN] Admin login detected: {uname} ({role}) - checking Windows elevation")
+                
+                # Show loading message
+                error_text.value = "Checking administrator access..."
+                error_text.color = ft.Colors.BLUE
+                page.update()
+                
+                try:
+                    elevation_success, elevation_message = check_admin_elevation_on_login(uname, role)
+                    
+                    if not elevation_success:
+                        error_text.value = f"Administrator access issue: {elevation_message}"
+                        error_text.color = ft.Colors.ORANGE
+                        page.update()
+                        
+                        # Still allow login but with warning
+                        import time
+                        time.sleep(2)  # Show message briefly
+                        error_text.value = "Proceeding without elevation - some features may require manual processing"
+                        error_text.color = ft.Colors.ORANGE
+                        page.update()
+                        time.sleep(2)
+                    else:
+                        error_text.value = elevation_message
+                        error_text.color = ft.Colors.GREEN
+                        page.update()
+                        import time
+                        time.sleep(1)  # Show success message briefly
+                        
+                except Exception as ex:
+                    print(f"[LOGIN] Elevation check error: {ex}")
+                    error_text.value = "Administrator access check failed - proceeding anyway"
+                    error_text.color = ft.Colors.ORANGE
+                    page.update()
+                    import time
+                    time.sleep(2)
+            
+            elif role == "TEAM_LEADER":
+                print(f"[LOGIN] Team Leader login detected: {uname} ({role}) - no Windows elevation required")
+                
+                # Show success message for Team Leader
+                error_text.value = "Team Leader access confirmed - no Windows admin privileges required"
+                error_text.color = ft.Colors.GREEN
+                page.update()
+                import time
+                time.sleep(1)  # Show success message briefly
+            
+            # Clear any elevation messages
+            error_text.value = ""
+            
             log_login(uname, role)
             reset_runtime_start(uname)
 
@@ -218,17 +274,35 @@ def login_view(page: ft.Page):
                 print(f"[DEBUG] save_session error: {ex}")
 
             page.clean()
+            
+            # Route to appropriate panel based on role and login type
             if is_admin_login:
+                # Administrator login window
                 if role == "ADMIN":
                     admin_panel(page, uname)
-                elif role == "TEAM LEADER":
-                    TLPanel(page, uname)  # <-- NEW
+                elif role == "TEAM_LEADER":
+                    TLPanel(page, uname)
+                elif role == "USER":
+                    # Users can access admin login but get redirected to user panel
+                    user_panel(page, uname)
                 else:
-                    error_text.value = "Access denied: User cannot log in as admin!"
+                    error_text.value = "Invalid role for admin login!"
+                    error_text.color = ft.Colors.RED
                     page.update()
                     return
             else:
-                user_panel(page, uname)
+                # User login window - all roles can access but get appropriate panels
+                if role == "USER":
+                    user_panel(page, uname)
+                elif role == "ADMIN":
+                    admin_panel(page, uname)
+                elif role == "TEAM_LEADER":
+                    TLPanel(page, uname)
+                else:
+                    error_text.value = "Invalid role!"
+                    error_text.color = ft.Colors.RED 
+                    page.update()
+                    return
 
         else:
             error_text.value = "Invalid credentials!"
@@ -240,10 +314,14 @@ def login_view(page: ft.Page):
     def toggle_login_type(e):
         nonlocal is_admin_login
         is_admin_login = not is_admin_login
-        login_type_text.value = "ADMINISTRATOR" if is_admin_login else "USER"
-        login_type_switch.content.value = (
-            "Login as User" if is_admin_login else "Login as Administrator"
-        )
+        if is_admin_login:
+            login_type_text.value = "ADMINISTRATOR"
+            login_type_text.color = ft.Colors.RED
+            login_type_switch.content.value = "Login as User"
+        else:
+            login_type_text.value = "USER"
+            login_type_text.color = ft.Colors.GREEN
+            login_type_switch.content.value = "Login as Administrator"
         page.update()
 
     login_type_switch = ft.TextButton(

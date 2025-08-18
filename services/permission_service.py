@@ -6,8 +6,8 @@ class PermissionService:
     """Service to handle permissions and team access for file approvals"""
     
     def __init__(self):
-        self.users_file = "data/users.json"
-        self.permissions_file = "data/permissions.json"
+        self.users_file = r"\\KMTI-NAS\Shared\data\users.json"
+        self.permissions_file = r"\\KMTI-NAS\Shared\data\permissions.json"
     
     def load_users(self) -> Dict:
         """Load users data"""
@@ -28,9 +28,8 @@ class PermissionService:
         except Exception as e:
             print(f"Error loading permissions: {e}")
         
-        # Return default permissions structure
+        # Remove default permissions structure with super_admins reference
         return {
-            "super_admins": [],
             "team_admins": {},
             "approval_teams": ["KUSAKABE", "MARKETING", "SALES", "DEFAULT"],
             "settings": {
@@ -50,25 +49,19 @@ class PermissionService:
             print(f"Error saving permissions: {e}")
             return False
     
-    def is_super_admin(self, username: str) -> bool:
-        """Check if user is a super admin"""
+    def get_user_role(self, username: str) -> str:
+        """Get user's role from users.json"""
         try:
             users = self.load_users()
-            permissions = self.load_permissions()
             
-            # Check if explicitly marked as super admin
-            if username in permissions.get("super_admins", []):
-                return True
-            
-            # Check if user has ADMIN role (fallback)
             for email, user_data in users.items():
                 if user_data.get('username') == username:
-                    return user_data.get('role', '').upper() == 'ADMIN'
+                    return user_data.get('role', 'USER').upper()
             
         except Exception as e:
-            print(f"Error checking super admin status: {e}")
+            print(f"Error getting user role: {e}")
         
-        return False
+        return 'USER'  # Default to USER role
     
     def is_team_admin(self, username: str, team: str) -> bool:
         """Check if user is admin for a specific team"""
@@ -99,27 +92,35 @@ class PermissionService:
         return ["DEFAULT"]
     
     def get_reviewable_teams(self, username: str, user_teams: List[str]) -> List[str]:
-        """Get teams that a user can review files for"""
+        """Get teams that a user can review files for based on their role"""
         try:
-            # Super admins can review all teams
-            if self.is_super_admin(username):
+            user_role = self.get_user_role(username)
+            
+            # ADMIN can review all teams
+            if user_role == 'ADMIN':
                 permissions = self.load_permissions()
                 return permissions.get("approval_teams", ["KUSAKABE", "MARKETING", "SALES", "DEFAULT"])
             
-            # Team admins can review their own teams
-            reviewable_teams = []
-            permissions = self.load_permissions()
-            team_admins = permissions.get("team_admins", {})
+            # TEAM_LEADER can review their assigned teams
+            elif user_role == 'TEAM_LEADER':
+                # Check if they have explicit team admin permissions
+                reviewable_teams = []
+                permissions = self.load_permissions()
+                team_admins = permissions.get("team_admins", {})
+                
+                for team, admins in team_admins.items():
+                    if username in admins:
+                        reviewable_teams.append(team)
+                
+                # If no specific team admin role, can review their own teams
+                if not reviewable_teams:
+                    reviewable_teams = user_teams
+                
+                return reviewable_teams
             
-            for team, admins in team_admins.items():
-                if username in admins:
-                    reviewable_teams.append(team)
-            
-            # If no specific team admin role, can review own teams
-            if not reviewable_teams:
-                reviewable_teams = user_teams
-            
-            return reviewable_teams
+            # USER cannot review any files
+            else:
+                return []
             
         except Exception as e:
             print(f"Error getting reviewable teams: {e}")
@@ -127,55 +128,55 @@ class PermissionService:
         return user_teams or ["DEFAULT"]
     
     def can_approve_file(self, username: str, file_team: str) -> bool:
-        """Check if user can approve files from a specific team"""
+        """Check if user can approve files from a specific team based on their role"""
         try:
-            # Super admins can approve all files
-            if self.is_super_admin(username):
+            user_role = self.get_user_role(username)
+            
+            # ADMIN can approve all files
+            if user_role == 'ADMIN':
                 return True
             
-            # Get user's reviewable teams
-            user_teams = self.get_user_teams(username)
-            reviewable_teams = self.get_reviewable_teams(username, user_teams)
+            # TEAM_LEADER can approve files from their teams
+            elif user_role == 'TEAM_LEADER':
+                user_teams = self.get_user_teams(username)
+                reviewable_teams = self.get_reviewable_teams(username, user_teams)
+                return file_team in reviewable_teams
             
-            return file_team in reviewable_teams
+            # USER cannot approve files
+            else:
+                return False
             
         except Exception as e:
             print(f"Error checking file approval permission: {e}")
         
         return False
     
-    def add_super_admin(self, username: str) -> bool:
-        """Add user as super admin"""
+    def get_permission_summary(self) -> Dict:
+        """Get summary of all permissions"""
         try:
             permissions = self.load_permissions()
+            users = self.load_users()
             
-            if "super_admins" not in permissions:
-                permissions["super_admins"] = []
+            # Count users by role
+            role_counts = {'ADMIN': 0, 'TEAM_LEADER': 0, 'USER': 0}
+            for user_data in users.values():
+                role = user_data.get('role', 'USER').upper()
+                if role in role_counts:
+                    role_counts[role] += 1
             
-            if username not in permissions["super_admins"]:
-                permissions["super_admins"].append(username)
-                return self.save_permissions(permissions)
+            summary = {
+                "role_counts": role_counts,
+                "team_admins": permissions.get("team_admins", {}),
+                "approval_teams": permissions.get("approval_teams", []),
+                "total_users": len(users),
+                "settings": permissions.get("settings", {})
+            }
             
-            return True  # Already exists
-            
-        except Exception as e:
-            print(f"Error adding super admin: {e}")
-            return False
-    
-    def remove_super_admin(self, username: str) -> bool:
-        """Remove user from super admins"""
-        try:
-            permissions = self.load_permissions()
-            
-            if username in permissions.get("super_admins", []):
-                permissions["super_admins"].remove(username)
-                return self.save_permissions(permissions)
-            
-            return True  # Already removed
+            return summary
             
         except Exception as e:
-            print(f"Error removing super admin: {e}")
-            return False
+            print(f"Error getting permission summary: {e}")
+            return {}
     
     def add_team_admin(self, username: str, team: str) -> bool:
         """Add user as admin for a specific team"""
@@ -265,27 +266,7 @@ class PermissionService:
             print(f"Error removing team: {e}")
             return False
     
-    def get_permission_summary(self) -> Dict:
-        """Get summary of all permissions"""
-        try:
-            permissions = self.load_permissions()
-            users = self.load_users()
-            
-            summary = {
-                "super_admins": permissions.get("super_admins", []),
-                "team_admins": permissions.get("team_admins", {}),
-                "approval_teams": permissions.get("approval_teams", []),
-                "total_users": len(users),
-                "admin_users": len([u for u in users.values() if u.get('role', '').upper() == 'ADMIN']),
-                "settings": permissions.get("settings", {})
-            }
-            
-            return summary
-            
-        except Exception as e:
-            print(f"Error getting permission summary: {e}")
-            return {}
-    
+
     def update_settings(self, settings: Dict) -> bool:
         """Update permission settings"""
         try:
@@ -306,7 +287,6 @@ class PermissionService:
         try:
             if not os.path.exists(self.permissions_file):
                 default_permissions = {
-                    "super_admins": [],
                     "team_admins": {},
                     "approval_teams": ["KUSAKABE", "MARKETING", "SALES", "DEFAULT"],
                     "settings": {
@@ -315,14 +295,6 @@ class PermissionService:
                         "auto_approve_threshold_mb": 0
                     }
                 }
-                
-                # Add all current ADMIN users as super admins
-                users = self.load_users()
-                for email, user_data in users.items():
-                    if user_data.get('role', '').upper() == 'ADMIN':
-                        username = user_data.get('username')
-                        if username:
-                            default_permissions["super_admins"].append(username)
                 
                 return self.save_permissions(default_permissions)
             

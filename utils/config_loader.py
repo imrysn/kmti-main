@@ -2,9 +2,10 @@ import json
 import os
 from pathlib import Path
 from typing import Dict, List
+from .path_config import DATA_PATHS
 
-# Your existing CONFIG_FILE
-CONFIG_FILE = "data/config.json"
+# Your existing CONFIG_FILE - now using centralized path config
+CONFIG_FILE = DATA_PATHS.config_file
 
 def get_base_dir():
     """Your existing function - kept unchanged for backward compatibility"""
@@ -18,7 +19,7 @@ def get_base_dir():
         except:
             pass
     # fallback: default path
-    return Path(r"X:\PROJECTS")
+    return Path("data/config.json")
 
 class EnhancedConfig:
     """Enhanced configuration class that extends your existing config"""
@@ -29,10 +30,10 @@ class EnhancedConfig:
         # Load your existing config
         self.config_data = self._load_config_file()
         
-        # Define secure paths based on your structure
-        self.data_dir = Path("data")
-        self.uploads_dir = Path("data/uploads") 
-        self.logs_dir = Path("data/logs")
+        # Define secure paths using centralized configuration
+        self.data_dir = Path(DATA_PATHS.LOCAL_BASE)
+        self.uploads_dir = Path(DATA_PATHS.uploads_dir)
+        self.logs_dir = Path(DATA_PATHS.local_logs_dir)
         
         # Security: Define allowed directories for file operations
         self.allowed_directories = [

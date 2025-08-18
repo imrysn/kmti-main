@@ -10,13 +10,14 @@ from admin.activity_logs import activity_logs
 from admin.system_settings import system_settings
 from admin.user_management import user_management
 from utils.session_logger import log_logout, log_activity
-from admin.components.file_approval_panel import FileApprovalPanel
+from admin.file_approval_panel import FileApprovalPanel
+from admin.components.role_colors import get_role_color, create_role_badge, get_role_display_name
 
 
 USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 ACTIVITY_LOGS_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
 ACTIVITY_METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
-SESSION_ROOT = r"\\KMTI-NAS\Shared\data\session"  
+SESSION_ROOT = "data/sessions"  
 
 def load_json(path, default):
     if not os.path.exists(path):
@@ -81,10 +82,31 @@ def session_exists(username: str) -> bool:
     return os.path.exists(session_file)
 
 def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
+    """Admin panel - accessible only by ADMIN role users."""
     BACKGROUND = ft.Colors.GREY_100
     PANEL_COLOR = "#FFFFFF"
     PANEL_RADIUS = 14
 
+    # Verify user has admin role
+    users = load_users()
+    user_role = None
+    for email, data in users.items():
+        if data.get("username") == username:
+            user_role = data.get("role", "").upper()
+            # Normalize role string
+            if user_role == "TEAM LEADER":
+                user_role = "TEAM_LEADER"
+            break
+    
+    print(f"[DEBUG] Admin panel access check: username={username}, role={user_role}")
+    
+    if user_role != "ADMIN":
+        print(f"[WARNING] Non-admin user {username} (role: {user_role}) attempted to access admin panel")
+        page.clean()
+        from login_window import login_view
+        login_view(page)
+        return
+    
     page.title = "KMTI Data Management Admin"
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.horizontal_alignment = ft.CrossAxisAlignment.START
@@ -152,7 +174,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
             icon=ft.Icons.REFRESH,
             on_click=lambda e: show_dashboard(),
             style=ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
                          ft.ControlState.HOVERED: ft.Colors.BLUE},
                 color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
                        ft.ControlState.HOVERED: ft.Colors.WHITE},

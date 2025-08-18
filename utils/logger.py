@@ -9,8 +9,8 @@ from pathlib import Path
 
 # Your existing constants - kept unchanged
 LOG_FILE = "data/logs/activity.log"
-METADATA_FILE = "data/logs/activity_logs.json"
-USERS_FILE = "data/users.json"
+METADATA_FILE = r"\\KMTI-NAS\Shared\data\logs\activity_logs.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 # New security audit log file
 SECURITY_LOG_FILE = "data/logs/security_audit.log"
@@ -414,8 +414,3 @@ class PerformanceTimer:
         if self.start_time:
             duration_ms = (datetime.now() - self.start_time).total_seconds() * 1000
             log_performance_metric(self.component, self.operation, duration_ms, self.details)
-
-# Example usage:
-# with PerformanceTimer("FileResolver", "resolve_path", {"user_id": "john"}):
-#     # Your code here
-#     pass

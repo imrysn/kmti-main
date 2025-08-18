@@ -13,7 +13,7 @@ from typing import Optional, Dict, List
 from collections import defaultdict
 
 # Your existing constants - kept unchanged
-USERS_FILE = "data/users.json"
+USERS_FILE = r"\\KMTI-NAS\Shared\data\users.json"
 
 # New security constants
 MAX_LOGIN_ATTEMPTS = 5
@@ -64,7 +64,7 @@ def load_users():
     return users
 
 def validate_login(username_or_email: str, password: str, is_admin_login: bool) -> str | None:
-    """Your existing validate_login function - kept unchanged for backward compatibility"""
+    """Enhanced validate_login with flexible role validation for proper access control"""
     users = load_users()
     entered_hash = hash_password(password)
 
@@ -75,9 +75,15 @@ def validate_login(username_or_email: str, password: str, is_admin_login: bool) 
         if username_or_email == email or username_or_email == data.get("username", ""):
             # Compare hashed password (support migration)
             if entered_hash == stored_hash or password == stored_hash:
-                role = data.get("role", "")
-                # Normalize role to uppercase for consistency
-                return role.upper()
+                role = data.get("role", "USER").upper()
+                
+                # Normalize role string (handle both "TEAM LEADER" and "TEAM_LEADER")
+                if role == "TEAM LEADER":
+                    role = "TEAM_LEADER"
+                
+                # Return role without access restriction here
+                # Access control is handled in login_window.py
+                return role
     return None
 
 class EnhancedAuthenticator:

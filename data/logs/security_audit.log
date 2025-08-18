@@ -1,17 +1,366 @@
 [
   {
-    "timestamp": "2025-08-12T14:53:34.441923",
-    "username": "kusakabe",
-    "fullname": "kusakabe",
-    "email": "kusakabe@example.com",
-    "role": "TEAM LEADER",
+    "timestamp": "2025-08-15T14:02:48.081508",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "0ac2d238-c00d-461a-b9f3-5330e160037b",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-15T14:08:24.194865",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "e89babe2-9c19-4f93-a961-02e4c1155fea",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-15T14:24:24.508420",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "94784fdf-3fa0-49d6-a1cb-e42c48947fc0",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-15T14:34:14.766288",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "4c749022-8bc9-40e8-a55e-45115e4c4dbe",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:49:14.427131",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "d2643e64-2eb2-4a84-81a5-3f257d953b44",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:49:17.453425",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "f88007a5-cc0e-4c8f-9d28-60024bab1869",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:49:21.800940",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "d3ee497a-9030-4c69-8e7d-951eee962a03",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:43.653725",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "7e5278be-0a3f-49db-b5fc-c92c29637a2e",
+      "action": "REJECT",
+      "reason": "not good"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:49.079507",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "a9c490b9-1d51-4cb4-a5df-227dbcb5f543",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:52.102332",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
     "event_type": "APPROVAL_ACTION",
     "severity": "INFO",
     "details": {
       "target_user": "user1",
-      "file_id": "e6957597-3339-42e9-87ad-fc8029eaa40b",
-      "action": "REJECT",
-      "reason": "Not detailed"
+      "file_id": "4e817e43-fe3d-4d38-a9a7-87c4286c93b7",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:54.512057",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "711efcaa-522a-4cb7-8fb3-38327ee18628",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:56.867053",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "55e1fdc0-8d2b-44ea-acfc-71c84dd07d95",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:51:59.074974",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "6488f890-5c4b-464e-9197-94d91500f117",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:52:01.193178",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "aa76ef0a-525e-45f6-a1df-86a422c52b42",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:52:04.349080",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "69f79bd9-3c46-4e9b-b4f3-5b3cbb87d196",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T07:52:06.454461",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user1",
+      "file_id": "53284e29-f86f-41ed-b199-c63fda97ec90",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T08:09:28.955079",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "af9167c8-eb91-4878-8186-834db263f0a4",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T08:20:12.941730",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "6ac2e22a-b820-4176-a9d4-c6be4ac4ed4e",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T08:56:50.975352",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "2050df51-5e8f-492b-8277-15de2521a7ac",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T09:39:48.002352",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "dee99c93-6e17-40fb-a9b8-1a9f7a44d798",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T09:46:28.177434",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "1afe451b-212e-49f4-a7cc-605031b14e9d",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T10:49:59.370179",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "DataTable.__init__() got an unexpected keyword argument 'show_checkboxes'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-18T10:58:53.385264",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "b29bb28d-7a48-44f7-96c4-85b9b247bcc7",
+      "action": "APPROVE",
+      "reason": "None provided"
     },
     "ip_address": "unknown"
   }

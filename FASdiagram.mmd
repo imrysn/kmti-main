@@ -1,0 +1,41 @@
+[MermaidChart: 65fcadc5-5b7e-46dc-90f2-b8c7a13927c4]
+
+sequenceDiagram
+    participant User
+    participant System
+    participant TeamLeader as Correct Team Leader
+    participant Admin
+    participant PublicDB as Public Network Database
+
+    %% User Upload
+    User->>System: Upload file
+    System-->>User: File listed in "My Files"
+
+    %% Submit File
+    User->>System: Click "Submit"
+    System->>System: Store file in Pending Review
+    System->>System: Determine user's team
+    System->>TeamLeader: Route file to correct Team Leader
+
+    %% Team Leader Review
+    TeamLeader->>System: View pending files (same team only)
+    TeamLeader->>System: Download/Open file for review
+    alt Approve
+        TeamLeader->>System: Approve file
+        System->>Admin: Move file to Admin Pending Review
+    else Reject
+        TeamLeader->>System: Reject file with reason
+        System->>User: Update status to "Rejected" with reason
+    end
+
+    %% Admin Review
+    Admin->>System: View pending files from Team Leaders
+    Admin->>System: Download/Open file for verification
+    alt Approve
+        Admin->>System: Approve file
+        System->>PublicDB: Upload file to public network
+        System->>User: Status updated to "Final Approved"
+    else Reject
+        Admin->>System: Reject file with reason
+        System->>User: Update status to "Rejected" with reason
+    end
