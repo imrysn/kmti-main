@@ -613,10 +613,10 @@ def data_management(content: ft.Column, username: Optional[str]):
                               on_click=lambda e: upload_files(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
+                                           ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.GREEN)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
             ft.ElevatedButton(icon=ft.Icons.CREATE_NEW_FOLDER,
@@ -624,10 +624,10 @@ def data_management(content: ft.Column, username: Optional[str]):
                               on_click=lambda e: create_new_folder(),
                               style=ft.ButtonStyle(
                                   bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                           ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                                  color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                         ft.ControlState.HOVERED: ft.Colors.BLACK},
-                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLACK)},
+                                           ft.ControlState.HOVERED: ft.Colors.BLUE},
+                                  color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                                         ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                  side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE)},
                                   shape=ft.RoundedRectangleBorder(radius=5))
                               ),
             breadcrumb,
