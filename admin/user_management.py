@@ -239,11 +239,11 @@ def user_management(content: ft.Column, username: Optional[str]):
                         "Delete",
                         style=ft.ButtonStyle(
                             bgcolor={ft.ControlState.DEFAULT: ft.Colors.GREY_100,
-                                    ft.ControlState.HOVERED: ft.Colors.GREY_200},
-                            color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                                ft.ControlState.HOVERED: ft.Colors.RED},
-                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.with_opacity(0.0, ft.Colors.BLACK))},
-                            shape=ft.RoundedRectangleBorder(radius=2)
+                                    ft.ControlState.HOVERED: ft.Colors.RED},
+                            color={ft.ControlState.DEFAULT: ft.Colors.RED,
+                                ft.ControlState.HOVERED: ft.Colors.WHITE},
+                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.RED)},
+                            shape=ft.RoundedRectangleBorder(radius=6)
                         ),
                         on_click=confirm_delete,
                         icon=ft.Icons.DELETE_OUTLINED,

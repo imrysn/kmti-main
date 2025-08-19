@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2025-08-18T09:44:13.225067",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 65.915,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T09:45:41.432774",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 1,
-      "approved": 0,
-      "rejected": 0,
-      "total": 1
-    }
-  },
-  {
-    "timestamp": "2025-08-18T09:45:41.452724",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 128.27700000000002,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T09:45:41.598365",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.006,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T09:45:41.620199",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 29.997,
-    "details": {}
-  },
-  {
     "timestamp": "2025-08-18T09:45:41.640266",
     "component": "EnhancedFileApprovalPanel",
     "operation": "create_interface",
@@ -3732,6 +3692,46 @@
     "component": "EnhancedFileApprovalPanel",
     "operation": "create_interface",
     "duration_ms": 173.04500000000002,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-19T09:08:58.760854",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 1,
+      "approved": 0,
+      "rejected": 0,
+      "total": 1
+    }
+  },
+  {
+    "timestamp": "2025-08-19T09:08:58.776821",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 296.496,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-19T09:08:59.048078",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.017,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-19T09:08:59.080842",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 268.121,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-19T09:08:59.100010",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "create_interface",
+    "duration_ms": 619.6930000000001,
     "details": {}
   }
 ]
