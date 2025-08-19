@@ -200,7 +200,7 @@ def login_view(page: ft.Page):
         if role in ["ADMIN", "TEAM_LEADER", "USER"]:
             # Check for Windows administrator elevation only for ADMIN role
             if role == "ADMIN":
-                print(f"[LOGIN] Admin login detected: {uname} ({role}) - checking Windows elevation")
+                print(f"[LOGIN] Admin login detected: {uname} ({role})")
                 
                 # Show loading message
                 error_text.value = "Checking administrator access..."
@@ -231,23 +231,22 @@ def login_view(page: ft.Page):
                         
                 except Exception as ex:
                     print(f"[LOGIN] Elevation check error: {ex}")
-                    error_text.value = "Administrator access check failed - proceeding anyway"
+                    error_text.value = "Network path access check failed - proceeding to fallback path"
                     error_text.color = ft.Colors.ORANGE
                     page.update()
                     import time
                     time.sleep(2)
             
             elif role == "TEAM_LEADER":
-                print(f"[LOGIN] Team Leader login detected: {uname} ({role}) - no Windows elevation required")
+                print(f"[LOGIN] Team Leader login detected: {uname} ({role})")
                 
                 # Show success message for Team Leader
-                error_text.value = "Team Leader access confirmed - no Windows admin privileges required"
+                error_text.value = "Team Leader access confirmed"
                 error_text.color = ft.Colors.GREEN
                 page.update()
                 import time
-                time.sleep(1)  # Show success message briefly
+                time.sleep(1)  
             
-            # Clear any elevation messages
             error_text.value = ""
             
             log_login(uname, role)
