@@ -11,6 +11,7 @@ from admin.components.team_leader_service import get_team_leader_service
 from utils.session_logger import log_logout, log_activity
 from utils.logger import log_file_operation
 from admin.components.role_colors import create_role_badge, get_role_color
+from user.components.dialogs import DialogManager
 
 
 class TeamLeaderPanel:
@@ -20,9 +21,11 @@ class TeamLeaderPanel:
         self.page = page
         self.username = username
         self.tl_service = get_team_leader_service()
+        self.dialog_manager = DialogManager(page, username)
         self.selected_file = None
         self.files_table = None
         self.preview_panel = None
+        self.selected_row_index = None  # Track selected row for highlighting
         self.user_team = self.tl_service.get_user_team(username)
         
         # Statistics cards references for dynamic updates
@@ -81,12 +84,12 @@ class TeamLeaderPanel:
         return ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text("File Approval", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text("File Approval", size=26, weight=ft.FontWeight.BOLD),
                     ft.Text(f"Team: {self.user_team}", 
-                           size=16, color=ft.Colors.GREY_600),
+                           size=18, color=ft.Colors.GREY_600),
                     ft.Row([
-                        ft.Text("Role: ", size=14, color=ft.Colors.GREY_500),
-                        create_role_badge("TEAM_LEADER", size=12)
+                        ft.Text("Role: ", size=16, color=ft.Colors.GREY_500),
+                        create_role_badge("TEAM_LEADER", size=14)
                     ])
                 ]),
                 ft.Container(expand=True),
@@ -105,8 +108,8 @@ class TeamLeaderPanel:
         """Create statistics card."""
         return ft.Container(
             content=ft.Column([
-                ft.Text(value, size=24, weight=ft.FontWeight.BOLD, color=color),
-                ft.Text(label, size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER)
+                ft.Text(value, size=26, weight=ft.FontWeight.BOLD, color=color),
+                ft.Text(label, size=16, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER)
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
             bgcolor=ft.Colors.WHITE,
             border_radius=10,
@@ -162,9 +165,9 @@ class TeamLeaderPanel:
             # Status indicator
             ft.Container(
                 content=ft.Text(f"Showing: {self._get_view_description()}", 
-                               size=14, color=ft.Colors.GREY_600),
+                               size=16, color=ft.Colors.GREY_600),
                 padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                bgcolor=ft.Colors.GREY_100,
+                bgcolor=ft.Colors.GREY_200,
                 border_radius=5
             ),
             
@@ -190,9 +193,11 @@ class TeamLeaderPanel:
     def _create_main_content(self) -> ft.ResponsiveRow:
         """Create main content area with responsive layout."""
         return ft.ResponsiveRow([
-            # Left: Files table
+            # Left: Files table - individually scrollable
             ft.Container(
-                content=self._create_files_table_section(),
+                content=ft.Column([
+                    self._create_files_table_section()
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
                 col={"xs": 12, "sm": 12, "md": 7, "lg": 8, "xl": 8},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
@@ -201,9 +206,11 @@ class TeamLeaderPanel:
                 expand=True
             ),
             
-            # Right: Preview and actions
+            # Right: Preview and actions - individually scrollable
             ft.Container(
-                content=self._create_preview_section(),
+                content=ft.Column([
+                    self._create_preview_section()
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
                 col={"xs": 12, "sm": 12, "md": 5, "lg": 4, "xl": 4},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
@@ -272,9 +279,9 @@ class TeamLeaderPanel:
         return ft.Container(
             content=ft.Column([
                 ft.Row([
-                    ft.Text(f"{self._get_view_description()}", size=20, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"{self._get_view_description()}", size=22, weight=ft.FontWeight.BOLD),
                     ft.Container(expand=True),
-                    ft.Text(f"Team: {self.user_team}", size=16, color=ft.Colors.GREY_600)
+                    ft.Text(f"Team: {self.user_team}", size=18, color=ft.Colors.GREY_600)
                 ]),
                 ft.Divider(),
                 ft.Container(height=10),
@@ -287,13 +294,13 @@ class TeamLeaderPanel:
     def _create_preview_section(self) -> ft.Container:
         """Create preview section."""
         self.preview_panel = ft.Column([
-            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
+            ft.Text("Select a file to review", size=18, color=ft.Colors.GREY_500, 
                    text_align=ft.TextAlign.CENTER),
             ft.Container(height=20),
             ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ], 
         horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
         alignment=ft.MainAxisAlignment.CENTER, 
@@ -354,12 +361,15 @@ class TeamLeaderPanel:
             # Clear and populate table
             self.files_table.rows.clear()
             
+            # Reset selection when table is refreshed
+            self.selected_row_index = None
+            
             if not all_files:
                 self._add_empty_table_row()
             else:
-                for file_data in all_files:
+                for i, file_data in enumerate(all_files):
                     try:
-                        row = self._create_table_row(file_data)
+                        row = self._create_table_row(file_data, i)
                         self.files_table.rows.append(row)
                     except Exception as row_error:
                         print(f"Error creating table row: {row_error}")
@@ -427,7 +437,7 @@ class TeamLeaderPanel:
             print(f"Error sorting files: {e}")
             return files
     
-    def _create_table_row(self, file_data: Dict) -> ft.DataRow:
+    def _create_table_row(self, file_data: Dict, row_index: int) -> ft.DataRow:
         """Create table row with dynamic column visibility based on current configuration."""
         file_size = file_data.get('file_size', 0)
         size_str = self._format_file_size(file_size)
@@ -456,25 +466,30 @@ class TeamLeaderPanel:
             cells.append(ft.DataCell(ft.Text(
                 display_filename,
                 tooltip=original_filename,
-                size=14,
+                size=16,
                 overflow=ft.TextOverflow.ELLIPSIS
             )))
         
         if col_config.get("user", True):
-            cells.append(ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=14)))
+            cells.append(ft.DataCell(ft.Text(file_data.get('user_id', 'Unknown'), size=16)))
         
         if col_config.get("size", True):
-            cells.append(ft.DataCell(ft.Text(size_str, size=14)))
+            cells.append(ft.DataCell(ft.Text(size_str, size=16)))
         
         if col_config.get("submitted", True):
-            cells.append(ft.DataCell(ft.Text(date_str, size=14)))
+            cells.append(ft.DataCell(ft.Text(date_str, size=16)))
         
         if col_config.get("status", True):
             cells.append(ft.DataCell(status_badge))
         
         return ft.DataRow(
             cells=cells,
-            on_select_changed=lambda e, data=file_data: self.select_file(data)
+            selected=self.selected_row_index == row_index,
+            on_select_changed=lambda e, data=file_data, idx=row_index: self.select_file(data, idx),
+            color={
+                ft.ControlState.SELECTED: ft.Colors.BLUE_100,
+                ft.ControlState.HOVERED: ft.Colors.GREY_50,
+            }
         )
     
     def _create_status_badge(self, status: str, file_data: Dict) -> ft.Container:
@@ -498,18 +513,31 @@ class TeamLeaderPanel:
             tooltip_text += f"\\nRejected by: {file_data['tl_rejected_by']}"
         
         return ft.Container(
-            content=ft.Text(config['text'], color=ft.Colors.WHITE, size=10, weight=ft.FontWeight.BOLD),
+            content=ft.Text(config['text'], color=ft.Colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
             bgcolor=config['color'],
             padding=ft.padding.symmetric(horizontal=8, vertical=4),
             border_radius=6,
             tooltip=tooltip_text
         )
     
-    def select_file(self, file_data: Dict):
-        """Select a file for review."""
+    def select_file(self, file_data: Dict, row_index: int):
+        """Select a file for review and highlight the row."""
         try:
+            # Update selected file and row index
             self.selected_file = file_data
+            old_selected_index = self.selected_row_index
+            self.selected_row_index = row_index
+            
+            # Update row highlighting
+            if old_selected_index is not None and old_selected_index < len(self.files_table.rows):
+                self.files_table.rows[old_selected_index].selected = False
+            
+            if row_index < len(self.files_table.rows):
+                self.files_table.rows[row_index].selected = True
+            
             self._update_preview_panel()
+            self.page.update()
+            
             log_file_operation(
                 username=self.username,
                 operation="SELECT_FILE",
@@ -519,7 +547,7 @@ class TeamLeaderPanel:
             )
         except Exception as e:
             print(f"Error selecting file: {e}")
-            self._show_snackbar("Error selecting file", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error selecting file")
     
     def _update_preview_panel(self):
         """Update the preview panel with selected file info."""
@@ -537,7 +565,7 @@ class TeamLeaderPanel:
             
         except Exception as e:
             print(f"Error updating preview panel: {e}")
-            self._show_snackbar("Error loading file preview", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error loading file preview")
     
     def _create_file_preview(self, file_data: Dict) -> List:
         """Create enhanced file preview content."""
@@ -552,45 +580,38 @@ class TeamLeaderPanel:
         
         # File details section
         details_section = [
-            ft.Text("File Details", size=18, weight=ft.FontWeight.BOLD),
+            ft.Text("File Details", size=20, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             ft.Column([
                 ft.Text(f"File: {file_data.get('original_filename', 'Unknown')}", 
-                       size=14, weight=ft.FontWeight.W_500),
-                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=14),
-                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=14),
-                ft.Text(f"Size: {file_size}", size=14),
-                ft.Text(f"Submitted: {submit_date}", size=14),
+                       size=16, weight=ft.FontWeight.W_500),
+                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=16),
+                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=16),
+                ft.Text(f"Size: {file_size}", size=16),
+                ft.Text(f"Submitted: {submit_date}", size=16),
                 ft.Row([
-                    ft.Text("Status: ", size=14),
+                    ft.Text("Status: ", size=16),
                     self._create_status_badge(status, file_data)
                 ])
             ], spacing=5, alignment=ft.MainAxisAlignment.START),
             
             ft.Container(height=10),
-            ft.Text("Description:", size=14, weight=ft.FontWeight.BOLD),
+            ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),
             ft.Text(file_data.get('description', 'No description provided'), 
-                   size=12, color=ft.Colors.GREY_600),
+                   size=16, color=ft.Colors.GREY_600),
         ]
         
-        # File operations section
+        # File operations section - Open button back in preview section
         operations_section = [
             ft.Container(height=15),
             ft.Row([
                 ft.ElevatedButton(
-                    "Download",
-                    icon=ft.Icons.DOWNLOAD,
-                    on_click=lambda e: self._handle_download_file(file_data),
-                    style=self._get_button_style("primary")
-                ),
-                ft.Container(width=10),
-                ft.ElevatedButton(
                     "Open",
-                    icon=ft.Icons.OPEN_IN_NEW,
+                    icon=ft.Icons.OPEN_IN_NEW_OUTLINED,
                     on_click=lambda e: self._handle_open_file(file_data),
                     style=self._get_button_style("secondary")
                 )
-            ], alignment=ft.MainAxisAlignment.CENTER),
+            ], alignment=ft.MainAxisAlignment.START),
             ft.Divider()
         ]
         
@@ -610,13 +631,13 @@ class TeamLeaderPanel:
             multiline=True,
             min_lines=2,
             max_lines=4,
-            text_size=14,
+            text_size=16,
             expand=True
         )
         
         # Comments section
         actions.extend([
-            ft.Text("Team Leader Actions", size=16, weight=ft.FontWeight.BOLD),
+            ft.Text("Team Leader Actions", size=18, weight=ft.FontWeight.BOLD),
             comment_field,
             ft.Container(height=5),
             ft.Row([
@@ -636,14 +657,14 @@ class TeamLeaderPanel:
                 multiline=True,
                 min_lines=2,
                 max_lines=3,
-                text_size=14,
+                text_size=16,
                 expand=True
             )
             
             actions.extend([
                 ft.Container(height=10),
                 ft.Divider(),
-                ft.Text("Approval Decision", size=16, weight=ft.FontWeight.BOLD),
+                ft.Text("Approval Decision", size=18, weight=ft.FontWeight.BOLD),
                 ft.Container(height=10),
                 reason_field,
                 ft.Container(height=10),
@@ -651,14 +672,14 @@ class TeamLeaderPanel:
                     ft.ElevatedButton(
                         "✓ Approve",
                         icon=ft.Icons.CHECK_CIRCLE,
-                        on_click=lambda e: self._handle_approve_file(file_data),
+                        on_click=lambda e: self._handle_approve_file_with_confirmation(file_data),
                         style=self._get_button_style("success")
                     ),
                     ft.Container(width=10),
                     ft.ElevatedButton(
                         "✗ Reject", 
                         icon=ft.Icons.CANCEL,
-                        on_click=lambda e: self._handle_reject_file(file_data, reason_field),
+                        on_click=lambda e: self._handle_reject_file_with_validation(file_data, reason_field),
                         style=self._get_button_style("danger")
                     )
                 ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
@@ -667,8 +688,8 @@ class TeamLeaderPanel:
             actions.extend([
                 ft.Container(height=10),
                 ft.Container(
-                    content=ft.Text("✓ File approved by you - waiting for admin review", 
-                                   color=ft.Colors.GREEN, size=14, weight=ft.FontWeight.W_500),
+                    content=ft.Text("✓ File approved - waiting for admin review", 
+                                   color=ft.Colors.GREEN, size=16, weight=ft.FontWeight.W_500),
                     bgcolor=ft.Colors.GREEN_50,
                     padding=10,
                     border_radius=5,
@@ -682,9 +703,9 @@ class TeamLeaderPanel:
                 ft.Container(
                     content=ft.Column([
                         ft.Text("✗ File rejected by you", 
-                               color=ft.Colors.RED, size=14, weight=ft.FontWeight.W_500),
+                               color=ft.Colors.RED, size=16, weight=ft.FontWeight.W_500),
                         ft.Text(f"Reason: {rejection_reason}", 
-                               color=ft.Colors.RED_700, size=12)
+                               color=ft.Colors.RED_700, size=16)
                     ]),
                     bgcolor=ft.Colors.RED_50,
                     padding=10,
@@ -702,7 +723,7 @@ class TeamLeaderPanel:
             original_filename = file_data.get('original_filename', 'unknown_file')
             
             if not file_path or not os.path.exists(file_path):
-                self._show_snackbar("File not found in storage", ft.Colors.RED)
+                self.dialog_manager.show_error_notification("File not found in storage")
                 return
             
             # Create downloads directory if it doesn't exist
@@ -712,12 +733,12 @@ class TeamLeaderPanel:
             download_path = downloads_dir / original_filename
             shutil.copy2(file_path, download_path)
             
-            self._show_snackbar(f"Downloaded: {original_filename}", ft.Colors.GREEN)
+            self.dialog_manager.show_success_notification(f"Downloaded: {original_filename}")
             log_file_operation(self.username, "DOWNLOAD", original_filename, "SUCCESS")
             
         except Exception as e:
             print(f"Error downloading file: {e}")
-            self._show_snackbar("Error downloading file", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error downloading file")
     
     def _handle_open_file(self, file_data: Dict):
         """Handle file opening."""
@@ -726,7 +747,7 @@ class TeamLeaderPanel:
             original_filename = file_data.get('original_filename', 'unknown_file')
             
             if not file_path or not os.path.exists(file_path):
-                self._show_snackbar("File not found in storage", ft.Colors.RED)
+                self.dialog_manager.show_error_notification("File not found in storage")
                 return
             
             # Open file with system default application
@@ -738,19 +759,19 @@ class TeamLeaderPanel:
             else:
                 subprocess.run(["xdg-open", file_path], check=True)
             
-            self._show_snackbar(f"Opening: {original_filename}", ft.Colors.BLUE)
+            self.dialog_manager.show_success_notification(f"Opening: {original_filename}")
             log_file_operation(self.username, "OPEN", original_filename, "SUCCESS")
             
         except Exception as e:
             print(f"Error opening file: {e}")
-            self._show_snackbar("Error opening file", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error opening file")
     
     def _handle_add_comment(self, file_data: Dict, comment_field: ft.TextField):
         """Handle adding comment to file."""
         try:
             comment_text = comment_field.value
             if not comment_text or not comment_text.strip():
-                self._show_snackbar("Please enter a comment", ft.Colors.ORANGE)
+                self.dialog_manager.show_error_notification("Please enter a comment")
                 return
             
             success, message = self.tl_service.add_comment_to_file(
@@ -760,14 +781,14 @@ class TeamLeaderPanel:
             if success:
                 comment_field.value = ""
                 comment_field.update()
-                self._show_snackbar("Comment added successfully", ft.Colors.GREEN)
+                self.dialog_manager.show_success_notification("Comment added successfully")
                 log_activity(self.username, f"Added comment to file: {file_data.get('original_filename')}")
             else:
-                self._show_snackbar(f"Failed to add comment: {message}", ft.Colors.RED)
+                self.dialog_manager.show_error_notification(f"Failed to add comment: {message}")
                 
         except Exception as e:
             print(f"Error adding comment: {e}")
-            self._show_snackbar("Error adding comment", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error adding comment")
     
     def _handle_approve_file(self, file_data: Dict):
         """Handle file approval."""
@@ -778,25 +799,25 @@ class TeamLeaderPanel:
             
             if success:
                 filename = file_data.get('original_filename', 'Unknown')
-                self._show_snackbar(f"File '{filename}' approved and sent to admin!", ft.Colors.GREEN)
+                self.dialog_manager.show_success_notification(f"File '{filename}' approved and sent to admin!")
                 log_activity(self.username, f"Approved file: {filename}")
                 
                 self._clear_selection()
                 self.refresh_files_table()
                 
             else:
-                self._show_snackbar(f"Failed to approve: {message}", ft.Colors.RED)
+                self.dialog_manager.show_error_notification(f"Failed to approve: {message}")
                 
         except Exception as e:
             print(f"Error approving file: {e}")
-            self._show_snackbar("Error approving file", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error approving file")
     
     def _handle_reject_file(self, file_data: Dict, reason_field: ft.TextField):
         """Handle file rejection."""
         try:
             reason = reason_field.value
             if not reason or not reason.strip():
-                self._show_snackbar("Please provide a reason for rejection", ft.Colors.ORANGE)
+                self.dialog_manager.show_error_notification("Please provide a reason for rejection")
                 return
             
             success, message = self.tl_service.reject_as_team_leader(
@@ -805,31 +826,74 @@ class TeamLeaderPanel:
             
             if success:
                 filename = file_data.get('original_filename', 'Unknown')
-                self._show_snackbar(f"File '{filename}' rejected", ft.Colors.RED)
+                self.dialog_manager.show_success_notification(f"File '{filename}' rejected")
                 log_activity(self.username, f"Rejected file: {filename} - Reason: {reason}")
                 
                 self._clear_selection()
                 self.refresh_files_table()
                 
             else:
-                self._show_snackbar(f"Failed to reject: {message}", ft.Colors.RED)
+                self.dialog_manager.show_error_notification(f"Failed to reject: {message}")
                 
         except Exception as e:
             print(f"Error rejecting file: {e}")
-            self._show_snackbar("Error rejecting file", ft.Colors.RED)
+            self.dialog_manager.show_error_notification("Error rejecting file")
+    
+    def _handle_approve_file_with_confirmation(self, file_data: Dict):
+        """Handle file approval with confirmation dialog."""
+        try:
+            filename = file_data.get('original_filename', 'Unknown')
+            
+            def on_confirm():
+                self._handle_approve_file(file_data)
+            
+            self.dialog_manager.show_confirmation_dialog(
+                title="Confirm Approval",
+                message=f"Are you sure you want to approve this file?",
+                on_confirm=on_confirm,
+                confirm_text="Approve",
+                cancel_text="Cancel",
+                confirm_color=ft.Colors.GREEN
+            )
+            
+        except Exception as e:
+            print(f"Error showing approval confirmation: {e}")
+            self.dialog_manager.show_error_notification("Error showing confirmation dialog")
+    
+    def _handle_reject_file_with_validation(self, file_data: Dict, reason_field: ft.TextField):
+        """Handle file rejection with validation for rejection reason."""
+        try:
+            reason = reason_field.value
+            if not reason or not reason.strip():
+                # Show notification that rejection reason is required
+                self.dialog_manager.show_error_notification("Please enter a rejection reason in the text field before proceeding")
+                return
+            
+            # Proceed with rejection
+            self._handle_reject_file(file_data, reason_field)
+            
+        except Exception as e:
+            print(f"Error validating rejection: {e}")
+            self.dialog_manager.show_error_notification("Error processing rejection")
     
     def _clear_selection(self):
         """Clear current file selection."""
+        # Clear row highlighting
+        if self.selected_row_index is not None and self.selected_row_index < len(self.files_table.rows):
+            self.files_table.rows[self.selected_row_index].selected = False
+        
         self.selected_file = None
+        self.selected_row_index = None
+        
         self.preview_panel.controls.clear()
         self.preview_panel.controls.extend([
-            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
+            ft.Text("Select a file to review", size=18, color=ft.Colors.GREY_500, 
                    text_align=ft.TextAlign.CENTER),
             ft.Container(height=20),
             ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=64, color=ft.Colors.GREY_300),
             ft.Container(height=20),
             ft.Text("Click on any file in the table to view details and approval options", 
-                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
         ])
         self.preview_panel.horizontal_alignment = ft.CrossAxisAlignment.CENTER
         self.preview_panel.alignment = ft.MainAxisAlignment.CENTER
@@ -839,8 +903,8 @@ class TeamLeaderPanel:
         return ft.Container(
             content=ft.Column([
                 ft.Icon(ft.Icons.ERROR_OUTLINE, size=64, color=ft.Colors.RED),
-                ft.Text("Team Leader Panel", size=24, weight=ft.FontWeight.BOLD),
-                ft.Text("Error loading review system", size=16, color=ft.Colors.RED),
+                ft.Text("Team Leader Panel", size=26, weight=ft.FontWeight.BOLD),
+                ft.Text("Error loading review system", size=18, color=ft.Colors.RED),
                 ft.Text(f"Details: {error_msg}", size=16, color=ft.Colors.GREY_600),
                 ft.Container(height=20),
                 ft.ElevatedButton(
@@ -954,31 +1018,6 @@ class TeamLeaderPanel:
                 shape=ft.RoundedRectangleBorder(radius=border_radius)
             )
     
-    def _show_snackbar(self, message: str, color: str):
-        """Show snackbar message."""
-        try:
-            if color == ft.Colors.GREEN:
-                icon = ft.Icons.CHECK_CIRCLE
-            elif color == ft.Colors.ORANGE:
-                icon = ft.Icons.WARNING
-            elif color == ft.Colors.RED:
-                icon = ft.Icons.ERROR
-            else:
-                icon = ft.Icons.INFO
-            
-            self.page.snack_bar = ft.SnackBar(
-                content=ft.Row([
-                    ft.Icon(icon, color=ft.Colors.WHITE, size=16),
-                    ft.Text(message, color=ft.Colors.WHITE)
-                ]),
-                bgcolor=color,
-                duration=3000
-            )
-            self.page.snack_bar.open = True
-            self.page.update()
-        except Exception as e:
-            print(f"Error showing snackbar: {e}")
-    
     # Event handlers
     def _on_search_changed(self, e):
         """Handle search input change."""
@@ -1029,7 +1068,7 @@ def TLPanel(page: ft.Page, username: str):
         login_view(page)
         return
     
-    page.bgcolor = ft.Colors.GREY_100
+    page.bgcolor = ft.Colors.GREY_200
     page.padding = 0
 
     content = ft.Column(expand=True, spacing=0)
@@ -1051,13 +1090,13 @@ def TLPanel(page: ft.Page, username: str):
         content=ft.Row(
             controls=[
                 ft.Row([
-                    ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.WHITE, size=20),
-                    ft.Text("KMTI Data Management", color=ft.Colors.WHITE, size=16, weight=ft.FontWeight.BOLD)
+                    ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.WHITE, size=22),
+                    ft.Text("KMTI Data Management", color=ft.Colors.WHITE, size=18, weight=ft.FontWeight.BOLD)
                 ]),
                 ft.Container(expand=True),  
                 ft.Row(
                     controls=[
-                        ft.Text(f"Hi, {username}", size=16, color=ft.Colors.WHITE),
+                        ft.Text(f"Hi, {username}", size=18, color=ft.Colors.WHITE),
                         tl_badge,
                         ft.TextButton(
                             content=ft.Text("Logout", size=16, color=ft.Colors.WHITE),
@@ -1085,7 +1124,7 @@ def TLPanel(page: ft.Page, username: str):
                 ft.Container(
                     content=ft.Column([
                         ft.Icon(ft.Icons.ERROR_OUTLINE, size=64, color=ft.Colors.RED),
-                        ft.Text(f"Error loading panel: {ex}", color=ft.Colors.RED, size=16),
+                        ft.Text(f"Error loading panel: {ex}", color=ft.Colors.RED, size=18),
                         ft.ElevatedButton(
                             "Retry",
                             icon=ft.Icons.REFRESH,

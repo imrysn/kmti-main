@@ -587,5 +587,31 @@
       "reason": "None provided"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-19T09:14:45.685963",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "Row.__init__() got an unexpected keyword argument 'padding'"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-19T09:18:28.368790",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "INTERFACE_ERROR",
+    "severity": "ERROR",
+    "details": {
+      "error": "Row.__init__() got an unexpected keyword argument 'padding'"
+    },
+    "ip_address": "unknown"
   }
 ]

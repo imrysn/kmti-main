@@ -207,76 +207,87 @@ class EnhancedFileApprovalPanel:
             border=ft.border.all(2, ft.Colors.GREY_200)
         )
     
-    def _create_filters_section(self) -> ft.Row:
-        """Create enhanced filters section."""
+    def _create_filters_section(self) -> ft.Container:
+        """Create enhanced filters section with padding."""
         teams = self.team_loader.load_teams_safely(self.admin_user, self.admin_teams)
         
-        return ft.Row([
-            # Search field
-            ft.TextField(
-                hint_text="Search files...",
-                width=200,
-                value=self.search_query,
-                on_change=self._on_search_changed,
-                prefix_icon=ft.Icons.SEARCH
-            ),
-            
-            # Team filter with real teams
-            ft.Dropdown(
-                label="Filter by Team",
-                width=160,
-                options=self._create_team_filter_options(teams),
-                value=self.current_team_filter,
-                on_change=self._on_team_filter_changed
-            ),
-            
-            # Status filter
-            ft.Dropdown(
-                label="Status",
-                width=160,
-                value=self.current_status_filter,
-                options=[
-                    ft.dropdown.Option("ALL", "All Status"),
-                    ft.dropdown.Option("pending_admin", "Pending Admin"),
-                    ft.dropdown.Option("approved", "Approved"),
-                    ft.dropdown.Option("rejected_admin", "Rejected")
+        return ft.Container(
+            content=ft.Row(
+                [
+                    # Search field
+                    ft.TextField(
+                        hint_text="Search files...",
+                        width=200,
+                        value=self.search_query,
+                        on_change=self._on_search_changed,
+                        prefix_icon=ft.Icons.SEARCH
+                    ),
+
+                    # Team filter with real teams
+                    ft.Dropdown(
+                        label="Filter by Team",
+                        width=160,
+                        options=self._create_team_filter_options(teams),
+                        value=self.current_team_filter,
+                        on_change=self._on_team_filter_changed
+                    ),
+
+                    # Status filter
+                    ft.Dropdown(
+                        label="Status",
+                        width=160,
+                        value=self.current_status_filter,
+                        options=[
+                            ft.dropdown.Option("ALL", "All Status"),
+                            ft.dropdown.Option("pending_admin", "Pending Admin"),
+                            ft.dropdown.Option("approved", "Approved"),
+                            ft.dropdown.Option("rejected_admin", "Rejected")
+                        ],
+                        on_change=self._on_status_filter_changed
+                    ),
+
+                    # Sort selector
+                    ft.Dropdown(
+                        label="Sort by",
+                        width=150,
+                        value=self.current_sort,
+                        options=[
+                            ft.dropdown.Option("submission_date", "Date Submitted"),
+                            ft.dropdown.Option("original_filename", "File Name"),
+                            ft.dropdown.Option("user_id", "User"),
+                            ft.dropdown.Option("file_size", "File Size")
+                        ],
+                        on_change=self._on_sort_changed
+                    ),
+
+                    ft.Container(expand=True),
+
+                    # Status indicator
+                    ft.Container(
+                        content=ft.Text(
+                            f"Showing: {self._get_view_description()}",
+                            size=16,
+                            color=ft.Colors.GREY_600
+                        ),
+                        padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                        bgcolor=ft.Colors.GREY_100,
+                        border_radius=5
+                    ),
+
+                    # Refresh button
+                    ft.ElevatedButton(
+                        "Refresh",
+                        icon=ft.Icons.REFRESH,
+                        on_click=lambda e: self.refresh_files_table(),
+                        style=self._get_button_style("secondary")
+                    )
                 ],
-                on_change=self._on_status_filter_changed
+                alignment=ft.MainAxisAlignment.START,
+                spacing=15,
             ),
-            
-            # Sort selector
-            ft.Dropdown(
-                label="Sort by",
-                width=150,
-                value=self.current_sort,
-                options=[
-                    ft.dropdown.Option("submission_date", "Date Submitted"),
-                    ft.dropdown.Option("original_filename", "File Name"),
-                    ft.dropdown.Option("user_id", "User"),
-                    ft.dropdown.Option("file_size", "File Size")
-                ],
-                on_change=self._on_sort_changed
-            ),
-            
-            ft.Container(expand=True),
-            
-            # Status indicator
-            ft.Container(
-                content=ft.Text(f"Showing: {self._get_view_description()}", 
-                               size=14, color=ft.Colors.GREY_600),
-                padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                bgcolor=ft.Colors.GREY_100,
-                border_radius=5
-            ),
-            
-            # Refresh button
-            ft.ElevatedButton(
-                "Refresh",
-                icon=ft.Icons.REFRESH,
-                on_click=lambda e: self.refresh_files_table(),
-                style=self._get_button_style("secondary")
-            )
-        ])
+            padding=ft.padding.symmetric(horizontal=10, vertical=8), 
+        )
+
     
     def _create_team_filter_options(self, teams: List[str]) -> List[ft.dropdown.Option]:
         """Create team filter dropdown options."""
