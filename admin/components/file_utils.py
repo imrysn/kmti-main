@@ -109,21 +109,20 @@ class FileOperationHandler:
 
 def create_file_action_buttons(file_data: Dict, file_handler: FileOperationHandler,
                               show_snackbar_callback, button_style_func) -> list:
-    """🚨 REMOVED: Download and Open buttons removed per security requirements"""
+    """Create file action buttons - Open button restored, Download removed for security"""
     import flet as ft
     
-    # Return empty list - no file action buttons for security reasons
+    # Restore Open button functionality like TLPanel
     return [
-        ft.Container(
-            content=ft.Text(
-                "File actions disabled for security",
-                size=12,
-                color=ft.Colors.GREY_500,
-                italic=True
-            ),
-            padding=ft.padding.symmetric(vertical=10),
-            alignment=ft.alignment.center
-        )
+        ft.Row([
+            ft.ElevatedButton(
+                "Open",
+                icon=ft.Icons.OPEN_IN_NEW_OUTLINED,
+                on_click=lambda e: file_handler.open_file(file_data, show_snackbar_callback),
+                style=button_style_func("secondary")
+            )
+        ], alignment=ft.MainAxisAlignment.START),
+        ft.Container(height=10)
     ]
 
 

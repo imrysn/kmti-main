@@ -137,6 +137,7 @@ class TeamLeaderApprovalService:
     def get_team_files_by_status(self, team_leader_username: str, status_filter: str = None) -> Dict[str, List[Dict]]:
         """
         Get all files from team leader's team organized by status.
+        🚨 ENHANCED: Now includes approved files that have been moved to project directories.
         Used for comprehensive statistics and filtering.
         """
         try:
@@ -151,6 +152,7 @@ class TeamLeaderApprovalService:
                 'rejected_by_admin': []
             }
             
+            # Get files from current queue (pending and in-process files)
             for file_id, file_data in queue.items():
                 file_status = file_data.get('status', '')
                 file_team = file_data.get('user_team', '')
@@ -170,6 +172,10 @@ class TeamLeaderApprovalService:
                     files_by_status['rejected_by_tl'].append(file_data)
                 elif file_status == 'rejected_admin':
                     files_by_status['rejected_by_admin'].append(file_data)
+            
+            # 🚨 ENHANCED: Also get approved files from archives (they've been moved out of queue)
+            archived_approved_files = self._get_archived_approved_files_for_team_leader(team_leader_username, team_leader_team)
+            files_by_status['approved'].extend(archived_approved_files)
             
             # If status filter is specified, return only that status
             if status_filter and status_filter in files_by_status:
@@ -398,6 +404,72 @@ class TeamLeaderApprovalService:
             print(f"Error getting file counts for team leader: {e}")
             return {'pending_team_leader': 0, 'approved_by_tl': 0, 'rejected_by_tl': 0, 'total_visible': 0}
     
+    def _get_archived_approved_files_for_team_leader(self, team_leader_username: str, team_leader_team: str) -> List[Dict]:
+        """
+        🚨 NEW: Get approved files that have been archived (moved to project directories)
+        These files are no longer in the main queue but should still be visible to team leaders
+        """
+        try:
+            archived_approved_files = []
+            
+            # Load approved files from archive
+            archive_dir = os.path.join(DATA_PATHS.SHARED_BASE, "approvals", "archived")
+            approved_archive_file = os.path.join(archive_dir, "approved_files.json")
+            
+            if os.path.exists(approved_archive_file):
+                with open(approved_archive_file, 'r', encoding='utf-8') as f:
+                    archived_files = json.load(f)
+                
+                for file_id, file_data in archived_files.items():
+                    # Only include files from the team leader's team that they approved
+                    if (file_data.get('user_team') == team_leader_team and 
+                        file_data.get('tl_approved_by') == team_leader_username):
+                        
+                        # 🚨 ENHANCED: Add project file location information
+                        file_data['current_location'] = self._get_approved_file_current_location(file_data)
+                        file_data['file_moved_to_project'] = file_data.get('moved_to_project', True)
+                        file_data['display_status'] = 'approved_and_moved'
+                        
+                        archived_approved_files.append(file_data)
+            
+            print(f"[DEBUG] Found {len(archived_approved_files)} archived approved files for TL {team_leader_username}")
+            return archived_approved_files
+            
+        except Exception as e:
+            print(f"[ERROR] Error getting archived approved files for team leader: {e}")
+            return []
+    
+    def _get_approved_file_current_location(self, file_data: Dict) -> Optional[str]:
+        """
+        🚨 NEW: Find the current location of an approved file using the enhanced path config
+        """
+        try:
+            original_filename = file_data.get('original_filename')
+            team_tag = file_data.get('user_team', 'DEFAULT')
+            
+            if not original_filename:
+                return None
+            
+            # Try to find the file in possible project locations
+            current_path = DATA_PATHS.find_approved_file(original_filename, team_tag)
+            
+            if current_path and os.path.exists(current_path):
+                print(f"[DEBUG] Found approved file {original_filename} at: {current_path}")
+                return current_path
+            else:
+                # Check if it's in the stored project file path
+                stored_path = file_data.get('project_file_path')
+                if stored_path and os.path.exists(stored_path):
+                    print(f"[DEBUG] Found approved file {original_filename} at stored path: {stored_path}")
+                    return stored_path
+                
+                print(f"[WARNING] Could not locate approved file {original_filename} for team {team_tag}")
+                return None
+                
+        except Exception as e:
+            print(f"[ERROR] Error finding approved file location: {e}")
+            return None
+    
     def add_comment_to_file(self, file_id: str, reviewer: str, comment: str) -> Tuple[bool, str]:
         """Add a comment to a file without changing its status."""
         try:
@@ -452,7 +524,7 @@ class TeamLeaderApprovalService:
             notification_service = NotificationService()
             
             # Update user's approval status file directly
-            user_upload_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
+            user_upload_folder = DATA_PATHS.get_user_upload_dir(user_id)
             if os.path.exists(user_upload_folder):
                 # Get the user approval service to update their local status
                 from user.services.approval_file_service import ApprovalFileService
@@ -488,7 +560,7 @@ class TeamLeaderApprovalService:
         try:
             import uuid
             
-            archive_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "archived")
+            archive_dir = os.path.join(DATA_PATHS.SHARED_BASE, "approvals", "archived")
             os.makedirs(archive_dir, exist_ok=True)
             
             # Team leader rejections go to a separate archive

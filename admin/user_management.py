@@ -5,9 +5,10 @@ import json
 import os
 import hashlib
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from admin.utils.team_utils import get_team_options
 from utils.session_logger import get_active_sessions, get_last_runtime, log_activity
+import json
 from utils.dialog import show_center_sheet
 
 
@@ -16,9 +17,13 @@ def user_management(content: ft.Column, username: Optional[str]):
     content.controls.clear()
 
     users_file = r"\\KMTI-NAS\Shared\data\users.json"
+    activity_metadata_file = r"\\KMTI-NAS\Shared\data\logs\activity_metadata.json"
     edit_mode = {"value": False}
     filter_mode = {"value": "All"}
     runtime_labels = {}
+    
+    # Ensure activity metadata directory exists
+    os.makedirs(os.path.dirname(activity_metadata_file), exist_ok=True)
 
     def hash_password(password: str) -> str:
         return hashlib.sha256(password.encode()).hexdigest()
@@ -129,11 +134,96 @@ def user_management(content: ft.Column, username: Optional[str]):
         minutes, seconds = divmod(rem, 60)
         return f"{days}d {hours}h {minutes}m {seconds}s"
 
+    def save_runtime_metadata(user_email: str, username: str, session_data: dict):
+        """Save runtime metadata to activity_metadata.json"""
+        try:
+            # Load existing metadata
+            metadata = {}
+            if os.path.exists(activity_metadata_file):
+                with open(activity_metadata_file, 'r') as f:
+                    metadata = json.load(f)
+            
+            # Initialize user data if not exists
+            if username not in metadata:
+                metadata[username] = {
+                    "email": user_email,
+                    "total_sessions": 0,
+                    "total_runtime_seconds": 0,
+                    "sessions": [],
+                    "last_login": None,
+                    "last_logout": None
+                }
+            
+            # Add session data
+            metadata[username]["sessions"].append(session_data)
+            metadata[username]["total_sessions"] += 1
+            
+            if "runtime_seconds" in session_data:
+                metadata[username]["total_runtime_seconds"] += session_data["runtime_seconds"]
+            
+            metadata[username]["last_login"] = session_data.get("login_time")
+            if "logout_time" in session_data:
+                metadata[username]["last_logout"] = session_data["logout_time"]
+            
+            # Save updated metadata
+            with open(activity_metadata_file, 'w') as f:
+                json.dump(metadata, f, indent=4)
+                
+        except Exception as e:
+            print(f"[ERROR] Failed to save runtime metadata: {e}")
+    
+    def calculate_session_runtime(login_time_str: str, logout_time_str: str = None) -> dict:
+        """Calculate session runtime with proper start/stop times"""
+        try:
+            login_time = datetime.strptime(login_time_str, "%Y-%m-%d %H:%M:%S")
+            
+            if logout_time_str:
+                logout_time = datetime.strptime(logout_time_str, "%Y-%m-%d %H:%M:%S")
+                delta = logout_time - login_time
+            else:
+                # Still active - calculate current runtime
+                delta = datetime.now() - login_time
+            
+            total_seconds = int(delta.total_seconds())
+            formatted_time = format_runtime_from_delta(delta)
+            
+            return {
+                "runtime_seconds": total_seconds,
+                "formatted_runtime": formatted_time,
+                "login_time": login_time_str,
+                "logout_time": logout_time_str,
+                "is_active": logout_time_str is None
+            }
+        except Exception as e:
+            print(f"[ERROR] Runtime calculation failed: {e}")
+            return {
+                "runtime_seconds": 0,
+                "formatted_runtime": "-",
+                "login_time": login_time_str,
+                "logout_time": logout_time_str,
+                "is_active": False
+            }
+    
+    def get_total_user_runtime(username: str) -> str:
+        """Get total runtime for user from metadata"""
+        try:
+            if os.path.exists(activity_metadata_file):
+                with open(activity_metadata_file, 'r') as f:
+                    metadata = json.load(f)
+                    
+                if username in metadata:
+                    total_seconds = metadata[username].get("total_runtime_seconds", 0)
+                    if total_seconds > 0:
+                        return format_runtime_from_delta(timedelta(seconds=total_seconds))
+            
+            return get_last_runtime(username)
+        except Exception:
+            return get_last_runtime(username)
+    
     def calculate_live_runtime(login_time_str: str) -> str:
         try:
-            start = datetime.strptime(login_time_str, "%Y-%m-%d %H:%M:%S")
-            delta = datetime.now() - start
-            return format_runtime_from_delta(delta)
+            runtime_data = calculate_session_runtime(login_time_str)
+            return runtime_data["formatted_runtime"]
         except Exception:
             return "-"
 
@@ -181,8 +271,13 @@ def user_management(content: ft.Column, username: Optional[str]):
             if session_key in active_sessions:
                 login_time = active_sessions[session_key]["login_time"]
                 runtime_text = calculate_live_runtime(login_time)
+                
+                # Update metadata for active sessions
+                session_data = calculate_session_runtime(login_time)
+                save_runtime_metadata(email, uname, session_data)
             else:
-                runtime_text = get_last_runtime(uname)
+                # Get total runtime including completed sessions
+                runtime_text = get_total_user_runtime(uname)
 
             cells = []
             for col_name, always in all_columns:
@@ -377,6 +472,14 @@ def user_management(content: ft.Column, username: Optional[str]):
                 if session_key in active_sessions:
                     login_time = active_sessions[session_key]["login_time"]
                     lbl.value = calculate_live_runtime(login_time)
+                    
+                    # Update metadata for live tracking
+                    users = load_users()
+                    if email in users:
+                        uname = users[email].get("username")
+                        if uname:
+                            session_data = calculate_session_runtime(login_time)
+                            save_runtime_metadata(email, uname, session_data)
             content.update()
 
     content.page.run_task(periodic_refresh)

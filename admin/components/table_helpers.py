@@ -79,9 +79,9 @@ class TableHelper:
         max_filename_length = max_lengths.get(size_category, 30)
         display_filename = self._limit_filename_display(original_filename, max_filename_length)
         
-        # Create status badge with proper styling
+        # Enhanced status display with color coding like TLPanel
         status = file_data.get('status', 'pending')
-        status_badge = self._create_status_badge(status)
+        status_badge = self._create_status_badge(status, file_data)
         
         cells = []
         
@@ -91,7 +91,7 @@ class TableHelper:
                     content=ft.Text(
                         display_filename,
                         tooltip=original_filename,
-                        size=14,
+                        size=16,  # Increased to 16px
                         overflow=ft.TextOverflow.ELLIPSIS,
                         weight=ft.FontWeight.W_500
                     ),
@@ -101,22 +101,22 @@ class TableHelper:
         
         if config.get("user", True):
             cells.append(ft.DataCell(
-                ft.Text(file_data.get('user_id', 'Unknown'), size=14)
+                ft.Text(file_data.get('user_id', 'Unknown'), size=16)  # Increased to 16px
             ))
         
         if config.get("team", True):
             cells.append(ft.DataCell(
-                ft.Text(file_data.get('user_team', 'Unknown'), size=14)
+                ft.Text(file_data.get('user_team', 'Unknown'), size=16)  # Increased to 16px
             ))
         
         if config.get("size", True):
             cells.append(ft.DataCell(
-                ft.Text(size_str, size=14)
+                ft.Text(size_str, size=16)  # Increased to 16px
             ))
         
         if config.get("submitted", True):
             cells.append(ft.DataCell(
-                ft.Text(date_str, size=14)
+                ft.Text(date_str, size=16)  # Increased to 16px
             ))
         
         if config.get("status", True):
@@ -124,7 +124,11 @@ class TableHelper:
         
         return ft.DataRow(
             cells=cells,
-            on_select_changed=lambda e, data=file_data: on_file_select(data)
+            on_select_changed=lambda e, data=file_data: on_file_select(data),
+            color={
+                ft.ControlState.SELECTED: ft.Colors.GREY_300,
+                ft.ControlState.HOVERED: ft.Colors.GREY_100,
+            }
         )
     
     def _limit_filename_display(self, filename: str, max_length: int) -> str:
@@ -139,29 +143,37 @@ class TableHelper:
         else:
             return filename[:max_length-3] + "..."
     
-    def _create_status_badge(self, status: str) -> ft.Container:
-        """Create color-coded status badge."""
+    def _create_status_badge(self, status: str, file_data: Dict = None) -> ft.Container:
+        """Create color-coded status badge similar to TLPanel."""
         status_configs = {
-            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
-            'pending': {'text': 'PENDING', 'color': ft.Colors.ORANGE},
+            'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
-            'rejected_admin': {'text': 'REJECTED', 'color': ft.Colors.RED},
-            'rejected_team_leader': {'text': 'REJECTED', 'color': ft.Colors.RED_700}
+            'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
+            'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}
         }
         
         config = status_configs.get(status, {'text': status.upper(), 'color': ft.Colors.GREY})
+        
+        # Add reviewer info for approved/rejected files
+        tooltip_text = f"Status: {status}"
+        if file_data and status == 'pending_admin' and file_data.get('tl_approved_by'):
+            tooltip_text += f"\nApproved by: {file_data['tl_approved_by']}"
+        elif file_data and status == 'rejected_team_leader' and file_data.get('tl_rejected_by'):
+            tooltip_text += f"\nRejected by: {file_data['tl_rejected_by']}"
         
         return ft.Container(
             content=ft.Text(
                 config['text'], 
                 color=ft.Colors.WHITE, 
-                size=10, 
+                size=12,  # Increased from 10 to 12 for better readability
                 weight=ft.FontWeight.BOLD
             ),
             bgcolor=config['color'],
             padding=ft.padding.symmetric(horizontal=8, vertical=4),
             border_radius=6,
+            tooltip=tooltip_text,
             alignment=ft.alignment.center
         )
     

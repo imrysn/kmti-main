@@ -28,9 +28,9 @@ class ApprovalFileService:
         self.username = username
         
         # Store system files in network data folder, not user upload folder
-        self.system_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
-        self.approval_status_file = os.path.join(self.system_data_folder, "file_approval_status.json")
-        self.notifications_file = os.path.join(self.system_data_folder, "approval_notifications.json")
+        self.system_data_folder = DATA_PATHS.get_user_approval_dir(username)
+        self.approval_status_file = DATA_PATHS.get_user_approval_status_file(username)
+        self.notifications_file = DATA_PATHS.get_user_notifications_file(username)
         
         # Ensure folders exist
         os.makedirs(user_folder, exist_ok=True)
@@ -84,7 +84,7 @@ class ApprovalFileService:
     def _get_user_team_cached(self) -> str:
         """Get user's team from users.json with caching"""
         try:
-            users_file = os.path.join(r"\\KMTI-NAS\Shared\data", "users.json")
+            users_file = DATA_PATHS.users_file
             if os.path.exists(users_file):
                 with open(users_file, 'r') as f:
                     users = json.load(f)
@@ -341,10 +341,10 @@ class ApprovalFileService:
         """Add file to global approval queue with file locking"""
         try:
             # Ensure global approvals directory exists on network
-            global_approvals_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals")
+            global_approvals_dir = DATA_PATHS.approvals_dir
             os.makedirs(global_approvals_dir, exist_ok=True)
             
-            global_queue_file = os.path.join(global_approvals_dir, "file_approvals.json")
+            global_queue_file = DATA_PATHS.file_approvals_file
             
             # Simple file locking mechanism
             lock_file = f"{global_queue_file}.lock"
@@ -473,7 +473,7 @@ class ApprovalFileService:
     def remove_from_global_queue(self, file_id: str):
         """Remove submission from global approval queue with file locking"""
         try:
-            global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
+            global_queue_file = DATA_PATHS.file_approvals_file
             if not os.path.exists(global_queue_file):
                 return
             
@@ -744,9 +744,9 @@ class FileApprovalService:
     """Admin-side file approval service"""
     
     def __init__(self):
-        self.global_queue_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "file_approvals.json")
-        self.comments_file = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "comments.json")
-        os.makedirs(os.path.join(r"\\KMTI-NAS\Shared\data", "approvals"), exist_ok=True)
+        self.global_queue_file = DATA_PATHS.file_approvals_file
+        self.comments_file = DATA_PATHS.comments_file
+        os.makedirs(DATA_PATHS.approvals_dir, exist_ok=True)
     
     def load_global_queue(self) -> Dict:
         """Load global approval queue"""
@@ -1068,7 +1068,7 @@ class FileApprovalService:
                 return
             
             # Create a user approval service instance to update their data
-            user_upload_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "uploads", user_id)
+            user_upload_folder = DATA_PATHS.get_user_upload_dir(user_id)
             if os.path.exists(user_upload_folder):
                 print(f"[INFO] Updating user status for {user_id}: {original_filename} -> {status}")
                 user_approval_service = ApprovalFileService(user_upload_folder, user_id)
@@ -1115,7 +1115,7 @@ class FileApprovalService:
     def _archive_file(self, file_data: Dict, status: str):
         """Archive approved/rejected files for admin panel display"""
         try:
-            archive_dir = os.path.join(r"\\KMTI-NAS\Shared\data", "approvals", "archived")
+            archive_dir = os.path.join(DATA_PATHS.SHARED_BASE, "approvals", "archived")
             os.makedirs(archive_dir, exist_ok=True)
             
             # Determine archive file based on status

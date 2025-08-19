@@ -4,6 +4,7 @@ This file defines all data paths used throughout the application
 """
 import os
 from pathlib import Path
+from typing import List, Optional
 
 # Network data directory (main data storage)
 NETWORK_DATA_DIR = r"\\KMTI-NAS\Shared\Public"
@@ -23,9 +24,13 @@ class DataPaths:
     """Centralized data paths configuration"""
     
     # Base directories
-    NETWORK_BASE = NETWORK_DATA_DIR
-    SHARED_BASE = NETWORK_SHARED_DIR
+    NETWORK_BASE = NETWORK_DATA_DIR  # New path for final approved files
+    SHARED_BASE = NETWORK_SHARED_DIR  # Old path for workflow data
     LOCAL_BASE = LOCAL_DATA_DIR
+    
+    # Project directories (where approved files go)
+    PROJECT_BASE_PRIMARY = r"\\KMTI-NAS\Database\PROJECTS"  # Primary project location
+    PROJECT_BASE_FALLBACK = NETWORK_BASE  # Fallback when primary not accessible
     
     # Network paths (shared data)
     @property
@@ -143,6 +148,65 @@ class DataPaths:
     def is_network_available(self):
         """Check if network directory is accessible"""
         return os.path.exists(self.NETWORK_BASE)
+    
+    def get_possible_approved_file_locations(self, team_tag: str, year: str = None) -> List[str]:
+        """Get all possible locations where approved files might be stored"""
+        if year is None:
+            from datetime import datetime
+            year = str(datetime.now().year)
+        
+        locations = []
+        
+        # Primary project location
+        try:
+            primary_path = os.path.join(self.PROJECT_BASE_PRIMARY, team_tag, year)
+            if os.path.exists(primary_path):
+                locations.append(primary_path)
+        except Exception:
+            pass
+        
+        # Fallback project location
+        try:
+            fallback_path = os.path.join(self.PROJECT_BASE_FALLBACK, "PROJECTS", team_tag, year)
+            if os.path.exists(fallback_path):
+                locations.append(fallback_path)
+        except Exception:
+            pass
+            
+        # Additional fallback for approved files
+        try:
+            approved_fallback = os.path.join(self.NETWORK_BASE, "approved_files_fallback", team_tag, year)
+            if os.path.exists(approved_fallback):
+                locations.append(approved_fallback)
+        except Exception:
+            pass
+        
+        return locations
+    
+    def find_approved_file(self, original_filename: str, team_tag: str, year: str = None) -> Optional[str]:
+        """Find an approved file across all possible locations"""
+        possible_locations = self.get_possible_approved_file_locations(team_tag, year)
+        
+        for location in possible_locations:
+            try:
+                # Check for exact filename match
+                file_path = os.path.join(location, original_filename)
+                if os.path.exists(file_path):
+                    return file_path
+                
+                # Check for files with numbered suffixes (file_001.ext, etc.)
+                name, ext = os.path.splitext(original_filename)
+                for file in os.listdir(location):
+                    if file.startswith(name) and file.endswith(ext):
+                        # Check if it's a numbered version
+                        middle_part = file[len(name):-len(ext)] if ext else file[len(name):]
+                        if middle_part.startswith('_') and (middle_part[1:].isdigit() or 
+                                                           middle_part[1:4].isdigit()):
+                            return os.path.join(location, file)
+            except Exception as e:
+                continue
+        
+        return None
 
 # Global instance
 DATA_PATHS = DataPaths()

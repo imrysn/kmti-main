@@ -83,22 +83,22 @@ def activity_logs(content: ft.Column, username: str):
                             }.get(role, ft.Colors.GREY)
 
                 role_badge = ft.Container(
-                    content=ft.Text(role, color=ft.Colors.WHITE, size=10, weight=FontWeight.BOLD),
+                    content=ft.Text(role, color=ft.Colors.WHITE, size=12, weight=FontWeight.BOLD),
                     bgcolor=role_color,
                     padding=ft.padding.symmetric(horizontal=8, vertical=4),
                     border_radius=4
-                ) if role else ft.Text("", size=14)
+                ) if role else ft.Text("", size=16)
 
                 filtered_rows.append(
                     ft.DataRow(
                         cells=[
-                            ft.DataCell(ft.Text(info["fullname"], size=14, weight=FontWeight.BOLD)),
-                            ft.DataCell(ft.Text(info["email"], size=14)),
-                            ft.DataCell(ft.Text(uname, size=14)),
+                            ft.DataCell(ft.Text(info["fullname"], size=16, weight=FontWeight.BOLD)),
+                            ft.DataCell(ft.Text(info["email"], size=16)),
+                            ft.DataCell(ft.Text(uname, size=16)),
                             ft.DataCell(role_badge),
-                            ft.DataCell(ft.Text(info["team"], size=14)),
-                            ft.DataCell(ft.Text(dt_display, size=14)),
-                            ft.DataCell(ft.Text(description, size=14)),
+                            ft.DataCell(ft.Text(info["team"], size=16)),
+                            ft.DataCell(ft.Text(dt_display, size=16)),
+                            ft.DataCell(ft.Text(description, size=16)),
                         ]
                     )
                 )
@@ -107,21 +107,21 @@ def activity_logs(content: ft.Column, username: str):
 
     table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Full Name", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Username", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Role", weight=FontWeight.BOLD, size=14), ),
-            ft.DataColumn(ft.Text("Team", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Date & Time", weight=FontWeight.BOLD, size=14)),
-            ft.DataColumn(ft.Text("Activity", weight=FontWeight.BOLD, size=14)),
+            ft.DataColumn(ft.Text("Full Name", weight=FontWeight.BOLD, size=16)),
+            ft.DataColumn(ft.Text("Email", weight=FontWeight.BOLD, size=16)),
+            ft.DataColumn(ft.Text("Username", weight=FontWeight.BOLD, size=16)),
+            ft.DataColumn(ft.Text("Role", weight=FontWeight.BOLD, size=16), ),
+            ft.DataColumn(ft.Text("Team", weight=FontWeight.BOLD, size=16)),
+            ft.DataColumn(ft.Text("Date & Time", weight=FontWeight.BOLD, size=16)),
+            ft.DataColumn(ft.Text("Activity", weight=FontWeight.BOLD, size=16)),
         ],
         rows=build_rows(),
         expand=False,
         data_row_color={ft.ControlState.HOVERED: "#B9B9B9"},
         column_spacing=80,
         horizontal_margin=40,
-        data_row_max_height=50,
-        data_row_min_height=40,
+        data_row_max_height=60,
+        data_row_min_height=50,
     )
 
     # Function to refresh table with search text
@@ -255,6 +255,7 @@ def activity_logs(content: ft.Column, username: str):
         border_color=ft.Colors.GREY_400,
         bgcolor=ft.Colors.WHITE,
         on_change=refresh_table,
+        text_size=16
     )
     
     export_button = ft.ElevatedButton(
@@ -305,25 +306,27 @@ def activity_logs(content: ft.Column, username: str):
         spacing=10
     )
 
-    table_scroll = ft.Row(
-        controls=[table],
-        scroll=ft.ScrollMode.AUTO,   # ✅ horizontal scroll if needed
+    # Create scrollable table container - ONLY the table scrolls, not the whole page
+    scrollable_table_container = ft.Container(
+        content=ft.Column(
+            [
+                ft.Row(
+                    [table],
+                    scroll=ft.ScrollMode.AUTO,  # Horizontal scroll for wide tables
+                    expand=True
+                )
+            ],
+            scroll=ft.ScrollMode.AUTO,  # Vertical scroll for many rows
+            expand=True
+        ),
         expand=True,
-        alignment=ft.MainAxisAlignment.CENTER   # ✅ centers the table
-    )
-
-    # Vertical scrollable area
-    table_area = ft.ListView(
-        controls=[table_scroll],
-        expand=True,
-        spacing=0,
-        padding=0,
-        auto_scroll=False
+        height=500,  # Fixed height to ensure only table scrolls
+        padding=10
     )
 
     # Table container with dashboard styling
     table_container = ft.Container(
-        content=table_area,
+        content=scrollable_table_container,
         bgcolor=PANEL_COLOR,
         border_radius=PANEL_RADIUS,
         padding=20,
@@ -339,9 +342,10 @@ def activity_logs(content: ft.Column, username: str):
 
 
 
+    # Add content with proper spacing - no whole page scroll
     content.controls.extend([
         top_controls,
         ft.Container(height=20),
-        table_container
+        table_container  # This container handles all scrolling internally
     ])
     content.update()

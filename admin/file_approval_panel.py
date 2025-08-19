@@ -311,11 +311,13 @@ class EnhancedFileApprovalPanel:
         return f"{team_desc}{status_desc}"
     
     def _create_main_content_area(self) -> ft.ResponsiveRow:
-        """Create main content area with responsive layout."""
+        """Create main content area with individually scrollable sections."""
         return ft.ResponsiveRow([
-            # Left: Files table
+            # Left: Files table - individually scrollable
             ft.Container(
-                content=self._create_files_table_section(),
+                content=ft.Column([
+                    self._create_files_table_section()
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
                 col={"xs": 12, "sm": 12, "md": 7, "lg": 8, "xl": 8},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
@@ -324,9 +326,11 @@ class EnhancedFileApprovalPanel:
                 expand=True
             ),
             
-            # Right: Preview and actions  
+            # Right: Preview and actions - individually scrollable
             ft.Container(
-                content=self._create_preview_section(),
+                content=ft.Column([
+                    self._create_preview_section()
+                ], scroll=ft.ScrollMode.AUTO, expand=True),
                 col={"xs": 12, "sm": 12, "md": 5, "lg": 4, "xl": 4},
                 bgcolor=ft.Colors.WHITE,
                 border_radius=8,
@@ -339,7 +343,7 @@ class EnhancedFileApprovalPanel:
     def _create_files_table_section(self) -> ft.Container:
         """Create files table section with dynamic responsive columns."""
         
-        # Define columns that will be shown based on container size
+        # Define columns that will be shown based on container size - similar to TLPanel
         def get_columns_for_size(col_config):
             columns = []
             if col_config.get("file", True):
@@ -392,13 +396,19 @@ class EnhancedFileApprovalPanel:
         return ft.Container(
             content=ft.Column([
                 ft.Row([
-                    ft.Text("File Management", size=20, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"{self._get_view_description()}", size=22, weight=ft.FontWeight.BOLD),
                     ft.Container(expand=True),
-                    ft.Text(f"Access Level: {self.access_level}", size=14, color=ft.Colors.GREY_600)
+                    ft.Text(f"Access Level: {self.access_level}", size=16, color=ft.Colors.GREY_600)
                 ]),
                 ft.Divider(),
                 ft.Container(height=10),
-                table_content  # Use responsive approach
+                # Create scrollable table container
+                ft.Container(
+                    content=ft.Column([
+                        table_content  # Use responsive approach
+                    ], scroll=ft.ScrollMode.AUTO),
+                    expand=True
+                )
             ], expand=True, spacing=0),
             expand=True,
             padding=0

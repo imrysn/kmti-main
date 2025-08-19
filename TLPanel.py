@@ -493,24 +493,36 @@ class TeamLeaderPanel:
         )
     
     def _create_status_badge(self, status: str, file_data: Dict) -> ft.Container:
-        """Create color-coded status badge."""
+        """🚨 ENHANCED: Create color-coded status badge with support for moved files."""
+        # Handle special display status for moved files
+        display_status = file_data.get('display_status', status)
+        
         status_configs = {
             'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
             'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
             'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
+            'approved_and_moved': {'text': 'APPROVED & MOVED', 'color': ft.Colors.GREEN_700},
             'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
             'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}
         }
         
-        config = status_configs.get(status, {'text': status.upper(), 'color': ft.Colors.GREY})
+        config = status_configs.get(display_status, {'text': display_status.upper(), 'color': ft.Colors.GREY})
         
         # Add reviewer info for approved/rejected files
-        tooltip_text = f"Status: {status}"
+        tooltip_text = f"Status: {display_status}"
         if status == 'pending_admin' and file_data.get('tl_approved_by'):
             tooltip_text += f"\\nApproved by: {file_data['tl_approved_by']}"
         elif status == 'rejected_team_leader' and file_data.get('tl_rejected_by'):
             tooltip_text += f"\\nRejected by: {file_data['tl_rejected_by']}"
+        elif display_status == 'approved_and_moved':
+            tooltip_text += f"\\nApproved by TL: {file_data.get('tl_approved_by', 'Unknown')}"
+            tooltip_text += f"\\nApproved by Admin: {file_data.get('approved_by', 'Unknown')}"
+            current_location = file_data.get('current_location')
+            if current_location:
+                tooltip_text += f"\\nMoved to: {current_location}"
+            else:
+                tooltip_text += "\\nFile moved to project directory"
         
         return ft.Container(
             content=ft.Text(config['text'], color=ft.Colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
@@ -741,14 +753,21 @@ class TeamLeaderPanel:
             self.dialog_manager.show_error_notification("Error downloading file")
     
     def _handle_open_file(self, file_data: Dict):
-        """Handle file opening."""
+        """🚨 ENHANCED: Handle file opening with support for moved files."""
         try:
             file_path = file_data.get('file_path')
             original_filename = file_data.get('original_filename', 'unknown_file')
             
+            # 🚨 ENHANCED: Check for moved files in project directories
             if not file_path or not os.path.exists(file_path):
-                self.dialog_manager.show_error_notification("File not found in storage")
-                return
+                # Try to find the file in its new location if it's an approved file
+                current_location = file_data.get('current_location')
+                if current_location and os.path.exists(current_location):
+                    file_path = current_location
+                    print(f"[OPEN_FILE] Using moved file location: {file_path}")
+                else:
+                    self.dialog_manager.show_error_notification("File not found in storage or project directory")
+                    return
             
             # Open file with system default application
             system = platform.system()
