@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 
 # Network data directory (main data storage)
-NETWORK_DATA_DIR = r"\\KMTI-NAS\Shared\data"
+NETWORK_DATA_DIR = r"\\KMTI-NAS\Shared\Public"
+NETWORK_SHARED_DIR = r"\\KMTI-NAS\Shared\data"
 
 # Local data directory (for sessions, logs, and local config)
 LOCAL_DATA_DIR = "data"
@@ -23,12 +24,13 @@ class DataPaths:
     
     # Base directories
     NETWORK_BASE = NETWORK_DATA_DIR
+    SHARED_BASE = NETWORK_SHARED_DIR
     LOCAL_BASE = LOCAL_DATA_DIR
     
     # Network paths (shared data)
     @property
     def approvals_dir(self):
-        return os.path.join(self.NETWORK_BASE, "approvals")
+        return os.path.join(self.SHARED_BASE, "approvals")
     
     @property
     def file_approvals_file(self):
@@ -40,27 +42,27 @@ class DataPaths:
     
     @property
     def uploads_dir(self):
-        return os.path.join(self.NETWORK_BASE, "uploads")
+        return os.path.join(self.SHARED_BASE, "uploads")
     
     @property
     def user_approvals_dir(self):
-        return os.path.join(self.NETWORK_BASE, "user_approvals")
+        return os.path.join(self.SHARED_BASE, "user_approvals")
     
     @property
     def users_file(self):
-        return os.path.join(self.NETWORK_BASE, "users.json")
+        return os.path.join(self.SHARED_BASE, "users.json")
     
     @property
     def config_file(self):
-        return os.path.join(self.NETWORK_BASE, "config.json")
+        return os.path.join(self.SHARED_BASE, "config.json")
     
     @property
     def cache_dir(self):
-        return os.path.join(self.NETWORK_BASE, "cache")
+        return os.path.join(self.SHARED_BASE, "cache")
     
     @property
     def notifications_dir(self):
-        return os.path.join(self.NETWORK_BASE, "notifications")
+        return os.path.join(self.SHARED_BASE, "notifications")
     
     # Local paths (not shared)
     @property

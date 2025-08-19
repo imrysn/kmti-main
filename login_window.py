@@ -1,6 +1,7 @@
 import flet as ft
 import json
 import os
+import sys
 import hashlib
 from utils.auth import validate_login
 from admin_panel import admin_panel
@@ -10,6 +11,16 @@ from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
 from utils.session_logger import log_login
 from datetime import datetime
 from utils.windows_admin_access import check_admin_elevation_on_login
+
+# -------------------------
+# Resource Helper
+# -------------------------
+
+def resource_path(relative_path: str) -> str:
+    """Get absolute path to resource, works for dev and PyInstaller."""
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 # -------------------------
 # Utility Functions
@@ -341,7 +352,7 @@ def login_view(page: ft.Page):
     page.add(
         ft.Column(
             [
-                ft.Image(src="assets/kmti_logo.png", width=150),
+                ft.Image(src=resource_path("assets/kmti_logo.png"), width=150),
                 ft.Divider(height=30, color="transparent"),
                 login_card,
                 ft.Divider(height=20, color="transparent"),

@@ -18,7 +18,7 @@ class NetworkAccessManager:
     
     def __init__(self):
         self.project_base = r"\\KMTI-NAS\Database\PROJECTS"
-        self.fallback_base = os.path.join(DATA_PATHS.NETWORK_BASE, "approved_files_staging")
+        self.fallback_base = os.path.join(DATA_PATHS.NETWORK_BASE, "PROJECTS")
         self.access_cache = {}
         
         # Ensure fallback directory exists
@@ -200,7 +200,7 @@ class EnhancedFileMovementService:
             current_year = str(datetime.now().year)
             
             # Create rejected files archive directory
-            rejected_dir = os.path.join(DATA_PATHS.NETWORK_BASE, "rejected_files_archive", team_tag, current_year)
+            rejected_dir = os.path.join(DATA_PATHS.SHARED_BASE, "rejected_files_archive", team_tag, current_year)
             os.makedirs(rejected_dir, exist_ok=True)
             
             print(f"[FILE_MOVEMENT] Moving rejected file for team: {team_tag}, year: {current_year}")
