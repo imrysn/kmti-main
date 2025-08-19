@@ -198,6 +198,7 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=8,
+                    expand=True,  
                 ),
                 padding=20,
                 bgcolor=PANEL_COLOR,
@@ -207,9 +208,9 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
                     spread_radius=1,
                     color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
                 ),
-                width=250,
-                height=160,
+                expand=True,   
             )
+
 
         content.controls.append(
             ft.Row(
@@ -226,7 +227,6 @@ def admin_panel(page: ft.Page, username: Optional[str], initial_tab: int = 0):
         content.controls.append(ft.Text("Recent Users", size=22, weight=ft.FontWeight.BOLD, color="#111111"))
 
         users_table = ft.DataTable(
-            heading_row_color="#FAFAFA",
             columns=[
                 ft.DataColumn(ft.Text("Name", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Email", weight=ft.FontWeight.BOLD)),

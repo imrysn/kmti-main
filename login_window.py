@@ -166,8 +166,6 @@ def login_view(page: ft.Page):
         return
 
     is_admin_login = False
-    saved_credentials = load_saved_credentials()
-    saved_usernames = list(saved_credentials.keys()) if isinstance(saved_credentials, dict) else []
 
     username = ft.TextField(
         label="Username", width=300, border_radius=10, height=50,
@@ -180,25 +178,16 @@ def login_view(page: ft.Page):
         focused_border_color="#000000", bgcolor=ft.Colors.WHITE
     )
 
-    remember_me = ft.Checkbox(label="Remember Me", value=False)
     error_text = ft.Text("", color="red")
     login_type_text = ft.Text("USER", size=18, weight=FontWeight.W_500, color=ft.Colors.BLACK)
-    success_snackbar = ft.SnackBar(content=ft.Text("Password remembered successfully!"))
 
     def login_action(e):
-        nonlocal saved_credentials
-        saved_credentials = load_saved_credentials()
-        saved_usernames.clear()
-        if isinstance(saved_credentials, dict):
-            saved_usernames.extend(saved_credentials.keys())
-
         uname = (username.value or "").strip()
         pwd = password.value or ""
         role = validate_login(uname, pwd, is_admin_login)
         error_text.value = ""
 
         if role in ["ADMIN", "TEAM_LEADER", "USER"]:
-            # Check for Windows administrator elevation only for ADMIN role
             if role == "ADMIN":
                 print(f"[LOGIN] Admin login detected: {uname} ({role})")
                 
@@ -251,21 +240,6 @@ def login_view(page: ft.Page):
             
             log_login(uname, role)
             reset_runtime_start(uname)
-
-            if remember_me.value:
-                try:
-                    os.makedirs("data", exist_ok=True)
-                    saved_credentials[uname] = {
-                        "password": hash_password(pwd),
-                        "role": role
-                    }
-                    with open("data/remember_me.json", "w", encoding="utf-8") as f:
-                        json.dump(saved_credentials, f, indent=4)
-                    page.snack_bar = success_snackbar
-                    page.snack_bar.open = True
-                    page.update()
-                except Exception as ex:
-                    print(f"[DEBUG] remember_me write error: {ex}")
 
             try:
                 save_session(uname, role, "admin" if is_admin_login else "user")
@@ -341,7 +315,6 @@ def login_view(page: ft.Page):
                     ft.Divider(height=20, color="transparent"),
                     username,
                     password,
-                    remember_me,
                     ft.Divider(height=10, color="transparent"),
                     ft.ElevatedButton(
                         "Login",

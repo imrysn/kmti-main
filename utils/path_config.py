@@ -75,10 +75,6 @@ class DataPaths:
     def local_config_file(self):
         return os.path.join(self.LOCAL_BASE, "config.json")
     
-    @property
-    def remember_me_file(self):
-        return os.path.join(self.LOCAL_BASE, "remember_me.json")
-    
     # User-specific paths
     def get_user_upload_dir(self, username: str):
         """Get user's upload directory"""

@@ -13,7 +13,6 @@ DATA_DIR = DATA_PATHS.LOCAL_BASE  # Local data for sessions, logs, and local con
 NETWORK_DATA_DIR = DATA_PATHS.NETWORK_BASE  # Network data directory
 OLD_SESSION_FILE = os.path.join(DATA_DIR, "session.json")   # legacy single session
 SESSIONS_DIR = DATA_PATHS.local_sessions_dir  # Keep sessions local
-REMEMBER_ME_FILE = DATA_PATHS.remember_me_file
 
 # Also check for the old session folder format and migrate if needed
 OLD_SESSION_ROOT = os.path.join(DATA_DIR, "session")
@@ -85,31 +84,14 @@ def migrate_old_session():
 
 
 def load_remembered_username() -> Optional[str]:
-    """Return a remembered/last username from remember_me.json if available."""
-    try:
-        if not os.path.exists(REMEMBER_ME_FILE):
-            return None
-        with open(REMEMBER_ME_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        # if format is {username: {...}}, prefer a stored last_username key if present
-        if isinstance(data, dict):
-            if data.get("_last_username"):
-                return data.get("_last_username")
-            # if there's only one remembered username, return it
-            keys = [k for k in data.keys() if not k.startswith("_")]
-            if len(keys) == 1:
-                return keys[0]
-    except Exception as e:
-        print(f"[DEBUG] Failed to read remember_me.json: {e}")
+    """REMOVED: Remember Me feature disabled"""
     return None
-
 
 def choose_session_file():
     """
     Decide which session file to try to restore:
-    1. If remember_me contains a username, prefer that.
-    2. Else if there's only one file in data/sessions, choose it.
-    3. Else pick the most recently modified session file.
+    1. If there's only one file in data/sessions, choose it.
+    2. Else pick the most recently modified session file.
     Returns path or None.
     """
     try:
@@ -120,13 +102,6 @@ def choose_session_file():
         ]
         if not files:
             return None
-
-        remembered = load_remembered_username()
-        if remembered:
-            safe_name = safe_username_for_file(remembered)
-            candidate = os.path.join(SESSIONS_DIR, f"{safe_name}.json")
-            if os.path.exists(candidate):
-                return candidate
 
         if len(files) == 1:
             return files[0]
