@@ -487,8 +487,8 @@ class TeamLeaderPanel:
             selected=self.selected_row_index == row_index,
             on_select_changed=lambda e, data=file_data, idx=row_index: self.select_file(data, idx),
             color={
-                ft.ControlState.SELECTED: ft.Colors.BLUE_100,
-                ft.ControlState.HOVERED: ft.Colors.GREY_50,
+                ft.ControlState.SELECTED: ft.Colors.GREY_300,
+                ft.ControlState.HOVERED: ft.Colors.GREY_100,
             }
         )
     

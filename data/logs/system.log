@@ -3579,3 +3579,46 @@
 2025-08-19 13:13:19,070 - flet - DEBUG - close:183 - Disconnecting all pages...
 2025-08-19 13:13:19,070 - flet - DEBUG - on_event_async:856 - page.on_event_async: page disconnect 
 2025-08-19 13:13:19,070 - flet - DEBUG - close:189 - Shutting down thread pool...
+2025-08-19 13:14:13,591 - file_operations - INFO - log_file_operation:225 - FILE_OP - SELECT_FILE - User: kusakabe, File: DECK-01.icd, Result: SUCCESS
+2025-08-19 13:14:16,380 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"app_lifecycle_state_change","eventData":"inactive"}}
+2025-08-19 13:14:16,380 - flet - DEBUG - on_event_async:856 - page.on_event_async: page app_lifecycle_state_change inactive
+2025-08-19 13:14:16,426 - flet - DEBUG - __on_message:121 - _on_message: {"action":"updateControlProps","payload":{"props":[{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]}}
+2025-08-19 13:14:16,426 - flet - DEBUG - on_event_async:856 - page.on_event_async: page change [{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]
+2025-08-19 13:14:16,426 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"window_event","eventData":"blur"}}
+2025-08-19 13:14:16,427 - flet - DEBUG - on_event_async:856 - page.on_event_async: page window_event blur
+2025-08-19 13:14:42,534 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"app_lifecycle_state_change","eventData":"resume"}}
+2025-08-19 13:14:42,534 - flet - DEBUG - on_event_async:856 - page.on_event_async: page app_lifecycle_state_change resume
+2025-08-19 13:14:42,534 - flet - DEBUG - __on_message:121 - _on_message: {"action":"updateControlProps","payload":{"props":[{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"true","windowfullscreen":"false"}]}}
+2025-08-19 13:14:42,535 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"window_event","eventData":"focus"}}
+2025-08-19 13:14:42,535 - flet - DEBUG - on_event_async:856 - page.on_event_async: page change [{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"true","windowfullscreen":"false"}]
+2025-08-19 13:14:42,535 - flet - DEBUG - on_event_async:856 - page.on_event_async: page window_event focus
+2025-08-19 13:14:45,204 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"app_lifecycle_state_change","eventData":"inactive"}}
+2025-08-19 13:14:45,204 - flet - DEBUG - on_event_async:856 - page.on_event_async: page app_lifecycle_state_change inactive
+2025-08-19 13:14:45,225 - flet - DEBUG - __on_message:121 - _on_message: {"action":"updateControlProps","payload":{"props":[{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]}}
+2025-08-19 13:14:45,225 - flet - DEBUG - on_event_async:856 - page.on_event_async: page change [{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]
+2025-08-19 13:14:45,226 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"window_event","eventData":"blur"}}
+2025-08-19 13:14:45,226 - flet - DEBUG - on_event_async:856 - page.on_event_async: page window_event blur
+2025-08-19 13:15:00,534 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"app_lifecycle_state_change","eventData":"resume"}}
+2025-08-19 13:15:00,535 - flet - DEBUG - on_event_async:856 - page.on_event_async: page app_lifecycle_state_change resume
+2025-08-19 13:15:00,535 - flet - DEBUG - __on_message:121 - _on_message: {"action":"updateControlProps","payload":{"props":[{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"true","windowfullscreen":"false"}]}}
+2025-08-19 13:15:00,536 - flet - DEBUG - on_event_async:856 - page.on_event_async: page change [{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"true","windowfullscreen":"false"}]
+2025-08-19 13:15:00,536 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"window_event","eventData":"focus"}}
+2025-08-19 13:15:00,536 - flet - DEBUG - on_event_async:856 - page.on_event_async: page window_event focus
+2025-08-19 13:15:03,306 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"_59","eventName":"click","eventData":null}}
+2025-08-19 13:15:03,306 - flet - DEBUG - on_event_async:856 - page.on_event_async: _59 click None
+2025-08-19 13:15:03,351 - flet - DEBUG - _process_command:85 - _process_command: remove ['_85'] {}
+2025-08-19 13:15:03,351 - flet - DEBUG - _process_command:85 - _process_command: add [] {'to': '_74', 'at': '5'}
+2025-08-19 13:15:03,352 - flet - DEBUG - __send:177 - __send: {"action":"pageControlsBatch","payload":[{"action":"removeControl","payload":{"ids":["_85"]}},{"action":"addPageControls","payload":{"controls":[{"t":"datarow","i":"_141","p":"_74","c":["_142","_144","_146","_148","_150"],"at":"5","color":"{\"selected\":\"blue100\",\"hovered\":\"grey50\"}","onselectchanged":"true","selected":"false"},{"t":"datacell","i":"_142","p":"_141","c":["_143"]},{"t":"text","i":"_143","p":"_142","c":[],"overflow":"ellipsis","size":"16","tooltip":"\"DECK-01.icd\"","value":"DECK-01.icd"},{"t":"datacell","i":"_144","p":"_141","c":["_145"]},{"t":"text","i":"_145","p":"_144","c":[],"size":"16","value":"user"},{"t":"datacell","i":"_146","p":"_141","c":["_147"]},{"t":"text","i":"_147","p":"_146","c":[],"size":"16","value":"169.1 KB"},{"t":"datacell","i":"_148","p":"_141","c":["_149"]},{"t":"text","i":"_149","p":"_148","c":[],"size":"16","value":"08/19 10:05"},{"t":"datacell","i":"_150","p":"_141","c":["_151"]},{"t":"container","i":"_151","p":"_150","c":["_152"],"bgcolor":"orange","borderradius":"6","padding":"{\"l\":8,\"t\":4,\"r\":8,\"b\":4}","tooltip":"\"Status: pending\""},{"t":"text","i":"_152","p":"_151","c":[],"color":"white","n":"content","size":"12","value":"PENDING TL","weight":"bold"}],"trimIDs":[]}}]}
+2025-08-19 13:15:03,352 - flet - DEBUG - __send_loop:114 - sent to TCP: 1251
+2025-08-19 13:15:06,509 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"app_lifecycle_state_change","eventData":"inactive"}}
+2025-08-19 13:15:06,509 - flet - DEBUG - on_event_async:856 - page.on_event_async: page app_lifecycle_state_change inactive
+2025-08-19 13:15:06,528 - flet - DEBUG - __on_message:121 - _on_message: {"action":"updateControlProps","payload":{"props":[{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]}}
+2025-08-19 13:15:06,528 - flet - DEBUG - on_event_async:856 - page.on_event_async: page change [{"i":"page","windowwidth":"1280.0","windowheight":"720.0","windowtop":"10.0","windowleft":"10.0","windowminimized":"false","windowmaximized":"false","windowfocused":"false","windowfullscreen":"false"}]
+2025-08-19 13:15:06,558 - flet - DEBUG - __on_message:121 - _on_message: {"action":"pageEventFromWeb","payload":{"eventTarget":"page","eventName":"window_event","eventData":"blur"}}
+2025-08-19 13:15:06,558 - flet - DEBUG - on_event_async:856 - page.on_event_async: page window_event blur
+2025-08-19 13:15:18,959 - flet - DEBUG - exit_gracefully:141 - Gracefully terminating Flet app...
+2025-08-19 13:15:18,989 - flet_desktop - DEBUG - close_flet_view:53 - Flet View process 1324
+2025-08-19 13:15:18,989 - flet - DEBUG - close:181 - Closing connection...
+2025-08-19 13:15:18,989 - flet - DEBUG - close:183 - Disconnecting all pages...
+2025-08-19 13:15:18,990 - flet - DEBUG - on_event_async:856 - page.on_event_async: page disconnect 
+2025-08-19 13:15:18,990 - flet - DEBUG - close:189 - Shutting down thread pool...
