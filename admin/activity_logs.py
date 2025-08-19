@@ -105,7 +105,6 @@ def activity_logs(content: ft.Column, username: str):
 
         return filtered_rows
 
-    # DataTable with dashboard styling
     table = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Full Name", weight=FontWeight.BOLD, size=14)),
@@ -118,7 +117,6 @@ def activity_logs(content: ft.Column, username: str):
         ],
         rows=build_rows(),
         expand=False,
-        heading_row_color="#E4E4E4",
         data_row_color={ft.ControlState.HOVERED: "#B9B9B9"},
         column_spacing=80,
         horizontal_margin=40,
@@ -297,7 +295,7 @@ def activity_logs(content: ft.Column, username: str):
     # Top row layout with dashboard styling
     top_controls = ft.Row(
         controls=[
-            ft.Text("Activity Logs", size=22, weight=FontWeight.BOLD, color="#111111"),
+            ft.Text("ACTIVITY LOGS", size=24, weight=FontWeight.BOLD, color="#111111"),
             ft.Container(expand=True),
             search_field,
             export_button,
@@ -307,11 +305,25 @@ def activity_logs(content: ft.Column, username: str):
         spacing=10
     )
 
+    table_scroll = ft.Row(
+        controls=[table],
+        scroll=ft.ScrollMode.AUTO,   # ✅ horizontal scroll if needed
+        expand=True,
+        alignment=ft.MainAxisAlignment.CENTER   # ✅ centers the table
+    )
+
+    # Vertical scrollable area
+    table_area = ft.ListView(
+        controls=[table_scroll],
+        expand=True,
+        spacing=0,
+        padding=0,
+        auto_scroll=False
+    )
+
     # Table container with dashboard styling
     table_container = ft.Container(
-        content=ft.Column([
-            table
-        ], expand=True, scroll=ft.ScrollMode.AUTO),
+        content=table_area,
         bgcolor=PANEL_COLOR,
         border_radius=PANEL_RADIUS,
         padding=20,
@@ -320,8 +332,12 @@ def activity_logs(content: ft.Column, username: str):
             spread_radius=1,
             color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
         ),
-        expand=True
+        expand=True   # ✅ fills parent while staying centered
     )
+
+
+
+
 
     content.controls.extend([
         top_controls,
