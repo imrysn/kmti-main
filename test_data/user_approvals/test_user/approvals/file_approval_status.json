@@ -1,0 +1,20 @@
+{
+  "submission_test.pdf": {
+    "file_id": "825984c7-16bc-425f-b3a3-6faeaaae2fe2",
+    "status": "pending_team_leader",
+    "submitted_for_approval": true,
+    "submission_date": "2025-08-19T22:27:09.142227",
+    "description": "Test file submission",
+    "tags": [
+      "test",
+      "submission"
+    ],
+    "status_history": [
+      {
+        "status": "pending_team_leader",
+        "timestamp": "2025-08-19T22:27:09.142227",
+        "comment": "File submitted for team leader review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "admin@kmti.test": {
+    "username": "test_admin",
+    "password": "35c975626aab67385195d908e15780e7d78576bdb0d27fc04e2412875b79530d",
+    "fullname": "Test Administrator",
+    "role": "ADMIN",
+    "team_tags": [
+      "ALL"
+    ]
+  },
+  "teamlead@kmti.test": {
+    "username": "test_teamlead",
+    "password": "116bc5697093169e6c4670c684fd474a81e996b35ed73b5370bc5b92831ad434",
+    "fullname": "Test Team Leader",
+    "role": "TEAM_LEADER",
+    "team_tags": [
+      "ENGINEERING"
+    ]
+  },
+  "user@kmti.test": {
+    "username": "test_user",
+    "password": "03c3457f3c8c9144151936369295b66432a9136e50791e9ec06c4146cea55775",
+    "fullname": "Test User",
+    "role": "USER",
+    "team_tags": [
+      "ENGINEERING"
+    ]
+  },
+  "user2@kmti.test": {
+    "username": "test_user2",
+    "password": "bd83cd0d16f42e02e08fe575f51207daf70940fb9b623c71bf483c7bc7cd3c7e",
+    "fullname": "Test User 2",
+    "role": "USER",
+    "team_tags": [
+      "DESIGN"
+    ]
+  }
+}
