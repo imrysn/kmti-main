@@ -154,7 +154,7 @@ def restore_session(page: ft.Page) -> bool:
 def main(page: ft.Page):
     # Set window properties first
     page.title = "KMTI Data Management System"
-    page.window_icon = "assets/kmti.ico"
+    page.window_icon = "assets/fms-icon.ico"
     page.theme_mode = ft.ThemeMode.LIGHT
 
     # Ensure data directories exist using centralized path management

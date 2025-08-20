@@ -28,9 +28,9 @@ class DataPaths:
     SHARED_BASE = NETWORK_SHARED_DIR  # Old path for workflow data
     LOCAL_BASE = LOCAL_DATA_DIR
     
-    # Project directories (where approved files go)
-    PROJECT_BASE_PRIMARY = r"\\KMTI-NAS\Database\PROJECTS"  # Primary project location
-    PROJECT_BASE_FALLBACK = NETWORK_BASE  # Fallback when primary not accessible
+    # Project directories (where approved files go) - UPDATED: Using shared public as main path
+    PROJECT_BASE_PRIMARY = NETWORK_BASE  # Primary project location (changed to shared public)
+    PROJECT_BASE_FALLBACK = r"\\KMTI-NAS\Database\PROJECTS"  # Fallback when primary not accessible (old primary)
     
     # Network paths (shared data)
     @property

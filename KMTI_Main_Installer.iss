@@ -13,7 +13,7 @@ OutputBaseFilename=KMTIFMS-setup
 Compression=lzma
 SolidCompression=yes
 DisableProgramGroupPage=yes
-SetupIconFile=assets\\kmti.ico
+SetupIconFile=assets\\fms-icon.ico
 
 [Files]
 Source: "dist\main.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -22,8 +22,8 @@ Source: "data\logs\*"; DestDir: "{app}\data\logs"; Flags: ignoreversion recurses
 Source: "data\config.json"; DestDir: "{app}\data"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\KMTI File Management System"; Filename: "{app}\main.exe"
-Name: "{userdesktop}\KMTI File Management System"; Filename: "{app}\main.exe"; Tasks: desktopicon
+Name: "{group}\KMTI File Management System"; Filename: "{app}\main.exe"; IconFilename: "{app}\assets\fms-icon.ico"
+Name: "{userdesktop}\KMTI File Management System"; Filename: "{app}\KMTI File Management System.exe"; IconFilename: "{app}\assets\fms-icon.ico"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
