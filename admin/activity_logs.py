@@ -312,15 +312,15 @@ def activity_logs(content: ft.Column, username: str):
             [
                 ft.Row(
                     [table],
-                    scroll=ft.ScrollMode.AUTO,  # Horizontal scroll for wide tables
+                    scroll=ft.ScrollMode.AUTO,  
                     expand=True
                 )
             ],
-            scroll=ft.ScrollMode.AUTO,  # Vertical scroll for many rows
+            scroll=ft.ScrollMode.AUTO, 
             expand=True
         ),
         expand=True,
-        height=500,  # Fixed height to ensure only table scrolls
+        height=800,  
         padding=10
     )
 
@@ -335,7 +335,7 @@ def activity_logs(content: ft.Column, username: str):
             spread_radius=1,
             color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
         ),
-        expand=True   # ✅ fills parent while staying centered
+        expand=True  
     )
 
 

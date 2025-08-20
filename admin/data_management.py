@@ -14,7 +14,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 BASE_DIR = get_base_dir()
-INDEX_CACHE_PATH = Path("cache/index.json")
+# Move index cache to network path to avoid rebuilding when app is installed on another computer
+INDEX_CACHE_PATH = Path(r"\\KMTI-NAS\Shared\data\cache\index.json")
 
 # Global index
 global_file_index = []
@@ -37,91 +38,77 @@ loading_progress = None
 
 def show_loading_overlay(page: ft.Page, show: bool, progress: float = None):
     """
-    Show or hide a full-screen spinner overlay with progress.
+    Disabled loading overlay to prevent continuous loading issues.
+    Index building now happens silently in background.
     """
-    global loading_overlay, loading_text, loading_progress
-
-    if loading_overlay is None:
-        loading_progress = ft.ProgressBar(width=300, value=0)
-        loading_text = ft.Text("Indexing...")
-        loading_overlay = ft.Container(
-            content=ft.Column(
-                [
-                    loading_text,
-                    loading_progress,
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            alignment=ft.alignment.center,
-            bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLACK),
-            visible=False,
-            expand=True,
-        )
-        page.overlay.append(loading_overlay)
-
-    if progress is not None:
-        loading_progress.value = progress
-        loading_text.value = f"Indexing... {int(progress*100)}%"
-
-    loading_overlay.visible = show
-    page.update()
+    # Removed loading overlay to avoid continuous loading overlay issues
+    # Index building happens silently in background
+    pass
 
 
 def build_index(base_dir: Path, page: Optional[ft.Page] = None):
     """
     Scans BASE_DIR and builds a list of all files and folders.
-    Shows spinner while processing.
+    Runs silently in background without loading overlay.
     """
     print(f"[DEBUG] Building index for {base_dir} ...")
     start_time = time.time()
     index = []
 
-    # Count total for progress
-    total_items = sum(len(files) + len(dirs) for _, dirs, files in os.walk(base_dir))
-    processed = 0
-
-    if page:
-        show_loading_overlay(page, True, 0)
-
+    # Build index without loading overlay to avoid continuous loading issues
     for root, dirs, files in os.walk(base_dir):
         for d in dirs:
             index.append(str(Path(root) / d))
-            processed += 1
         for f in files:
             index.append(str(Path(root) / f))
-            processed += 1
-
-        if page and total_items > 0:
-            progress = processed / total_items
-            show_loading_overlay(page, True, progress)
 
     elapsed = time.time() - start_time
     print(f"[DEBUG] Index built with {len(index)} entries in {elapsed:.2f} seconds.")
-
-    if page:
-        show_loading_overlay(page, False)
 
     return index
 
 
 def save_index_to_cache():
     with index_lock:
-        os.makedirs(INDEX_CACHE_PATH.parent, exist_ok=True)
-        with open(INDEX_CACHE_PATH, "w", encoding="utf-8") as f:
-            json.dump(global_file_index, f)
-    print("[DEBUG] Index saved to cache/index.json")
+        try:
+            # Ensure network cache directory exists
+            os.makedirs(INDEX_CACHE_PATH.parent, exist_ok=True)
+            with open(INDEX_CACHE_PATH, "w", encoding="utf-8") as f:
+                json.dump(global_file_index, f)
+            print(f"[DEBUG] Index saved to network cache: {INDEX_CACHE_PATH}")
+        except Exception as e:
+            print(f"[WARNING] Failed to save to network cache: {e}")
+            # Fallback to local cache
+            local_cache_path = Path("cache/index.json")
+            os.makedirs(local_cache_path.parent, exist_ok=True)
+            with open(local_cache_path, "w", encoding="utf-8") as f:
+                json.dump(global_file_index, f)
+            print(f"[DEBUG] Index saved to local fallback cache: {local_cache_path}")
 
 
 def load_index_from_cache():
+    # Try network cache first
     if INDEX_CACHE_PATH.exists():
         try:
             with open(INDEX_CACHE_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                print(f"[DEBUG] Loaded {len(data)} entries from cache/index.json")
+                print(f"[DEBUG] Loaded {len(data)} entries from network cache: {INDEX_CACHE_PATH}")
                 return data
         except Exception as e:
-            print(f"[ERROR] Failed to load index cache: {e}")
+            print(f"[WARNING] Failed to load network cache: {e}")
+    
+    # Fallback to local cache
+    local_cache_path = Path("cache/index.json")
+    if local_cache_path.exists():
+        try:
+            with open(local_cache_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                print(f"[DEBUG] Loaded {len(data)} entries from local cache: {local_cache_path}")
+                return data
+        except Exception as e:
+            print(f"[ERROR] Failed to load local cache: {e}")
+    
+    print("[INFO] No cache found, will build new index")
     return []
 
 
