@@ -42,13 +42,7 @@ def save_config(config):
 def system_settings(content: ft.Column, username: Optional[str]):
     content.controls.clear()
 
-    # Track current section
-    state = {"selected": "Teams"}
-    right_panel = ft.Container(expand=True, bgcolor="white", border_radius=12, padding=20)
-
-    # ------------ Pages ------------
-
-    # --- Team Management Page ---
+    # ------------ Team Management Section ------------
     team_table = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Team")),
@@ -56,7 +50,7 @@ def system_settings(content: ft.Column, username: Optional[str]):
         ],
         rows=[]
     )
-    new_team_field = ft.TextField(label="New Team", width=250)
+    new_team_field = ft.TextField(label=" Add New Team", width=250)
 
     def refresh_team_table():
         team_table.rows.clear()
@@ -134,7 +128,6 @@ def system_settings(content: ft.Column, username: Optional[str]):
 
         content.update()
 
-
     def add_team(e):
         name = new_team_field.value.strip()
         if not name:
@@ -143,159 +136,175 @@ def system_settings(content: ft.Column, username: Optional[str]):
         if name not in teams:
             teams.append(name)
             save_teams(teams)
-            log_activity(username, f"Added new team '{name}'")
+            log_activity(username, f"'{name}' Team Added")
         new_team_field.value = ""
         refresh_team_table()
 
-    def team_page():
-        refresh_team_table()
-        return ft.Column([
-                ft.Row(
-                    [
-                        ft.Text("Teams", size=22, weight=FontWeight.BOLD),
-                        ft.Container(expand=True),
-                        new_team_field,
-                        ft.ElevatedButton("Add Team", on_click=add_team),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                ft.Divider(),
-                team_table
-            ], spacing=20, expand=True)
+    # Initialize team table
+    refresh_team_table()
 
-    # --- Directory Settings Page ---
-    def directory_page():
-        config = load_config()
-        current_path = config.get("base_dir", "")
+    # ------------ Directory Settings Section ------------
+    config = load_config()
+    current_path = config.get("base_dir", "")
 
-        path_field = ft.TextField(
-            label="Base Directory Path",
-            value=current_path,
-            expand=True
-        )
+    path_field = ft.TextField(
+        label="Base Directory Path",
+        value=current_path,
+        expand=True
+    )
 
-        def browse_folder(_):
-            def on_result(e: ft.FilePickerResultEvent):
-                if e.path:
-                    path_field.value = e.path
-                    path_field.update()
-            file_picker = ft.FilePicker(on_result=on_result)
-            content.page.overlay.append(file_picker)
-            content.page.update()
-            file_picker.get_directory_path()
+    def browse_folder(_):
+        def on_result(e: ft.FilePickerResultEvent):
+            if e.path:
+                path_field.value = e.path
+                path_field.update()
+        file_picker = ft.FilePicker(on_result=on_result)
+        content.page.overlay.append(file_picker)
+        content.page.update()
+        file_picker.get_directory_path()
 
-        def save_directory(_):
-            new_path = path_field.value.strip()
-            if new_path and os.path.exists(new_path):
-                config["base_dir"] = new_path
-                save_config(config)
-                log_activity(username, f"Changed base directory to {new_path}")
-                dlg = ft.AlertDialog(
-                    title=ft.Text("Directory Saved"),
-                    content=ft.Text("Base directory updated successfully.")
-                )
-                content.page.dialog = dlg
-                dlg.open = True
-                content.page.update()
-            else:
-                dlg = ft.AlertDialog(
-                    title=ft.Text("Invalid Path"),
-                    content=ft.Text("The entered path does not exist.")
-                )
-                content.page.dialog = dlg
-                dlg.open = True
-                content.page.update()
-
-        return ft.Column([
-            ft.Text("Base Directory", size=22, weight=FontWeight.BOLD),
-            ft.Divider(),
-            ft.Row([
-                path_field,
-                ft.ElevatedButton("Browse", on_click=browse_folder),
-                ft.ElevatedButton("Save", on_click=save_directory),
-            ]),
-            ft.Text(
-                "This directory will be used as the root for file management.",
-                size=14,
-                italic=True,
+    def save_directory(_):
+        new_path = path_field.value.strip()
+        if new_path and os.path.exists(new_path):
+            config["base_dir"] = new_path
+            save_config(config)
+            log_activity(username, f"Changed base directory to {new_path}")
+            dlg = ft.AlertDialog(
+                title=ft.Text("Directory Saved"),
+                content=ft.Text("Base directory updated successfully.")
             )
-        ], spacing=20, expand=True)
+            content.page.dialog = dlg
+            dlg.open = True
+            content.page.update()
+        else:
+            dlg = ft.AlertDialog(
+                title=ft.Text("Invalid Path"),
+                content=ft.Text("The entered path does not exist.")
+            )
+            content.page.dialog = dlg
+            dlg.open = True
+            content.page.update()
 
-    # --- About Page ---
-    def about_page():
-        return ft.Column([
-            ft.Text("About KMTI Data Management System", size=22, weight=FontWeight.BOLD),
-            ft.Divider(),
-            ft.Text("Version: 1.0.0"),
-            ft.Text("Developed by: OJT Team"),
-            ft.Text("Description: Local File System Data Management System"),
-        ], spacing=20, expand=True)
-
-    # ------------ Navigation ------------
-    sections = [
-        "Teams",
-        "Directory",
-        "About"
-    ]
-
-    sidebar_buttons = {}
-
-    def show_section(section_name):
-        state["selected"] = section_name
-
-        for sec, cont in sidebar_buttons.items():
-            cont.bgcolor = "#007BFFFF" if sec == section_name else "#F5F5F7"
-
-        if section_name == "Teams":
-            right_panel.content = team_page()
-        elif section_name == "Directory":
-            right_panel.content = directory_page()
-        elif section_name == "About":
-            right_panel.content = about_page()
-
-        content.update()
-
-    # Sidebar with hover effects
-    sidebar_column = ft.Column(
-        spacing=5,
-        horizontal_alignment=ft.CrossAxisAlignment.START,
-        expand=True,
-    )
-
-    for s in sections:
-        is_selected = (s == state["selected"])
-        btn = ft.TextButton(
-            text=s,
-            style=ft.ButtonStyle(
-                color={ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                       ft.ControlState.SELECTED: ft.Colors.WHITE,
-                       ft.ControlState.HOVERED: ft.Colors.WHITE,
-                       ft.ControlState.PRESSED: ft.Colors.WHITE},
-                bgcolor={ft.ControlState.HOVERED: "#339CFF",
-                         ft.ControlState.SELECTED: "#007BFF"},
+    # ------------ Main Layout (Single Scrollable Page) ------------
+    main_content = ft.Column(
+        controls=[
+            # Page Header
+            ft.Container(
+                content=ft.Text("System Settings", size=28, weight=FontWeight.BOLD),
+                margin=ft.margin.only(bottom=50)
             ),
-            on_click=lambda e, sec=s: show_section(sec),
-        )
-        container = ft.Container(
-            content=btn,
-            border_radius=5,
-            padding=5,
-            width=180,
-            bgcolor="#007BFFFF" if is_selected else "#F5F5F7",
-        )
-        sidebar_buttons[s] = container
-        sidebar_column.controls.append(container)
+            
+            # Team Management Section
+            ft.Container(
+                content=ft.Column([
+                    ft.Text("Team Management", size=22, weight=FontWeight.BOLD),
+                    ft.Divider(),
+                    ft.Row(
+                        [
+                            new_team_field,
+                            ft.ElevatedButton("Add Team", on_click=add_team,
+                                              style=ft.ButtonStyle(
+                                                bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                                        ft.ControlState.HOVERED: ft.Colors.BLUE},
+                                                color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                                                        ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                                side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE)},
+                                                shape=ft.RoundedRectangleBorder(radius=5))),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    ft.Container(height=10),  
+                    ft.Container(
+                        content=team_table,
+                        alignment=ft.alignment.center
+                    )
+                ], spacing=10),
+                bgcolor="white",
+                border_radius=12,
+                padding=20,
+                margin=ft.margin.only(bottom=50),
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
 
-    sidebar = ft.Container(
-        bgcolor="#F5F5F7",
-        width=200,
-        content=sidebar_column,
-        padding=20,
+            ),
+            
+            # Directory Settings Section
+            ft.Container(
+                content=ft.Column([
+                    ft.Text("Base Directory Settings", size=22, weight=FontWeight.BOLD),
+                    ft.Divider(),
+                    ft.Row([
+                        path_field,
+                        ft.ElevatedButton("Browse", on_click=browse_folder,
+                                          style=ft.ButtonStyle(
+                                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                                    ft.ControlState.HOVERED: ft.Colors.BLUE},
+                                            color={ft.ControlState.DEFAULT: ft.Colors.BLUE,
+                                                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.BLUE)},
+                                            shape=ft.RoundedRectangleBorder(radius=5))),
+                        ft.ElevatedButton("Save", on_click=save_directory,
+                                          style=ft.ButtonStyle(
+                                            bgcolor={ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                                                    ft.ControlState.HOVERED: ft.Colors.GREEN},
+                                            color={ft.ControlState.DEFAULT: ft.Colors.GREEN,
+                                                    ft.ControlState.HOVERED: ft.Colors.WHITE},
+                                            side={ft.ControlState.DEFAULT: ft.BorderSide(1, ft.Colors.GREEN)},
+                                            shape=ft.RoundedRectangleBorder(radius=5))),
+                    ]),
+                    ft.Container(height=10),  # Spacer
+                    ft.Text(
+                        "This directory will be used as the root for file management.",
+                        size=14,
+                        italic=True,
+                        color=ft.Colors.GREY_600
+                    )
+                ], spacing=10),
+                bgcolor="white",
+                border_radius=12,
+                padding=20,
+                margin=ft.margin.only(bottom=50),
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
+            ),
+            
+            # About Section
+            ft.Container(
+                content=ft.Column([
+                    ft.Text("About KMTI File Management System", size=22, weight=FontWeight.BOLD),
+                    ft.Divider(),
+                    ft.Text("Version: 1.0.0", size=16),
+                    ft.Text("Developed by: OJT Team", size=16),
+                    ft.Text("Description: Local File System Data Management System", size=16),
+                ], spacing=15),
+                bgcolor="white",
+                border_radius=12,
+                padding=20,
+                margin=ft.margin.only(bottom=50),
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
+            ),
+        ],
+        spacing=0,
+        scroll=ft.ScrollMode.AUTO, 
+        expand=True
     )
 
-    layout = ft.Row([sidebar, right_panel], expand=True)
-    content.controls.append(layout)
+    page_container = ft.Container(
+        content=main_content,
+        padding=50,
+        margin=ft.margin.symmetric(horizontal=250), 
+        expand=True
+    )
 
-    # Initial page
-    show_section(state["selected"])
+    content.controls.append(page_container)
     content.update()

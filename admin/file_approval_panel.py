@@ -204,7 +204,12 @@ class EnhancedFileApprovalPanel:
             width=120,
             height=80,
             alignment=ft.alignment.center,
-            border=ft.border.all(2, ft.Colors.GREY_200)
+            border=ft.border.all(2, ft.Colors.GREY_200),
+            shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
         )
     
     def _create_filters_section(self) -> ft.Container:
@@ -270,7 +275,6 @@ class EnhancedFileApprovalPanel:
                             color=ft.Colors.GREY_600
                         ),
                         padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                        bgcolor=ft.Colors.GREY_100,
                         border_radius=5
                     ),
 
@@ -323,7 +327,12 @@ class EnhancedFileApprovalPanel:
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
                 padding=20,
-                expand=True
+                expand=True,
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
             ),
             
             # Right: Preview and actions - individually scrollable
@@ -336,7 +345,12 @@ class EnhancedFileApprovalPanel:
                 border_radius=8,
                 border=ft.border.all(1, ft.Colors.GREY_300),
                 padding=10,
-                expand=True
+                expand=True,
+                shadow=ft.BoxShadow(
+                    blur_radius=8,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    )
             )
         ], expand=True)
     
