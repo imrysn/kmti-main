@@ -6,7 +6,7 @@ from datetime import datetime
 from ..services.approval_file_service import ApprovalFileService
 from .shared_ui import SharedUI
 from .dialogs import DialogManager
-from typing import Dict
+from typing import Dict, Optional
 
 class ApprovalFilesView:
     """Files view component for approval system with FILE CARD LAYOUT DESIGN"""
@@ -29,11 +29,132 @@ class ApprovalFilesView:
         self.submissions_container_ref = None
         self.stats_ref = None
         self.file_count_text_ref = None
+        self.scroll_container_ref = None  # Reference for smooth scrolling
+        
+        # File highlighting support
+        self.highlighted_filename = None
+        self.highlight_timer = None
     
     def set_navigation(self, navigation):
         """Set navigation functions"""
         self.navigation = navigation
         self.shared.set_navigation(navigation)
+    
+    def set_highlighted_file(self, filename: str):
+        """Set file to be highlighted and start auto-clear timer with smooth scrolling"""
+        print(f"[DEBUG] Setting highlighted file: {filename}")
+        self.highlighted_filename = filename
+        
+        # Clear any existing timer
+        if self.highlight_timer:
+            self.highlight_timer.cancel()
+        
+        # Set timer to clear highlight after 5 seconds
+        def clear_highlight():
+            time.sleep(5)
+            print(f"[DEBUG] Clearing highlight for: {filename}")
+            self.highlighted_filename = None
+            self.refresh_content()
+        
+        self.highlight_timer = threading.Timer(5.0, clear_highlight)
+        self.highlight_timer.start()
+        
+        # Scroll to highlighted file after a short delay (let content render first)
+        def scroll_to_file():
+            time.sleep(0.5)  # Wait for content to render
+            self.scroll_to_highlighted_file()
+        
+        scroll_thread = threading.Timer(0.5, scroll_to_file)
+        scroll_thread.start()
+    
+    def scroll_to_highlighted_file(self):
+        """Smooth scroll to the highlighted file with animation"""
+        if not self.highlighted_filename or not self.scroll_container_ref:
+            return
+            
+        try:
+            print(f"[DEBUG] Scrolling to highlighted file: {self.highlighted_filename}")
+            
+            # Get all submissions to calculate position
+            submissions = self.approval_service.get_user_submissions()
+            submissions = sorted(submissions, key=lambda x: x.get("submission_date", ""), reverse=True)
+            
+            if not submissions:
+                return
+                
+            # Find the highlighted file position
+            highlighted_index = -1
+            current_position = 0
+            
+            # Separate by status to match the display order
+            status_groups = self.separate_submissions_by_status(submissions)
+            sections = [
+                ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
+                ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
+                ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
+            ]
+            
+            # Calculate approximate position based on layout
+            for status_key, title, icon, color in sections:
+                status_submissions = status_groups.get(status_key, [])
+                if status_submissions:
+                    # Add height for section header (~50px)
+                    current_position += 50
+                    
+                    # Check each file in this section
+                    for i, submission in enumerate(status_submissions):
+                        if submission.get("original_filename") == self.highlighted_filename:
+                            highlighted_index = current_position
+                            break
+                        # Add height for each file card (~90px including margin)
+                        current_position += 90
+                    
+                    if highlighted_index >= 0:
+                        break
+                    
+                    # Add spacing between sections
+                    current_position += 20
+            
+            if highlighted_index >= 0:
+                # Scroll to the calculated position with offset for better visibility
+                scroll_offset = max(0, highlighted_index - 100)  # 100px offset from top
+                
+                # Try multiple scrolling methods for compatibility
+                try:
+                    # Method 1: Try modern scroll_to with duration (smooth animation)
+                    scroll_column = self.scroll_container_ref.content.controls[0]
+                    if hasattr(scroll_column, 'scroll_to'):
+                        scroll_column.scroll_to(offset=scroll_offset, duration=800)
+                        print(f"[DEBUG] Method 1: Smooth scrolled to position: {scroll_offset}")
+                    elif hasattr(self.scroll_container_ref.content, 'scroll_to'):
+                        self.scroll_container_ref.content.scroll_to(offset=scroll_offset, duration=800)
+                        print(f"[DEBUG] Method 2: Smooth scrolled to position: {scroll_offset}")
+                    else:
+                        # Method 3: Try setting scroll property directly
+                        if hasattr(scroll_column, 'scroll'):
+                            scroll_column.scroll = scroll_offset
+                            print(f"[DEBUG] Method 3: Direct scrolled to position: {scroll_offset}")
+                        else:
+                            print(f"[DEBUG] Method 4: Fallback - highlighting without scrolling")
+                    
+                except Exception as scroll_error:
+                    print(f"[DEBUG] Scroll method failed: {scroll_error}")
+                
+                self.page.update()
+            else:
+                print(f"[DEBUG] File {self.highlighted_filename} not found for scrolling")
+                
+        except Exception as e:
+            print(f"[DEBUG] Error scrolling to file: {e}")
+            # Graceful fallback - just ensure content is visible
+            try:
+                self.page.update()
+            except:
+                pass
+    
+    def is_file_highlighted(self, filename: str) -> bool:
+        """Check if file should be highlighted"""
+        return self.highlighted_filename and self.highlighted_filename == filename
     
     def get_file_type_info(self, filename: str):
         """Get file type icon and color based on filename extension"""
@@ -72,16 +193,18 @@ class ApprovalFilesView:
         status_map = {
             "pending": (ft.Icons.SCHEDULE, ft.Colors.ORANGE, "Pending Review"),
             "approved": (ft.Icons.VERIFIED, ft.Colors.GREEN, "Approved"),
-            "rejected": (ft.Icons.CANCEL, ft.Colors.RED, "Rejected"),
-            "changes_requested": (ft.Icons.EDIT, ft.Colors.BLUE, "Changes Requested")
+            "rejected": (ft.Icons.CANCEL, ft.Colors.RED, "Rejected")
         }
         return status_map.get(status, (ft.Icons.HELP, ft.Colors.GREY, "Unknown"))
     
     def create_submission_card(self, submission: Dict):
-        """Create a file card similar to Files view layout"""
+        """Create a file card similar to Files view layout - WITH HIGHLIGHTING SUPPORT"""
         filename = submission.get("original_filename", "Unknown")
         status = submission.get("status", "pending")
         file_size = submission.get("file_size", 0)
+        
+        # Check if this file should be highlighted
+        is_highlighted = self.is_file_highlighted(filename)
         
         # Get file type info
         icon, icon_color, badge_color = self.get_file_type_info(filename)
@@ -89,23 +212,35 @@ class ApprovalFilesView:
         # Get status details
         status_icon, status_color, status_text = self.get_status_details(status)
         
-        # File icon container
+        # File icon container - Enhanced shadow for highlighted files
         file_icon = ft.Container(
             content=ft.Icon(icon, color=icon_color, size=24),
             bgcolor=badge_color,
             width=50,
             height=50,
             border_radius=8,
-            alignment=ft.alignment.center
+            alignment=ft.alignment.center,
+            shadow=ft.BoxShadow(
+                spread_radius=3 if is_highlighted else 1,
+                blur_radius=8 if is_highlighted else 3,
+                color=ft.Colors.BLUE_400 if is_highlighted else ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            ) if is_highlighted else ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=3,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            )
         )
         
-        # File info
+        # File info - Bold text and blue color for highlighted files
         file_name_text = ft.Text(
             filename, 
             size=14,
-            weight=ft.FontWeight.W_500, 
+            weight=ft.FontWeight.BOLD if is_highlighted else ft.FontWeight.W_500, 
             overflow=ft.TextOverflow.ELLIPSIS,
-            max_lines=1
+            max_lines=1,
+            color=ft.Colors.BLUE_700 if is_highlighted else ft.Colors.BLACK87
         )
         
         file_size_text = ft.Text(
@@ -155,8 +290,8 @@ class ApprovalFilesView:
             )
             action_buttons.append(withdraw_button)
             
-        elif status in ["rejected", "changes_requested"]:
-            # Resubmit button
+        elif status == "rejected":
+            # Resubmit button (only for rejected, not changes_requested)
             def handle_resubmit(e, sub=submission):
                 e.control.page.update()
                 self.show_resubmit_dialog(sub)
@@ -223,18 +358,21 @@ class ApprovalFilesView:
             action_buttons_container
         ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER)
         
-        # Final card container
+        # Final card container - with highlighting support
         return ft.Container(
             content=main_row,
             padding=ft.padding.all(20),
             margin=ft.margin.only(bottom=10),
-            bgcolor=ft.Colors.WHITE,
-            border=ft.border.all(1, ft.Colors.GREY_200),
+            bgcolor=ft.Colors.BLUE_50 if is_highlighted else ft.Colors.WHITE,
+            border=ft.border.all(
+                2 if is_highlighted else 1, 
+                ft.Colors.BLUE_400 if is_highlighted else ft.Colors.GREY_200
+            ),
             border_radius=12,
             shadow=ft.BoxShadow(
-                spread_radius=0,
-                blur_radius=4,
-                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                spread_radius=2 if is_highlighted else 0,
+                blur_radius=8 if is_highlighted else 4,
+                color=ft.Colors.BLUE_200 if is_highlighted else ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
                 offset=ft.Offset(0, 2)
             ),
             ink=False
@@ -245,13 +383,11 @@ class ApprovalFilesView:
         pending_submissions = [s for s in submissions if s.get("status") == "pending"]
         approved_submissions = [s for s in submissions if s.get("status") == "approved"]
         rejected_submissions = [s for s in submissions if s.get("status") == "rejected"]
-        changes_requested = [s for s in submissions if s.get("status") == "changes_requested"]
         
         return {
             "pending": pending_submissions,
             "approved": approved_submissions,
-            "rejected": rejected_submissions,
-            "changes_requested": changes_requested
+            "rejected": rejected_submissions
         }
     
     def create_section_header(self, title: str, count: int, icon: str, color: str):
@@ -296,7 +432,6 @@ class ApprovalFilesView:
         pending_count = len([s for s in submissions if s.get("status") == "pending"])
         approved_count = len([s for s in submissions if s.get("status") == "approved"])
         rejected_count = len([s for s in submissions if s.get("status") == "rejected"])
-        changes_count = len([s for s in submissions if s.get("status") == "changes_requested"])
         
         def create_stat_card(title: str, count: int, icon: str, color: str):
             return ft.Container(
@@ -321,7 +456,6 @@ class ApprovalFilesView:
         self.stats_ref = ft.Row([
             create_stat_card("Pending", pending_count, ft.Icons.SCHEDULE, ft.Colors.ORANGE),
             create_stat_card("Approved", approved_count, ft.Icons.CHECK_CIRCLE, ft.Colors.GREEN),
-            create_stat_card("Changes Req.", changes_count, ft.Icons.EDIT, ft.Colors.BLUE),
             create_stat_card("Rejected", rejected_count, ft.Icons.CANCEL, ft.Colors.RED)
         ], spacing=15, alignment=ft.MainAxisAlignment.CENTER)
         
@@ -330,8 +464,12 @@ class ApprovalFilesView:
             margin=ft.margin.only(bottom=25)
         )
 
-    def create_submissions_list(self):
-        """Create submissions list with card-based design similar to Files view"""
+    def create_submissions_list(self, highlighted_filename: Optional[str] = None):
+        """Create submissions list with card-based design similar to Files view - WITH HIGHLIGHTING & SCROLLING SUPPORT"""
+        # Set highlighted file if provided
+        if highlighted_filename:
+            self.set_highlighted_file(highlighted_filename)
+        
         submissions = self.approval_service.get_user_submissions()
         
         # Sort submissions by submission date (newest first)
@@ -349,15 +487,16 @@ class ApprovalFilesView:
             # Separate by status
             status_groups = self.separate_submissions_by_status(submissions)
             
-            # Add sections in order: Pending, Changes Requested, Rejected, Approved
+            # Add sections in order: Pending, Rejected, Approved
             sections = [
                 ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
-                ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
                 ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
                 ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
             ]
             
             sections_added = 0
+            highlighted_file_found = False
+            
             for status_key, title, icon, color in sections:
                 status_submissions = status_groups.get(status_key, [])
                 if status_submissions:
@@ -371,9 +510,30 @@ class ApprovalFilesView:
                     
                     # Add submission cards
                     for submission in status_submissions:
-                        file_cards.append(self.create_submission_card(submission))
+                        card = self.create_submission_card(submission)
+                        file_cards.append(card)
+                        
+                        # Check if highlighted file was found
+                        if self.is_file_highlighted(submission.get("original_filename", "")):
+                            highlighted_file_found = True
                     
                     sections_added += 1
+            
+            # If highlighted file not found, show message
+            if self.highlighted_filename and not highlighted_file_found:
+                info_message = ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.INFO, color=ft.Colors.ORANGE_600, size=20),
+                        ft.Text(f"File '{self.highlighted_filename}' not found in submissions", 
+                               size=14, color=ft.Colors.ORANGE_700)
+                    ], spacing=10),
+                    bgcolor=ft.Colors.ORANGE_50,
+                    border=ft.border.all(1, ft.Colors.ORANGE_200),
+                    border_radius=8,
+                    padding=15,
+                    margin=ft.margin.only(bottom=20)
+                )
+                file_cards.insert(0, info_message)
         else:
             file_cards.append(self.create_empty_state())
         
@@ -382,6 +542,18 @@ class ApprovalFilesView:
         self.submissions_container_ref = ft.Container(
             content=scrollable_content,
             expand=True
+        )
+        
+        # Create scroll container with reference for smooth scrolling
+        self.scroll_container_ref = ft.Container(
+            content=ft.Column([
+                self.submissions_container_ref
+            ], scroll=ft.ScrollMode.AUTO, expand=True),
+            expand=True,
+            bgcolor=ft.Colors.GREY_50,
+            padding=ft.padding.all(15),
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200)
         )
         
         # Header container
@@ -409,17 +581,8 @@ class ApprovalFilesView:
             
             header_container,
             
-            # Files list container
-            ft.Container(
-                content=ft.Column([
-                    self.submissions_container_ref
-                ], scroll=ft.ScrollMode.AUTO, expand=True),
-                expand=True,
-                bgcolor=ft.Colors.GREY_50,
-                padding=ft.padding.all(15),
-                border_radius=12,
-                border=ft.border.all(1, ft.Colors.GREY_200)
-            )
+            # Files list container with scroll reference
+            self.scroll_container_ref
         ], expand=True)
         
         return ft.Container(
@@ -441,14 +604,12 @@ class ApprovalFilesView:
             pending_count = len([s for s in submissions if s.get("status") == "pending"])
             approved_count = len([s for s in submissions if s.get("status") == "approved"])
             rejected_count = len([s for s in submissions if s.get("status") == "rejected"])
-            changes_count = len([s for s in submissions if s.get("status") == "changes_requested"])
             
             # Update stat cards
-            if len(self.stats_ref.controls) >= 4:
+            if len(self.stats_ref.controls) >= 3:
                 self.stats_ref.controls[0].content.controls[1].value = str(pending_count)  # Pending count
                 self.stats_ref.controls[1].content.controls[1].value = str(approved_count)  # Approved count
-                self.stats_ref.controls[2].content.controls[1].value = str(changes_count)  # Changes count  
-                self.stats_ref.controls[3].content.controls[1].value = str(rejected_count)  # Rejected count
+                self.stats_ref.controls[2].content.controls[1].value = str(rejected_count)  # Rejected count
         
         # Refresh submissions list
         if self.submissions_container_ref:
@@ -469,7 +630,6 @@ class ApprovalFilesView:
                 status_groups = self.separate_submissions_by_status(submissions)
                 sections = [
                     ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
-                    ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
                     ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
                     ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
                 ]
@@ -493,6 +653,11 @@ class ApprovalFilesView:
             
             # Update container content
             self.submissions_container_ref.content = ft.Column(file_cards, spacing=0)
+            
+            # Update scroll container content if it exists
+            if self.scroll_container_ref:
+                self.scroll_container_ref.content.controls[0] = self.submissions_container_ref
+            
             self.page.update()
     
     def confirm_withdraw(self, filename: str):
@@ -551,7 +716,7 @@ class ApprovalFilesView:
         )
     
     def show_submission_details(self, submission: Dict):
-        """Show detailed view of submission"""
+        """Show detailed view of submission with LARGER TEXT SIZES"""
         # Format status history
         history_items = []
         for entry in submission.get("status_history", []):
@@ -565,7 +730,7 @@ class ApprovalFilesView:
             
             history_items.append(
                 ft.Container(
-                    content=ft.Text(f"• {entry['status'].upper()}{admin_info} - {timestamp}{comment}", size=11),
+                    content=ft.Text(f"• {entry['status'].upper()}{admin_info} - {timestamp}{comment}", size=15),  # Increased from 13 to 15
                     margin=ft.margin.only(bottom=5)
                 )
             )
@@ -581,8 +746,8 @@ class ApprovalFilesView:
             comment_items.append(
                 ft.Container(
                     content=ft.Column([
-                        ft.Text(f"{comment['admin_id']} - {timestamp}", size=10, weight=ft.FontWeight.BOLD),
-                        ft.Text(comment['comment'], size=11)
+                        ft.Text(f"{comment['admin_id']} - {timestamp}", size=14, weight=ft.FontWeight.BOLD),  # Increased from 12 to 14
+                        ft.Text(comment['comment'], size=15)  # Increased from 13 to 15
                     ], spacing=5),
                     bgcolor=ft.Colors.GREY_50,
                     border_radius=5,
@@ -591,33 +756,44 @@ class ApprovalFilesView:
                 )
             )
         
-        # Create details content
+        # Create details content with larger text sizes
         details_content = ft.Column([
-            ft.Text(f"File: {submission['original_filename']}", size=14, weight=ft.FontWeight.BOLD),
-            ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=12),
-            ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=12),
+            ft.Text(f"File: {submission['original_filename']}", size=18, weight=ft.FontWeight.BOLD),  # Increased from 16 to 18
+            ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=16),  # Increased from 14 to 16
+            ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=16),  # Increased from 14 to 16
+            ft.Container(height=10),  # Added spacing
             ft.Divider(),
-            ft.Text("Description:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text(submission.get("description", "No description"), size=11),
-            ft.Text("Tags:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text(", ".join(submission.get("tags", [])) or "None", size=11),
+            ft.Container(height=5),  # Added spacing
+            ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),  # Increased from 14 to 16
+            ft.Text(submission.get("description", "No description"), size=15),  # Increased from 13 to 15
+            ft.Container(height=10),  # Added spacing
+            ft.Text("Tags:", size=16, weight=ft.FontWeight.BOLD),  # Increased from 14 to 16
+            ft.Text(", ".join(submission.get("tags", [])) or "None", size=15),  # Increased from 13 to 15
+            ft.Container(height=10),  # Added spacing
             ft.Divider(),
-            ft.Text("Status History:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Column(history_items, spacing=0) if history_items else ft.Text("No history available", size=11, color=ft.Colors.GREY_500),
+            ft.Container(height=5),  # Added spacing
+            ft.Text("Status History:", size=16, weight=ft.FontWeight.BOLD),  # Increased from 14 to 16
+            ft.Container(height=5),  # Added spacing
+            ft.Column(history_items, spacing=0) if history_items else ft.Text("No history available", size=15, color=ft.Colors.GREY_500),  # Increased from 13 to 15
+            ft.Container(height=10) if comment_items else ft.Container(),  # Added spacing
             ft.Divider() if comment_items else ft.Container(),
-            ft.Text("Admin Comments:", size=12, weight=ft.FontWeight.BOLD) if comment_items else ft.Container(),
+            ft.Container(height=5) if comment_items else ft.Container(),  # Added spacing
+            ft.Text("Admin Comments:", size=16, weight=ft.FontWeight.BOLD) if comment_items else ft.Container(),  # Increased from 14 to 16
+            ft.Container(height=5) if comment_items else ft.Container(),  # Added spacing
             ft.Column(comment_items, spacing=0) if comment_items else ft.Container()
-        ], scroll=ft.ScrollMode.AUTO, spacing=10)
+        ], scroll=ft.ScrollMode.AUTO, spacing=8)  # Increased spacing from 10 to 8 but added individual spacings
         
         self.dialogs.show_details_dialog(
             title="Submission Details",
             content=details_content,
-            width=600,
-            height=500
+            width=650,  # Increased width from 600 to 650 for better readability
+            height=550   # Increased height from 500 to 550 for better spacing
         )
     
-    def create_content(self):
-        """Create the main approval files content with CONSISTENT UI DESIGN"""
+    def create_content(self, highlighted_filename: Optional[str] = None):
+        """Create the main approval files content with CONSISTENT UI DESIGN, file highlighting, and smooth scrolling support"""
+        print(f"[DEBUG] Creating approval files content with highlighted file: {highlighted_filename}")
+        
         return ft.Container(
             content=ft.Column([
                 # Back button - CONSISTENT DESIGN
@@ -637,9 +813,9 @@ class ApprovalFilesView:
                         
                         ft.Container(width=20),
                         
-                        # Right side - Approval content with FILES LAYOUT
+                        # Right side - Approval content with FILES LAYOUT, highlighting, and scrolling
                         ft.Container(
-                            content=self.create_submissions_list(),
+                            content=self.create_submissions_list(highlighted_filename),
                             expand=True
                         )
                     ], alignment=ft.MainAxisAlignment.START, 

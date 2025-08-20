@@ -16,7 +16,7 @@ class SharedUI:
         self.navigation = navigation
     
     def create_user_avatar(self, size: int = 80) -> ft.Container:
-        """Create user avatar with initials - CONSISTENT DESIGN"""
+        """Create user avatar with initials - CONSISTENT DESIGN (Blue border removed)"""
         # Get user's initials
         full_name = self.user_data.get("fullname") or self.user_data.get("full_name", self.username or "User")
         name_parts = full_name.split()
@@ -75,8 +75,8 @@ class SharedUI:
             height=size,
             bgcolor=ft.Colors.BLUE_500,
             border_radius=size//2,
-            alignment=ft.alignment.center,
-            border=ft.border.all(2, ft.Colors.BLUE_500)
+            alignment=ft.alignment.center
+            # REMOVED: border=ft.border.all(2, ft.Colors.BLUE_500)
         )
     
     def create_menu_item(self, icon, label, page_key, current_section):

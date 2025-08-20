@@ -86,7 +86,7 @@ class ProfileView:
         self.navigation = None
         
         # Initialize profile image service
-        user_folder = f"data/uploads/{username}"
+        user_folder = self.profile_service.user_folder
         self.image_service = ProfileImageService(user_folder, username)
         
         # Store references to profile image components for real-time updates
@@ -188,7 +188,7 @@ class ProfileView:
     def check_upload_directory(self):
         """Check and create upload directories if needed"""
         try:
-            user_folder = f"data/uploads/{self.username}"
+            user_folder = self.profile_service.user_folder
             profile_images_folder = os.path.join(user_folder, "profile_images")
             
             # Create directories if they don't exist
@@ -541,7 +541,7 @@ class ProfileView:
     
 
     def create_profile_details(self):
-        """Create profile details section"""
+        """Create profile details section with bigger text"""
         return ft.Container(
             content=ft.Column([
                 # Header
@@ -551,31 +551,31 @@ class ProfileView:
                 
                 ft.Container(height=30),
                 
-                # Profile details
+                # Profile details with bigger text sizes
                 ft.Row([
-                    ft.Text("Full Name:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("fullname") or self.user_data.get("full_name", "N/A"), size=14)
+                    ft.Text("Full Name:", size=16, weight=ft.FontWeight.BOLD, width=120),
+                    ft.Text(self.user_data.get("fullname") or self.user_data.get("full_name", "N/A"), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Email:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("email", "N/A"), size=14)
+                    ft.Text("Email:", size=16, weight=ft.FontWeight.BOLD, width=120),
+                    ft.Text(self.user_data.get("email", "N/A"), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Role:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("role", "User"), size=14)
+                    ft.Text("Role:", size=16, weight=ft.FontWeight.BOLD, width=120),
+                    ft.Text(self.user_data.get("role", "User"), size=16)
                 ]),
                 ft.Container(height=20),
-                # NEW: Team field added here
+                # NEW: Team field added here with bigger text
                 ft.Row([
-                    ft.Text("Team:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.get_team_display(), size=14)
+                    ft.Text("Team:", size=16, weight=ft.FontWeight.BOLD, width=120),
+                    ft.Text(self.get_team_display(), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Join Date:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("join_date", "N/A"), size=14)
+                    ft.Text("Join Date:", size=16, weight=ft.FontWeight.BOLD, width=120),
+                    ft.Text(self.user_data.get("join_date", "N/A"), size=16)
                 ]),
             ]),
             bgcolor=ft.Colors.WHITE,

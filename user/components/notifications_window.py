@@ -170,6 +170,8 @@ class NotificationsWindow:
         self.is_visible = False
         self.window_container = None
         self.on_close_callback = None
+        # ADD: Navigation support for file clicks
+        self.navigation = None
         
         # Success/delete notification animations
         self.delete_notification_ui = None
@@ -178,6 +180,11 @@ class NotificationsWindow:
         self.create_delete_notification()
         if self.delete_notification_ui:
             self.page.overlay.append(self.delete_notification_ui)
+    
+    # ADD: Set navigation functions
+    def set_navigation(self, navigation):
+        """Set navigation functions for file clicks"""
+        self.navigation = navigation
         
     def set_close_callback(self, callback: Callable):
         """Set callback for when window is closed"""
@@ -385,7 +392,7 @@ class NotificationsWindow:
         """Show error message to user"""
         try:
             self.page.snack_bar = ft.SnackBar(
-                content=ft.Text(f"❌ {message}"),
+                content=ft.Text(f"⚠ {message}"),
                 bgcolor=ft.Colors.RED,
                 duration=3000
             )
@@ -448,8 +455,9 @@ class NotificationsWindow:
         return icon_map.get(extension, (ft.Icons.DESCRIPTION, ft.Colors.BLUE_600, ft.Colors.BLUE_100))
     
     def create_notification_item(self, notification: Dict, index: int):
-        """Create a single notification item with circular file icons - cellphone style"""
+        """Create a single notification item with circular file icons - consistent alignment"""
         is_read = notification.get("read", False)
+        filename = notification.get("filename", "Unknown file")
         
         def mark_read(e):
             try:
@@ -465,6 +473,15 @@ class NotificationsWindow:
             print(f"DEBUG: Delete button clicked for index {index}")
             self.delete_notification(index, show_confirmation=True)
         
+        # ADD: Handle file name click - navigate to file approvals and close popup
+        def handle_file_click(e):
+            print(f"[DEBUG] File clicked from notifications popup: {filename}")
+            if self.navigation and 'on_notification_file_click' in self.navigation:
+                # Hide the notifications popup first
+                self.hide()
+                # Then navigate to file approvals with highlight
+                self.navigation['on_notification_file_click'](filename)
+        
         # Format timestamp
         try:
             timestamp = datetime.fromisoformat(notification["timestamp"]).strftime("%m/%d %H:%M")
@@ -472,7 +489,6 @@ class NotificationsWindow:
             timestamp = "Unknown"
         
         # Get notification details
-        filename = notification.get("filename", "Unknown file")
         old_status = notification.get("old_status", "unknown")
         new_status = notification.get("new_status", "unknown")
         admin_id = notification.get("admin_id", "admin")
@@ -483,132 +499,142 @@ class NotificationsWindow:
         # Get file-specific icon and colors
         file_icon, icon_color, bg_color = self.get_file_icon_and_color(filename)
         
-        # Create the notification container with cellphone-style centering
+        # MODIFIED: Make filename clickable with blue styling
+        clickable_filename = ft.Container(
+            content=ft.Text(
+                display_filename,
+                size=15,
+                weight=ft.FontWeight.W_600,
+                color=ft.Colors.GREY_700,  # Blue color to indicate clickable
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            on_click=handle_file_click,
+            ink=True,
+            ink_color=ft.Colors.BLUE_50,
+            border_radius=4,
+            padding=ft.padding.symmetric(horizontal=4, vertical=2),
+            tooltip=f"Click to view {filename} in File Approvals",
+            border=ft.border.all(1, ft.Colors.GREY_300),
+            bgcolor=ft.Colors.GREY_50
+        )
+        
+        # Create the notification container
         notification_container = ft.Container(
-            content=ft.Container(
-                content=ft.Row([
-                    # Left circular icon (file type indicator)
-                    ft.Container(
-                        content=ft.Icon(
-                            file_icon, 
-                            color=icon_color, 
-                            size=26
+            content=ft.Row([
+                # Left circular icon (file type indicator)
+                ft.Container(
+                    content=ft.Icon(
+                        file_icon, 
+                        color=icon_color, 
+                        size=26
+                    ),
+                    padding=ft.padding.all(14),
+                    bgcolor=bg_color,
+                    border_radius=50,  # Make it perfectly circular
+                    width=54,
+                    height=54,
+                    alignment=ft.alignment.center,
+                    shadow=ft.BoxShadow(
+                        spread_radius=0,
+                        blur_radius=4,
+                        color=ft.Colors.BLACK12,
+                        offset=ft.Offset(0, 2),
+                    )
+                ),
+                
+                # Main content area with clickable filename
+                ft.Container(
+                    content=ft.Column([
+                        # Clickable file name
+                        clickable_filename,
+                        ft.Container(height=3),
+                        # Status message
+                        ft.Text(
+                            f"Status: {old_status} → {new_status}",
+                            size=13,
+                            color=ft.Colors.GREY_700,
+                            overflow=ft.TextOverflow.ELLIPSIS,
                         ),
-                        padding=ft.padding.all(14),
-                        bgcolor=bg_color,
-                        border_radius=50,  # Make it perfectly circular
-                        width=54,
-                        height=54,
-                        alignment=ft.alignment.center,
-                        shadow=ft.BoxShadow(
-                            spread_radius=0,
-                            blur_radius=4,
-                            color=ft.Colors.BLACK12,
-                            offset=ft.Offset(0, 2),
+                        ft.Container(height=2),
+                        # Admin and time
+                        ft.Text(
+                            f"By {admin_id} • {timestamp}",
+                            size=11,
+                            color=ft.Colors.GREY_500,
+                        )
+                    ], 
+                    spacing=0, 
+                    tight=True,
+                    alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    expand=True,
+                    padding=ft.padding.only(left=14, right=8, top=6, bottom=6),
+                    on_click=mark_read if not is_read else None,
+                    alignment=ft.alignment.center_left
+                ),
+                
+                # Right action button (circular delete button)
+                ft.Container(
+                    content=ft.IconButton(
+                        icon=ft.Icons.DELETE_OUTLINE,
+                        icon_color=ft.Colors.RED_400,
+                        icon_size=20,
+                        tooltip="Delete notification",
+                        on_click=delete_with_confirmation,
+                        style=ft.ButtonStyle(
+                            shape=ft.CircleBorder(),
+                            bgcolor={
+                                ft.ControlState.DEFAULT: ft.Colors.TRANSPARENT,
+                                ft.ControlState.HOVERED: ft.Colors.RED_50,
+                                ft.ControlState.PRESSED: ft.Colors.RED_100
+                            },
+                            padding=ft.padding.all(6)
                         )
                     ),
-                    
-                    # Main content area
-                    ft.Container(
-                        content=ft.Column([
-                            # File name
-                            ft.Text(
-                                display_filename,
-                                size=15,
-                                weight=ft.FontWeight.W_600,
-                                color=ft.Colors.BLACK87,
-                                overflow=ft.TextOverflow.ELLIPSIS,
-                            ),
-                            ft.Container(height=3),
-                            # Status message
-                            ft.Text(
-                                f"Status: {old_status} → {new_status}",
-                                size=13,
-                                color=ft.Colors.GREY_700,
-                                overflow=ft.TextOverflow.ELLIPSIS,
-                            ),
-                            ft.Container(height=2),
-                            # Admin and time
-                            ft.Text(
-                                f"By {admin_id} • {timestamp}",
-                                size=11,
-                                color=ft.Colors.GREY_500,
-                            )
-                        ], 
-                        spacing=0, 
-                        tight=True,
-                        alignment=ft.MainAxisAlignment.CENTER
-                        ),
-                        expand=True,
-                        padding=ft.padding.only(left=14, right=8, top=6, bottom=6),
-                        on_click=mark_read if not is_read else None,
-                        alignment=ft.alignment.center_left
-                    ),
-                    
-                    # Right action button (circular delete button)
-                    ft.Container(
-                        content=ft.IconButton(
-                            icon=ft.Icons.DELETE_OUTLINE,
-                            icon_color=ft.Colors.RED_400,
-                            icon_size=20,
-                            tooltip="Delete notification",
-                            on_click=delete_with_confirmation,
-                            style=ft.ButtonStyle(
-                                shape=ft.CircleBorder(),
-                                bgcolor={
-                                    ft.ControlState.DEFAULT: ft.Colors.TRANSPARENT,
-                                    ft.ControlState.HOVERED: ft.Colors.RED_50,
-                                    ft.ControlState.PRESSED: ft.Colors.RED_100
-                                },
-                                padding=ft.padding.all(6)
-                            )
-                        ),
-                        width=42,
-                        height=42,
-                        alignment=ft.alignment.center
-                    )
-                ], 
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                spacing=10
-                ),
-                bgcolor=ft.Colors.WHITE if is_read else ft.Colors.BLUE_50,
-                border_radius=14,
-                padding=ft.padding.all(16),
-                shadow=ft.BoxShadow(
-                    spread_radius=0,
-                    blur_radius=8,
-                    color=ft.Colors.BLACK12,
-                    offset=ft.Offset(0, 2),
-                ),
-                border=ft.border.all(
-                    1, 
-                    ft.Colors.BLUE_200 if not is_read else ft.Colors.GREY_200
+                    width=42,
+                    height=42,
+                    alignment=ft.alignment.center
                 )
+            ], 
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            spacing=10
+            ),
+            bgcolor=ft.Colors.WHITE if is_read else ft.Colors.BLUE_50,
+            border_radius=14,
+            padding=ft.padding.all(16),
+            shadow=ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=8,
+                color=ft.Colors.BLACK12,
+                offset=ft.Offset(0, 2),
+            ),
+            border=ft.border.all(
+                1, 
+                ft.Colors.BLUE_200 if not is_read else ft.Colors.GREY_200
             ),
             on_hover=lambda e: self.on_notification_hover(e),
             ink=True,
             ink_color=ft.Colors.BLUE_50 if not is_read else ft.Colors.GREY_50
         )
         
-        # Center the notification like a cellphone notification
+        # FIXED: Return container without forced centering
         return ft.Container(
             content=notification_container,
             width=480,  # Fixed width like a phone notification
-            alignment=ft.alignment.center,
             margin=ft.margin.only(bottom=12),
         )
     
     def on_notification_hover(self, e):
         """Handle notification hover effect"""
         if e.data == "true":
-            e.control.content.content.shadow = ft.BoxShadow(
+            e.control.shadow = ft.BoxShadow(
                 spread_radius=0,
                 blur_radius=12,
                 color=ft.Colors.BLACK20,
                 offset=ft.Offset(0, 4),
             )
         else:
-            e.control.content.content.shadow = ft.BoxShadow(
+            e.control.shadow = ft.BoxShadow(
                 spread_radius=0,
                 blur_radius=8,
                 color=ft.Colors.BLACK12,
@@ -698,7 +724,7 @@ class NotificationsWindow:
             self.show_error_message("Failed to refresh notifications")
     
     def create_window_content(self):
-        """Create the full screen window content with enhanced error handling"""
+        """Create the full screen window content with enhanced error handling and FIXED alignment"""
         try:
             notifications = self.approval_service.load_notifications()
             total_count = len(notifications)
@@ -716,7 +742,13 @@ class NotificationsWindow:
                             ft.Text(f"{total_count} Total", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
                             ft.Container(width=20),
                             ft.Text(f"{unread_count} unread", size=16, color=ft.Colors.GREY_600)
-                        ])
+                        ]),
+                        # ADD: Hint about clickable file names
+                        ft.Container(
+                            content=ft.Text("💡 Click file names to view in File Approvals", 
+                                          size=12, color=ft.Colors.BLUE_600, italic=True),
+                            margin=ft.margin.only(top=8)
+                        ) if total_count > 0 else ft.Container()
                     ], spacing=0),
                     ft.Container(expand=True),
                     ft.Row([
@@ -788,7 +820,7 @@ class NotificationsWindow:
                 border=ft.border.only(bottom=ft.BorderSide(1, ft.Colors.GREY_300))
             )
             
-            # Notifications list - centered like cellphone notifications
+            # FIXED: Notifications list with consistent top alignment, not centered
             if not notifications:
                 notifications_content = self.create_empty_state()
             else:
@@ -797,10 +829,11 @@ class NotificationsWindow:
                     for i, notif in enumerate(notifications)
                 ]
                 
+                # FIXED: Changed alignment and horizontal alignment to prevent centering
                 notifications_content = ft.Container(
                     content=ft.Column([
                         ft.Container(height=20),
-                        # Center all notifications horizontally
+                        # FIXED: Center notifications horizontally but keep them at the top
                         ft.Container(
                             content=ft.Column(
                                 notification_items,
@@ -808,14 +841,14 @@ class NotificationsWindow:
                                 spacing=0,
                                 scroll=ft.ScrollMode.AUTO
                             ),
-                            alignment=ft.alignment.center,
+                            alignment=ft.alignment.top_center,  # FIXED: Changed from center to top_center
                             expand=True
                         ),
                         ft.Container(height=20)
                     ], spacing=0, expand=True),
                     expand=True,
                     bgcolor=ft.Colors.GREY_50,
-                    alignment=ft.alignment.center
+                    alignment=ft.alignment.top_center  # FIXED: Changed from center to top_center
                 )
             
             return ft.Container(
