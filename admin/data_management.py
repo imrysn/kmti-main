@@ -187,20 +187,43 @@ def list_directory(path: Path):
     return folders, files
 
 
-def search_all(base: Path, query: str, max_results=500):
+def search_all(base: Path, query: str, current_folder: Path = None, max_results=500):
     """
     Search in the in-memory global_file_index for speed.
+    If current_folder is provided, filter results to only include items within that folder.
     """
-    print(f"[DEBUG] Searching index for '{query}'...")
+    print(f"[DEBUG] Searching index for '{query}' in folder '{current_folder}'...")
     results = []
     q = query.lower()
+    
+    # Normalize the current folder path for comparison
+    current_folder_str = None
+    if current_folder:
+        current_folder_str = str(current_folder).lower().replace('\\', '/')
+        print(f"[DEBUG] Filtering results to folder: {current_folder_str}")
+    
     with index_lock:
         for path_str in global_file_index:
+            # Check if the filename matches the query
             if q in os.path.basename(path_str).lower():
-                results.append(Path(path_str))
+                # If current_folder is specified, filter by path
+                if current_folder_str:
+                    # Normalize the path for comparison
+                    normalized_path = path_str.lower().replace('\\', '/')
+                    # Check if the file/folder is within the current folder
+                    if normalized_path.startswith(current_folder_str + '/') or normalized_path == current_folder_str:
+                        # Additional check: ensure it's a direct child or descendant
+                        relative_path = normalized_path[len(current_folder_str):].lstrip('/')
+                        if relative_path:  # Only include if there's something after the current folder path
+                            results.append(Path(path_str))
+                else:
+                    # No folder filter, include all matches
+                    results.append(Path(path_str))
+                    
                 if len(results) >= max_results:
                     print(f"[DEBUG] Max results reached ({max_results})")
                     break
+                    
     print(f"[DEBUG] Search completed with {len(results)} results.")
     return results
 
@@ -531,8 +554,8 @@ def data_management(content: ft.Column, username: Optional[str]):
             else:
                 print(f"[DEBUG] Cache miss for query: '{query}'")
 
-        # Perform search
-        results = search_all(current_path[0], query)
+        # Perform search with current folder filtering
+        results = search_all(current_path[0], query, current_folder=current_path[0])
 
         # Save results to cache and update UI (main thread)
         with search_lock:
