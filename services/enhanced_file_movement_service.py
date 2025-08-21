@@ -17,8 +17,9 @@ class NetworkAccessManager:
     """Manages network access and provides fallback mechanisms"""
     
     def __init__(self):
-        self.project_base = r"\\KMTI-NAS\Database\PROJECTS"
-        self.fallback_base = os.path.join(DATA_PATHS.NETWORK_BASE, "PROJECTS")
+        # Updated to use shared public as primary path instead of database path
+        self.project_base = os.path.join(DATA_PATHS.NETWORK_BASE, "PROJECTS")  # Now uses shared public
+        self.fallback_base = r"\\KMTI-NAS\Database\PROJECTS"  # Old primary becomes fallback
         self.access_cache = {}
         
         # Ensure fallback directory exists
@@ -84,14 +85,23 @@ class NetworkAccessManager:
         
         print(f"[ACCESS_MANAGER] Direct access failed for {username}: {message}")
         
-        # Try fallback path
+        # Try fallback path (now the old database path)
         fallback_path = os.path.join(self.fallback_base, team_tag, year)
-        try:
-            os.makedirs(fallback_path, exist_ok=True)
+        has_fallback_access, fallback_message = self.test_network_access(fallback_path, username)
+        
+        if has_fallback_access:
             return True, fallback_path, "fallback"
+        
+        print(f"[ACCESS_MANAGER] Fallback access failed for {username}: {fallback_message}")
+        
+        # If both paths fail, create local fallback directory
+        try:
+            local_fallback = os.path.join(DATA_PATHS.NETWORK_BASE, "approved_files_fallback", team_tag, year)
+            os.makedirs(local_fallback, exist_ok=True)
+            return True, local_fallback, "local_fallback"
         except Exception as e:
-            print(f"[ACCESS_MANAGER] Fallback path failed: {e}")
-            return False, f"No accessible path: {message}", "failed"
+            print(f"[ACCESS_MANAGER] Local fallback path failed: {e}")
+            return False, f"No accessible path - Primary: {message}, Fallback: {fallback_message}, Local fallback: {e}", "failed"
 
 
 class EnhancedFileMovementService:

@@ -271,60 +271,16 @@ class AdminLoginElevationHandler:
             print(f"[ELEVATION] Team Leader login: {username} - bypassing Windows admin elevation")
             return True, "Team Leader login successful - no Windows admin elevation required"
         
-        # Only require elevation for ADMIN users
-        if user_role.upper() not in ['ADMIN']:
-            return True, "No elevation needed for regular users"
+        # No elevation required for any users - removed Windows admin access requirement
+        if user_role.upper() not in ['REQUIRES_ELEVATION_DISABLED']:
+            print(f"[ELEVATION] Elevation disabled for {user_role} users - proceeding without Windows admin privileges")
+            return True, "No elevation needed - Windows admin access disabled"
         
-        print(f"[ELEVATION] Admin login detected: {username} ({user_role}) - checking Windows admin elevation")
+        # Windows admin elevation is now disabled - proceeding without elevation checks
+        print(f"[ELEVATION] Admin login for {username} ({user_role}) - Windows admin elevation disabled")
+        print(f"[ELEVATION] Proceeding without Windows administrator privileges")
         
-        # Check current admin status
-        admin_status = self.access_manager.check_admin_status()
-        
-        if admin_status["is_admin"]:
-            print("[ELEVATION] ✅ Already running with administrator privileges")
-            return True, "Administrator privileges confirmed"
-        
-        # Check if we can elevate
-        if not admin_status["can_elevate"]:
-            return False, "Current user cannot request administrator elevation"
-        
-        # If page is provided, use the enhanced dialog
-        if page is not None:
-            try:
-                has_elevation, message = self.access_manager.check_and_request_elevation_with_dialog(
-                    page, username, user_role)
-                return has_elevation, message
-            except Exception as e:
-                print(f"[ELEVATION] Dialog error: {e}, falling back to basic method")
-        
-        # Fallback: Test critical network paths
-        critical_paths = [
-            r"\\KMTI-NAS\Database\PROJECTS",
-            r"\\KMTI-NAS\Shared\data"
-        ]
-        
-        access_issues = []
-        for path in critical_paths:
-            has_access, message = self._test_network_access(path)
-            if not has_access:
-                access_issues.append(f"{path}: {message}")
-        
-        if access_issues:
-            print(f"[ELEVATION] Network access issues detected:")
-            for issue in access_issues:
-                print(f"  ❌ {issue}")
-            
-            # Request elevation for network access
-            print(f"[ELEVATION] Requesting administrator elevation for {username}...")
-            success = self.access_manager.request_admin_elevation(
-                f"Administrator {username} requires elevated privileges for network file operations"
-            )
-            
-            if not success:
-                print("[ELEVATION] ⚠️ Proceeding without elevation - files will use fallback processing")
-                return True, "Administrator login successful - using fallback file processing for network operations"
-        
-        return True, "Administrator privileges verified or granted"
+        return True, "Administrator login successful - Windows admin elevation disabled"
     
     def _test_network_access(self, test_path: str) -> Tuple[bool, str]:
         """Test network access without elevation"""

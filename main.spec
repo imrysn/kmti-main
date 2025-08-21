@@ -41,5 +41,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='assets/fms-icon.ico',
     icon=['assets\\fms-icon.ico'],  # ✅ custom icon
 )
