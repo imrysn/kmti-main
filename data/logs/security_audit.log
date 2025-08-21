@@ -773,5 +773,21 @@
       "reason": "None provided"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-20T16:02:17.388915",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "7ee66626-040a-4a5a-99fc-bf4ab76220c0",
+      "action": "COMMENT",
+      "reason": "MF"
+    },
+    "ip_address": "unknown"
   }
 ]

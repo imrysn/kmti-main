@@ -1,23 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
-import os
-
-def collect_data_dirs():
-    datas = [('assets/*', 'assets'),
-             ('data/*', 'data')]
-    base = os.path.abspath('data')
-    for sub in ['logs']:
-        full = os.path.join(base, sub)
-        if os.path.exists(full):
-            datas.append((full, f'data/{sub}'))
-    return datas
+# ✅ Only include local data folder (data/*)
+datas = [
+    ('data/*', 'data'),
+    ('assets/', 'assets')
+]
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=collect_data_dirs(),
+    datas=datas,
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -26,6 +19,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
@@ -34,18 +28,18 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='KMTI-System',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=False,  # hide console, since GUI app
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='assets/kmti.ico',
+    icon=['assets\\fms-icon.ico'],  # ✅ custom icon
 )
