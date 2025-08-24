@@ -829,72 +829,25 @@ class FilesView:
         )
     
     def create_files_list(self):
-        """Create the files list with card-based design - separated by submission status with newest files first"""
-        files = self.file_service.get_files()
+        """Create the files list with fast loading and async processing"""
         
-        # Sort files by timestamp (newest first)
-        files = self.sort_files_by_date(files)
-        
-        # Separate files by submission status
-        not_submitted_files, submitted_files = self.separate_files_by_submission_status(files)
-        
-        file_count = len(files)
-        total_size = self.calculate_total_size_immediately(files) if files else 0
-        file_count_text = f"{file_count} file{'s' if file_count != 1 else ''}"
-        if files:
-            file_count_text += f" • {total_size:.1f} MB total"
-        
-        self.file_count_text_ref = ft.Text(file_count_text, size=12, color=ft.Colors.GREY_600)
-        
-        file_cards = []
-        if files:
-            # Add "Not Submitted" section if there are unsubmitted files
-            if not_submitted_files:
-                # Section header for not submitted files
-                section_header = ft.Container(
-                    content=ft.Row([
-                        ft.Icon(ft.Icons.UPLOAD_FILE, color=ft.Colors.BLUE, size=20),
-                        ft.Text("Not Submitted", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE),
-                        ft.Text(f"({len(not_submitted_files)})", size=14, color=ft.Colors.GREY_600)
-                    ], spacing=8),
-                    margin=ft.margin.only(bottom=10, top=5)
-                )
-                file_cards.append(section_header)
-                
-                # Add not submitted file cards
-                for file in not_submitted_files:
-                    file_cards.append(self.create_file_card(file))
-            
-            # Add spacing between sections if both exist
-            if not_submitted_files and submitted_files:
-                spacing = ft.Container(height=20)
-                file_cards.append(spacing)
-            
-            # Add "Submitted" section if there are submitted files
-            if submitted_files:
-                # Section header for submitted files
-                section_header = ft.Container(
-                    content=ft.Row([
-                        ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=20),
-                        ft.Text("Submitted for Approval", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN),
-                        ft.Text(f"({len(submitted_files)})", size=14, color=ft.Colors.GREY_600)
-                    ], spacing=8),
-                    margin=ft.margin.only(bottom=10, top=5)
-                )
-                file_cards.append(section_header)
-                
-                # Add submitted file cards
-                for file in submitted_files:
-                    file_cards.append(self.create_file_card(file))
-        else:
-            file_cards.append(self.create_empty_state())
-        
-        scrollable_content = ft.Column(file_cards, spacing=0)
-        self.files_scrollable_container_ref = ft.Container(
-            content=scrollable_content,
-            expand=True
+        # Create immediate loading state
+        loading_state = ft.Container(
+            content=ft.Column([
+                ft.Container(height=40),
+                ft.ProgressRing(width=40, height=40, stroke_width=4, color=ft.Colors.BLUE),
+                ft.Container(height=20),
+                ft.Text("Loading files...", size=16, color=ft.Colors.GREY_600),
+                ft.Container(height=40)
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            alignment=ft.alignment.center,
+            height=300
         )
         
+        # Create immediate file count (before async processing)
+        self.file_count_text_ref = ft.Text("Loading...", size=12, color=ft.Colors.GREY_600)
+        
+        # Create header immediately
         header_container = ft.Container(
             content=ft.Row([
                 ft.Column([
@@ -916,23 +869,25 @@ class FilesView:
             margin=ft.margin.only(bottom=20)
         )
         
+        # Create scrollable container with loading state initially
+        self.files_scrollable_container_ref = ft.Container(
+            content=ft.Column([loading_state], scroll=ft.ScrollMode.AUTO, expand=True),
+            expand=True,
+            bgcolor=ft.Colors.GREY_50,
+            padding=ft.padding.all(15),
+            border_radius=12,
+            border=ft.border.all(1, ft.Colors.GREY_200)
+        )
+        
         main_files_column = ft.Column([
             header_container,
-            
-            # Files list container
-            ft.Container(
-                content=ft.Column([
-                    self.files_scrollable_container_ref
-                ], scroll=ft.ScrollMode.AUTO, expand=True),
-                expand=True,
-                bgcolor=ft.Colors.GREY_50,
-                padding=ft.padding.all(15),
-                border_radius=12,
-                border=ft.border.all(1, ft.Colors.GREY_200)
-            )
+            self.files_scrollable_container_ref
         ], expand=True)
         
         self.main_files_column_ref = main_files_column
+        
+        # Start async file loading
+        self.load_files_async()
         
         return ft.Container(
             content=main_files_column,
@@ -942,6 +897,144 @@ class FilesView:
             border=ft.border.all(1, ft.Colors.GREY_200),
             expand=True
         )
+    
+    def load_files_async(self):
+        """Load and process files asynchronously to prevent UI blocking"""
+        def async_file_processing():
+            try:
+                print("DEBUG: Starting async file processing")
+                
+                # Get files quickly
+                files = self.file_service.get_files()
+                file_count = len(files)
+                
+                # Update count immediately
+                if self.file_count_text_ref:
+                    self.file_count_text_ref.value = f"{file_count} file{'s' if file_count != 1 else ''} • Processing..."
+                    try:
+                        self.file_count_text_ref.update()
+                    except:
+                        pass
+                
+                if file_count == 0:
+                    # Show empty state immediately
+                    empty_state = self.create_empty_state()
+                    if self.files_scrollable_container_ref:
+                        self.files_scrollable_container_ref.content.controls.clear()
+                        self.files_scrollable_container_ref.content.controls.append(empty_state)
+                        try:
+                            self.files_scrollable_container_ref.update()
+                        except:
+                            pass
+                    
+                    # Update final count
+                    if self.file_count_text_ref:
+                        self.file_count_text_ref.value = "0 files"
+                        try:
+                            self.file_count_text_ref.update()
+                        except:
+                            pass
+                    return
+                
+                # Process files in background
+                print(f"DEBUG: Processing {file_count} files in background")
+                
+                # Sort files by timestamp (this is the slow part)
+                files = self.sort_files_by_date(files)
+                
+                # Separate files by submission status
+                not_submitted_files, submitted_files = self.separate_files_by_submission_status(files)
+                
+                # Calculate total size
+                total_size = self.calculate_total_size_immediately(files)
+                final_count_text = f"{file_count} file{'s' if file_count != 1 else ''} • {total_size:.1f} MB total"
+                
+                # Update UI with processed files
+                if self.files_scrollable_container_ref:
+                    self.files_scrollable_container_ref.content.controls.clear()
+                    
+                    # Add "Not Submitted" section if there are unsubmitted files
+                    if not_submitted_files:
+                        section_header = ft.Container(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.UPLOAD_FILE, color=ft.Colors.BLUE, size=20),
+                                ft.Text("Not Submitted", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE),
+                                ft.Text(f"({len(not_submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                            ], spacing=8),
+                            margin=ft.margin.only(bottom=10, top=5)
+                        )
+                        self.files_scrollable_container_ref.content.controls.append(section_header)
+                        
+                        # Add not submitted file cards
+                        for file in not_submitted_files:
+                            file_card = self.create_file_card(file)
+                            self.files_scrollable_container_ref.content.controls.append(file_card)
+                    
+                    # Add spacing between sections if both exist
+                    if not_submitted_files and submitted_files:
+                        spacing = ft.Container(height=20)
+                        self.files_scrollable_container_ref.content.controls.append(spacing)
+                    
+                    # Add "Submitted" section if there are submitted files
+                    if submitted_files:
+                        section_header = ft.Container(
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.CHECK_CIRCLE, color=ft.Colors.GREEN, size=20),
+                                ft.Text("Submitted for Approval", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN),
+                                ft.Text(f"({len(submitted_files)})", size=14, color=ft.Colors.GREY_600)
+                            ], spacing=8),
+                            margin=ft.margin.only(bottom=10, top=5)
+                        )
+                        self.files_scrollable_container_ref.content.controls.append(section_header)
+                        
+                        # Add submitted file cards
+                        for file in submitted_files:
+                            file_card = self.create_file_card(file)
+                            self.files_scrollable_container_ref.content.controls.append(file_card)
+                    
+                    try:
+                        self.files_scrollable_container_ref.update()
+                    except:
+                        pass
+                
+                # Update final count
+                if self.file_count_text_ref:
+                    self.file_count_text_ref.value = final_count_text
+                    try:
+                        self.file_count_text_ref.update()
+                    except:
+                        pass
+                
+                print(f"DEBUG: Async file processing completed - {len(not_submitted_files)} not submitted, {len(submitted_files)} submitted")
+                
+            except Exception as ex:
+                print(f"DEBUG: Error in async file processing: {ex}")
+                # Show error state
+                if self.files_scrollable_container_ref:
+                    error_state = ft.Container(
+                        content=ft.Column([
+                            ft.Icon(ft.Icons.ERROR_OUTLINE, size=64, color=ft.Colors.RED),
+                            ft.Text("Error loading files", size=16, color=ft.Colors.RED),
+                            ft.Text(str(ex), size=12, color=ft.Colors.GREY_600),
+                            ft.ElevatedButton(
+                                "Retry",
+                                on_click=lambda e: self.load_files_async(),
+                                bgcolor=ft.Colors.BLUE,
+                                color=ft.Colors.WHITE
+                            )
+                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                        alignment=ft.alignment.center,
+                        height=300
+                    )
+                    self.files_scrollable_container_ref.content.controls.clear()
+                    self.files_scrollable_container_ref.content.controls.append(error_state)
+                    try:
+                        self.files_scrollable_container_ref.update()
+                    except:
+                        pass
+        
+        # Start async processing in background thread
+        threading.Thread(target=async_file_processing, daemon=True).start()
     
     def create_content(self):
         """Create the main files content with CONSISTENT UI DESIGN"""
