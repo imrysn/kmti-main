@@ -551,7 +551,9 @@ class ApprovalFilesView:
         )
     
     def show_submission_details(self, submission: Dict):
-        """Show detailed view of submission"""
+        """Show detailed view of submission with Team Leader and Admin comments"""
+        filename = submission.get("original_filename", "")
+        
         # Format status history
         history_items = []
         for entry in submission.get("status_history", []):
@@ -570,43 +572,129 @@ class ApprovalFilesView:
                 )
             )
         
-        # Admin comments
-        comment_items = []
-        for comment in submission.get("admin_comments", []):
+        # Get Team Leader comments
+        tl_comments = self.approval_service.get_team_leader_comments(filename)
+        tl_comment_items = []
+        
+        for comment in tl_comments:
             try:
                 timestamp = datetime.fromisoformat(comment["timestamp"]).strftime("%Y-%m-%d %H:%M")
             except:
                 timestamp = "Unknown"
             
-            comment_items.append(
+            tl_comment_items.append(
                 ft.Container(
                     content=ft.Column([
-                        ft.Text(f"{comment['admin_id']} - {timestamp}", size=10, weight=ft.FontWeight.BOLD),
-                        ft.Text(comment['comment'], size=11)
+                        ft.Row([
+                            ft.Icon(ft.Icons.SUPERVISOR_ACCOUNT, size=16, color=ft.Colors.BLUE_700),
+                            ft.Text(f"Team Leader: {comment['admin_id']}", size=10, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700),
+                            ft.Text(f" - {timestamp}", size=10, color=ft.Colors.GREY_600)
+                        ], spacing=5),
+                        ft.Text(comment['comment'], size=11, color=ft.Colors.GREY_800)
                     ], spacing=5),
-                    bgcolor=ft.Colors.GREY_50,
+                    bgcolor=ft.Colors.BLUE_50,
+                    border=ft.border.all(1, ft.Colors.BLUE_200),
                     border_radius=5,
                     padding=10,
                     margin=ft.margin.only(bottom=5)
                 )
             )
         
-        # Create details content
+        # Get Admin comments
+        admin_comments = self.approval_service.get_admin_comments(filename)
+        admin_comment_items = []
+        
+        for comment in admin_comments:
+            try:
+                timestamp = datetime.fromisoformat(comment["timestamp"]).strftime("%Y-%m-%d %H:%M")
+            except:
+                timestamp = "Unknown"
+            
+            admin_comment_items.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Row([
+                            ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS, size=16, color=ft.Colors.GREEN_700),
+                            ft.Text(f"Admin: {comment['admin_id']}", size=10, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN_700),
+                            ft.Text(f" - {timestamp}", size=10, color=ft.Colors.GREY_600)
+                        ], spacing=5),
+                        ft.Text(comment['comment'], size=11, color=ft.Colors.GREY_800)
+                    ], spacing=5),
+                    bgcolor=ft.Colors.GREEN_50,
+                    border=ft.border.all(1, ft.Colors.GREEN_200),
+                    border_radius=5,
+                    padding=10,
+                    margin=ft.margin.only(bottom=5)
+                )
+            )
+        
+        # Combine all comments in chronological order
+        all_comments = []
+        
+        # Add Team Leader comments with section header
+        if tl_comment_items:
+            all_comments.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.SUPERVISOR_ACCOUNT, size=18, color=ft.Colors.BLUE_700),
+                        ft.Text("Team Leader Comments:", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700)
+                    ], spacing=8),
+                    margin=ft.margin.only(bottom=10, top=5)
+                )
+            )
+            all_comments.extend(tl_comment_items)
+        
+        # Add Admin comments with section header
+        if admin_comment_items:
+            if tl_comment_items:  # Add spacing if there were TL comments
+                all_comments.append(ft.Container(height=10))
+            
+            all_comments.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS, size=18, color=ft.Colors.GREEN_700),
+                        ft.Text("Admin Comments:", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN_700)
+                    ], spacing=8),
+                    margin=ft.margin.only(bottom=10, top=5)
+                )
+            )
+            all_comments.extend(admin_comment_items)
+        
+        # If no comments at all
+        if not tl_comment_items and not admin_comment_items:
+            all_comments.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.COMMENT_OUTLINED, size=16, color=ft.Colors.GREY_400),
+                        ft.Text("No comments from Team Leader or Admin yet", size=11, color=ft.Colors.GREY_500)
+                    ], spacing=8),
+                    margin=ft.margin.only(bottom=5)
+                )
+            )
+        
+        # Create details content with enhanced comments section
         details_content = ft.Column([
+            # File information section
             ft.Text(f"File: {submission['original_filename']}", size=14, weight=ft.FontWeight.BOLD),
             ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=12),
             ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=12),
             ft.Divider(),
+            
+            # Description and tags section
             ft.Text("Description:", size=12, weight=ft.FontWeight.BOLD),
             ft.Text(submission.get("description", "No description"), size=11),
             ft.Text("Tags:", size=12, weight=ft.FontWeight.BOLD),
             ft.Text(", ".join(submission.get("tags", [])) or "None", size=11),
             ft.Divider(),
+            
+            # Status history section
             ft.Text("Status History:", size=12, weight=ft.FontWeight.BOLD),
             ft.Column(history_items, spacing=0) if history_items else ft.Text("No history available", size=11, color=ft.Colors.GREY_500),
-            ft.Divider() if comment_items else ft.Container(),
-            ft.Text("Admin Comments:", size=12, weight=ft.FontWeight.BOLD) if comment_items else ft.Container(),
-            ft.Column(comment_items, spacing=0) if comment_items else ft.Container()
+            ft.Divider(),
+            
+            # Enhanced comments section with role distinction
+            ft.Text("Comments & Reviews:", size=12, weight=ft.FontWeight.BOLD),
+            ft.Column(all_comments, spacing=0) if all_comments else ft.Text("No comments available", size=11, color=ft.Colors.GREY_500)
         ], scroll=ft.ScrollMode.AUTO, spacing=10)
         
         self.dialogs.show_details_dialog(

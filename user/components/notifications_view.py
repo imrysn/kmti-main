@@ -43,11 +43,27 @@ class NotificationsView:
         except:
             timestamp = "Unknown"
         
-        # Get notification message
+        # Get notification message with improved formatting
         if notification["type"] == "status_update":
-            message = f"Status changed from '{notification.get('old_status', 'unknown')}' to '{notification.get('new_status', 'unknown')}'"
+            # Use the formatted status transition if available
+            if notification.get("status_transition"):
+                message = f"Status: {notification['status_transition']}"
+            else:
+                # Fallback to old format but improved
+                old_status = notification.get('old_status', 'unknown').replace('_', ' ').title()
+                new_status = notification.get('new_status', 'unknown').replace('_', ' ').title()
+                message = f"Status: {old_status} → {new_status}"
+            
+            # Add comment if provided
             if notification.get("comment"):
-                message += f"\nComment: {notification['comment']}"
+                message += f"\n💬 {notification['comment']}"
+            
+            # Add source system info
+            source = notification.get("source_system", "admin")
+            if source == "team_leader":
+                message += "\n👥 Updated by Team Leader"
+            elif source == "admin":
+                message += "\n⚡ Updated by Admin"
         else:
             message = notification.get("message", "Notification received")
         
@@ -65,8 +81,18 @@ class NotificationsView:
                         weight=ft.FontWeight.BOLD if not is_read else ft.FontWeight.NORMAL
                     ),
                     ft.Text(message, size=12, color=ft.Colors.GREY_700),
-                    ft.Text(f"By: {notification.get('admin_id', 'System')} • {timestamp}", 
-                            size=10, color=ft.Colors.GREY_500)
+                    ft.Row([
+                        ft.Icon(
+                            ft.Icons.SUPERVISOR_ACCOUNT if notification.get("source_system") == "team_leader" else ft.Icons.ADMIN_PANEL_SETTINGS,
+                            size=12, 
+                            color=ft.Colors.BLUE_600 if notification.get("source_system") == "team_leader" else ft.Colors.GREEN_600
+                        ),
+                        ft.Text(
+                            f"{notification.get('admin_id', 'System')} • {timestamp}", 
+                            size=10, 
+                            color=ft.Colors.GREY_500
+                        )
+                    ], spacing=4)
                 ], spacing=2, expand=True),
                 ft.ElevatedButton(
                     "Mark Read" if not is_read else "Read",
@@ -77,7 +103,10 @@ class NotificationsView:
                 ) if not is_read else ft.Container()
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             bgcolor=ft.Colors.BLUE_50 if not is_read else ft.Colors.WHITE,
-            border=ft.border.all(1, ft.Colors.BLUE_200 if not is_read else ft.Colors.GREY_200),
+            border=ft.border.all(
+                1, 
+                ft.Colors.BLUE_200 if not is_read else ft.Colors.GREY_200
+            ),
             border_radius=8,
             padding=15,
             margin=ft.margin.only(bottom=10)

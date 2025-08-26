@@ -496,66 +496,150 @@ class ApprovalFileService:
         
         return available_files
     
-    def update_file_status(self, filename: str, new_status: str, admin_comment: str = "", admin_id: str = ""):
-        """Update file status (called by admin system)"""
+    def update_file_status(self, filename: str, new_status: str, admin_comment: str = "", admin_id: str = "", old_status: str = "", source_system: str = "admin", skip_notification: bool = False):
+        """Update file status (called by admin system with enhanced notification control)"""
         try:
             approval_data = self.load_approval_status()
             
             if filename in approval_data:
+                current_status = approval_data[filename].get("status", "unknown")
                 approval_data[filename]["status"] = new_status
                 approval_data[filename]["last_updated"] = datetime.now().isoformat()
                 
-                # Add admin comment if provided
+                # Add admin comment if provided with role distinction
                 if admin_comment:
                     if "admin_comments" not in approval_data[filename]:
                         approval_data[filename]["admin_comments"] = []
                     
+                    # Determine comment type based on source system and admin role
+                    comment_type = "admin_comment"  # Default
+                    if source_system == "team_leader" or (admin_id and "team_leader" in admin_id.lower()):
+                        comment_type = "team_leader_comment"
+                    
                     approval_data[filename]["admin_comments"].append({
                         "admin_id": admin_id,
                         "comment": admin_comment,
-                        "timestamp": datetime.now().isoformat()
+                        "timestamp": datetime.now().isoformat(),
+                        "type": comment_type,
+                        "source_system": source_system
                     })
                 
-                # Add to status history
+                # Add to status history with proper old status tracking
                 if "status_history" not in approval_data[filename]:
                     approval_data[filename]["status_history"] = []
                 
                 approval_data[filename]["status_history"].append({
                     "status": new_status,
+                    "previous_status": old_status or current_status,
                     "timestamp": datetime.now().isoformat(),
                     "admin_id": admin_id,
-                    "comment": admin_comment
+                    "comment": admin_comment,
+                    "source_system": source_system
                 })
                 
                 self.save_approval_status(approval_data)
                 
-                # Add notification
-                self.add_notification({
-                    "type": "status_update",
-                    "filename": filename,
-                    "old_status": "pending",
-                    "new_status": new_status,
-                    "admin_id": admin_id,
-                    "comment": admin_comment,
-                    "timestamp": datetime.now().isoformat(),
-                    "read": False
-                })
+                # Add notification with duplication prevention
+                if not skip_notification:
+                    self._add_status_notification(filename, old_status or current_status, new_status, admin_id, admin_comment, source_system)
                 
                 return True
         except Exception as e:
             print(f"Error updating file status: {e}")
         return False
     
-    def add_notification(self, notification: Dict):
-        """Add notification with better performance"""
+    def _add_status_notification(self, filename: str, old_status: str, new_status: str, admin_id: str, admin_comment: str, source_system: str):
+        """Add status notification with duplication checking and debouncing"""
         try:
             notifications = self.load_notifications()
+            current_time = datetime.now().isoformat()
+            
+            # Check for recent duplicate notifications (within last 30 seconds)
+            recent_threshold = datetime.now().timestamp() - 30
+            
+            for notif in notifications[:5]:  # Check only the 5 most recent notifications
+                if (notif.get("filename") == filename and 
+                    notif.get("new_status") == new_status and
+                    notif.get("type") == "status_update"):
+                    try:
+                        notif_time = datetime.fromisoformat(notif.get("timestamp", "")).timestamp()
+                        if notif_time > recent_threshold:
+                            print(f"[NOTIFICATION] Skipping duplicate notification for {filename}: {old_status} → {new_status}")
+                            return  # Skip duplicate notification
+                    except ValueError:
+                        continue
+            
+            # Create proper status transition text
+            status_text = self._format_status_transition(old_status, new_status)
+            
+            # Add single clean notification
+            notification = {
+                "id": str(uuid.uuid4()),
+                "type": "status_update",
+                "filename": filename,
+                "old_status": old_status,
+                "new_status": new_status,
+                "status_transition": status_text,
+                "admin_id": admin_id,
+                "comment": admin_comment,
+                "source_system": source_system,
+                "timestamp": current_time,
+                "read": False
+            }
+            
             notifications.insert(0, notification)
             
-            # Keep only last 50 notifications for better performance
+            # Keep only last 50 notifications
             notifications = notifications[:50]
             
             self.save_notifications(notifications)
+            print(f"[NOTIFICATION] Added clean notification: {filename} {status_text}")
+            
+        except Exception as e:
+            print(f"Error adding status notification: {e}")
+    
+    def _format_status_transition(self, old_status: str, new_status: str) -> str:
+        """Format status transition for display"""
+        # Map internal statuses to user-friendly text
+        status_map = {
+            "pending": "Pending Review",
+            "pending_team_leader": "Pending TL Review", 
+            "pending_admin": "Pending Admin Review",
+            "approved": "Approved",
+            "rejected": "Rejected",
+            "rejected_team_leader": "Rejected by TL",
+            "rejected_admin": "Rejected by Admin",
+            "changes_requested": "Changes Requested",
+            "unknown": "Unknown"
+        }
+        
+        old_display = status_map.get(old_status, old_status.replace("_", " ").title())
+        new_display = status_map.get(new_status, new_status.replace("_", " ").title())
+        
+        return f"{old_display} → {new_display}"
+    
+    def add_notification(self, notification: Dict):
+        """Add notification with better performance and duplication checking"""
+        try:
+            # Use the enhanced notification method if it's a status update
+            if notification.get("type") == "status_update":
+                self._add_status_notification(
+                    notification.get("filename", ""),
+                    notification.get("old_status", "unknown"),
+                    notification.get("new_status", "unknown"),
+                    notification.get("admin_id", ""),
+                    notification.get("comment", ""),
+                    notification.get("source_system", "admin")
+                )
+            else:
+                # For other notification types, use the original method
+                notifications = self.load_notifications()
+                notifications.insert(0, notification)
+                
+                # Keep only last 50 notifications for better performance
+                notifications = notifications[:50]
+                
+                self.save_notifications(notifications)
         except Exception as e:
             print(f"Error adding notification: {e}")
     
@@ -578,6 +662,117 @@ class ApprovalFileService:
             return sum(1 for n in notifications if not n.get("read", False))
         except:
             return 0
+    
+    def get_team_leader_comments(self, filename: str) -> List[Dict]:
+        """Get Team Leader comments for a specific file from multiple sources"""
+        try:
+            comments = []
+            approval_data = self.load_approval_status()
+            
+            if filename in approval_data:
+                admin_comments = approval_data[filename].get("admin_comments", [])
+                
+                # Filter Team Leader comments
+                for comment in admin_comments:
+                    if comment.get("type") == "team_leader_comment" or comment.get("source_system") == "team_leader":
+                        comments.append({
+                            "admin_id": comment.get("admin_id", "Team Leader"),
+                            "comment": comment.get("comment", ""),
+                            "timestamp": comment.get("timestamp", ""),
+                            "role": "Team Leader"
+                        })
+            
+            # Also check metadata from preview panel system if available
+            comments.extend(self._load_metadata_comments(filename, "team_leader"))
+            
+            # Sort by timestamp (newest first)
+            comments.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+            
+            return comments
+            
+        except Exception as e:
+            print(f"Error getting team leader comments: {e}")
+            return []
+    
+    def get_admin_comments(self, filename: str) -> List[Dict]:
+        """Get Admin comments for a specific file from multiple sources"""
+        try:
+            comments = []
+            approval_data = self.load_approval_status()
+            
+            if filename in approval_data:
+                admin_comments = approval_data[filename].get("admin_comments", [])
+                
+                # Filter Admin comments (default or explicitly admin)
+                for comment in admin_comments:
+                    if comment.get("type", "admin_comment") == "admin_comment" or comment.get("source_system") == "admin":
+                        comments.append({
+                            "admin_id": comment.get("admin_id", "Admin"),
+                            "comment": comment.get("comment", ""),
+                            "timestamp": comment.get("timestamp", ""),
+                            "role": "Admin"
+                        })
+            
+            # Also check metadata from file approval panel system if available
+            comments.extend(self._load_metadata_comments(filename, "admin"))
+            
+            # Sort by timestamp (newest first)
+            comments.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+            
+            return comments
+            
+        except Exception as e:
+            print(f"Error getting admin comments: {e}")
+            return []
+    
+    def _load_metadata_comments(self, filename: str, comment_type: str) -> List[Dict]:
+        """Load comments from metadata system (preview_panel.py/file_approval_panel.py)"""
+        try:
+            from utils.metadata_manager import get_metadata_manager
+            import datetime as dt
+            
+            # Try to get metadata from current year and user's team
+            current_year = str(dt.datetime.now().year)
+            metadata_manager = get_metadata_manager()
+            
+            # Search for file metadata
+            metadata = metadata_manager.load_metadata(filename, self.user_team, current_year)
+            
+            if metadata:
+                comments = []
+                
+                # Check for comments in different metadata structures
+                if comment_type == "team_leader":
+                    # Look for team leader comments in metadata
+                    tl_comments = metadata.get("team_leader_comments", [])
+                    for comment in tl_comments:
+                        comments.append({
+                            "admin_id": comment.get("reviewer", "Team Leader"),
+                            "comment": comment.get("comment", ""),
+                            "timestamp": comment.get("timestamp", ""),
+                            "role": "Team Leader"
+                        })
+                
+                elif comment_type == "admin":
+                    # Look for admin comments in metadata
+                    admin_comments = metadata.get("admin_comments", [])
+                    for comment in admin_comments:
+                        comments.append({
+                            "admin_id": comment.get("reviewer", "Admin"),
+                            "comment": comment.get("comment", ""),
+                            "timestamp": comment.get("timestamp", ""),
+                            "role": "Admin"
+                        })
+                
+                return comments
+                
+        except ImportError:
+            # Metadata manager not available
+            pass
+        except Exception as e:
+            print(f"Error loading metadata comments: {e}")
+        
+        return []
     
     def resubmit_file(self, filename: str, description: str = "", tags: List[str] = None) -> bool:
         """Resubmit a file that was rejected or needed changes"""
