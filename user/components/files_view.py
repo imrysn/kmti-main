@@ -783,7 +783,7 @@ class FilesView:
             file_info_container,
             submission_status,
             ft.Container(width=15),
-            action_buttons_container
+            action_buttons_container,
         ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER)
         
         # Final container - removed the on_click and tooltip from here to prevent conflicts

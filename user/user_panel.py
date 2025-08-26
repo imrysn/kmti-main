@@ -197,10 +197,9 @@ def user_panel(page: ft.Page, username: Optional[str]):
     def update_appbar():
         """Update app bar with role badge"""
         notification_badge, notification_icon = get_notification_status()
-        user_badge = create_role_badge("USER", size=12)
         
         page.appbar = ft.AppBar(
-            title=ft.Text("User Dashboard", color=ft.Colors.WHITE),
+            title=ft.Text("", color=ft.Colors.WHITE),
             actions=[
                 ft.Container(
                     content=ft.Stack([
@@ -236,7 +235,6 @@ def user_panel(page: ft.Page, username: Optional[str]):
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),
                     on_click=lambda e: show_profile_view()
                 ),
-                user_badge,
                 ft.TextButton(
                     "Logout", 
                     style=ft.ButtonStyle(color=ft.Colors.WHITE),

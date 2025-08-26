@@ -231,8 +231,8 @@ class ApprovalFilesView:
             border=ft.border.all(1, ft.Colors.GREY_200),
             border_radius=12,
             shadow=ft.BoxShadow(
-                spread_radius=0,
-                blur_radius=4,
+                spread_radius=1,
+                blur_radius=3,
                 color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
                 offset=ft.Offset(0, 2)
             ),
@@ -307,10 +307,10 @@ class ApprovalFilesView:
                 padding=15,
                 width=130,
                 shadow=ft.BoxShadow(
-                    spread_radius=0,
-                    blur_radius=2,
+                    spread_radius=1,
+                    blur_radius=3,
                     color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
-                    offset=ft.Offset(0, 1)
+                    offset=ft.Offset(0, 2)
                 )
             )
         
