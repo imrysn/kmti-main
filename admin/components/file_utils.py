@@ -56,28 +56,40 @@ class FileOperationHandler:
             return False
     
     def open_file(self, file_data: Dict, show_snackbar_callback) -> bool:
-
+        """Open file with compatibility for preview panel."""
         try:
-            file_id = file_data.get('file_id')
-            user_id = file_data.get('user_id')
-            original_filename = file_data.get('original_filename')
+            import os
+            import subprocess
+            import platform
             
-            if not all([file_id, user_id, original_filename]):
-                raise ValueError("Missing required file information")
+            file_path = file_data.get('file_path')
+            original_filename = file_data.get('original_filename', 'unknown_file')
             
-            resolved_path = self.file_manager.resolve_file_path(user_id, file_id, original_filename)
+            # Enhanced: Check for moved files in project directories
+            if not file_path or not os.path.exists(file_path):
+                # Try to find the file in its new location if it's an approved file
+                current_location = file_data.get('current_location')
+                if current_location and os.path.exists(current_location):
+                    file_path = current_location
+                    print(f"[OPEN_FILE] Using moved file location: {file_path}")
+                else:
+                    show_snackbar_callback("File not found in storage or project directory", "red")
+                    log_file_operation(self.admin_user, "OPEN", original_filename, "FAILED", 
+                                     {"reason": "file_not_found", "file_id": file_data.get('file_id')})
+                    return False
             
-            if not resolved_path:
-                show_snackbar_callback("File not found in storage", "red")
-                log_file_operation(self.admin_user, "OPEN", original_filename, "FAILED", 
-                                 {"reason": "file_not_found", "file_id": file_id})
-                return False
+            # Open file with system default application
+            system = platform.system()
+            if system == "Windows":
+                os.startfile(file_path)
+            elif system == "Darwin":
+                subprocess.run(["open", file_path], check=True)
+            else:
+                subprocess.run(["xdg-open", file_path], check=True)
             
-            self._open_file_with_system_default(resolved_path)
-            
-            show_snackbar_callback(f"Opening: {original_filename}", "blue")
+            show_snackbar_callback(f"Opening: {original_filename}", "green")
             log_file_operation(self.admin_user, "OPEN", original_filename, "SUCCESS", 
-                             {"file_id": file_id})
+                             {"file_id": file_data.get('file_id')})
             
             return True
             

@@ -156,11 +156,12 @@ class ApprovalFileService:
             return False
     
     def get_uploaded_files(self) -> List[Dict]:
-        """Get all uploaded files with cached approval status - EXCLUDES system files"""
+        """🚨 ENHANCED: Get all uploaded files INCLUDING approved/moved files with status tracking"""
         files = []
         approval_data = self.load_approval_status()  # Uses cache
         
         try:
+            # First, get files physically present in upload folder
             if os.path.exists(self.user_folder):
                 # FIXED: Comprehensive system file exclusion
                 excluded_files = {
@@ -201,17 +202,75 @@ class ApprovalFileService:
                         "file_path": file_path,
                         "file_size": stat.st_size,
                         "upload_date": modified_time.isoformat(),
+                        "current_location": file_path,  # Track current location
+                        "is_moved": False,  # Still in original location
                         **file_approval  # Merge approval data
                     }
                     files.append(file_info)
+            
+            # 🚨 NEW: Add approved/moved files that no longer exist in upload folder
+            for filename, file_approval in approval_data.items():
+                # Skip if file is already in the physical files list
+                if any(f['filename'] == filename for f in files):
+                    continue
                 
-                # Sort files by upload time (newest first)
-                files.sort(key=lambda x: x["upload_date"], reverse=True)
+                # Only include files that were submitted and approved/moved
+                if file_approval.get('submitted_for_approval') and file_approval.get('status') in ['approved', 'moved']:
+                    # Try to find the file in its new location
+                    moved_location = self._find_approved_file_location(filename, file_approval)
+                    
+                    file_info = {
+                        "filename": filename,
+                        "file_path": moved_location or f"MOVED: {filename}",  # Fallback if location unknown
+                        "file_size": file_approval.get('original_file_size', 0),
+                        "upload_date": file_approval.get('original_upload_date', ''),
+                        "current_location": moved_location,  # New location if found
+                        "is_moved": True,  # File has been moved
+                        "display_status": "approved_and_moved",  # Special status for display
+                        **file_approval  # Merge approval data
+                    }
+                    files.append(file_info)
+                    print(f"[DEBUG] Added moved/approved file to list: {filename} -> {moved_location}")
+                
+            # Sort files by upload time (newest first)
+            files.sort(key=lambda x: x.get("upload_date", ""), reverse=True)
                         
         except Exception as e:
             print(f"Error getting uploaded files: {e}")
             
         return files
+    
+    def _find_approved_file_location(self, filename: str, file_approval: Dict) -> Optional[str]:
+        """🚨 NEW: Find approved file in its moved location using path_config."""
+        try:
+            from utils.path_config import DATA_PATHS
+            
+            # Get user's team for project directory structure
+            user_team = self.user_team
+            
+            # Try current year first, then previous years
+            from datetime import datetime
+            current_year = str(datetime.now().year)
+            years_to_check = [current_year, str(int(current_year) - 1)]
+            
+            for year in years_to_check:
+                found_location = DATA_PATHS.find_approved_file(filename, user_team, year)
+                if found_location:
+                    print(f"[DEBUG] Found approved file {filename} at: {found_location}")
+                    return found_location
+            
+            # Check for specific moved location stored in file metadata
+            moved_location = file_approval.get('moved_to_location')
+            if moved_location and os.path.exists(moved_location):
+                print(f"[DEBUG] Found approved file at stored location: {moved_location}")
+                return moved_location
+            
+            print(f"[DEBUG] Could not find approved file location for: {filename}")
+            return None
+            
+        except Exception as e:
+            print(f"Error finding approved file location for {filename}: {e}")
+            return None
     
     def get_file_approval_status(self, filename: str) -> Dict:
         """Get approval status for a specific file (cached)"""
@@ -239,6 +298,9 @@ class ApprovalFileService:
             # Generate unique file ID for tracking
             file_id = str(uuid.uuid4())
             
+            # 🚨 ENHANCED: Store original file metadata for tracking after move
+            file_stat = os.stat(file_path)
+            
             # Update local approval status
             approval_data = self.load_approval_status()
             approval_data[filename] = {
@@ -249,6 +311,9 @@ class ApprovalFileService:
                 "description": description,
                 "tags": tags,
                 "admin_comments": [],
+                "original_file_size": file_stat.st_size,  # Store original size
+                "original_upload_date": datetime.fromtimestamp(file_stat.st_mtime).isoformat(),  # Store original date
+                "original_file_path": file_path,  # Store original path
                 "status_history": [{
                     "status": "pending",
                     "timestamp": datetime.now().isoformat(),
@@ -496,8 +561,8 @@ class ApprovalFileService:
         
         return available_files
     
-    def update_file_status(self, filename: str, new_status: str, admin_comment: str = "", admin_id: str = "", old_status: str = "", source_system: str = "admin", skip_notification: bool = False):
-        """Update file status (called by admin system with enhanced notification control)"""
+    def update_file_status(self, filename: str, new_status: str, admin_comment: str = "", admin_id: str = "", old_status: str = "", source_system: str = "admin", skip_notification: bool = False, moved_to_location: str = None):
+        """🚨 ENHANCED: Update file status with optional moved location tracking"""
         try:
             approval_data = self.load_approval_status()
             
@@ -505,6 +570,12 @@ class ApprovalFileService:
                 current_status = approval_data[filename].get("status", "unknown")
                 approval_data[filename]["status"] = new_status
                 approval_data[filename]["last_updated"] = datetime.now().isoformat()
+                
+                # 🚨 NEW: Track moved file location for approved files
+                if new_status == "approved" and moved_to_location:
+                    approval_data[filename]["moved_to_location"] = moved_to_location
+                    approval_data[filename]["moved_date"] = datetime.now().isoformat()
+                    print(f"[DEBUG] Stored moved location for {filename}: {moved_to_location}")
                 
                 # Add admin comment if provided with role distinction
                 if admin_comment:

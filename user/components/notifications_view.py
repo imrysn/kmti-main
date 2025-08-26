@@ -29,6 +29,57 @@ class NotificationsView:
         self.navigation = navigation
         self.shared.set_navigation(navigation)
     
+    def _extract_comment_author(self, notification: Dict) -> str:
+        """🚨 NEW: Extract comment author with fallback logic"""
+        # Try multiple fields for comment author
+        author_fields = ['comment_author', 'admin_id', 'tl_id', 'user_id']
+        for field in author_fields:
+            author = notification.get(field)
+            if author and author.strip() and author.lower() != 'unknown':
+                return author
+        
+        print(f"[WARNING] Could not extract comment author from notification: {notification}")
+        return "Unknown"
+    
+    def _extract_role_display(self, notification: Dict) -> str:
+        """🚨 NEW: Extract role display with fallback logic"""
+        # Try explicit role_display first
+        role_display = notification.get('role_display')
+        if role_display and role_display.strip():
+            return role_display
+        
+        # Try comment_author_role and convert to display format
+        comment_author_role = notification.get('comment_author_role')
+        if comment_author_role:
+            role_map = {
+                'admin': 'Admin',
+                'team_leader': 'Team Leader',
+                'user': 'User'
+            }
+            return role_map.get(comment_author_role, comment_author_role.replace('_', ' ').title())
+        
+        # Try to determine from other fields
+        if notification.get('admin_id'):
+            return 'Admin'
+        elif notification.get('tl_id'):
+            return 'Team Leader'
+        elif notification.get('user_id'):
+            return 'User'
+        
+        print(f"[WARNING] Could not extract role display from notification: {notification}")
+        return "Unknown"
+    
+    def _extract_comment_text(self, notification: Dict) -> str:
+        """🚨 NEW: Extract comment text with fallback logic"""
+        # Try multiple fields for comment text
+        text_fields = ['comment', 'text', 'message']
+        for field in text_fields:
+            text = notification.get(field)
+            if text and text.strip():
+                return text
+        
+        return "No comment text"
+    
     def create_notification_card(self, notification: Dict, index: int):
         """Create card for a notification"""
         is_read = notification.get("read", False)
@@ -43,7 +94,7 @@ class NotificationsView:
         except:
             timestamp = "Unknown"
         
-        # Get notification message with improved formatting
+        # 🚨 FIXED: Get notification message with proper comment author display
         if notification["type"] == "status_update":
             # Use the formatted status transition if available
             if notification.get("status_transition"):
@@ -64,6 +115,19 @@ class NotificationsView:
                 message += "\n👥 Updated by Team Leader"
             elif source == "admin":
                 message += "\n⚡ Updated by Admin"
+        elif notification["type"] == "comment_added":
+            # 🚨 ENHANCED: Handle comment notifications with better data validation
+            comment_author = self._extract_comment_author(notification)
+            role_display = self._extract_role_display(notification)
+            comment_text = self._extract_comment_text(notification)
+            
+            # Create properly formatted message
+            if comment_author != "Unknown" and role_display != "Unknown":
+                message = f"[{role_display}] {comment_author} commented: \"{comment_text}\""
+            else:
+                # Fallback for malformed notifications
+                message = f"New comment: \"{comment_text}\""
+                print(f"[DEBUG] Malformed comment notification data: {notification}")
         else:
             message = notification.get("message", "Notification received")
         
@@ -83,12 +147,12 @@ class NotificationsView:
                     ft.Text(message, size=12, color=ft.Colors.GREY_700),
                     ft.Row([
                         ft.Icon(
-                            ft.Icons.SUPERVISOR_ACCOUNT if notification.get("source_system") == "team_leader" else ft.Icons.ADMIN_PANEL_SETTINGS,
+                            ft.Icons.SUPERVISOR_ACCOUNT if notification.get("source_system") == "team_leader" or notification.get("comment_author_role") == "team_leader" else ft.Icons.ADMIN_PANEL_SETTINGS,
                             size=12, 
-                            color=ft.Colors.BLUE_600 if notification.get("source_system") == "team_leader" else ft.Colors.GREEN_600
+                            color=ft.Colors.BLUE_600 if notification.get("source_system") == "team_leader" or notification.get("comment_author_role") == "team_leader" else ft.Colors.GREEN_600
                         ),
                         ft.Text(
-                            f"{notification.get('admin_id', 'System')} • {timestamp}", 
+                            f"{notification.get('admin_id') or notification.get('comment_author', 'System')} • {timestamp}", 
                             size=10, 
                             color=ft.Colors.GREY_500
                         )

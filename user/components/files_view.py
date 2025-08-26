@@ -291,40 +291,10 @@ class FilesView:
         )
     
     def open_file(self, filename: str):
-        """Open file using the default system application"""
+        """Open file using the default system application from user folder"""
         try:
             file_path = os.path.join(self.file_service.user_folder, filename)
-            
-            if not os.path.exists(file_path):
-                self.page.snack_bar = ft.SnackBar(
-                    content=ft.Text(f"❌ File '{filename}' not found!"),
-                    bgcolor=ft.Colors.RED
-                )
-                self.page.snack_bar.open = True
-                self.page.update()
-                return
-            
-            # Open file with default system application
-            import subprocess
-            import platform
-            
-            system = platform.system()
-            if system == "Windows":
-                os.startfile(file_path)
-            elif system == "Darwin":  # macOS
-                subprocess.call(["open", file_path])
-            else:  # Linux and others
-                subprocess.call(["xdg-open", file_path])
-            
-            print(f"DEBUG: Opened file: {filename}")
-            
-            # Show success notification
-            self.page.snack_bar = ft.SnackBar(
-                content=ft.Text(f"📂 Opening '{filename}'..."),
-                bgcolor=ft.Colors.BLUE
-            )
-            self.page.snack_bar.open = True
-            self.page.update()
+            self._open_file_with_system_app(file_path, filename)
             
         except Exception as ex:
             print(f"DEBUG: Error opening file {filename}: {str(ex)}")
@@ -334,6 +304,56 @@ class FilesView:
             )
             self.page.snack_bar.open = True
             self.page.update()
+    
+    def open_file_from_path(self, file_path: str, display_name: str):
+        """🚨 NEW: Open file from specific path (for moved files)"""
+        try:
+            self._open_file_with_system_app(file_path, display_name)
+        except Exception as ex:
+            print(f"DEBUG: Error opening moved file {display_name}: {str(ex)}")
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"❌ Could not open moved file '{display_name}': {str(ex)}"),
+                bgcolor=ft.Colors.RED
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+    
+    def _open_file_with_system_app(self, file_path: str, display_name: str):
+        """🚨 NEW: Common method to open file with system application"""
+        if not os.path.exists(file_path):
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"❌ File '{display_name}' not found at expected location!"),
+                bgcolor=ft.Colors.RED
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+            return
+        
+        # Open file with default system application
+        import subprocess
+        import platform
+        
+        system = platform.system()
+        if system == "Windows":
+            os.startfile(file_path)
+        elif system == "Darwin":  # macOS
+            subprocess.call(["open", file_path])
+        else:  # Linux and others
+            subprocess.call(["xdg-open", file_path])
+        
+        print(f"DEBUG: Opened file: {display_name} from {file_path}")
+        
+        # Show success notification
+        location_info = ""
+        if "KMTI-NAS" in file_path and "projects" in file_path.lower():
+            location_info = " from project directory"
+        
+        self.page.snack_bar = ft.SnackBar(
+            content=ft.Text(f"📂 Opening '{display_name}'{location_info}..."),
+            bgcolor=ft.Colors.BLUE
+        )
+        self.page.snack_bar.open = True
+        self.page.update()
     
     def upload_file(self, e: ft.FilePickerResultEvent):
         """Handle file upload with immediate real-time updates"""
@@ -454,11 +474,15 @@ class FilesView:
         print(f"DEBUG: Separated files - {len(not_submitted_files)} not submitted, {len(submitted_files)} submitted")
         return not_submitted_files, submitted_files
     
-    def get_file_approval_status_detailed(self, filename: str):
-        """Get detailed approval status including admin approval status"""
+    def get_file_approval_status_detailed(self, filename: str, file_info: dict = None):
+        """🚨 ENHANCED: Get detailed approval status including moved file tracking"""
         try:
             # Get basic approval status (submitted_for_approval)
             approval_status = self.approval_service.get_file_approval_status(filename)
+            
+            # 🚨 NEW: Handle moved files with special status
+            is_moved = file_info and file_info.get('is_moved', False)
+            current_location = file_info and file_info.get('current_location')
             
             # Check if file has been approved by admin by looking at submissions
             submissions = self.approval_service.get_user_submissions()
@@ -471,8 +495,25 @@ class FilesView:
                         "is_approved": status == "approved",
                         "is_rejected": status == "rejected",
                         "needs_changes": status == "changes_requested",
-                        "is_pending": status == "pending"
+                        "is_pending": status == "pending",
+                        "is_moved": is_moved,
+                        "current_location": current_location,
+                        "display_status": "approved_and_moved" if (status == "approved" and is_moved) else status
                     }
+            
+            # Check approval data directly for moved files
+            if is_moved and approval_status.get("status") == "approved":
+                return {
+                    "submitted_for_approval": True,
+                    "admin_status": "approved",
+                    "is_approved": True,
+                    "is_rejected": False,
+                    "needs_changes": False,
+                    "is_pending": False,
+                    "is_moved": True,
+                    "current_location": current_location,
+                    "display_status": "approved_and_moved"
+                }
             
             # If not found in submissions but marked as submitted, it's pending
             if approval_status.get("submitted_for_approval", False):
@@ -482,7 +523,10 @@ class FilesView:
                     "is_approved": False,
                     "is_rejected": False,
                     "needs_changes": False,
-                    "is_pending": True
+                    "is_pending": True,
+                    "is_moved": False,
+                    "current_location": None,
+                    "display_status": "pending"
                 }
             
             # File not submitted for approval
@@ -492,7 +536,10 @@ class FilesView:
                 "is_approved": False,
                 "is_rejected": False,
                 "needs_changes": False,
-                "is_pending": False
+                "is_pending": False,
+                "is_moved": False,
+                "current_location": None,
+                "display_status": "not_submitted"
             }
             
         except Exception as e:
@@ -503,7 +550,10 @@ class FilesView:
                 "is_approved": False,
                 "is_rejected": False,
                 "needs_changes": False,
-                "is_pending": False
+                "is_pending": False,
+                "is_moved": False,
+                "current_location": None,
+                "display_status": "error"
             }
     
     def rebuild_files_list_completely(self):
@@ -591,15 +641,18 @@ class FilesView:
             print(f"DEBUG: Error during complete list rebuild: {ex}")
     
     def create_file_card(self, file_info):
-        """Create a file card with ADMIN APPROVAL STATUS - FIXED to prevent hover tooltip on action buttons"""
+        """🚨 ENHANCED: Create a file card with moved file support and location tracking"""
         
-        # Check detailed approval status including admin decision
-        detailed_status = self.get_file_approval_status_detailed(file_info["name"])
+        # Check detailed approval status including admin decision and moved file info
+        detailed_status = self.get_file_approval_status_detailed(file_info["name"], file_info)
         is_submitted = detailed_status["submitted_for_approval"]
         is_approved = detailed_status["is_approved"]
         is_rejected = detailed_status["is_rejected"]
         needs_changes = detailed_status["needs_changes"]
         is_pending = detailed_status["is_pending"]
+        is_moved = detailed_status.get("is_moved", False)
+        current_location = detailed_status.get("current_location")
+        display_status = detailed_status.get("display_status", "unknown")
         
         # Determine file type and icon
         file_type = file_info.get("type", "FILE").upper()
@@ -662,22 +715,54 @@ class FilesView:
             alignment=ft.MainAxisAlignment.CENTER
         )
         
+        # 🚨 ENHANCED: File opening with moved file support
+        def handle_file_open(e, file_data=file_info):
+            if is_moved and current_location and os.path.exists(current_location):
+                # Open from moved location
+                self.open_file_from_path(current_location, file_data["name"])
+            else:
+                # Open from original location
+                self.open_file(file_data["name"])
+        
+        tooltip_text = f"Click to open '{file_info['name']}'" 
+        if is_moved and current_location:
+            tooltip_text += f"\nLocation: {current_location}"
+        elif is_moved:
+            tooltip_text += "\n(File moved - searching for location...)"
+        
         file_info_container = ft.Container(
             content=file_info_column,
             expand=True,
             alignment=ft.alignment.center_left,
-            on_click=lambda e, fn=file_info["name"]: self.open_file(fn),
+            on_click=handle_file_open,
             ink=True,
             border_radius=8,
             padding=ft.padding.symmetric(horizontal=5, vertical=5),
-            tooltip=f"Click to open '{file_info['name']}'"
+            tooltip=tooltip_text
         )
         
-        # Submission status - show different statuses based on admin decision
+        # 🚨 ENHANCED: Submission status - show different statuses including moved files
         submission_status_controls = []
 
-        # Approved status
-        if is_approved:
+        # Approved and moved status (special case)
+        if display_status == "approved_and_moved" and is_moved:
+            status_text = "✅ APPROVED - Moved to Project Directory"
+            if current_location:
+                # Show shortened path for display
+                short_location = current_location.split('\\')[-2:] if '\\' in current_location else [current_location.split('/')[-1]]
+                location_display = '\\'.join(short_location) if len(short_location) > 1 else short_location[0]
+                status_text = f"✅ APPROVED - In: {location_display}"
+            
+            submission_status_controls.append(ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.VERIFIED, color=ft.Colors.GREEN_700, size=16),
+                    ft.Text("APPROVED & MOVED", size=12, color=ft.Colors.GREEN_700, weight=ft.FontWeight.BOLD)
+                ], spacing=5),
+                ft.Text(status_text, size=10, color=ft.Colors.GREEN_600, italic=True)
+            ], spacing=2))
+            
+        # Regular approved status (not moved yet)
+        elif is_approved and not is_moved:
             submission_status_controls.append(ft.Row([
                 ft.Icon(ft.Icons.VERIFIED, color=ft.Colors.GREEN, size=16),
                 ft.Text("Approved by admin", size=12, color=ft.Colors.GREEN, weight=ft.FontWeight.BOLD)

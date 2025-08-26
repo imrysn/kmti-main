@@ -837,5 +837,85 @@
       "reason": "Wow"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T11:53:29.452850",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "e08d4772-3de7-492f-b54f-30da7a963f06",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T13:02:39.925573",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "e08d4772-3de7-492f-b54f-30da7a963f06",
+      "action": "COMMENT",
+      "reason": "Test"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T13:06:23.929414",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "7ecbd349-542e-4f77-b00c-5ad83f6efa15",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T13:42:10.826318",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "687e1a2a-22e5-4997-9f60-0dac3efacc9b",
+      "action": "COMMENT",
+      "reason": "Good"
+    },
+    "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T13:42:17.725857",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "687e1a2a-22e5-4997-9f60-0dac3efacc9b",
+      "action": "APPROVE",
+      "reason": "None provided"
+    },
+    "ip_address": "unknown"
   }
 ]

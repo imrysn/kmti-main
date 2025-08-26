@@ -53,8 +53,8 @@ class NotificationService:
             print(f"Error sending notification to {username}: {e}")
             return False
     
-    def notify_comment_added(self, username: str, filename: str, admin_id: str, comment: str):
-        """Send comment notification to user"""
+    def notify_comment_added(self, username: str, filename: str, comment_author_role: str, comment_author: str, comment: str):
+        """🚨 ENHANCED: Send comment notification to user with role support"""
         try:
             # Use centralized data folder for notifications
             user_data_folder = os.path.join(r"\\KMTI-NAS\Shared\data", "user_approvals", username)
@@ -63,16 +63,34 @@ class NotificationService:
             # Load existing notifications
             notifications = []
             if os.path.exists(notifications_file):
-                with open(notifications_file, 'r') as f:
+                with open(notifications_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     notifications = data if isinstance(data, list) else []
             
-            # Create notification
+            # Create role-specific display text
+            role_display = {
+                'admin': 'Admin',
+                'team_leader': 'Team Leader', 
+                'user': 'User'
+            }.get(comment_author_role, comment_author_role.title())
+            
+            # Create notification with comment ID to prevent duplicates
+            comment_id = f"{filename}_{comment_author}_{comment[:20]}_{datetime.now().strftime('%Y%m%d_%H%M')}"
+            
+            # Check for duplicate notifications
+            existing_ids = [n.get('comment_id') for n in notifications if n.get('type') == 'comment_added']
+            if comment_id in existing_ids:
+                print(f"[INFO] Duplicate comment notification prevented for {username}: {comment_id}")
+                return True
+            
             notification = {
                 'type': 'comment_added',
                 'filename': filename,
-                'admin_id': admin_id,
+                'comment_author': comment_author,
+                'comment_author_role': comment_author_role,
+                'role_display': role_display,
                 'comment': comment,
+                'comment_id': comment_id,
                 'timestamp': datetime.now().isoformat(),
                 'read': False
             }
@@ -85,14 +103,14 @@ class NotificationService:
             
             # Save notifications
             os.makedirs(user_data_folder, exist_ok=True)
-            with open(notifications_file, 'w') as f:
+            with open(notifications_file, 'w', encoding='utf-8') as f:
                 json.dump(notifications, f, indent=2)
             
-            print(f"Comment notification sent to {username}: {comment[:50]}...")
+            print(f"[SUCCESS] Comment notification sent to {username}: {role_display} {comment_author} commented on {filename}")
             return True
             
         except Exception as e:
-            print(f"Error sending comment notification to {username}: {e}")
+            print(f"[ERROR] Error sending comment notification to {username}: {e}")
             return False
     
     def get_user_notifications(self, username: str) -> List[Dict]:

@@ -17,6 +17,7 @@ from utils.logger import log_action
 from utils.session_logger import log_activity, log_panel_access
 from admin.components.role_colors import create_role_badge, get_role_color
 from utils.path_config import DATA_PATHS
+from utils.session_logger import get_comment_metadata_for_monitoring, detect_new_comments_for_user
 
 # Use consistent session management with login_window.py
 SESSION_ROOT = DATA_PATHS.local_sessions_dir
@@ -58,6 +59,105 @@ def clear_session(username: str):
             print(f"[DEBUG] Cleared session for {username}")
     except Exception as ex:
         print(f"[DEBUG] clear_session error: {ex}")
+
+
+class CommentMonitor:
+    """🚨 NEW: Monitor centralized comment files for new comments and trigger notifications."""
+    
+    def __init__(self, username: str, approval_service):
+        self.username = username
+        self.approval_service = approval_service
+        self.monitoring = False
+        self.monitor_thread = None
+        self.last_metadata = None
+        self.notification_callback = None
+    
+    def start_monitoring(self, on_new_comments_detected=None):
+        """Start monitoring for new comments."""
+        if self.monitoring:
+            return
+        
+        self.monitoring = True
+        self.notification_callback = on_new_comments_detected
+        self.last_metadata = get_comment_metadata_for_monitoring()
+        
+        # Start monitoring thread
+        import threading
+        self.monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)
+        self.monitor_thread.start()
+        
+        print(f"[DEBUG] Started comment monitoring for user {self.username}")
+    
+    def stop_monitoring(self):
+        """Stop comment monitoring."""
+        self.monitoring = False
+        if self.monitor_thread:
+            self.monitor_thread.join(timeout=1.0)
+        print(f"[DEBUG] Stopped comment monitoring for user {self.username}")
+    
+    def _monitor_loop(self):
+        """Main monitoring loop - runs in background thread."""
+        import time
+        
+        while self.monitoring:
+            try:
+                time.sleep(5.0)  # Check every 5 seconds
+                
+                if not self.monitoring:
+                    break
+                
+                # Detect new comments
+                new_comments = detect_new_comments_for_user(self.username, self.last_metadata)
+                
+                if new_comments:
+                    self._process_new_comments(new_comments)
+                    
+                    # Update metadata for next check
+                    self.last_metadata = get_comment_metadata_for_monitoring()
+                    
+                    # Trigger UI update callback
+                    if self.notification_callback:
+                        try:
+                            self.notification_callback()
+                        except Exception as e:
+                            print(f"Error in notification callback: {e}")
+            
+            except Exception as e:
+                print(f"Error in comment monitoring loop: {e}")
+                time.sleep(10.0)  # Wait longer on error
+    
+    def _process_new_comments(self, new_comments: list):
+        """Process detected new comments and send notifications."""
+        try:
+            from services.notification_service import NotificationService
+            notification_service = NotificationService()
+            
+            for comment_info in new_comments:
+                filename = comment_info.get('filename')
+                comment_data = comment_info.get('comment', {})
+                comment_author = comment_info.get('comment_author')
+                comment_text = comment_info.get('comment_text')
+                
+                # Determine comment author role
+                comment_author_role = 'user'  # default
+                if comment_data.get('admin_id'):
+                    comment_author_role = 'admin'
+                elif comment_data.get('tl_id'):
+                    comment_author_role = 'team_leader'
+                
+                # Send notification
+                success = notification_service.notify_comment_added(
+                    self.username, filename, comment_author_role, comment_author, comment_text
+                )
+                
+                if success:
+                    print(f"[SUCCESS] Notified {self.username} about new comment on {filename} by {comment_author}")
+                else:
+                    print(f"[WARNING] Failed to notify {self.username} about new comment")
+                    
+        except Exception as e:
+            print(f"Error processing new comments for {self.username}: {e}")
+
 
 def user_panel(page: ft.Page, username: Optional[str]):
     """User panel - accessible only by USER role users."""
@@ -284,6 +384,23 @@ def user_panel(page: ft.Page, username: Optional[str]):
             page.add(ft.Text(f"An error occurred: {e}", color=ft.Colors.RED))
             page.update()
 
+    # 🚨 NEW: Initialize comment monitoring for notifications
+    comment_monitor = CommentMonitor(username, approval_service)
+    comment_monitor.start_monitoring(on_new_comments_detected=on_notifications_updated)
+    
+    # Cleanup function for when panel closes
+    def cleanup_on_logout():
+        comment_monitor.stop_monitoring()
+    
+    # Store original logout function and extend it
+    original_logout = logout
+    def logout_with_cleanup(e):
+        cleanup_on_logout()
+        original_logout(e)
+    
+    # Replace logout function
+    logout = logout_with_cleanup
+    
     # Initialize page
     page.title = "KMTI Data Management Users"
     page.bgcolor = ft.Colors.GREY_200
