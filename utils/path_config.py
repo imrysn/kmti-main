@@ -3,22 +3,42 @@ Centralized path configuration for KMTI Data Management System
 This file defines all data paths used throughout the application
 """
 import os
+import sys
 from pathlib import Path
 from typing import List, Optional
+
+def get_base_path():
+    """Get base path for the application (works for both dev and packaged)"""
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable - use directory where executable is located
+        return os.path.dirname(sys.executable)
+    else:
+        # Running as script - use current working directory
+        return os.getcwd()
+
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
+
+# Get the base path for the application
+APP_BASE_PATH = get_base_path()
 
 # Network data directory (main data storage)
 NETWORK_DATA_DIR = r"\\KMTI-NAS\Shared\Public"
 NETWORK_SHARED_DIR = r"\\KMTI-NAS\Shared\data"
 
 # Local data directory (for sessions, logs, and local config)
-LOCAL_DATA_DIR = "data"
+# This will be in the same directory as the executable/installation
+LOCAL_DATA_DIR = os.path.join(APP_BASE_PATH, "data")
 
-# Ensure directories exist
+# Ensure local directory exists (but don't try to create network dirs here)
 os.makedirs(LOCAL_DATA_DIR, exist_ok=True)
-try:
-    os.makedirs(NETWORK_DATA_DIR, exist_ok=True)
-except Exception as e:
-    print(f"Warning: Could not create network directory {NETWORK_DATA_DIR}: {e}")
 
 class DataPaths:
     """Centralized data paths configuration"""
@@ -124,12 +144,17 @@ class DataPaths:
     def ensure_local_dirs(self):
         """Ensure all local directories exist"""
         directories = [
+            self.LOCAL_BASE,  # Ensure main data directory exists
             self.local_sessions_dir,
             self.local_logs_dir
         ]
         
         for directory in directories:
-            os.makedirs(directory, exist_ok=True)
+            try:
+                os.makedirs(directory, exist_ok=True)
+                print(f"[PATH_CONFIG] Ensured local directory: {directory}")
+            except Exception as e:
+                print(f"Warning: Could not create local directory {directory}: {e}")
     
     def ensure_user_dirs(self, username: str):
         """Ensure all user-specific directories exist"""
@@ -147,7 +172,10 @@ class DataPaths:
     
     def is_network_available(self):
         """Check if network directory is accessible"""
-        return os.path.exists(self.NETWORK_BASE)
+        try:
+            return os.path.exists(self.NETWORK_BASE)
+        except:
+            return False
     
     def get_possible_approved_file_locations(self, team_tag: str, year: str = None) -> List[str]:
         """Get all possible locations where approved files might be stored"""
@@ -212,11 +240,14 @@ class DataPaths:
 DATA_PATHS = DataPaths()
 
 # Initialize directories
-DATA_PATHS.ensure_local_dirs()
-if DATA_PATHS.is_network_available():
-    DATA_PATHS.ensure_network_dirs()
-else:
-    print(f"Warning: Network directory {NETWORK_DATA_DIR} is not accessible")
+try:
+    DATA_PATHS.ensure_local_dirs()
+    if DATA_PATHS.is_network_available():
+        DATA_PATHS.ensure_network_dirs()
+    else:
+        print(f"Warning: Network directory {NETWORK_DATA_DIR} is not accessible")
+except Exception as e:
+    print(f"Error initializing directories: {e}")
 
 # Backward compatibility functions
 def get_base_dir():

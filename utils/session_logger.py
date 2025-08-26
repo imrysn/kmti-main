@@ -243,3 +243,268 @@ def log_panel_access(username: str, role: str, panel: str, login_type: str):
     
     description = f"Accessed {panel_description} via {login_method}"
     log_activity(username, description)
+
+
+# --------------------------
+# 🚨 NEW: Centralized Comment Functions for All Panels
+# --------------------------
+
+def load_comments_from_centralized_files(file_id: str) -> list:
+    """🚨 SHARED UTILITY: Load comments for a specific file ID from centralized JSON files.
+    This function should be used by ALL panels (Admin, TL, User) for consistency.
+    """
+    try:
+        import os
+        import json
+        from utils.path_config import DATA_PATHS
+        
+        comments = []
+        
+        # Load from approval_comments.json
+        approval_comments_file = os.path.join(DATA_PATHS.approvals_dir, "approval_comments.json")
+        if os.path.exists(approval_comments_file):
+            try:
+                with open(approval_comments_file, 'r', encoding='utf-8') as f:
+                    approval_comments = json.load(f)
+                    if file_id in approval_comments:
+                        for comment in approval_comments[file_id]:
+                            # Add source identifier
+                            comment['source'] = 'approval'
+                            comments.append(comment)
+            except Exception as e:
+                print(f"Error loading approval_comments.json: {e}")
+        
+        # Load from comments.json  
+        comments_file = os.path.join(DATA_PATHS.approvals_dir, "comments.json")
+        if os.path.exists(comments_file):
+            try:
+                with open(comments_file, 'r', encoding='utf-8') as f:
+                    general_comments = json.load(f)
+                    if file_id in general_comments:
+                        for comment in general_comments[file_id]:
+                            # Add source identifier
+                            comment['source'] = 'general'
+                            comments.append(comment)
+            except Exception as e:
+                print(f"Error loading comments.json: {e}")
+        
+        # Sort comments by timestamp
+        comments.sort(key=lambda x: x.get('timestamp', ''), reverse=False)
+        
+        print(f"[DEBUG] Loaded {len(comments)} centralized comments for file {file_id}")
+        return comments
+        
+    except Exception as e:
+        print(f"Error loading centralized comments for file {file_id}: {e}")
+        return []
+
+def load_centralized_comments() -> dict:
+    """Load all centralized comments from approval JSON files."""
+    comments = {}
+    
+    try:
+        import os
+        import json
+        
+        approvals_dir = r"\\KMTI-NAS\Shared\data\approvals"
+        
+        # Load approval_comments.json
+        approval_comments_file = os.path.join(approvals_dir, "approval_comments.json")
+        if os.path.exists(approval_comments_file):
+            try:
+                with open(approval_comments_file, 'r', encoding='utf-8') as f:
+                    approval_comments = json.load(f)
+                    for file_id, file_comments in approval_comments.items():
+                        if file_id not in comments:
+                            comments[file_id] = []
+                        for comment in file_comments:
+                            comment['source'] = 'approval'
+                            comments[file_id].append(comment)
+            except Exception as e:
+                print(f"Error loading approval_comments.json: {e}")
+        
+        # Load comments.json
+        comments_file = os.path.join(approvals_dir, "comments.json")
+        if os.path.exists(comments_file):
+            try:
+                with open(comments_file, 'r', encoding='utf-8') as f:
+                    general_comments = json.load(f)
+                    for file_id, file_comments in general_comments.items():
+                        if file_id not in comments:
+                            comments[file_id] = []
+                        for comment in file_comments:
+                            comment['source'] = 'general'
+                            comments[file_id].append(comment)
+            except Exception as e:
+                print(f"Error loading comments.json: {e}")
+        
+        print(f"[DEBUG] Loaded centralized comments for {len(comments)} files")
+        return comments
+        
+    except Exception as e:
+        print(f"Error loading centralized comments: {e}")
+        return {}
+
+
+def get_comment_metadata_for_monitoring() -> dict:
+    """Get metadata about comments for monitoring new additions."""
+    try:
+        import os
+        import json
+        
+        approvals_dir = r"\\KMTI-NAS\Shared\data\approvals"
+        comment_metadata = {}
+        
+        # Check approval_comments.json metadata
+        approval_comments_file = os.path.join(approvals_dir, "approval_comments.json")
+        if os.path.exists(approval_comments_file):
+            try:
+                stat = os.stat(approval_comments_file)
+                comment_metadata['approval_comments_modified'] = stat.st_mtime
+                
+                with open(approval_comments_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    comment_metadata['approval_comments_count'] = sum(len(comments) for comments in data.values())
+            except Exception as e:
+                print(f"Error getting approval_comments.json metadata: {e}")
+                comment_metadata['approval_comments_modified'] = 0
+                comment_metadata['approval_comments_count'] = 0
+        else:
+            comment_metadata['approval_comments_modified'] = 0
+            comment_metadata['approval_comments_count'] = 0
+        
+        # Check comments.json metadata
+        comments_file = os.path.join(approvals_dir, "comments.json")
+        if os.path.exists(comments_file):
+            try:
+                stat = os.stat(comments_file)
+                comment_metadata['comments_modified'] = stat.st_mtime
+                
+                with open(comments_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    comment_metadata['comments_count'] = sum(len(comments) for comments in data.values())
+            except Exception as e:
+                print(f"Error getting comments.json metadata: {e}")
+                comment_metadata['comments_modified'] = 0
+                comment_metadata['comments_count'] = 0
+        else:
+            comment_metadata['comments_modified'] = 0
+            comment_metadata['comments_count'] = 0
+        
+        return comment_metadata
+        
+    except Exception as e:
+        print(f"Error getting comment metadata: {e}")
+        return {
+            'approval_comments_modified': 0,
+            'approval_comments_count': 0,
+            'comments_modified': 0,
+            'comments_count': 0
+        }
+
+
+def detect_new_comments_for_user(username: str, last_check_metadata: dict) -> list:
+    """Detect new comments for a specific user since last check."""
+    try:
+        from services.approval_service import ApprovalFileService
+        from utils.path_config import DATA_PATHS
+        
+        # Get current comment metadata
+        current_metadata = get_comment_metadata_for_monitoring()
+        
+        # If no previous metadata or no changes, return empty
+        if not last_check_metadata:
+            return []
+        
+        # Check if files were modified
+        approval_modified = (current_metadata.get('approval_comments_modified', 0) > 
+                           last_check_metadata.get('approval_comments_modified', 0))
+        comments_modified = (current_metadata.get('comments_modified', 0) > 
+                           last_check_metadata.get('comments_modified', 0))
+        
+        if not approval_modified and not comments_modified:
+            return []
+        
+        # Get user's submitted files to check for relevant comments
+        user_folder = DATA_PATHS.get_user_upload_dir(username)
+        if not os.path.exists(user_folder):
+            return []
+        
+        approval_service = ApprovalFileService(user_folder, username)
+        user_files = approval_service.get_uploaded_files()
+        
+        # Get user's file IDs from their approval status
+        user_file_ids = set()
+        for file_info in user_files:
+            if file_info.get('submitted_for_approval'):
+                approval_data = approval_service.get_file_approval_status(file_info['filename'])
+                file_id = approval_data.get('file_id')
+                if file_id:
+                    user_file_ids.add(file_id)
+        
+        if not user_file_ids:
+            return []
+        
+        # Load current comments and find new ones
+        all_comments = load_centralized_comments()
+        new_comments = []
+        
+        for file_id in user_file_ids:
+            if file_id in all_comments:
+                for comment in all_comments[file_id]:
+                    # Check if comment is newer than last check
+                    try:
+                        comment_time = comment.get('timestamp', '')
+                        if comment_time:
+                            from datetime import datetime
+                            comment_dt = datetime.fromisoformat(comment_time.replace('Z', '+00:00'))
+                            
+                            # Use file modification time as proxy for "last check"
+                            last_check_time = max(
+                                last_check_metadata.get('approval_comments_modified', 0),
+                                last_check_metadata.get('comments_modified', 0)
+                            )
+                            
+                            if comment_dt.timestamp() > last_check_time:
+                                # Find the filename for this file_id
+                                filename = None
+                                for file_info in user_files:
+                                    approval_data = approval_service.get_file_approval_status(file_info['filename'])
+                                    if approval_data.get('file_id') == file_id:
+                                        filename = file_info['filename']
+                                        break
+                                
+                                if filename:
+                                    # 🚨 ENHANCED: Better comment author and text extraction
+                                    comment_author = comment.get('admin_id') or comment.get('tl_id') or comment.get('user_id') or 'Unknown'
+                                    comment_text = comment.get('comment') or comment.get('text') or 'No comment text'
+                                    
+                                    # 🚨 FIXED: Don't notify user about their own comments
+                                    if comment_author != username:
+                                        new_comments.append({
+                                            'file_id': file_id,
+                                            'filename': filename,
+                                            'comment': comment,
+                                            'comment_author': comment_author,
+                                            'comment_text': comment_text
+                                        })
+                    except Exception as e:
+                        print(f"Error processing comment timestamp: {e}")
+                        continue
+        
+        # 🚨 ENHANCED: Additional debug information
+        if new_comments:
+            print(f"[DEBUG] Found {len(new_comments)} new comments for user {username}:")
+            for comment_info in new_comments[:3]:  # Show first 3 for debugging
+                author = comment_info.get('comment_author', 'Unknown')
+                filename = comment_info.get('filename', 'Unknown')
+                text_preview = comment_info.get('comment_text', '')[:50] + '...' if len(comment_info.get('comment_text', '')) > 50 else comment_info.get('comment_text', '')
+                print(f"  - {author} on {filename}: {text_preview}")
+        else:
+            print(f"[DEBUG] No new comments found for user {username}")
+        
+        return new_comments
+        
+    except Exception as e:
+        print(f"Error detecting new comments for {username}: {e}")
+        return []

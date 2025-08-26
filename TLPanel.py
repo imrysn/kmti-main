@@ -71,6 +71,17 @@ class TeamLeaderPreviewPanelManager:
         self.config = config
         self.tl_service = tl_service
     
+    def _load_centralized_comments(self, file_id: str) -> List[Dict]:
+        """🚨 FIXED: Load comments using shared centralized utility function."""
+        try:
+            from utils.session_logger import load_comments_from_centralized_files
+            comments = load_comments_from_centralized_files(file_id)
+            print(f"[DEBUG] TL panel loaded {len(comments)} centralized comments for file {file_id}")
+            return comments
+        except Exception as e:
+            print(f"Error loading centralized comments in TL panel: {e}")
+            return []
+    
     def create_empty_preview_panel(self) -> ft.Column:
         """Create empty preview panel."""
         preview_column = ft.Column([
@@ -314,26 +325,45 @@ class TeamLeaderPreviewPanelManager:
         ]
     
     def _create_comments_section(self, file_data: Dict) -> List:
-        """Create comments section compatible with TL service."""
-        # Try to get comments from TL service
+        """🚨 FIXED: Create comments section reading from centralized JSON files like Admin panel."""
         try:
-            comments = []
-            if hasattr(self.tl_service, 'load_comments'):
-                all_comments = self.tl_service.load_comments()
-                comments = all_comments.get(file_data['file_id'], [])
-            elif hasattr(self.tl_service, 'get_file_comments'):
-                comments = self.tl_service.get_file_comments(file_data['file_id'])
+            # Read comments from centralized JSON files in \\KMTI-NAS\Shared\data\approvals
+            comments = self._load_centralized_comments(file_data['file_id'])
         except Exception as e:
-            print(f"Error loading comments: {e}")
+            print(f"Error loading centralized comments: {e}")
             comments = []
         
         comment_controls = []
         if comments:
             for comment in comments:
-                comment_user = comment.get('admin_id', comment.get('user_id', comment.get('tl_id', 'Unknown')))
+                # Handle different comment sources (admin, team leader, user)
+                comment_user = comment.get('admin_id', comment.get('tl_id', comment.get('user_id', 'Unknown')))
                 comment_text = comment.get('comment', comment.get('text', ''))
+                comment_timestamp = comment.get('timestamp', '')
+                
+                # Add role label for better identification
+                role_label = ""
+                if comment.get('admin_id'):
+                    role_label = "[Admin] "
+                elif comment.get('tl_id'):
+                    role_label = "[Team Leader] "
+                elif comment.get('user_id'):
+                    role_label = "[User] "
+                
+                # Format timestamp for display
+                try:
+                    if comment_timestamp:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(comment_timestamp.replace('Z', '+00:00'))
+                        formatted_time = dt.strftime('%Y-%m-%d %H:%M')
+                        comment_display = f"{role_label}{comment_user} ({formatted_time}): {comment_text}"
+                    else:
+                        comment_display = f"{role_label}{comment_user}: {comment_text}"
+                except Exception:
+                    comment_display = f"{role_label}{comment_user}: {comment_text}"
+                
                 comment_controls.append(
-                    ft.Text(f"{comment_user}: {comment_text}", size=16)
+                    ft.Text(comment_display, size=16)
                 )
         else:
             comment_controls.append(ft.Text("No comments yet", size=16, color=ft.Colors.GREY_500))
@@ -458,24 +488,29 @@ class TeamLeaderActionHandler:
         self.dialog_manager = dialog_manager
     
     def handle_add_comment(self, file_data: Dict, comment_text: str, refresh_callback):
-        """Handle adding comment to file."""
+        """🚨 FIXED: Handle adding comment to centralized JSON files like Admin panel."""
         try:
             if not comment_text or not comment_text.strip():
                 self.dialog_manager.show_error_notification("Please enter a comment")
                 return False
             
-            success, message = self.tl_service.add_comment_to_file(
-                file_data['file_id'], self.username, comment_text
+            # Write comment to centralized JSON files instead of TL service memory
+            success = self._add_comment_to_centralized_files(
+                file_data['file_id'], self.username, comment_text.strip()
             )
             
             if success:
                 self.dialog_manager.show_success_notification("Comment added successfully")
                 log_activity(self.username, f"Added comment to file: {file_data.get('original_filename')}")
+                
+                # Trigger user notification about new comment
+                self._notify_user_about_comment(file_data, self.username, comment_text.strip())
+                
                 if refresh_callback:
                     refresh_callback()
                 return True
             else:
-                self.dialog_manager.show_error_notification(f"Failed to add comment: {message}")
+                self.dialog_manager.show_error_notification("Failed to add comment")
                 return False
                 
         except Exception as e:
@@ -532,6 +567,76 @@ class TeamLeaderActionHandler:
             print(f"Error rejecting file: {e}")
             self.dialog_manager.show_error_notification("Error rejecting file")
             return False
+    
+    def _add_comment_to_centralized_files(self, file_id: str, tl_user: str, comment_text: str) -> bool:
+        """🚨 NEW: Add comment to centralized JSON files."""
+        try:
+            import os
+            import json
+            from datetime import datetime
+            from utils.path_config import DATA_PATHS
+            
+            # Use approval_comments.json for team leader comments
+            approval_comments_file = os.path.join(DATA_PATHS.approvals_dir, "approval_comments.json")
+            os.makedirs(DATA_PATHS.approvals_dir, exist_ok=True)
+            
+            # Load existing comments
+            approval_comments = {}
+            if os.path.exists(approval_comments_file):
+                try:
+                    with open(approval_comments_file, 'r', encoding='utf-8') as f:
+                        approval_comments = json.load(f)
+                except Exception as e:
+                    print(f"Error loading approval comments: {e}")
+                    approval_comments = {}
+            
+            # Add new comment
+            if file_id not in approval_comments:
+                approval_comments[file_id] = []
+            
+            new_comment = {
+                'tl_id': tl_user,
+                'comment': comment_text,
+                'timestamp': datetime.now().isoformat(),
+                'source': 'team_leader'
+            }
+            
+            approval_comments[file_id].append(new_comment)
+            
+            # Save updated comments
+            with open(approval_comments_file, 'w', encoding='utf-8') as f:
+                json.dump(approval_comments, f, indent=2)
+            
+            print(f"[SUCCESS] Added TL comment to centralized file for file {file_id}")
+            return True
+            
+        except Exception as e:
+            print(f"Error adding comment to centralized files: {e}")
+            return False
+    
+    def _notify_user_about_comment(self, file_data: Dict, tl_user: str, comment_text: str):
+        """🚨 NEW: Notify user about new comment from team leader."""
+        try:
+            user_id = file_data.get('user_id')
+            original_filename = file_data.get('original_filename')
+            
+            if not user_id or not original_filename:
+                print(f"[WARNING] Missing user_id or filename for comment notification")
+                return
+            
+            # Import notification service
+            from services.notification_service import NotificationService
+            notification_service = NotificationService()
+            
+            # Send comment notification
+            notification_service.notify_comment_added(
+                user_id, original_filename, "team_leader", tl_user, comment_text
+            )
+            
+            print(f"[SUCCESS] Sent comment notification to user {user_id}")
+            
+        except Exception as e:
+            print(f"Error sending comment notification: {e}")
     
     def _show_snackbar(self, message: str, color):
         """Show snackbar notification."""

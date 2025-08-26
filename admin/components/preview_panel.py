@@ -12,6 +12,17 @@ class PreviewPanelManager:
         self.config = config
         self.approval_service = approval_service
     
+    def _load_centralized_comments(self, file_id: str) -> List[Dict]:
+        """🚨 FIXED: Load comments using shared centralized utility function."""
+        try:
+            from utils.session_logger import load_comments_from_centralized_files
+            comments = load_comments_from_centralized_files(file_id)
+            print(f"[DEBUG] Admin panel loaded {len(comments)} centralized comments for file {file_id}")
+            return comments
+        except Exception as e:
+            print(f"Error loading centralized comments in Admin panel: {e}")
+            return []
+    
     def create_empty_preview_panel(self) -> ft.Column:
         padding = self.config.get_ui_constant('preview_panel_padding', 15)
         
@@ -129,14 +140,45 @@ class PreviewPanelManager:
         )
     
     def _create_comments_section(self, file_data: Dict) -> List:
-
-        comments = self.approval_service.load_comments().get(file_data['file_id'], [])
+        """🚨 FIXED: Load comments from centralized JSON files like TLPanel."""
+        try:
+            # Read comments from centralized JSON files in \\KMTI-NAS\Shared\data\approvals
+            comments = self._load_centralized_comments(file_data['file_id'])
+        except Exception as e:
+            print(f"Error loading centralized comments: {e}")
+            comments = []
         
         comment_controls = []
         if comments:
             for comment in comments:
+                # Handle different comment sources (admin, team leader, user)
+                comment_user = comment.get('admin_id', comment.get('tl_id', comment.get('user_id', 'Unknown')))
+                comment_text = comment.get('comment', comment.get('text', ''))
+                comment_timestamp = comment.get('timestamp', '')
+                
+                # Add role label for better identification
+                role_label = ""
+                if comment.get('admin_id'):
+                    role_label = "[Admin] "
+                elif comment.get('tl_id'):
+                    role_label = "[Team Leader] "
+                elif comment.get('user_id'):
+                    role_label = "[User] "
+                
+                # Format timestamp for display
+                try:
+                    if comment_timestamp:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(comment_timestamp.replace('Z', '+00:00'))
+                        formatted_time = dt.strftime('%Y-%m-%d %H:%M')
+                        comment_display = f"{role_label}{comment_user} ({formatted_time}): {comment_text}"
+                    else:
+                        comment_display = f"{role_label}{comment_user}: {comment_text}"
+                except Exception:
+                    comment_display = f"{role_label}{comment_user}: {comment_text}"
+                
                 comment_controls.append(
-                    ft.Text(f"{comment.get('admin_id', 'Unknown')}: {comment.get('comment', '')}", size=16)  # Increased size
+                    ft.Text(comment_display, size=16)  # Increased size
                 )
         else:
             comment_controls.append(ft.Text("No comments yet", size=16, color=ft.Colors.GREY_500))  # Increased size
