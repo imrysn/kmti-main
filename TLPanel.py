@@ -12,6 +12,535 @@ from utils.session_logger import log_logout, log_activity
 from utils.logger import log_file_operation
 from admin.components.role_colors import create_role_badge, get_role_color
 from user.components.dialogs import DialogManager
+from admin.components.preview_panel import create_preview_section_container
+from admin.components.file_utils import FileOperationHandler
+from utils.config_loader import get_config
+from utils.file_manager import get_file_manager
+
+
+class TeamLeaderFileHandler:
+    """File handler wrapper for Team Leader Panel compatibility with PreviewPanelManager."""
+    
+    def __init__(self, username: str, file_manager, dialog_manager):
+        self.username = username
+        self.file_manager = file_manager
+        self.dialog_manager = dialog_manager
+    
+    def open_file(self, file_data: Dict, show_snackbar_callback):
+        """Open file with compatibility for preview panel."""
+        try:
+            import os
+            import subprocess
+            import platform
+            
+            file_path = file_data.get('file_path')
+            original_filename = file_data.get('original_filename', 'unknown_file')
+            
+            # Enhanced: Check for moved files in project directories
+            if not file_path or not os.path.exists(file_path):
+                # Try to find the file in its new location if it's an approved file
+                current_location = file_data.get('current_location')
+                if current_location and os.path.exists(current_location):
+                    file_path = current_location
+                    print(f"[OPEN_FILE] Using moved file location: {file_path}")
+                else:
+                    show_snackbar_callback("File not found in storage or project directory", "red")
+                    return
+            
+            # Open file with system default application
+            system = platform.system()
+            if system == "Windows":
+                os.startfile(file_path)
+            elif system == "Darwin":
+                subprocess.run(["open", file_path], check=True)
+            else:
+                subprocess.run(["xdg-open", file_path], check=True)
+            
+            show_snackbar_callback(f"Opening: {original_filename}", "green")
+            log_file_operation(self.username, "OPEN", original_filename, "SUCCESS")
+            
+        except Exception as e:
+            print(f"Error opening file: {e}")
+            show_snackbar_callback("Error opening file", "red")
+
+
+class TeamLeaderPreviewPanelManager:
+    """Team Leader specific PreviewPanelManager that handles TL service compatibility."""
+    
+    def __init__(self, config, tl_service):
+        self.config = config
+        self.tl_service = tl_service
+    
+    def create_empty_preview_panel(self) -> ft.Column:
+        """Create empty preview panel."""
+        preview_column = ft.Column([
+            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
+                   text_align=ft.TextAlign.CENTER),
+            ft.Container(height=20),
+            ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
+            ft.Container(height=20),
+            ft.Text("Click on any file in the table to view details and approval options", 
+                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+        ], 
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
+        alignment=ft.MainAxisAlignment.CENTER, 
+        scroll=ft.ScrollMode.AUTO,
+        expand=True
+        )
+        return preview_column
+    
+    def clear_preview_panel(self, preview_panel_widget: ft.Column):
+        """Clear preview panel."""
+        preview_panel_widget.controls.clear()
+        preview_panel_widget.controls.extend([
+            ft.Text("Select a file to review", size=16, color=ft.Colors.GREY_500, 
+                   text_align=ft.TextAlign.CENTER),
+            ft.Container(height=20),
+            ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=64, color=ft.Colors.GREY_300),
+            ft.Container(height=20),
+            ft.Text("Click on any file in the table to view details and approval options", 
+                   size=14, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
+        ])
+        preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+        preview_panel_widget.alignment = ft.MainAxisAlignment.CENTER
+        preview_panel_widget.scroll = ft.ScrollMode.AUTO
+    
+    def update_preview_panel(self, preview_panel_widget: ft.Column, file_data: Dict,
+                           action_handler, file_handler, show_snackbar_callback,
+                           button_style_func, refresh_callback):
+        """Update preview panel with file data."""
+        try:
+            preview_content = self.create_file_preview_content(
+                file_data, action_handler, file_handler, show_snackbar_callback,
+                button_style_func, refresh_callback
+            )
+            
+            preview_panel_widget.controls.clear()
+            preview_panel_widget.controls.extend(preview_content)
+            preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.START
+            preview_panel_widget.alignment = ft.MainAxisAlignment.START
+            
+        except Exception as e:
+            print(f"Error updating preview panel: {e}")
+            import traceback
+            traceback.print_exc()
+            self._show_preview_error(preview_panel_widget, str(e))
+    
+    def create_file_preview_content(self, file_data: Dict, action_handler,
+                                   file_handler, show_snackbar_callback,
+                                   button_style_func, refresh_callback) -> List:
+        """Create file preview content."""
+        file_info = self._create_file_info_section(file_data, file_handler,
+                                                  show_snackbar_callback, button_style_func)
+        
+        comments_section = self._create_comments_section(file_data)
+        
+        actions_section = self._create_actions_section(file_data, action_handler,
+                                                     button_style_func, refresh_callback)
+        
+        return file_info + [ft.Divider()] + comments_section + [ft.Divider()] + actions_section
+    
+    def _show_preview_error(self, preview_panel_widget: ft.Column, error_msg: str):
+        """Show preview error."""
+        preview_panel_widget.controls.clear()
+        preview_panel_widget.controls.extend([
+            ft.Icon(ft.Icons.ERROR_OUTLINE, size=48, color=ft.Colors.RED),
+            ft.Container(height=10),
+            ft.Text("Error Loading Preview", size=16, weight=ft.FontWeight.BOLD, 
+                   color=ft.Colors.RED),
+            ft.Container(height=10),
+            ft.Text(f"Details: {error_msg}", size=12, color=ft.Colors.GREY_600,
+                   text_align=ft.TextAlign.CENTER)
+        ])
+        preview_panel_widget.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+        preview_panel_widget.alignment = ft.MainAxisAlignment.CENTER
+    
+    def _handle_open_file(self, file_data: Dict, file_handler, show_snackbar_callback):
+        """Handle file opening."""
+        try:
+            file_handler.open_file(file_data, show_snackbar_callback)
+        except Exception as e:
+            print(f"Error opening file: {e}")
+            show_snackbar_callback("Error opening file", "red")
+    
+    def _handle_add_comment(self, action_handler, file_data: Dict, comment_field: ft.TextField, refresh_callback):
+        """Handle adding comment to file."""
+        if action_handler.handle_add_comment(file_data, comment_field.value, refresh_callback):
+            comment_field.value = ""
+            comment_field.update()
+    
+    def _handle_approve_with_confirmation(self, action_handler, file_data: Dict, refresh_callback):
+        """Handle file approval with confirmation dialog."""
+        try:
+            filename = file_data.get('original_filename', 'Unknown')
+            
+            def on_confirm():
+                action_handler.handle_approve_file(file_data, refresh_callback)
+            
+            action_handler.dialog_manager.show_confirmation_dialog(
+                title="Confirm Approval",
+                message=f"Are you sure you want to approve this file?",
+                on_confirm=on_confirm,
+                confirm_text="Approve",
+                cancel_text="Cancel",
+                confirm_color=ft.Colors.GREEN
+            )
+            
+        except Exception as e:
+            print(f"Error showing approval confirmation: {e}")
+            action_handler.handle_approve_file(file_data, refresh_callback)
+    
+    def _handle_reject_with_validation(self, action_handler, file_data: Dict, reason_field: ft.TextField, refresh_callback):
+        """Handle file rejection with validation for rejection reason."""
+        try:
+            reason = reason_field.value
+            if not reason or not reason.strip():
+                action_handler._show_snackbar("Please enter a rejection reason in the text field before proceeding", "red")
+                return
+            
+            action_handler.handle_reject_file(file_data, reason, refresh_callback)
+            
+        except Exception as e:
+            print(f"Error validating rejection: {e}")
+            action_handler._show_snackbar("Error processing rejection", "red")
+    
+    def _create_status_badge(self, status: str, file_data: Dict) -> ft.Container:
+        """Create color-coded status badge with support for moved files."""
+        # Handle special display status for moved files
+        display_status = file_data.get('display_status', status)
+        
+        status_configs = {
+            'pending_team_leader': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
+            'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
+            'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
+            'approved_and_moved': {'text': 'APPROVED', 'color': ft.Colors.GREEN_700},
+            'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
+            'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}
+        }
+        
+        config = status_configs.get(display_status, {'text': display_status.upper(), 'color': ft.Colors.GREY})
+        
+        # Add reviewer info for approved/rejected files
+        tooltip_text = f"Status: {display_status}"
+        if status == 'pending_admin' and file_data.get('tl_approved_by'):
+            tooltip_text += f"\nApproved by: {file_data['tl_approved_by']}"
+        elif status == 'rejected_team_leader' and file_data.get('tl_rejected_by'):
+            tooltip_text += f"\nRejected by: {file_data['tl_rejected_by']}"
+        elif display_status == 'approved_and_moved':
+            tooltip_text += f"\nApproved by TL: {file_data.get('tl_approved_by', 'Unknown')}"
+            tooltip_text += f"\nApproved by Admin: {file_data.get('approved_by', 'Unknown')}"
+            current_location = file_data.get('current_location')
+            if current_location:
+                tooltip_text += f"\nMoved to: {current_location}"
+            else:
+                tooltip_text += "\nFile moved to project directory"
+        
+        return ft.Container(
+            content=ft.Text(config['text'], color=ft.Colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+            bgcolor=config['color'],
+            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+            border_radius=6,
+            tooltip=tooltip_text
+        )
+    
+    def _create_file_info_section(self, file_data: Dict, file_handler,
+                                 show_snackbar_callback, button_style_func) -> List:
+        """Create file info section with TL service compatibility."""
+        submit_date = "Unknown"
+        try:
+            submit_date = datetime.fromisoformat(file_data['submission_date']).strftime('%Y-%m-%d %H:%M')
+        except (ValueError, KeyError, TypeError):
+            pass
+        
+        # Create file info display manually since get_file_info_display might not work with TL data
+        def format_file_size(size_bytes):
+            """Format file size in human readable format."""
+            if size_bytes == 0:
+                return "0 B"
+            
+            size_names = ["B", "KB", "MB", "GB"]
+            i = 0
+            size = float(size_bytes)
+            
+            while size >= 1024 and i < len(size_names) - 1:
+                size /= 1024.0
+                i += 1
+            
+            return f"{size:.1f} {size_names[i]}"
+        
+        file_info = {
+            'filename': file_data.get('original_filename', 'Unknown'),
+            'user': file_data.get('user_id', 'Unknown'),
+            'team': file_data.get('user_team', 'Unknown'),
+            'size': format_file_size(file_data.get('file_size', 0)),
+            'description': file_data.get('description', 'No description provided')
+        }
+        
+        status = file_data.get('status', 'unknown')
+        
+        return [
+            ft.Text("File Details", size=20, weight=ft.FontWeight.BOLD),
+            ft.Divider(),
+            ft.Column([
+                ft.Text(f"File: {file_info['filename']}", 
+                       size=16, weight=ft.FontWeight.W_500),
+                ft.Text(f"User: {file_info['user']}", size=16),
+                ft.Text(f"Team: {file_info['team']}", size=16),
+                ft.Text(f"Size: {file_info['size']}", size=16),
+                ft.Text(f"Submitted: {submit_date}", size=16),
+                ft.Row([
+                    ft.Text("Status: ", size=16),
+                    self._create_status_badge(status, file_data)
+                ])
+            ], spacing=5, alignment=ft.MainAxisAlignment.START),
+            
+            ft.Container(height=10),
+            ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),
+            ft.Text(file_info['description'], 
+                   size=16, color=ft.Colors.GREY_600),
+            
+            # File operations section - Open button restored
+            ft.Container(height=15),
+            ft.Row([
+                ft.ElevatedButton(
+                    "Open",
+                    icon=ft.Icons.OPEN_IN_NEW_OUTLINED,
+                    on_click=lambda e: self._handle_open_file(file_data, file_handler, show_snackbar_callback),
+                    style=button_style_func("secondary")
+                )
+            ], alignment=ft.MainAxisAlignment.START),
+            ft.Divider()
+        ]
+    
+    def _create_comments_section(self, file_data: Dict) -> List:
+        """Create comments section compatible with TL service."""
+        # Try to get comments from TL service
+        try:
+            comments = []
+            if hasattr(self.tl_service, 'load_comments'):
+                all_comments = self.tl_service.load_comments()
+                comments = all_comments.get(file_data['file_id'], [])
+            elif hasattr(self.tl_service, 'get_file_comments'):
+                comments = self.tl_service.get_file_comments(file_data['file_id'])
+        except Exception as e:
+            print(f"Error loading comments: {e}")
+            comments = []
+        
+        comment_controls = []
+        if comments:
+            for comment in comments:
+                comment_user = comment.get('admin_id', comment.get('user_id', comment.get('tl_id', 'Unknown')))
+                comment_text = comment.get('comment', comment.get('text', ''))
+                comment_controls.append(
+                    ft.Text(f"{comment_user}: {comment_text}", size=16)
+                )
+        else:
+            comment_controls.append(ft.Text("No comments yet", size=16, color=ft.Colors.GREY_500))
+        
+        return [
+            ft.Text("Comments", size=18, weight=ft.FontWeight.BOLD),
+            ft.Container(
+                content=ft.Column(comment_controls, alignment=ft.MainAxisAlignment.START),
+                height=100,
+                bgcolor=ft.Colors.GREY_50,
+                padding=10,
+                border_radius=4,
+                alignment=ft.alignment.center_left
+            )
+        ]
+    
+    def _create_actions_section(self, file_data: Dict, action_handler,
+                               button_style_func, refresh_callback) -> List:
+        """Create actions section with Team Leader specific text."""
+        status = file_data.get('status', 'unknown')
+        
+        # Comment field (always available)
+        comment_field = ft.TextField(
+            label="Add comment (optional)",
+            multiline=True,
+            min_lines=2,
+            max_lines=4,
+            text_size=16,
+            expand=True
+        )
+        
+        # Comments section with Team Leader specific text
+        actions = [
+            ft.Text("Team Leader Actions", size=18, weight=ft.FontWeight.BOLD),
+            comment_field,
+            ft.Container(height=5),
+            ft.Row([
+                ft.ElevatedButton(
+                    "Add Comment",
+                    icon=ft.Icons.COMMENT,
+                    on_click=lambda e: self._handle_add_comment(action_handler, file_data, comment_field, refresh_callback),
+                    style=button_style_func("primary")
+                )
+            ], alignment=ft.MainAxisAlignment.START)
+        ]
+        
+        # Conditional approval/rejection actions based on status
+        if status in ['pending_admin', 'pending_team_leader', 'pending']:
+            reason_field = ft.TextField(
+                label="Reason for rejection",
+                multiline=True,
+                min_lines=2,
+                max_lines=3,
+                text_size=16,
+                expand=True
+            )
+            
+            actions.extend([
+                ft.Container(height=10),
+                ft.Divider(),
+                ft.Text("Approval Decision", size=18, weight=ft.FontWeight.BOLD),
+                ft.Container(height=10),
+                reason_field,
+                ft.Container(height=10),
+                ft.Row([
+                    ft.ElevatedButton(
+                        "✓ Approve",
+                        icon=ft.Icons.CHECK_CIRCLE,
+                        on_click=lambda e: self._handle_approve_with_confirmation(action_handler, file_data, refresh_callback),
+                        style=button_style_func("success")
+                    ),
+                    ft.Container(width=10),
+                    ft.ElevatedButton(
+                        "✗ Reject",
+                        icon=ft.Icons.CANCEL,
+                        on_click=lambda e: self._handle_reject_with_validation(action_handler, file_data, reason_field, refresh_callback),
+                        style=button_style_func("danger")
+                    )
+                ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
+            ])
+        elif status == 'approved':
+            actions.extend([
+                ft.Container(height=10),
+                ft.Container(
+                    content=ft.Text("✓ File approved - No further action needed", 
+                                   color=ft.Colors.GREEN, size=16, weight=ft.FontWeight.W_500),
+                    bgcolor=ft.Colors.GREEN_50,
+                    padding=10,
+                    border_radius=5,
+                    border=ft.border.all(1, ft.Colors.GREEN_200)
+                )
+            ])
+        elif status in ['rejected_admin', 'rejected_team_leader']:
+            rejection_reason = file_data.get('admin_rejection_reason') or file_data.get('tl_rejection_reason', 'No reason provided')
+            actions.extend([
+                ft.Container(height=10),
+                ft.Container(
+                    content=ft.Column([
+                        ft.Text("✗ File rejected", 
+                               color=ft.Colors.RED, size=16, weight=ft.FontWeight.W_500),
+                        ft.Text(f"Reason: {rejection_reason}", 
+                               color=ft.Colors.RED_700, size=16)
+                    ]),
+                    bgcolor=ft.Colors.RED_50,
+                    padding=10,
+                    border_radius=5,
+                    border=ft.border.all(1, ft.Colors.RED_200)
+                )
+            ])
+        
+        return actions
+
+
+class TeamLeaderActionHandler:
+    """Action handler for Team Leader Panel that works with PreviewPanelManager."""
+    
+    def __init__(self, page: ft.Page, username: str, tl_service, dialog_manager):
+        self.page = page
+        self.username = username
+        self.admin_user = username  # For compatibility with PreviewPanelManager
+        self.tl_service = tl_service
+        self.dialog_manager = dialog_manager
+    
+    def handle_add_comment(self, file_data: Dict, comment_text: str, refresh_callback):
+        """Handle adding comment to file."""
+        try:
+            if not comment_text or not comment_text.strip():
+                self.dialog_manager.show_error_notification("Please enter a comment")
+                return False
+            
+            success, message = self.tl_service.add_comment_to_file(
+                file_data['file_id'], self.username, comment_text
+            )
+            
+            if success:
+                self.dialog_manager.show_success_notification("Comment added successfully")
+                log_activity(self.username, f"Added comment to file: {file_data.get('original_filename')}")
+                if refresh_callback:
+                    refresh_callback()
+                return True
+            else:
+                self.dialog_manager.show_error_notification(f"Failed to add comment: {message}")
+                return False
+                
+        except Exception as e:
+            print(f"Error adding comment: {e}")
+            self.dialog_manager.show_error_notification("Error adding comment")
+            return False
+    
+    def handle_approve_file(self, file_data: Dict, refresh_callback):
+        """Handle file approval."""
+        try:
+            success, message = self.tl_service.approve_as_team_leader(
+                file_data['file_id'], self.username
+            )
+            
+            if success:
+                filename = file_data.get('original_filename', 'Unknown')
+                self.dialog_manager.show_success_notification(f"File '{filename}' approved and sent to admin!")
+                log_activity(self.username, f"Approved file: {filename}")
+                if refresh_callback:
+                    refresh_callback()
+                return True
+            else:
+                self.dialog_manager.show_error_notification(f"Failed to approve: {message}")
+                return False
+                
+        except Exception as e:
+            print(f"Error approving file: {e}")
+            self.dialog_manager.show_error_notification("Error approving file")
+            return False
+    
+    def handle_reject_file(self, file_data: Dict, reason: str, refresh_callback):
+        """Handle file rejection."""
+        try:
+            if not reason or not reason.strip():
+                self.dialog_manager.show_error_notification("Please provide a reason for rejection")
+                return False
+            
+            success, message = self.tl_service.reject_as_team_leader(
+                file_data['file_id'], self.username, reason
+            )
+            
+            if success:
+                filename = file_data.get('original_filename', 'Unknown')
+                self.dialog_manager.show_success_notification(f"File '{filename}' rejected")
+                log_activity(self.username, f"Rejected file: {filename} - Reason: {reason}")
+                if refresh_callback:
+                    refresh_callback()
+                return True
+            else:
+                self.dialog_manager.show_error_notification(f"Failed to reject: {message}")
+                return False
+                
+        except Exception as e:
+            print(f"Error rejecting file: {e}")
+            self.dialog_manager.show_error_notification("Error rejecting file")
+            return False
+    
+    def _show_snackbar(self, message: str, color):
+        """Show snackbar notification."""
+        if color == ft.Colors.RED or color == "red":
+            self.dialog_manager.show_error_notification(message)
+        elif color == ft.Colors.GREEN or color == "green":
+            self.dialog_manager.show_success_notification(message)
+        else:
+            self.dialog_manager.show_error_notification(message)
 
 
 class TeamLeaderPanel:
@@ -24,9 +553,18 @@ class TeamLeaderPanel:
         self.dialog_manager = DialogManager(page, username)
         self.selected_file = None
         self.files_table = None
-        self.preview_panel = None
+        self.preview_panel_widget = None  # Changed from preview_panel to preview_panel_widget
         self.selected_row_index = None  # Track selected row for highlighting
         self.user_team = self.tl_service.get_user_team(username)
+        
+        # Initialize config and preview manager for preview panel integration
+        self.config = get_config()
+        self.file_manager = get_file_manager()
+        self.file_handler = TeamLeaderFileHandler(self.username, self.file_manager, self.dialog_manager)
+        self.preview_manager = TeamLeaderPreviewPanelManager(self.config, self.tl_service)
+        
+        # Initialize team leader action handler for preview panel integration
+        self.tl_action_handler = TeamLeaderActionHandler(page, username, self.tl_service, self.dialog_manager)
         
         # Statistics cards references for dynamic updates
         self.stat_pending_card = None
@@ -292,34 +830,9 @@ class TeamLeaderPanel:
         )
     
     def _create_preview_section(self) -> ft.Container:
-        """Create preview section."""
-        self.preview_panel = ft.Column([
-            ft.Text("Select a file to review", size=18, color=ft.Colors.GREY_500, 
-                   text_align=ft.TextAlign.CENTER),
-            ft.Container(height=20),
-            ft.Icon(ft.Icons.FOLDER_OPEN, size=64, color=ft.Colors.GREY_300),
-            ft.Container(height=20),
-            ft.Text("Click on any file in the table to view details and approval options", 
-                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
-        ], 
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
-        alignment=ft.MainAxisAlignment.CENTER, 
-        scroll=ft.ScrollMode.AUTO,
-        expand=True
-        )
-        
-        return ft.Container(
-            content=ft.Container(
-                content=self.preview_panel,
-                expand=True,
-                padding=15,
-                bgcolor=ft.Colors.WHITE,
-                border_radius=8,
-                border=ft.border.all(1, ft.Colors.GREY_200)
-            ),
-            expand=True,
-            padding=0
-        )
+        """Create preview section using PreviewPanelManager."""
+        self.preview_panel_widget = self.preview_manager.create_empty_preview_panel()
+        return create_preview_section_container(self.preview_panel_widget, self.config)
     
     def refresh_files_table(self):
         """Refresh the files table with enhanced filtering."""
@@ -384,11 +897,7 @@ class TeamLeaderPanel:
     def _update_statistics_cards(self):
         """Update statistics cards with current filtered files."""
         try:
-            # Get counts for current filtered files
-            dynamic_counts = self.tl_service.get_file_counts_for_team_leader(
-                self.username, self.current_filtered_files)
             
-            # Also get overall team statistics for reference
             overall_counts = self.tl_service.get_file_counts_for_team_leader(self.username)
             
             # Update card values based on view mode
@@ -407,9 +916,9 @@ class TeamLeaderPanel:
                 rejected_text = str(len(self.current_filtered_files))
             else:  # all_team
                 # Show dynamic counts from filtered files
-                pending_text = str(dynamic_counts['pending_team_leader'])
-                approved_text = str(dynamic_counts['approved_by_tl'])
-                rejected_text = str(dynamic_counts['rejected_by_tl'])
+                pending_text = str(overall_counts['pending_team_leader'])
+                approved_text = str(overall_counts['approved_by_tl'])
+                rejected_text = str(overall_counts['rejected_by_tl'])
             
             # Update stat card values
             if self.stat_pending_card:
@@ -502,7 +1011,7 @@ class TeamLeaderPanel:
             'pending': {'text': 'PENDING TL', 'color': ft.Colors.ORANGE},
             'pending_admin': {'text': 'PENDING ADMIN', 'color': ft.Colors.ORANGE},
             'approved': {'text': 'APPROVED', 'color': ft.Colors.GREEN},
-            'approved_and_moved': {'text': 'APPROVED & MOVED', 'color': ft.Colors.GREEN_700},
+            'approved_and_moved': {'text': 'APPROVED', 'color': ft.Colors.GREEN_700},
             'rejected_team_leader': {'text': 'REJECTED TL', 'color': ft.Colors.RED},
             'rejected_admin': {'text': 'REJECTED ADMIN', 'color': ft.Colors.RED_900}
         }
@@ -562,338 +1071,42 @@ class TeamLeaderPanel:
             self.dialog_manager.show_error_notification("Error selecting file")
     
     def _update_preview_panel(self):
-        """Update the preview panel with selected file info."""
+        """Update the preview panel with selected file info using PreviewPanelManager."""
         if not self.selected_file:
             return
         
         try:
-            file_data = self.selected_file
-            preview_content = self._create_file_preview(file_data)
-            self.preview_panel.controls.clear()
-            self.preview_panel.controls.extend(preview_content)
-            self.preview_panel.horizontal_alignment = ft.CrossAxisAlignment.START
-            self.preview_panel.alignment = ft.MainAxisAlignment.START
+            def show_snackbar_callback(message: str, color):
+                """Snackbar callback for preview panel."""
+                if color == "red":
+                    self.dialog_manager.show_error_notification(message)
+                elif color == "green":
+                    self.dialog_manager.show_success_notification(message)
+                else:
+                    self.dialog_manager.show_error_notification(message)
+            
+            def refresh_callback():
+                """Refresh callback for preview panel."""
+                self._clear_selection()
+                self.refresh_files_table()
+            
+            self.preview_manager.update_preview_panel(
+                self.preview_panel_widget, 
+                self.selected_file,
+                self.tl_action_handler, 
+                self.file_handler, 
+                show_snackbar_callback,
+                self._get_button_style, 
+                refresh_callback
+            )
             self.page.update()
             
         except Exception as e:
             print(f"Error updating preview panel: {e}")
             self.dialog_manager.show_error_notification("Error loading file preview")
     
-    def _create_file_preview(self, file_data: Dict) -> List:
-        """Create enhanced file preview content."""
-        submit_date = "Unknown"
-        try:
-            submit_date = datetime.fromisoformat(file_data['submission_date']).strftime('%Y-%m-%d %H:%M')
-        except:
-            pass
-        
-        file_size = self._format_file_size(file_data.get('file_size', 0))
-        status = file_data.get('status', 'unknown')
-        
-        # File details section
-        details_section = [
-            ft.Text("File Details", size=20, weight=ft.FontWeight.BOLD),
-            ft.Divider(),
-            ft.Column([
-                ft.Text(f"File: {file_data.get('original_filename', 'Unknown')}", 
-                       size=16, weight=ft.FontWeight.W_500),
-                ft.Text(f"User: {file_data.get('user_id', 'Unknown')}", size=16),
-                ft.Text(f"Team: {file_data.get('user_team', 'Unknown')}", size=16),
-                ft.Text(f"Size: {file_size}", size=16),
-                ft.Text(f"Submitted: {submit_date}", size=16),
-                ft.Row([
-                    ft.Text("Status: ", size=16),
-                    self._create_status_badge(status, file_data)
-                ])
-            ], spacing=5, alignment=ft.MainAxisAlignment.START),
-            
-            ft.Container(height=10),
-            ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),
-            ft.Text(file_data.get('description', 'No description provided'), 
-                   size=16, color=ft.Colors.GREY_600),
-        ]
-        
-        # File operations section - Open button back in preview section
-        operations_section = [
-            ft.Container(height=15),
-            ft.Row([
-                ft.ElevatedButton(
-                    "Open",
-                    icon=ft.Icons.OPEN_IN_NEW_OUTLINED,
-                    on_click=lambda e: self._handle_open_file(file_data),
-                    style=self._get_button_style("secondary")
-                )
-            ], alignment=ft.MainAxisAlignment.START),
-            ft.Divider()
-        ]
-        
-        # Action sections based on file status and view mode
-        action_sections = self._create_action_sections(file_data)
-        
-        return details_section + operations_section + action_sections
-    
-    def _create_action_sections(self, file_data: Dict) -> List:
-        """Create action sections based on file status."""
-        status = file_data.get('status', 'unknown')
-        actions = []
-        
-        # Comment field (always available)
-        comment_field = ft.TextField(
-            label="Add comment (optional)",
-            multiline=True,
-            min_lines=2,
-            max_lines=4,
-            text_size=16,
-            expand=True
-        )
-        
-        # Comments section
-        actions.extend([
-            ft.Text("Team Leader Actions", size=18, weight=ft.FontWeight.BOLD),
-            comment_field,
-            ft.Container(height=5),
-            ft.Row([
-                ft.ElevatedButton(
-                    "Add Comment",
-                    icon=ft.Icons.COMMENT,
-                    on_click=lambda e: self._handle_add_comment(file_data, comment_field),
-                    style=self._get_button_style("primary")
-                )
-            ], alignment=ft.MainAxisAlignment.START),
-        ])
-        
-        # Approval/Rejection actions (only for pending files)
-        if status in ['pending_team_leader', 'pending']:
-            reason_field = ft.TextField(
-                label="Reason for rejection",
-                multiline=True,
-                min_lines=2,
-                max_lines=3,
-                text_size=16,
-                expand=True
-            )
-            
-            actions.extend([
-                ft.Container(height=10),
-                ft.Divider(),
-                ft.Text("Approval Decision", size=18, weight=ft.FontWeight.BOLD),
-                ft.Container(height=10),
-                reason_field,
-                ft.Container(height=10),
-                ft.Row([
-                    ft.ElevatedButton(
-                        "✓ Approve",
-                        icon=ft.Icons.CHECK_CIRCLE,
-                        on_click=lambda e: self._handle_approve_file_with_confirmation(file_data),
-                        style=self._get_button_style("success")
-                    ),
-                    ft.Container(width=10),
-                    ft.ElevatedButton(
-                        "✗ Reject", 
-                        icon=ft.Icons.CANCEL,
-                        on_click=lambda e: self._handle_reject_file_with_validation(file_data, reason_field),
-                        style=self._get_button_style("danger")
-                    )
-                ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
-            ])
-        elif status == 'pending_admin':
-            actions.extend([
-                ft.Container(height=10),
-                ft.Container(
-                    content=ft.Text("✓ File approved - waiting for admin review", 
-                                   color=ft.Colors.GREEN, size=16, weight=ft.FontWeight.W_500),
-                    bgcolor=ft.Colors.GREEN_50,
-                    padding=10,
-                    border_radius=5,
-                    border=ft.border.all(1, ft.Colors.GREEN_200)
-                )
-            ])
-        elif status == 'rejected_team_leader':
-            rejection_reason = file_data.get('tl_rejection_reason', 'No reason provided')
-            actions.extend([
-                ft.Container(height=10),
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text("✗ File rejected by you", 
-                               color=ft.Colors.RED, size=16, weight=ft.FontWeight.W_500),
-                        ft.Text(f"Reason: {rejection_reason}", 
-                               color=ft.Colors.RED_700, size=16)
-                    ]),
-                    bgcolor=ft.Colors.RED_50,
-                    padding=10,
-                    border_radius=5,
-                    border=ft.border.all(1, ft.Colors.RED_200)
-                )
-            ])
-        
-        return actions
-    
-    def _handle_download_file(self, file_data: Dict):
-        """Handle file download."""
-        try:
-            file_path = file_data.get('file_path')
-            original_filename = file_data.get('original_filename', 'unknown_file')
-            
-            if not file_path or not os.path.exists(file_path):
-                self.dialog_manager.show_error_notification("File not found in storage")
-                return
-            
-            # Create downloads directory if it doesn't exist
-            downloads_dir = Path.home() / "Downloads" / "KMTI_Reviews"
-            downloads_dir.mkdir(parents=True, exist_ok=True)
-            
-            download_path = downloads_dir / original_filename
-            shutil.copy2(file_path, download_path)
-            
-            self.dialog_manager.show_success_notification(f"Downloaded: {original_filename}")
-            log_file_operation(self.username, "DOWNLOAD", original_filename, "SUCCESS")
-            
-        except Exception as e:
-            print(f"Error downloading file: {e}")
-            self.dialog_manager.show_error_notification("Error downloading file")
-    
-    def _handle_open_file(self, file_data: Dict):
-        """🚨 ENHANCED: Handle file opening with support for moved files."""
-        try:
-            file_path = file_data.get('file_path')
-            original_filename = file_data.get('original_filename', 'unknown_file')
-            
-            # 🚨 ENHANCED: Check for moved files in project directories
-            if not file_path or not os.path.exists(file_path):
-                # Try to find the file in its new location if it's an approved file
-                current_location = file_data.get('current_location')
-                if current_location and os.path.exists(current_location):
-                    file_path = current_location
-                    print(f"[OPEN_FILE] Using moved file location: {file_path}")
-                else:
-                    self.dialog_manager.show_error_notification("File not found in storage or project directory")
-                    return
-            
-            # Open file with system default application
-            system = platform.system()
-            if system == "Windows":
-                os.startfile(file_path)
-            elif system == "Darwin":
-                subprocess.run(["open", file_path], check=True)
-            else:
-                subprocess.run(["xdg-open", file_path], check=True)
-            
-            self.dialog_manager.show_success_notification(f"Opening: {original_filename}")
-            log_file_operation(self.username, "OPEN", original_filename, "SUCCESS")
-            
-        except Exception as e:
-            print(f"Error opening file: {e}")
-            self.dialog_manager.show_error_notification("Error opening file")
-    
-    def _handle_add_comment(self, file_data: Dict, comment_field: ft.TextField):
-        """Handle adding comment to file."""
-        try:
-            comment_text = comment_field.value
-            if not comment_text or not comment_text.strip():
-                self.dialog_manager.show_error_notification("Please enter a comment")
-                return
-            
-            success, message = self.tl_service.add_comment_to_file(
-                file_data['file_id'], self.username, comment_text
-            )
-            
-            if success:
-                comment_field.value = ""
-                comment_field.update()
-                self.dialog_manager.show_success_notification("Comment added successfully")
-                log_activity(self.username, f"Added comment to file: {file_data.get('original_filename')}")
-            else:
-                self.dialog_manager.show_error_notification(f"Failed to add comment: {message}")
-                
-        except Exception as e:
-            print(f"Error adding comment: {e}")
-            self.dialog_manager.show_error_notification("Error adding comment")
-    
-    def _handle_approve_file(self, file_data: Dict):
-        """Handle file approval."""
-        try:
-            success, message = self.tl_service.approve_as_team_leader(
-                file_data['file_id'], self.username
-            )
-            
-            if success:
-                filename = file_data.get('original_filename', 'Unknown')
-                self.dialog_manager.show_success_notification(f"File '{filename}' approved and sent to admin!")
-                log_activity(self.username, f"Approved file: {filename}")
-                
-                self._clear_selection()
-                self.refresh_files_table()
-                
-            else:
-                self.dialog_manager.show_error_notification(f"Failed to approve: {message}")
-                
-        except Exception as e:
-            print(f"Error approving file: {e}")
-            self.dialog_manager.show_error_notification("Error approving file")
-    
-    def _handle_reject_file(self, file_data: Dict, reason_field: ft.TextField):
-        """Handle file rejection."""
-        try:
-            reason = reason_field.value
-            if not reason or not reason.strip():
-                self.dialog_manager.show_error_notification("Please provide a reason for rejection")
-                return
-            
-            success, message = self.tl_service.reject_as_team_leader(
-                file_data['file_id'], self.username, reason
-            )
-            
-            if success:
-                filename = file_data.get('original_filename', 'Unknown')
-                self.dialog_manager.show_success_notification(f"File '{filename}' rejected")
-                log_activity(self.username, f"Rejected file: {filename} - Reason: {reason}")
-                
-                self._clear_selection()
-                self.refresh_files_table()
-                
-            else:
-                self.dialog_manager.show_error_notification(f"Failed to reject: {message}")
-                
-        except Exception as e:
-            print(f"Error rejecting file: {e}")
-            self.dialog_manager.show_error_notification("Error rejecting file")
-    
-    def _handle_approve_file_with_confirmation(self, file_data: Dict):
-        """Handle file approval with confirmation dialog."""
-        try:
-            filename = file_data.get('original_filename', 'Unknown')
-            
-            def on_confirm():
-                self._handle_approve_file(file_data)
-            
-            self.dialog_manager.show_confirmation_dialog(
-                title="Confirm Approval",
-                message=f"Are you sure you want to approve this file?",
-                on_confirm=on_confirm,
-                confirm_text="Approve",
-                cancel_text="Cancel",
-                confirm_color=ft.Colors.GREEN
-            )
-            
-        except Exception as e:
-            print(f"Error showing approval confirmation: {e}")
-            self.dialog_manager.show_error_notification("Error showing confirmation dialog")
-    
-    def _handle_reject_file_with_validation(self, file_data: Dict, reason_field: ft.TextField):
-        """Handle file rejection with validation for rejection reason."""
-        try:
-            reason = reason_field.value
-            if not reason or not reason.strip():
-                # Show notification that rejection reason is required
-                self.dialog_manager.show_error_notification("Please enter a rejection reason in the text field before proceeding")
-                return
-            
-            # Proceed with rejection
-            self._handle_reject_file(file_data, reason_field)
-            
-        except Exception as e:
-            print(f"Error validating rejection: {e}")
-            self.dialog_manager.show_error_notification("Error processing rejection")
+
+
     
     def _clear_selection(self):
         """Clear current file selection."""
@@ -904,18 +1117,9 @@ class TeamLeaderPanel:
         self.selected_file = None
         self.selected_row_index = None
         
-        self.preview_panel.controls.clear()
-        self.preview_panel.controls.extend([
-            ft.Text("Select a file to review", size=18, color=ft.Colors.GREY_500, 
-                   text_align=ft.TextAlign.CENTER),
-            ft.Container(height=20),
-            ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=64, color=ft.Colors.GREY_300),
-            ft.Container(height=20),
-            ft.Text("Click on any file in the table to view details and approval options", 
-                   size=16, color=ft.Colors.GREY_400, text_align=ft.TextAlign.CENTER)
-        ])
-        self.preview_panel.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-        self.preview_panel.alignment = ft.MainAxisAlignment.CENTER
+        # Use preview manager to clear the preview panel
+        if hasattr(self, 'preview_panel_widget') and self.preview_panel_widget:
+            self.preview_manager.clear_preview_panel(self.preview_panel_widget)
     
     def _create_error_interface(self, error_msg: str) -> ft.Container:
         """Create error interface."""

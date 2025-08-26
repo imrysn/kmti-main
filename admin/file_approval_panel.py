@@ -12,7 +12,7 @@ from admin.components.file_utils import FileOperationHandler
 from admin.components.ui_helpers import UIComponentHelper, TeamLoader, create_snackbar_helper
 from admin.components.preview_panel import PreviewPanelManager, create_preview_section_container
 from admin.components.data_managers import FileDataManager, StatisticsManager, ServiceInitializer, cleanup_resources
-from admin.components.role_permissions import RoleValidator, is_admin_or_team_leader, get_file_access_level
+from admin.components.role_permissions import RoleValidator
 
 
 class EnhancedFileApprovalPanel:
