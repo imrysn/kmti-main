@@ -121,7 +121,7 @@ class ApprovalActionHandler:
     
     def handle_add_comment(self, file_data: Dict, comment_text: str, 
                           refresh_callback) -> bool:
-
+        """🚨 FIXED: Add comment to centralized JSON files instead of approval service memory."""
         try:
             if not file_data or not comment_text:
                 self._show_snackbar("Please enter a comment", ft.Colors.ORANGE)
@@ -132,17 +132,18 @@ class ApprovalActionHandler:
                 self._show_snackbar("Comment cannot be empty", ft.Colors.ORANGE)
                 return False
             
-            success = self.approval_service.add_comment(
-                file_data['file_id'],
-                self.admin_user,
-                comment_text
+            # Write comment to centralized JSON files instead of approval service
+            success = self._add_comment_to_centralized_files(
+                file_data['file_id'], self.admin_user, comment_text
             )
             
             if success:
+                # 🚨 FIXED: Use updated notification method with role parameter
                 self.notification_service.notify_comment_added(
                     file_data['user_id'],
                     file_data['original_filename'],
-                    self.admin_user,
+                    "admin",  # comment_author_role
+                    self.admin_user,  # comment_author
                     comment_text
                 )
                 
@@ -160,6 +161,52 @@ class ApprovalActionHandler:
         except Exception as e:
             self.enhanced_logger.general_logger.error(f"Error adding comment: {e}")
             self._show_snackbar("Error adding comment", ft.Colors.RED)
+            return False
+    
+    def _add_comment_to_centralized_files(self, file_id: str, admin_user: str, comment_text: str) -> bool:
+        """🚨 NEW: Add admin comment to centralized JSON files."""
+        try:
+            import os
+            import json
+            from datetime import datetime
+            from utils.path_config import DATA_PATHS
+            
+            # Use approval_comments.json for admin comments
+            approval_comments_file = os.path.join(DATA_PATHS.approvals_dir, "approval_comments.json")
+            os.makedirs(DATA_PATHS.approvals_dir, exist_ok=True)
+            
+            # Load existing comments
+            approval_comments = {}
+            if os.path.exists(approval_comments_file):
+                try:
+                    with open(approval_comments_file, 'r', encoding='utf-8') as f:
+                        approval_comments = json.load(f)
+                except Exception as e:
+                    print(f"Error loading approval comments: {e}")
+                    approval_comments = {}
+            
+            # Add new comment
+            if file_id not in approval_comments:
+                approval_comments[file_id] = []
+            
+            new_comment = {
+                'admin_id': admin_user,
+                'comment': comment_text,
+                'timestamp': datetime.now().isoformat(),
+                'source': 'admin'
+            }
+            
+            approval_comments[file_id].append(new_comment)
+            
+            # Save updated comments
+            with open(approval_comments_file, 'w', encoding='utf-8') as f:
+                json.dump(approval_comments, f, indent=2)
+            
+            print(f"[SUCCESS] Added admin comment to centralized file for file {file_id}")
+            return True
+            
+        except Exception as e:
+            print(f"Error adding admin comment to centralized files: {e}")
             return False
     
     def _show_snackbar(self, message: str, color: str):
