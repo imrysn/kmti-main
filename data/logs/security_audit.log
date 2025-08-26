@@ -821,5 +821,21 @@
       "reason": "None provided"
     },
     "ip_address": "unknown"
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.671923",
+    "username": "admin",
+    "fullname": "Admin User",
+    "email": "admin@kmti.com",
+    "role": "ADMIN",
+    "event_type": "APPROVAL_ACTION",
+    "severity": "INFO",
+    "details": {
+      "target_user": "user",
+      "file_id": "d8bb892a-be1b-4cb6-a14b-ac57dd27975a",
+      "action": "COMMENT",
+      "reason": "Wow"
+    },
+    "ip_address": "unknown"
   }
 ]

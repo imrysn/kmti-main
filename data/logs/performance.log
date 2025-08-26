@@ -1,75 +1,5 @@
 [
   {
-    "timestamp": "2025-08-18T17:53:11.384718",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.006,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:11.409594",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 29.044,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:12.333407",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.01,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:12.361277",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 48.054,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:14.475539",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.01,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:14.504385",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 40.029,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:17.098457",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.008,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:17.122237",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 74.124,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:18.592434",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.013,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:18.627293",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 46.936,
-    "details": {}
-  },
-  {
     "timestamp": "2025-08-18T17:53:27.653761",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
@@ -3872,6 +3802,81 @@
     "component": "EnhancedFileApprovalPanel",
     "operation": "create_interface",
     "duration_ms": 237.381,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:48:39.407803",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 3,
+      "approved": 0,
+      "rejected": 0,
+      "total": 3
+    }
+  },
+  {
+    "timestamp": "2025-08-26T10:48:39.469076",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 239.564,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:48:39.594478",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.017,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:48:39.619519",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 81.83,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:48:39.639034",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "create_interface",
+    "duration_ms": 409.527,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.501139",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.014,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.540730",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 73.045,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.569689",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.012,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.611340",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 48.938,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T10:49:00.641530",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_interface",
+    "duration_ms": 79.128,
     "details": {}
   }
 ]

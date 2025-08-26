@@ -73,7 +73,6 @@ class ApprovalFilesView:
             "pending": (ft.Icons.SCHEDULE, ft.Colors.ORANGE, "Pending Review"),
             "approved": (ft.Icons.VERIFIED, ft.Colors.GREEN, "Approved"),
             "rejected": (ft.Icons.CANCEL, ft.Colors.RED, "Rejected"),
-            "changes_requested": (ft.Icons.EDIT, ft.Colors.BLUE, "Changes Requested")
         }
         return status_map.get(status, (ft.Icons.HELP, ft.Colors.GREY, "Unknown"))
     
@@ -155,7 +154,7 @@ class ApprovalFilesView:
             )
             action_buttons.append(withdraw_button)
             
-        elif status in ["rejected", "changes_requested"]:
+        elif status == "rejected":
             # Resubmit button
             def handle_resubmit(e, sub=submission):
                 e.control.page.update()
@@ -245,13 +244,11 @@ class ApprovalFilesView:
         pending_submissions = [s for s in submissions if s.get("status") == "pending"]
         approved_submissions = [s for s in submissions if s.get("status") == "approved"]
         rejected_submissions = [s for s in submissions if s.get("status") == "rejected"]
-        changes_requested = [s for s in submissions if s.get("status") == "changes_requested"]
         
         return {
             "pending": pending_submissions,
             "approved": approved_submissions,
-            "rejected": rejected_submissions,
-            "changes_requested": changes_requested
+            "rejected": rejected_submissions
         }
     
     def create_section_header(self, title: str, count: int, icon: str, color: str):
@@ -296,7 +293,6 @@ class ApprovalFilesView:
         pending_count = len([s for s in submissions if s.get("status") == "pending"])
         approved_count = len([s for s in submissions if s.get("status") == "approved"])
         rejected_count = len([s for s in submissions if s.get("status") == "rejected"])
-        changes_count = len([s for s in submissions if s.get("status") == "changes_requested"])
         
         def create_stat_card(title: str, count: int, icon: str, color: str):
             return ft.Container(
@@ -321,7 +317,6 @@ class ApprovalFilesView:
         self.stats_ref = ft.Row([
             create_stat_card("Pending", pending_count, ft.Icons.SCHEDULE, ft.Colors.ORANGE),
             create_stat_card("Approved", approved_count, ft.Icons.CHECK_CIRCLE, ft.Colors.GREEN),
-            create_stat_card("Changes Req.", changes_count, ft.Icons.EDIT, ft.Colors.BLUE),
             create_stat_card("Rejected", rejected_count, ft.Icons.CANCEL, ft.Colors.RED)
         ], spacing=15, alignment=ft.MainAxisAlignment.CENTER)
         
@@ -349,10 +344,9 @@ class ApprovalFilesView:
             # Separate by status
             status_groups = self.separate_submissions_by_status(submissions)
             
-            # Add sections in order: Pending, Changes Requested, Rejected, Approved
+            # Add sections in order: Pending, Rejected, Approved
             sections = [
                 ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
-                ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
                 ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
                 ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
             ]
@@ -441,14 +435,12 @@ class ApprovalFilesView:
             pending_count = len([s for s in submissions if s.get("status") == "pending"])
             approved_count = len([s for s in submissions if s.get("status") == "approved"])
             rejected_count = len([s for s in submissions if s.get("status") == "rejected"])
-            changes_count = len([s for s in submissions if s.get("status") == "changes_requested"])
             
             # Update stat cards
-            if len(self.stats_ref.controls) >= 4:
+            if len(self.stats_ref.controls) >= 3:
                 self.stats_ref.controls[0].content.controls[1].value = str(pending_count)  # Pending count
                 self.stats_ref.controls[1].content.controls[1].value = str(approved_count)  # Approved count
-                self.stats_ref.controls[2].content.controls[1].value = str(changes_count)  # Changes count  
-                self.stats_ref.controls[3].content.controls[1].value = str(rejected_count)  # Rejected count
+                self.stats_ref.controls[2].content.controls[1].value = str(rejected_count)  # Rejected count
         
         # Refresh submissions list
         if self.submissions_container_ref:
@@ -469,7 +461,6 @@ class ApprovalFilesView:
                 status_groups = self.separate_submissions_by_status(submissions)
                 sections = [
                     ("pending", "Pending Review", ft.Icons.SCHEDULE, ft.Colors.ORANGE),
-                    ("changes_requested", "Changes Requested", ft.Icons.EDIT, ft.Colors.BLUE),
                     ("rejected", "Rejected", ft.Icons.CANCEL, ft.Colors.RED),
                     ("approved", "Approved", ft.Icons.VERIFIED, ft.Colors.GREEN)
                 ]
