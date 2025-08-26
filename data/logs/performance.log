@@ -1,59 +1,5 @@
 [
   {
-    "timestamp": "2025-08-18T17:53:27.653761",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.011,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-18T17:53:27.689619",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 57.607,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-19T07:07:35.071621",
-    "component": "FileApprovalPanel",
-    "operation": "file_counts",
-    "duration_ms": 50.0,
-    "details": {
-      "pending": 1,
-      "approved": 0,
-      "rejected": 0,
-      "total": 1
-    }
-  },
-  {
-    "timestamp": "2025-08-19T07:07:35.227474",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 376.731,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-19T07:07:35.422994",
-    "component": "FileApprovalPanel",
-    "operation": "get_file_counts",
-    "duration_ms": 0.019,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-19T07:07:35.445981",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "refresh_files_table",
-    "duration_ms": 104.725,
-    "details": {}
-  },
-  {
-    "timestamp": "2025-08-19T07:07:35.464464",
-    "component": "EnhancedFileApprovalPanel",
-    "operation": "create_interface",
-    "duration_ms": 613.737,
-    "details": {}
-  },
-  {
     "timestamp": "2025-08-19T07:16:24.785764",
     "component": "FileApprovalPanel",
     "operation": "get_file_counts",
@@ -3877,6 +3823,60 @@
     "component": "EnhancedFileApprovalPanel",
     "operation": "refresh_interface",
     "duration_ms": 79.128,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:26.173347",
+    "component": "FileApprovalPanel",
+    "operation": "file_counts",
+    "duration_ms": 50.0,
+    "details": {
+      "pending": 3,
+      "approved": 0,
+      "rejected": 0,
+      "total": 3
+    }
+  },
+  {
+    "timestamp": "2025-08-26T11:46:26.183591",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 63.72800000000001,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:26.255192",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.015000000000000001,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:26.307763",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 66.231,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:26.327952",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "create_interface",
+    "duration_ms": 208.097,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:39.417673",
+    "component": "FileApprovalPanel",
+    "operation": "get_file_counts",
+    "duration_ms": 0.024,
+    "details": {}
+  },
+  {
+    "timestamp": "2025-08-26T11:46:39.454204",
+    "component": "EnhancedFileApprovalPanel",
+    "operation": "refresh_files_table",
+    "duration_ms": 69.63900000000001,
     "details": {}
   }
 ]

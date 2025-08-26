@@ -164,17 +164,11 @@ class TableHelper:
             tooltip_text += f"\nRejected by: {file_data['tl_rejected_by']}"
         
         return ft.Container(
-            content=ft.Text(
-                config['text'], 
-                color=ft.Colors.WHITE, 
-                size=12,  # Increased from 10 to 12 for better readability
-                weight=ft.FontWeight.BOLD
-            ),
+            content=ft.Text(config['text'], color=ft.Colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
             bgcolor=config['color'],
             padding=ft.padding.symmetric(horizontal=8, vertical=4),
             border_radius=6,
-            tooltip=tooltip_text,
-            alignment=ft.alignment.center
+            tooltip=tooltip_text
         )
     
     @staticmethod

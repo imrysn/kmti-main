@@ -940,7 +940,13 @@ class FilesView:
             padding=ft.padding.all(20),
             border_radius=12,
             border=ft.border.all(1, ft.Colors.GREY_200),
-            expand=True
+            expand=True,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=3,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            )
         )
     
     def create_content(self):

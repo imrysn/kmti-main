@@ -422,7 +422,13 @@ class ApprovalFilesView:
             padding=ft.padding.all(20),
             border_radius=12,
             border=ft.border.all(1, ft.Colors.GREY_200),
-            expand=True
+            expand=True,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=3,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2)
+            )
         )
     
     def refresh_content(self):
@@ -666,26 +672,26 @@ class ApprovalFilesView:
         # Create details content with enhanced comments section
         details_content = ft.Column([
             # File information section
-            ft.Text(f"File: {submission['original_filename']}", size=14, weight=ft.FontWeight.BOLD),
-            ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=12),
-            ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=12),
+            ft.Text(f"File: {submission['original_filename']}", size=16, weight=ft.FontWeight.BOLD),
+            ft.Text(f"Status: {self.get_status_details(submission.get('status', 'unknown'))[2]}", size=16),
+            ft.Text(f"Size: {self.format_file_size(submission.get('file_size', 0))}", size=16),
             ft.Divider(),
             
             # Description and tags section
-            ft.Text("Description:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text(submission.get("description", "No description"), size=11),
-            ft.Text("Tags:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Text(", ".join(submission.get("tags", [])) or "None", size=11),
+            ft.Text("Description:", size=16, weight=ft.FontWeight.BOLD),
+            ft.Text(submission.get("description", "No description"), size=16),
+            ft.Text("Tags:", size=16, weight=ft.FontWeight.BOLD),
+            ft.Text(", ".join(submission.get("tags", [])) or "None", size=16),
             ft.Divider(),
             
             # Status history section
-            ft.Text("Status History:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Column(history_items, spacing=0) if history_items else ft.Text("No history available", size=11, color=ft.Colors.GREY_500),
+            ft.Text("Status History:", size=16, weight=ft.FontWeight.BOLD),
+            ft.Column(history_items, spacing=0) if history_items else ft.Text("No history available", size=16, color=ft.Colors.GREY_500),
             ft.Divider(),
             
             # Enhanced comments section with role distinction
-            ft.Text("Comments & Reviews:", size=12, weight=ft.FontWeight.BOLD),
-            ft.Column(all_comments, spacing=0) if all_comments else ft.Text("No comments available", size=11, color=ft.Colors.GREY_500)
+            ft.Text("Comments & Reviews:", size=16, weight=ft.FontWeight.BOLD),
+            ft.Column(all_comments, spacing=0) if all_comments else ft.Text("No comments available", size=16, color=ft.Colors.GREY_500)
         ], scroll=ft.ScrollMode.AUTO, spacing=10)
         
         self.dialogs.show_details_dialog(

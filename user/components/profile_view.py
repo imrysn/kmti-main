@@ -401,7 +401,7 @@ class ProfileView:
                 # Username
                 ft.Text(
                     f"@{self.username}",
-                    size=14,
+                    size=16,
                     color=ft.Colors.GREY_600,
                     text_align=ft.TextAlign.CENTER
                 ),
@@ -409,7 +409,7 @@ class ProfileView:
                 # Email
                 ft.Text(
                     self.user_data.get('email', f'{self.username}@example.com'),
-                    size=12,
+                    size=16,
                     color=ft.Colors.GREY_500,
                     text_align=ft.TextAlign.CENTER
                 ),
@@ -418,7 +418,7 @@ class ProfileView:
                 ft.Container(
                     content=ft.Text(
                         self.user_data.get('role', 'USER').upper(),
-                        size=10,
+                        size=12,
                         weight=ft.FontWeight.BOLD,
                         color=ft.Colors.WHITE
                     ),
@@ -458,7 +458,7 @@ class ProfileView:
                 ft.Container(width=12),
                 ft.Text(
                     label, 
-                    size=14, 
+                    size=16, 
                     weight=ft.FontWeight.BOLD if is_active else ft.FontWeight.NORMAL,
                     color=ft.Colors.BLUE_600 if is_active else ft.Colors.GREY_700
                 )
@@ -553,29 +553,29 @@ class ProfileView:
                 
                 # Profile details
                 ft.Row([
-                    ft.Text("Full Name:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("fullname") or self.user_data.get("full_name", "N/A"), size=14)
+                    ft.Text("Full Name:", size=16, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.user_data.get("fullname") or self.user_data.get("full_name", "N/A"), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Email:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("email", "N/A"), size=14)
+                    ft.Text("Email:", size=16, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.user_data.get("email", "N/A"), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Role:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("role", "User"), size=14)
+                    ft.Text("Role:", size=16, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.user_data.get("role", "User"), size=16)
                 ]),
                 ft.Container(height=20),
                 # NEW: Team field added here
                 ft.Row([
-                    ft.Text("Team:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.get_team_display(), size=14)
+                    ft.Text("Team:", size=16, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.get_team_display(), size=16)
                 ]),
                 ft.Container(height=20),
                 ft.Row([
-                    ft.Text("Join Date:", size=14, weight=ft.FontWeight.BOLD, width=100),
-                    ft.Text(self.user_data.get("join_date", "N/A"), size=14)
+                    ft.Text("Join Date:", size=16, weight=ft.FontWeight.BOLD, width=100),
+                    ft.Text(self.user_data.get("join_date", "N/A"), size=16)
                 ]),
             ]),
             bgcolor=ft.Colors.WHITE,
@@ -591,7 +591,7 @@ class ProfileView:
             )
         )
     
-    def create_back_button(self, on_click_handler, text: str = "Back"):
+    def create_back_button(self, on_click_handler, text: str = ""):
         """Create back button - consistent with other views"""
         return ft.Container(
             content=ft.Row([
