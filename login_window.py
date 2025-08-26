@@ -8,7 +8,7 @@ from admin_panel import admin_panel
 from user.user_panel import user_panel
 from TLPanel import TLPanel
 from flet import FontWeight, CrossAxisAlignment, MainAxisAlignment
-from utils.session_logger import log_login
+from utils.session_logger import log_login, log_activity, log_panel_access
 from datetime import datetime
 from utils.windows_admin_access import check_admin_elevation_on_login
 
@@ -156,7 +156,13 @@ def check_existing_session(page: ft.Page):
             else:
                 return False
         else:
-            user_panel(page, username)
+            # User panel - allow both USER and TEAM_LEADER roles
+            if role in ["USER", "TEAM_LEADER"]:
+                user_panel(page, username)
+            elif role == "ADMIN":
+                admin_panel(page, username)
+            else:
+                return False
         print(f"[DEBUG] Auto-restored session for {username} (role={role}, panel={panel})")
         return True
     except Exception as e:
@@ -265,7 +271,10 @@ def login_view(page: ft.Page):
                 if role == "ADMIN":
                     admin_panel(page, uname)
                 elif role == "TEAM_LEADER":
+                    # Team Leader accessing via Admin login -> TL Panel
                     TLPanel(page, uname)
+                    # Log which panel was accessed
+                    log_panel_access(uname, role, "admin", "admin")
                 elif role == "USER":
                     # Users can access admin login but get redirected to user panel
                     user_panel(page, uname)
@@ -275,13 +284,16 @@ def login_view(page: ft.Page):
                     page.update()
                     return
             else:
-                # User login window - all roles can access but get appropriate panels
+                # User login window - Team Leaders get User Panel, others get their appropriate panels
                 if role == "USER":
                     user_panel(page, uname)
                 elif role == "ADMIN":
                     admin_panel(page, uname)
                 elif role == "TEAM_LEADER":
-                    TLPanel(page, uname)
+                    # Team Leader accessing via User login -> User Panel for file upload/management
+                    user_panel(page, uname)
+                    # Log which panel was accessed
+                    log_panel_access(uname, role, "user", "user")
                 else:
                     error_text.value = "Invalid role!"
                     error_text.color = ft.Colors.RED 

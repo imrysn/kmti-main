@@ -14,7 +14,7 @@ from .services.profile_service import ProfileService
 from .services.file_service import FileService
 from .services.approval_file_service import ApprovalFileService
 from utils.logger import log_action  
-from utils.session_logger import log_activity
+from utils.session_logger import log_activity, log_panel_access
 from admin.components.role_colors import create_role_badge, get_role_color
 from utils.path_config import DATA_PATHS
 
@@ -75,14 +75,16 @@ def user_panel(page: ft.Page, username: Optional[str]):
     
     print(f"[DEBUG] User panel access check: username={username}, role={user_role}")
     
-    if user_role != "USER":
-        print(f"[WARNING] Non-user role {user_role} attempted to access user panel")
+    # Allow both USER and TEAM_LEADER roles to access user panel
+    if user_role not in ["USER", "TEAM_LEADER"]:
+        print(f"[WARNING] Non-user/team-leader role {user_role} attempted to access user panel")
         page.clean()
         from login_window import login_view
         login_view(page)
         return
     
-    save_session(username, "USER", "user")
+    # Save session with actual role but specify panel
+    save_session(username, user_role, "user")
 
     # Use network path for user folder
     user_folder = DATA_PATHS.get_user_upload_dir(username)

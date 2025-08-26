@@ -604,7 +604,7 @@ class NotificationsWindow:
             e.control.content.content.shadow = ft.BoxShadow(
                 spread_radius=0,
                 blur_radius=12,
-                color=ft.Colors.BLACK20,
+                color=ft.Colors.BLACK,
                 offset=ft.Offset(0, 4),
             )
         else:

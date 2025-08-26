@@ -227,3 +227,19 @@ def log_activity(username: str, description: str):
 
     with open(log_file, "w") as f:
         json.dump(logs, f, indent=4)
+
+
+def log_panel_access(username: str, role: str, panel: str, login_type: str):
+    """
+    Log specific panel access for Team Leaders to track which panel they accessed.
+    This helps with activity metadata tracking for dual access roles.
+    """
+    panel_description = {
+        "user": "User Panel (file upload/management)",
+        "admin": "Team Leader Panel (file review/approval)" if role == "TEAM_LEADER" else "Admin Panel"
+    }.get(panel, f"{panel} Panel")
+    
+    login_method = "Admin Login" if login_type == "admin" else "User Login"
+    
+    description = f"Accessed {panel_description} via {login_method}"
+    log_activity(username, description)
